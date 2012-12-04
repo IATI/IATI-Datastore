@@ -197,20 +197,20 @@ class Importer:
         for sector in activity.findall('sector'):
             try:
                 sector = self.import_sector(out['iati_identifier'],sector,file_name)
-                #Session.add(sector)
+                Session.add(sector)
             except ValueError:
                 pass
         for ra in activity.findall('related-activity'):
             try:
                 rela = self.import_relatedactivity(out['iati_identifier'],ra,file_name)
-                #Session.add(rela)
+                Session.add(rela)
             except ValueError:
                 pass
         for tx in activity.findall("transaction"):
             transaction = self.import_transaction(out['iati_identifier'],tx,file_name)
-            #Session.add(transaction)
+            Session.add(transaction)
         x = Activity(**out) 
-        #Session.add(x)
+        Session.add(x)
 
     def load_file(self, file_name):
         """Read an IATI-XML file and write it into the database."""
@@ -228,7 +228,7 @@ class Importer:
                 self.log.write_traceback()
                 self.log.write('Activity skipped in: %s - %s' % (file_name, str(e)))
         sys.stdout.flush()
-        #Session.commit()
+        Session.commit()
         return num_activities
 
 
