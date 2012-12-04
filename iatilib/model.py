@@ -4,6 +4,12 @@ from . import engine
 
 Base = declarative_base(bind=engine)
 
+class LogEntry(Base):
+    __tablename__ = 'logentry'
+    id = Column(Integer,primary_key=True)
+    timestamp = Column(DateTime)
+    text = Column(String)
+
 class Activity(Base):
     __tablename__ = 'activity'
     id = Column(Integer, primary_key=True)
