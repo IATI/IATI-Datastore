@@ -15,39 +15,45 @@ class Importer:
         x = x.replace(',','')
         return float(x)
 
-    def nodecpy(self, out, node, name, attrs={}, convert=unicode):
+    def nodecpy(self, out, node, name, attrs=None, convert=unicode):
         """TODO understand & document"""
         if ((node is None) or (node.text is None)):
             return
-        if node.text:
-            out[name] = convert(node.text)
-        for k, v in attrs.iteritems():
-            out[name + '_' + v] = node.get(k)
-            assert not ((name+'_'+v) == 'legacy_value')
+        out[name] = convert(node.text)
+        if attrs:
+            for k, v in attrs.iteritems():
+                out[name + '_' + v] = node.get(k)
 
     def import_transaction(self, activityiatiid,tx,file_name):
         """Read a transaction from the XML tree and generate a model of it."""
         temp = {}
-        optimised = { x.tag : x for x in tx }
+        # Run a single pass of the XML tree 
+        optimised = { }
+        for element in tx:
+            if element.tag == 'transaction-date':
+                # This tag may appear multiple times?
+                try:
+                    # for some (WB) projects, the date is not set even though the tag exists...
+                    temp['transaction_date_iso'] = self.import_date_value(element)
+                except ValueError:
+                    pass
+            else:
+                optimised[element.tag] = element
+        # Turn the XML content into a data dict
         value = optimised.get('value')
         if value is not None:
             temp['value_date'] = value.get('value-date')
             temp['value_currency'] = value.get('currency')
             temp['value'] = self.read_number(value.text)
-        if tx.findtext('description'):
-            temp['description'] = tx.findtext('description')
+        description_tag = optimised.get('description')
+        if description_tag:
+            temp['description'] = description_tag.text
         self.nodecpy(temp, optimised.get('activity-type'), 'transaction_type', {'code': 'code'})
         self.nodecpy(temp, optimised.get('transaction-type'), 'transaction_type', {'code': 'code'})
         self.nodecpy(temp, optimised.get('flow-type'), 'flow_type', {'code': 'code'})
         self.nodecpy(temp, optimised.get('finance-type'), 'finance_type', {'code': 'code'})
         self.nodecpy(temp, optimised.get('tied-status'), 'tied_status', {'code': 'code'})
         self.nodecpy(temp, optimised.get('aid-type'), 'aid_type', {'code':'code'})
-        for date in tx.findall('transaction-date'):
-            try:
-                # for some (WB) projects, the date is not set even though the tag exists...
-                temp['transaction_date_iso'] = self.import_date_value(date)
-            except ValueError:
-                pass
         if not (temp.has_key('transaction_date_iso')):
             temp['transaction_date_iso'] = temp['value_date']
         self.nodecpy(temp, optimised.get('disembursement-channel'), 'disembursement_channel', {'code': 'code'})
