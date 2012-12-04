@@ -11,7 +11,7 @@ class Importer:
 
     def read_number(self, x):
         if x is None: return 0.0
-        assert type(x) is str, type(x)
+        assert (type(x) is str) or (type(x) is unicode), type(x)
         x = x.replace(',','')
         return float(x)
 
@@ -21,25 +21,27 @@ class Importer:
             return
         if node.text:
             out[name] = convert(node.text)
-        for k, v in attrs.items():
+        for k, v in attrs.iteritems():
             out[name + '_' + v] = node.get(k)
+            assert not ((name+'_'+v) == 'legacy_value')
 
     def import_transaction(self, activityiatiid,tx,file_name):
         """Read a transaction from the XML tree and generate a model of it."""
         temp = {}
-        value = tx.find('value')
+        optimised = { x.tag : x for x in tx }
+        value = optimised.get('value')
         if value is not None:
             temp['value_date'] = value.get('value-date')
             temp['value_currency'] = value.get('currency')
             temp['value'] = self.read_number(value.text)
         if tx.findtext('description'):
             temp['description'] = tx.findtext('description')
-        self.nodecpy(temp, tx.find('activity-type'), 'transaction_type', {'code': 'code'})
-        self.nodecpy(temp, tx.find('transaction-type'), 'transaction_type', {'code': 'code'})
-        self.nodecpy(temp, tx.find('flow-type'), 'flow_type', {'code': 'code'})
-        self.nodecpy(temp, tx.find('finance-type'), 'finance_type', {'code': 'code'})
-        self.nodecpy(temp, tx.find('tied-status'), 'tied_status', {'code': 'code'})
-        self.nodecpy(temp, tx.find('aid-type'), 'aid_type', {'code':'code'})
+        self.nodecpy(temp, optimised.get('activity-type'), 'transaction_type', {'code': 'code'})
+        self.nodecpy(temp, optimised.get('transaction-type'), 'transaction_type', {'code': 'code'})
+        self.nodecpy(temp, optimised.get('flow-type'), 'flow_type', {'code': 'code'})
+        self.nodecpy(temp, optimised.get('finance-type'), 'finance_type', {'code': 'code'})
+        self.nodecpy(temp, optimised.get('tied-status'), 'tied_status', {'code': 'code'})
+        self.nodecpy(temp, optimised.get('aid-type'), 'aid_type', {'code':'code'})
         for date in tx.findall('transaction-date'):
             try:
                 # for some (WB) projects, the date is not set even though the tag exists...
@@ -48,12 +50,11 @@ class Importer:
                 pass
         if not (temp.has_key('transaction_date_iso')):
             temp['transaction_date_iso'] = temp['value_date']
-        self.nodecpy(temp, tx.find('disembursement-channel'), 'disembursement_channel', {'code': 'code'})
-        self.nodecpy(temp, tx.find('provider-org'), 'provider_org', {'ref': 'ref'})
-        self.nodecpy(temp, tx.find('receiver-org'), 'receiver_org', {'ref': 'ref'})
+        self.nodecpy(temp, optimised.get('disembursement-channel'), 'disembursement_channel', {'code': 'code'})
+        self.nodecpy(temp, optimised.get('provider-org'), 'provider_org', {'ref': 'ref'})
+        self.nodecpy(temp, optimised.get('receiver-org'), 'receiver_org', {'ref': 'ref'})
         temp['iati_identifier'] = activityiatiid
         # Create a model of the transaction
-        self.clean_object_dict(temp, Transaction, file_name)
         return Transaction(**temp)
 
 
@@ -111,7 +112,6 @@ class Importer:
             'percentage': percentage,
             'vocabulary': vocab
         }
-        self.clean_object_dict(tsector, Sector, file_name)
         return Sector(**tsector)
 
     def import_relatedactivity(self, activityiatiid, ra, file_name):
@@ -121,15 +121,15 @@ class Importer:
             'relref': ra.get('ref'),
             'reltype': ra.get('type')                    
             }
-        self.clean_object_dict(related_activity, RelatedActivity, file_name)
         return RelatedActivity(**related_activity)
 
     def parse_activity(self, activity, file_name):
         """TODO understand & document"""
         out = {}
+        optimised = { x.tag : x for x in activity }
         out['source_file'] = file_name
         out['default_currency'] = activity.get("default-currency")
-        self.nodecpy(out, activity.find('reporting-org'), 'reporting_org', {'ref': 'ref', 'type': 'type'})
+        self.nodecpy(out, optimised.get('reporting-org'), 'reporting_org', {'ref': 'ref', 'type': 'type'})
         
         out['iati_identifier'] = activity.findtext('iati-identifier')
         if activity.findtext('activity-website'):
@@ -140,17 +140,18 @@ class Importer:
         if activity.findtext('recipient-region'):
             out['recipient_region'] = activity.findtext('recipient-region')
             out['recipient_region_code'] = activity.find('recipient-region').get('code')
-        self.nodecpy(out, activity.find('recipient-country'), 'recipient_country', {'code': 'code'})
-        self.nodecpy(out, activity.find('collaboration_type'), 'collaboration_type', {'code': 'code'})
-        self.nodecpy(out, activity.find('default-flow-type'), 'flow_type', {'code': 'code'})
-        self.nodecpy(out, activity.find('default-finance-type'), 'finance_type', {'code': 'code'})
-        self.nodecpy(out, activity.find('default-tied-status'), 'tied_status', {'code': 'code'})
-        self.nodecpy(out, activity.find('default-aid-type'), 'aid_type', {'code':'code'})
-        self.nodecpy(out, activity.find('activity-status'), 'status', {'code':'code'})
-        _activity_status = activity.find('activity-status')
+        self.nodecpy(out, optimised.get('recipient-country'), 'recipient_country', {'code': 'code'})
+        self.nodecpy(out, optimised.get('collaboration_type'), 'collaboration_type', {'code': 'code'})
+        self.nodecpy(out, optimised.get('default-flow-type'), 'flow_type', {'code': 'code'})
+        self.nodecpy(out, optimised.get('default-finance-type'), 'finance_type', {'code': 'code'})
+        self.nodecpy(out, optimised.get('default-tied-status'), 'tied_status', {'code': 'code'})
+        self.nodecpy(out, optimised.get('default-aid-type'), 'aid_type', {'code':'code'})
+        self.nodecpy(out, optimised.get('activity-status'), 'status', {'code':'code'})
+        _activity_status = optimised.get('activity-status')
         assert _activity_status is not None, 'No value of "activity-status" found on this activity.'
         out['status_code'] = _activity_status.get('code')
-        self.nodecpy(out, activity.find('legacy-data'), 'legacy', {'name': 'name', 'value': 'value'})
+        # 'Legacy' properties are not part of the object model
+        #self.nodecpy(out, optimised.get('legacy-data'), 'legacy', {'name': 'name', 'value': 'value'})
         
         self.nodecpy(out, activity.find('participating-org[@role="Funding"]'), 'funding_org', {'ref': 'ref', 'type': 'type'})
         self.nodecpy(out, activity.find('participating-org[@role="Extending"]'), 'extending_org', {'ref': 'ref', 'type': 'type'})
@@ -202,23 +203,8 @@ class Importer:
         for tx in activity.findall("transaction"):
             transaction = self.import_transaction(out['iati_identifier'],tx,file_name)
             #Session.add(transaction)
-        self.clean_object_dict(out, Activity, file_name)
         x = Activity(**out) 
         #Session.add(x)
-
-    def clean_object_dict(self, dict_, model_class, file_name):
-        # Remove dictionary keys which don't appear on the model
-        # Inner loop method: Try to be efficient
-        table_keys = model_class.__table__.c.keys()
-        delete = []
-        for k,v in dict_.iteritems():
-            if not k in table_keys:
-                self.log.write("  Extra field in %s:\t%s %s" % (file_name, str(model_class.__name__), k))
-                delete.append(k)
-            elif type(v) is str:
-                dict_[k] = unicode(v)
-        for k in delete:
-            del dict_[k]
 
     def load_file(self, file_name):
         """Read an IATI-XML file and write it into the database."""
@@ -234,7 +220,7 @@ class Importer:
                 num_activities += 1
             except (ValueError,AssertionError) as e:
                 self.log.write_traceback()
-                self.log.write('Error in file: %s - %s' % (file_name, str(e)))
+                self.log.write('Activity skipped in: %s - %s' % (file_name, str(e)))
         sys.stdout.flush()
         #Session.commit()
         return num_activities
@@ -248,7 +234,7 @@ class Importer:
         totalfiles = len(listing)
         self.log.write('Found %d files' % totalfiles)
         filecount = 0
-        max_filecount = 50
+        max_filecount = 500
         for infile in listing:
             filecount += 1
             percentage = str(round(((float(filecount)/float(totalfiles))*100),2))
