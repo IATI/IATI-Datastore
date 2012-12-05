@@ -2,5 +2,11 @@ Flask==0.9
 Jinja2==2.6
 SQLAlchemy==0.7.9
 Werkzeug==0.8.3
+iron-core==0.1.0
+iron-worker==1.0.1
+iso8601==0.1.4
 lxml==3.0.1
 psycopg2==2.4.5
+python-dateutil==2.1
+requests==0.14.2
+six==1.2.0

@@ -14,7 +14,6 @@ engine = sqlalchemy.create_engine(database_url,echo=database_echo)
 Session = sqlalchemy.orm.scoped_session(sqlalchemy.orm.sessionmaker(engine))
 
 import model
-from importer import Importer
 
 # Simple logfile class. Use a library if this gets any more than ~15 lines
 class LogFile:
