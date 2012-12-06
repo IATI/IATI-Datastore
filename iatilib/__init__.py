@@ -1,19 +1,24 @@
 import os
-import sqlalchemy
-import sqlalchemy.orm
 from datetime import datetime
 import traceback
+from . import basex_client
 
-database_url = os.environ.get('DATABASE_URL')
-database_echo = os.environ.get('DATABASE_ECHO', '').lower()=='true'
+# Parse environment
+db_config = {
+    'DATABASE_URL':None,
+    'DATABASE_PORT':None,
+    'DATABASE_USER':None,
+    'DATABASE_PASS':None,
+    'DATABASE_NAME':None
+}
+for k in db_config.keys():
+    db_config[k] = os.environ.get(k)
+    if not db_config[k]: 
+        raise ValueError('No %s defined in the environment. The following must all be defined: %s' % (k, ','.join(db_config.keys())))
+db_config['DATABASE_PORT'] = int( db_config['DATABASE_PORT'] )
 
-if not database_url:
-    raise ValueError('No DATABASE_URL defined in the environment. Try running:\n          $ export DATABASE_URL=postgresql://user:pass@localhost/mydatabase')
-
-engine = sqlalchemy.create_engine(database_url,echo=database_echo)
-Session = sqlalchemy.orm.scoped_session(sqlalchemy.orm.sessionmaker(engine))
-
-import model
+def open_db():
+    return BaseX(db_config['DATABASE_URL'], db_config['DATABASE_PORT'], db_config['DATABASE_USER'], db_config['DATABASE_PASS'], db_config['DATABASE_NAME'])
 
 # Simple logfile class. Use a library if this gets any more than ~15 lines
 class LogFile:
@@ -31,4 +36,19 @@ class LogFile:
         traceback.print_exc(file=self.file)
     def close(self):
         self.file.close()
+
+# Encapsulates DB connection
+class BaseX:
+    def __init__(self,host,port,user,pw,db_name):
+        # create session
+        self.session = basex_client.Session(host,port,user,pw)
+        self.session.init()
+        self.session.execute('open %s ' % db_name)
+    def query(self,xquery):
+        xquery = 'xquery '+xquery
+        result = self.session.execute(xquery)
+        return result
+    def close(self):
+        self.session.close()
+
 

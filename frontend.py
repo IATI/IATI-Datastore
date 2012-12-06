@@ -1,18 +1,25 @@
 import os
-from flask import Flask
-from iatilib import Session, model
+from flask import Flask, escape
+import iatilib
 
 app = Flask(__name__)
+
+session = iatilib.open_db()
+
 # TODO update this at some point
 DEBUG = True
 
 @app.route('/')
 def hello():
-    q = Session.query(model.LogEntry)
-    def row(x):
-        return '<tr><td>%s</td><td>%s</td><td>%s</td></tr>' % (x.id,x.timestamp.isoformat(),x.text)
-    table = '<table border="2">%s</table>' % ''.join( [row(x) for x in q] )
-    return '<html>API Status: Healthy<br/>%s</html>' % table
+    # Ping the DB server for something
+    query = '//iati-activity'
+    result = session.query(query)
+    out = '<p>API Status: healthy</p>'
+    out += '<hr/>'
+    out += '<p>query=<code>%s</code></p>' % query
+    out += '<hr/>'
+    out += '<pre>%s</pre>' % escape(result)
+    return '<html>%s</html>' % out
 
 if __name__=='__main__':
   port = int(os.environ.get('PORT',5000))
