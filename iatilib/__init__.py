@@ -1,7 +1,7 @@
 import os
 from datetime import datetime
 import traceback
-from . import basex_client
+from . import basex
 
 # Parse environment
 db_config = {
@@ -18,7 +18,7 @@ for k in db_config.keys():
 db_config['DATABASE_PORT'] = int( db_config['DATABASE_PORT'] )
 
 def open_db():
-    return BaseX(db_config['DATABASE_URL'], db_config['DATABASE_PORT'], db_config['DATABASE_USER'], db_config['DATABASE_PASS'], db_config['DATABASE_NAME'])
+    return basex.BaseX(db_config['DATABASE_URL'], db_config['DATABASE_PORT'], db_config['DATABASE_USER'], db_config['DATABASE_PASS'], db_config['DATABASE_NAME'])
 
 # Simple logfile class. Use a library if this gets any more than ~15 lines
 class LogFile:
@@ -36,19 +36,4 @@ class LogFile:
         traceback.print_exc(file=self.file)
     def close(self):
         self.file.close()
-
-# Encapsulates DB connection
-class BaseX:
-    def __init__(self,host,port,user,pw,db_name):
-        # create session
-        self.session = basex_client.Session(host,port,user,pw)
-        self.session.init()
-        self.session.execute('open %s ' % db_name)
-    def query(self,xquery):
-        xquery = 'xquery '+xquery
-        result = self.session.execute(xquery)
-        return result
-    def close(self):
-        self.session.close()
-
 
