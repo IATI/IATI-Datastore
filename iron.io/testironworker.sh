@@ -1,0 +1,1 @@
+PYTHONPATH="pip/lib/python2.7/site-packages:$PYTHONPATH" DATABASE_URL="postgres://ejqaeauwvqiqoq:Y7P5b-RPrja0RjrRQ7B3jSFkeN@ec2-54-243-230-119.compute-1.amazonaws.com:5432/d401nqin6n2jh7" python ./testironworker.py "$@"

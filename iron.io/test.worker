@@ -1,0 +1,7 @@
+runtime "binary"
+dir "iatilib"
+file "iron_requirements.txt"
+file "testironworker.py"
+build 'pip install --install-option="--prefix=`pwd`/pip" -r iron_requirements.txt'
+exec "testironworker.sh"
+
