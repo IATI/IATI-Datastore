@@ -1,0 +1,65 @@
+body {
+    background: #eee;
+}
+.subcontainer {
+    background: #fff;
+    width: 400px;
+    padding: 50px;
+    margin-top: 40px;
+}
+footer {
+    font-size: 10px;
+    border-top: 1px solid #ccc;
+    margin-top: 50px;
+    line-height: 12px;
+    padding-top: 5px;
+    margin-bottom: 40px;
+}
+footer p {
+    margin-bottom: 4px;
+}
+dd {
+    margin-bottom: 8px;
+}
+.params td {
+    border-top: none;
+}
+u {
+    /* Hijacked this tag */
+    font-family: Menlo,Monaco,Consolas,"Courier New",monospace;
+    font-size: 12px;
+    text-decoration: none;
+}
+.accordion {
+    margin-top: 5px;
+}
+.url-opt {
+    font-style: italic;
+}
+.label.pull-right {
+    margin-left: 2px;
+}
+.accordion-heading {
+  font-size: 11px;
+}
+.accordion-toggle {
+  padding-right: 4px !important;
+}
+.accordion-inner pre {
+    margin-top: 4px;
+}
+pre .label {
+    font-family: Helvetica Neue;
+}
+.example {
+  padding: 2px 10px;
+  border-left: 2px solid #eee;
+  border-right: 2px solid #eee;
+  border-top: 1px solid #eee;
+  border-bottom: 1px solid #eee;
+  margin: 3px 0;
+  font-size: 11px;
+}
+a.accordion-toggle {
+  color: #000;
+}

@@ -3,6 +3,8 @@ from datetime import datetime
 import traceback
 from . import basex
 
+_logger = None
+
 # Parse environment
 db_config = {
     'DATABASE_URL':None,
@@ -20,20 +22,17 @@ db_config['DATABASE_PORT'] = int( db_config['DATABASE_PORT'] )
 def open_db():
     return basex.BaseX(db_config['DATABASE_URL'], db_config['DATABASE_PORT'], db_config['DATABASE_USER'], db_config['DATABASE_PASS'], db_config['DATABASE_NAME'])
 
-# Simple logfile class. Use a library if this gets any more than ~15 lines
-class LogFile:
-    def __init__(self,filename,log_to_screen=True):
-        self.file = open(filename,'a')
-        self.log_to_screen = log_to_screen
-    def write(self,text):
-        if self.log_to_screen:
-            print text
-        text = '%s %s' % (str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")), text)
-        print >>self.file, text
-    def write_traceback(self):
-        if self.log_to_screen:
-            traceback.print_exc()
-        traceback.print_exc(file=self.file)
-    def close(self):
-        self.file.close()
+def log(type, message, *args, **kwargs):
+    """Log into the internal iati logger."""
+    global _logger
+    if _logger is None:
+        import logging
+        _logger = logging.getLogger('iati')
+        # Only set up a default log handler if the
+        # end-user application didn't set anything up.
+        if not logging.root.handlers and _logger.level == logging.NOTSET:
+            _logger.setLevel(logging.INFO)
+            handler = logging.StreamHandler()
+            _logger.addHandler(handler)
+    getattr(_logger, type)(message.rstrip(), *args, **kwargs)
 
