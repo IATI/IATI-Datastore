@@ -51,11 +51,9 @@ class IatiFrontendTestCase(unittest.TestCase):
     def test_arg_multivalue_1(self):
         data,rv = self._get_json('/api/1/debug/args.json?recipient-country=AF|UG')
         assert data['raw_xml']['processed']=='(recipient-country/@code=AF or recipient-country/@code=UG)', json.dumps(data,indent=2)
-
     def test_arg_multivalue_2(self):
         data,rv = self._get_json('/api/1/debug/args.json?recipient-country=AF%2BUG')
         assert data['raw_xml']['processed']=='(recipient-country/@code=AF and recipient-country/@code=UG)', json.dumps(data,indent=2)
-
     def test_arg_multivalue_3(self):
         data,rv = self._get_json('/api/1/debug/args.json?recipient-country=AF%2BUG|DE')
         assert data['raw_xml']['processed']=='(recipient-country/@code=AF and (recipient-country/@code=UG or recipient-country/@code=DE))', json.dumps(data,indent=2)

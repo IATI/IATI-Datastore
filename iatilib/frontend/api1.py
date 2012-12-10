@@ -88,7 +88,7 @@ def endpoint(rule, **options):
 ###########################################
 
 def parse_args():
-    """Turn the querystring into an XPath expression we can use to select elements from the databse.
+    """Turn the querystring into an XPath expression we can use to select elements.
     See the querystring section of the IATI document:
     https://docs.google.com/document/d/1gxvmYZSDXBTSMAU16bxfFd-hn1lYVY1c2olkXbuPBj4/edit
     Plenty of special cases apply!
@@ -128,17 +128,18 @@ def parse_args():
     out = []
     for key,value in sorted(request.args.items(), key=lambda x:x[0]):
         xParent, xChild, xProperty = split(key)
+        # Left hand side of the query's equals sign
         lhs = clean_parent(xParent,xChild,xProperty)\
                 + clean_child(xChild,xChild,xProperty)\
                 + clean_property(xProperty,xChild,xProperty)
         # Nested OR groups within AND groups...
         _or      = lambda x : x[0] if len(x)==1 else '(%s)' % ' or '.join(x)
         _and     = lambda x : x[0] if len(x)==1 else '(%s)' % ' and '.join(x)
-        or_list  = lambda x: [(lhs+'='+y) for y in x.split('|')]
-        and_list = lambda x: [ _or(or_list(y)) for y in x.split('+') ]
+        or_string  = lambda x:  _or( [    lhs+'='+y for y in x.split('|') ] )
+        and_string = lambda x: _and( [ or_string(y) for y in x.split('+') ] )
         # input:   ?field=aa||bb+cc   
         # output:  ((field/text()=aa or field/text()=bb) and (field.text()=cc))
-        out.append(_and(and_list(value)))
+        out.append(and_string(value))
     return ' and '.join(out)
 
 
