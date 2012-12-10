@@ -156,18 +156,18 @@ def index():
     #all_endpoints = [request.url_root[:-1]+x for x in rules if x.startswith('/api/1')]
     return {'version':'1.0','ok':True,'endpoints':all_endpoints}
 
-#### URL: /health
+#### URL: /about
 
-@endpoint('/health')
-def health():
-    # Ping the DB server for something
+@endpoint('/about')
+def about():
+    # General status info
     count_activity = session.query('count(//iati-activity)')
     count_transaction = session.query('count(//transaction)')
-    return 'DB contains %s activities; %s transactions.' % (count_activity,count_transaction)
+    return {'ok':True,'status':'healthy','indexed_activities':count_activity,'indexed_transactions':count_transaction}
 
 #### URL: /activity and /activities
 
-@endpoint('/activities')
+@endpoint('/access/activities')
 def activities_list():
     args = parse_args()
     query = '//iati-activity' 
@@ -177,10 +177,10 @@ def activities_list():
     result = session.query(query)
     return result
 
-@endpoint('/activity/<id>')
+@endpoint('/access/activity/<id>')
 def activity(id):
     query = '//iati-activity[iati-identifier[text()=\'%s\']]' % id
-    log('debug','/access/activity: '+query)
+    log('info','/access/activity: '+query)
     result = session.query(query)
     return result
 
