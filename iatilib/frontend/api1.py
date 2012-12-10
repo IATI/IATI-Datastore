@@ -93,15 +93,27 @@ def parse_args():
     https://docs.google.com/document/d/1gxvmYZSDXBTSMAU16bxfFd-hn1lYVY1c2olkXbuPBj4/edit
     Plenty of special cases apply!
     """
-    default_property = {
-            'sector':'/@code',
-            'participating-org':'/@ref'
-    }
-    special_case = {
-            'sector' : 'sector[@vocabulary=\'DAC\']'
-    }
-    out = []
-    for key,value in request.args.items():
+    def clean_parent(parent, child, property):
+        if parent:
+            return parent+'/'
+        return ''
+    def clean_child(parent, child, property):
+        if child=='sector':
+            return 'sector[@vocabulary=\'DAC\']'
+        return child
+    def clean_property(parent, child, property):
+        if property=='text':
+            return '/text()'
+        if property:
+            return '/@'+property
+        if child=='sector' \
+                or child=='reporting-org'\
+                or child=='recipient-country':
+            return '/@code'
+        if child=='participating-org':
+            return '/@ref'
+        return '/text()'
+    def split(key):
         # Split out the parent xPath element
         split_parent = key.split('_')
         assert len(split_parent)<=2, 'Bad parameter: %s' % key
@@ -111,26 +123,23 @@ def parse_args():
         assert len(split_child)<=2, 'Bad parameter: %s' % key
         xChild = split_child[0]
         xProperty = split_child[1] if len(split_child)>1 else None
-        #  (clean up the xParent):
-        if xParent:
-            xParent = xParent+'/'
-        else: 
-            xParent = ''
-        #  (clean up the xProperty):
-        if xProperty:
-            if xProperty=='text': 
-                xProperty = '/text()'
-            else:
-                xProperty = '/@'+xProperty
-        else:
-            xProperty = default_property.get(xChild, '/text()')
-        # Apply special case transformations (sector becomes sector[vocabulary='DAC'])
-        xParent = special_case.get(xParent,xParent)
-        xChild = special_case.get(xChild,xChild)
-        # Form an xPath expression
-        expression = '//%s%s%s=%s' % (xParent, xChild, xProperty, value)
-        out.append(expression)
-    return out
+        return xParent, xChild, xProperty
+    # Create an array of xpath strings...
+    out = []
+    for key,value in sorted(request.args.items(), key=lambda x:x[0]):
+        xParent, xChild, xProperty = split(key)
+        lhs = clean_parent(xParent,xChild,xProperty)\
+                + clean_child(xChild,xChild,xProperty)\
+                + clean_property(xProperty,xChild,xProperty)
+        # Nested OR groups within AND groups...
+        _or      = lambda x : x[0] if len(x)==1 else '(%s)' % ' or '.join(x)
+        _and     = lambda x : x[0] if len(x)==1 else '(%s)' % ' and '.join(x)
+        or_list  = lambda x: [(lhs+'='+y) for y in x.split('|')]
+        and_list = lambda x: [ _or(or_list(y)) for y in x.split('+') ]
+        # input:   ?field=aa||bb+cc   
+        # output:  ((field/text()=aa or field/text()=bb) and (field.text()=cc))
+        out.append(_and(and_list(value)))
+    return ' and '.join(out)
 
 
 
