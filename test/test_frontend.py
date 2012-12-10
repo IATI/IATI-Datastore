@@ -17,8 +17,10 @@ class IatiFrontendTestCase(unittest.TestCase):
         return data, rv
 
     def test_health(self):
-        data,rv = self._get_json('/api/1/health.json')
-        assert 'DB contains' in data['raw_xml'], json.dumps(data,indent=2)
+        data,rv = self._get_json('/api/1/about.json')
+        data = data['raw_xml'] # not really raw xml...
+        assert data['status']=='healthy', json.dumps(data,indent=2)
+        assert data['indexed_activities'] > 0, json.dumps(data,indent=2)
 
     # These argument tests come from the IATI API Guidelines:
     # https://docs.google.com/document/d/1gxvmYZSDXBTSMAU16bxfFd-hn1lYVY1c2olkXbuPBj4/edit 
