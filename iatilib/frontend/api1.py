@@ -1,3 +1,4 @@
+from iatilib import log
 from iatilib.frontend import app,session
 from flask import request, make_response, escape
 from datetime import datetime,timedelta
@@ -107,10 +108,10 @@ def parse_args():
         if property:
             return '/@'+property
         if child=='sector' \
-                or child=='reporting-org'\
                 or child=='recipient-country':
             return '/@code'
-        if child=='participating-org':
+        if child=='participating-org'\
+                or child=='reporting-org':
             return '/@ref'
         return '/text()'
     def split(key):
@@ -131,16 +132,17 @@ def parse_args():
         # Left hand side of the query's equals sign
         lhs = clean_parent(xParent,xChild,xProperty)\
                 + clean_child(xChild,xChild,xProperty)\
-                + clean_property(xProperty,xChild,xProperty)
+                + clean_property(xProperty,xChild,xProperty) 
         # Nested OR groups within AND groups...
         _or      = lambda x : x[0] if len(x)==1 else '(%s)' % ' or '.join(x)
         _and     = lambda x : x[0] if len(x)==1 else '(%s)' % ' and '.join(x)
-        or_string  = lambda x:  _or( [    lhs+'='+y for y in x.split('|') ] )
+        or_string  = lambda x:  _or( [    lhs+'=\''+y+'\'' for y in x.split('|') ] )
         and_string = lambda x: _and( [ or_string(y) for y in x.split('+') ] )
         # input:   ?field=aa||bb+cc   
         # output:  ((field/text()=aa or field/text()=bb) and (field.text()=cc))
         out.append(and_string(value))
     return ' and '.join(out)
+
 
 
 
@@ -167,17 +169,20 @@ def health():
 
 @endpoint('/activities')
 def activities_list():
-    query = '//iati-activity'
+    args = parse_args()
+    query = '//iati-activity' 
+    if args:
+        query += '[%s]' % args
+    log('info','/access/activities/: '+query)
     result = session.query(query)
     return result
 
 @endpoint('/activity/<id>')
 def activity(id):
     query = '//iati-activity[iati-identifier[text()=\'%s\']]' % id
+    log('debug','/access/activity: '+query)
     result = session.query(query)
-    #return '%s<br/>%s' % (query,result)
     return result
-
 
 @endpoint('/debug/args')
 def debug_args():
