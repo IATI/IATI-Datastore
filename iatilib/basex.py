@@ -18,9 +18,15 @@ class BaseX:
         # create session
         self.session = Session(host,port,user,pw)
         self.session.init()
-        self.session.execute('open %s ' % db_name)
+        self._open(db_name)
         self.db_name = db_name
         self.tmp = tempfile.mkdtemp()
+    def _open(self,db_name):
+        try:
+            return self.session.execute('open %s' % db_name)
+        except IOError:
+            self.session.execute('create db %s' % db_name)
+            return self.session.execute('open %s' % db_name)
     def query(self,xquery):
         xquery = 'xquery '+xquery
         result = self.session.execute(xquery)
@@ -43,15 +49,15 @@ class BaseX:
         return out
     def get_index(self):
         # Fetch the metadata index for this db_name separately
-        self.session.execute('open %s' % self.db_name+'__index')
+        self._open(self.db_name+'__index')
         out = self.query('//root')
-        self.session.execute('open %s' % self.db_name)
+        self._open(self.db_name)
         return out
     def store_index(self,index_xml):
         # Store the metadata index for this db_name separately
-        self.session.execute('open %s' % self.db_name+'__index')
+        self._open(self.db_name+'__index')
         out = self.store_file('index.xml',index_xml)
-        self.session.execute('open %s' % self.db_name)
+        self._open(self.db_name)
         return out
     def close(self):
         self.session.close()
