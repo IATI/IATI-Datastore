@@ -4,6 +4,9 @@ IATI Datastore
 The IATI datastore is running on [Heroku](http://heroku.com), using [BaseX](http://basex.org) 7.0.2 hosted on Amazon EC2.
 
 ---
+#####Essential stats:
+http://iati-datastore.herokuapp.com/api/1/about
+
 #####List all activities:
 http://iati-datastore.herokuapp.com/api/1/access/activities
 
