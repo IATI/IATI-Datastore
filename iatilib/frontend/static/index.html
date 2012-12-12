@@ -26,12 +26,12 @@
         <h4>Intro</h4>
         <div class="accordion">
             <div class="accordion-group">
-                <div class="accordion-heading"><a href="#row1" class="accordion-toggle" data-toggle="collapse">
-                /api/1/
+                <div class="accordion-heading"><a href="#row5" class="accordion-toggle" data-toggle="collapse">
+                /api/1/about
                 </a></div>
-                <div class="accordion-body collapse" id="row1"><div class="accordion-inner">
-                    <p class="description">Check the health of the API.</p>
-<div class="example"><a href="/api/1/" title="Check the health of the API.">/api/1</a></div>
+                <div class="accordion-body collapse" id="row5"><div class="accordion-inner">
+                    <p class="description">Human-readable information about the API.</p>
+<div class="example"><a href="/api/1/about" title="Human-readable information about the API.">/api/1/about</a></div>
                 </div></div>
             </div>
         </div>
@@ -39,20 +39,24 @@
         <div class="accordion">
             <div class="accordion-group">
                 <div class="accordion-heading"><a href="#row2" class="accordion-toggle" data-toggle="collapse">
-                /api/1/activities
+                /api/1/access/activities
                 </a></div>
                 <div class="accordion-body collapse" id="row2"><div class="accordion-inner">
-<p class="description">List all activities in the dataset.</p>
-<div class="example"><a href="/api/1/activities" title="All activities">/api/1/activities</a></div>
+<p class="description">List activity objects.</p>
+<div class="example"><a href="/api/1/access/activities" title="All activities">/api/1/access/activities</a></div>
+<div class="example"><a title="Query for a particular activity" href="/api/1/access/activities?iati-identifier=GB-CHC-1074937-GPAF-IMP-035">/api/1/access/activities?iati-identifier=GB-CHC-1074937-GPAF-IMP-035</a></div>
+<div class="example"><a title="Query for activities by a given organisation" href="/api/1/access/activities?reporting-org=GB-CHC-1074937">/api/1/access/activities?reporting-org=GB-CHC-1074937</a></div>
+<div class="example"><a title="Query for activities with a budget containing a period-end of July 30th 2014" href="/api/1/access/activities?budget_period-end.iso-date=2014-06-30">/api/1/access/activities?budget_period-end.iso-date=2014-06-30</a></div>
+<div class="example"><a title="Query for activities with a budget containing a period-end of July 30th 2014 or March 31st 2015" href="/api/1/access/activities?budget_period-end.iso-date=2014-06-30|2015-03-31">/api/1/access/activities?budget_period-end.iso-date=2014-06-30|2015-03-31</a></div>
                 </div></div>
             </div>
             <div class="accordion-group">
                 <div class="accordion-heading"><a href="#row3" class="accordion-toggle" data-toggle="collapse">
-                    /api/1/activity/<i>ID</i>
+                    /api/1/access/activity/<i>ID</i>
                 </a></div>
                 <div class="accordion-body collapse" id="row3"><div class="accordion-inner">
 <p class="description">Fetch a specific activity by ID.</p>
-<div class="example"><a href="/api/1/activity/asdf1234" title="Show activity asdf1234">/api/1/activity/asdf1234</a></div>
+<div class="example"><a title="Fetch activity ID 'GB-CHC-1074937-GPAF-IMP-035'" href="/api/1/access/activity/GB-CHC-1074937-GPAF-IMP-035">/api/1/access/activity/GB-CHC-1074937-GPAF-IMP-035</a></div>
                 </div></div>
             </div>
         </div>
