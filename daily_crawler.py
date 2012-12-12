@@ -26,13 +26,16 @@ def daily_crawler(debug_limit=None,verbose=False):
         if verbose: print 'Done.'
     scrape = resources_changed.items()
     for i in range(len(scrape)):
-        name,resource = scrape[i]
-        if verbose: 
-            print '[%d/%d] Scraping %s... ' % (i+1,len(scrape),resource['url']),
-            sys.stdout.flush()
-        content = _download(resource['url'],verbose=verbose)
-        result = session.store_file(name,content)
-        if verbose: print 'Done.'
+        try:
+            name,resource = scrape[i]
+            if verbose: 
+                print '[%d/%d] Adding [%s] %s... ' % (i+1,len(scrape),name,resource['url']),
+                sys.stdout.flush()
+            result = session.add(name,resource['url'])
+            if verbose: print 'Done.'
+        except IOError, e:
+            if verbose: print 'ERROR'
+            print '  > Could not download %s: %s' % (resource['url'],str(e))
     print 'Done. DB contains %s activites.' % session.query('count(//iati-activity)')
     session.close()
 
@@ -76,13 +79,10 @@ def _sync_index(session,index,verbose=False):
             resources_changed[name] = resource 
     return resources_deleted, resources_changed
 
-def _download(url, verbose=False):
-    r = urllib.urlopen(url)
-    return r.read()
-
 if __name__=='__main__':
     parser = argparse.ArgumentParser(description='Daily script to crawl the IATI registry, populating an XML database.')
     parser.add_argument('-d', '--debug', type=int, dest='debug_limit', help='Debug: Limit number of files the crawler may access. Further files are considered to be deleted.')
+    parser.add_argument('-v', '--verbose', action='store_true', help='Verbose mode')
     arg = parser.parse_args()
-    daily_crawler(debug_limit=arg.debug_limit,verbose=True)
+    daily_crawler(debug_limit=arg.debug_limit,verbose=arg.verbose)
 

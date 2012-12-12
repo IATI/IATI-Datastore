@@ -7,7 +7,6 @@
 import hashlib
 import socket
 import array
-import tempfile
 import threading
 import os
 import json
@@ -22,7 +21,6 @@ class BaseX:
         self.session.init()
         self._open(db_name)
         self.db_name = db_name
-        self.tmp = tempfile.mkdtemp()
     def _open(self,db_name):
         try:
             return self.session.execute('open %s' % db_name)
@@ -33,21 +31,13 @@ class BaseX:
         xquery = 'xquery '+xquery
         result = self.session.execute(xquery)
         return result
-    def add(self,file_path):
-        query = 'add '+file_path
-        result = self.session.execute(query)
-        return result
     def delete(self,file_path):
         query = 'delete '+file_path
         result = self.session.execute(query)
         return result
-    def store_file(self,filename,content):
+    def add(self,filename,location):
         self.session.execute('delete '+filename)
-        filename = os.path.join(self.tmp,filename)
-        with open(filename,'w') as tmpfile:
-            tmpfile.write(content)
-        out = self.session.execute('add '+filename)
-        os.remove(filename)
+        out = self.session.execute('add to %s %s' %( filename,location ))
         return out
     def get_index(self):
         # Fetch the metadata index for current db_name
@@ -60,7 +50,8 @@ class BaseX:
         # Store the metadata index for current db_name 
         self._open(self.db_name+'__index')
         index_xml = '<blob>%s</blob>' % escape( json.dumps(index) )
-        out = self.store_file('index.xml',index_xml)
+        self.delete('index.xml')
+        out = self.session.execute('add to index.xml %s'%index_xml)
         self._open(self.db_name)
         return out
     def close(self):
