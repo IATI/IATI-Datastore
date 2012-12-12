@@ -4,15 +4,14 @@ import ckanclient
 import argparse
 import sys
 
+CKAN_API = 'http://iatiregistry.org/api'
+
 def daily_crawler(debug_limit=None,verbose=False):
-    # Timestamp to check metadata_modified against
-    url = 'http://iatiregistry.org/api'
-    registry = ckanclient.CkanClient(base_location=url)
     # Fetch the list of resources on IatiRegistry
-    index = _fetch_resource_index(registry, debug_limit=debug_limit, verbose=verbose)
+    index = _fetch_resource_index(debug_limit=debug_limit, verbose=verbose)
     if verbose:
         print 'Found %d resources.' % len(index)
-    session=open_db()
+    session = open_db()
     resources_deleted, resources_changed = _sync_index(session,index,verbose=verbose)
     if verbose:
         print '--- %d resources deleted ---' % len(resources_deleted)
@@ -24,6 +23,7 @@ def daily_crawler(debug_limit=None,verbose=False):
             sys.stdout.flush()
         result = session.delete(name)
         if verbose: print 'Done.'
+    # Scraped all of the added/changed resources
     scrape = resources_changed.items()
     for i in range(len(scrape)):
         try:
@@ -39,9 +39,10 @@ def daily_crawler(debug_limit=None,verbose=False):
     print 'Done. DB contains %s activites.' % session.query('count(//iati-activity)')
     session.close()
 
-def _fetch_resource_index(registry,debug_limit=None,verbose=False):
+def _fetch_resource_index(debug_limit=None,verbose=False):
     """Scrape an index of all resources from CKAN, including some metadata.
-    Run time is 30-60m approximately."""
+    Run time is 10-60m approximately."""
+    registry = ckanclient.CkanClient(base_location=CKAN_API)
     index = {}
     # Get the list of packages from CKAN
     pkg_names = registry.package_register_get()
