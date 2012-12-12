@@ -1,5 +1,5 @@
 from iatilib import log
-from iatilib.frontend import app,session
+from iatilib.frontend import app,session_local,session_live
 from flask import request, make_response, escape
 from datetime import datetime,timedelta
 import json
@@ -11,6 +11,11 @@ from urllib import urlencode
 ##################################################
 
 all_endpoints = []
+
+def session():
+    if 'live' in request.args:
+        return session_live
+    return session_local
 
 def endpoint(rule, **options):
     """Function decorator borrowed & modified from Flask core."""
@@ -161,8 +166,8 @@ def index():
 @endpoint('/about')
 def about():
     # General status info
-    count_activity = session.query('count(//iati-activity)')
-    count_transaction = session.query('count(//transaction)')
+    count_activity = session().query('count(//iati-activity)')
+    count_transaction = session().query('count(//transaction)')
     return {'ok':True,'status':'healthy','indexed_activities':count_activity,'indexed_transactions':count_transaction}
 
 #### URL: /activity and /activities
@@ -174,14 +179,14 @@ def activities_list():
     if args:
         query += '[%s]' % args
     log('info','/access/activities/: '+query)
-    result = session.query(query)
+    result = session().query(query)
     return result
 
 @endpoint('/access/activity/<id>')
 def activity(id):
     query = '//iati-activity[iati-identifier[text()=\'%s\']]' % id
     log('info','/access/activity: '+query)
-    result = session.query(query)
+    result = session().query(query)
     return result
 
 @endpoint('/debug/args')

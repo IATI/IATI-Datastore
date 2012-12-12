@@ -6,12 +6,12 @@ import sys
 
 CKAN_API = 'http://iatiregistry.org/api'
 
-def daily_crawler(debug_limit=None,verbose=False):
+def daily_crawler(db_name,debug_limit=None,verbose=False):
     # Fetch the list of resources on IatiRegistry
     index = _fetch_resource_index(debug_limit=debug_limit, verbose=verbose)
     if verbose:
         print 'Found %d resources.' % len(index)
-    session = open_db()
+    session = open_db(db_name)
     resources_deleted, resources_changed = _sync_index(session,index,verbose=verbose)
     if verbose:
         print '--- %d resources deleted ---' % len(resources_deleted)
@@ -82,8 +82,9 @@ def _sync_index(session,index,verbose=False):
 
 if __name__=='__main__':
     parser = argparse.ArgumentParser(description='Daily script to crawl the IATI registry, populating an XML database.')
+    parser.add_argument('db_name', help='Name of the database ("live","local"...) to populate')
     parser.add_argument('-d', '--debug', type=int, dest='debug_limit', help='Debug: Limit number of files the crawler may access. Further files are considered to be deleted.')
     parser.add_argument('-v', '--verbose', action='store_true', help='Verbose mode')
     arg = parser.parse_args()
-    daily_crawler(debug_limit=arg.debug_limit,verbose=arg.verbose)
+    daily_crawler(arg.db_name,debug_limit=arg.debug_limit,verbose=arg.verbose)
 

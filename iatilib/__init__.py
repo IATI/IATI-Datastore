@@ -11,7 +11,6 @@ db_config = {
     'DATABASE_PORT':None,
     'DATABASE_USER':None,
     'DATABASE_PASS':None,
-    'DATABASE_NAME':None
 }
 for k in db_config.keys():
     db_config[k] = os.environ.get(k)
@@ -19,8 +18,8 @@ for k in db_config.keys():
         raise ValueError('No %s defined in the environment. The following must all be defined: %s' % (k, ','.join(db_config.keys())))
 db_config['DATABASE_PORT'] = int( db_config['DATABASE_PORT'] )
 
-def open_db():
-    return basex.BaseX(db_config['DATABASE_URL'], db_config['DATABASE_PORT'], db_config['DATABASE_USER'], db_config['DATABASE_PASS'], db_config['DATABASE_NAME'])
+def open_db(db_name):
+    return basex.BaseX(db_config['DATABASE_URL'], db_config['DATABASE_PORT'], db_config['DATABASE_USER'], db_config['DATABASE_PASS'], db_name)
 
 def log(type, message, *args, **kwargs):
     """Log into the internal iati logger."""
