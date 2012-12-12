@@ -10,6 +10,8 @@ import array
 import tempfile
 import threading
 import os
+import json
+from xml.sax.saxutils import escape,unescape
 
 # DB Connection Wrapper
 #######################
@@ -48,14 +50,16 @@ class BaseX:
         os.remove(filename)
         return out
     def get_index(self):
-        # Fetch the metadata index for this db_name separately
+        # Fetch the metadata index for current db_name
         self._open(self.db_name+'__index')
-        out = self.query('//root')
+        result = self.query('//blob/text()')
         self._open(self.db_name)
-        return out
-    def store_index(self,index_xml):
-        # Store the metadata index for this db_name separately
+        if len(result):
+            return json.loads( unescape(result) )
+    def store_index(self,index):
+        # Store the metadata index for current db_name 
         self._open(self.db_name+'__index')
+        index_xml = '<blob>%s</blob>' % escape( json.dumps(index) )
         out = self.store_file('index.xml',index_xml)
         self._open(self.db_name)
         return out
