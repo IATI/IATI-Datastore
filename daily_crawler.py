@@ -1,16 +1,15 @@
-from iatilib import open_db, xmldict
+from iatilib import open_db
 import urllib
 import ckanclient
-import os
-from pprint import pprint
+import argparse
 import sys
 
-def daily_crawler(verbose=False):
+def daily_crawler(debug_limit=None,verbose=False):
     # Timestamp to check metadata_modified against
     url = 'http://iatiregistry.org/api'
     registry = ckanclient.CkanClient(base_location=url)
     # Fetch the list of resources on IatiRegistry
-    index = _fetch_resource_index(registry, debug_limit=16, verbose=verbose)
+    index = _fetch_resource_index(registry, debug_limit=debug_limit, verbose=verbose)
     if verbose:
         print 'Found %d resources.' % len(index)
     session=open_db()
@@ -82,5 +81,8 @@ def _download(url, verbose=False):
     return r.read()
 
 if __name__=='__main__':
-    daily_crawler(verbose=True)
+    parser = argparse.ArgumentParser(description='Daily script to crawl the IATI registry, populating an XML database.')
+    parser.add_argument('-d', '--debug', type=int, dest='debug_limit', help='Debug: Limit number of files the crawler may access. Further files are considered to be deleted.')
+    arg = parser.parse_args()
+    daily_crawler(debug_limit=arg.debug_limit,verbose=True)
 
