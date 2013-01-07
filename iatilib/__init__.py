@@ -1,25 +1,16 @@
 import os
-from datetime import datetime
-import traceback
-from . import basex
+from sqlalchemy import *
+from sqlalchemy.orm import sessionmaker, scoped_session
 
 _logger = None
 
 # Parse environment
-db_config = {
-    'DATABASE_URL':None,
-    'DATABASE_PORT':None,
-    'DATABASE_USER':None,
-    'DATABASE_PASS':None,
-}
-for k in db_config.keys():
-    db_config[k] = os.environ.get(k)
-    if not db_config[k]: 
-        raise ValueError('No %s defined in the environment. The following must all be defined: %s' % (k, ','.join(db_config.keys())))
-db_config['DATABASE_PORT'] = int( db_config['DATABASE_PORT'] )
+db_url = os.environ.get('DATABASE_URL')
+database_echo = os.environ.get('DATABASE_ECHO', '').lower()=='true'
+assert db_url is not None, 'No DATABASE_URL defined in the environment.'
 
-def open_db(db_name):
-    return basex.BaseX(db_config['DATABASE_URL'], db_config['DATABASE_PORT'], db_config['DATABASE_USER'], db_config['DATABASE_PASS'], db_name)
+engine = create_engine(db_url,echo=database_echo)
+session = scoped_session(sessionmaker(engine))
 
 def log(type, message, *args, **kwargs):
     """Log into the internal iati logger."""
