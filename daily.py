@@ -1,4 +1,5 @@
 from iatilib import session
+from iatilib import Parser
 from iatilib.model import *
 import dateutil.parser
 import ckanclient
@@ -33,24 +34,49 @@ def daily_crawler(debug_limit=None,verbose=False):
     for i in range(len(scrape)):
         try:
             id = scrape[i]
+            url = incoming[id].url
             if verbose: 
                 status = 'update' if id in existing else 'new file'
-                print 'Scrape [%d/%d] (%s: %s) %s... ' % (i+1,len(scrape),status,id,incoming[id].url),
+                print 'Scrape [%d/%d] (%s) %s... ' % (i+1,len(scrape),status,_trim_string(url)),
                 sys.stdout.flush()
-            # Scraping here
-            # ...
+            # Download and import
+            parser = Parser(url,id)
+            objects = parser.parse()
             # Done
             if id in existing:
                 existing[id].apply_update( incoming[id] )
+                session.commit()
+                #for x in session.query(Activity).filter(Activity.resource_id==id):
+                    #session.delete(x)
+                for x in objects:
+                    session.add( x )
             else:
                 session.add( incoming[id] )
+                session.commit()
+                for x in objects:
+                    if x.__tablename__=='activity':
+                        assert x.parent_resource==id
+                    session.add( x )
             if verbose: print 'Done.'
+            print '    Got:', _object_summary(objects)
         except IOError, e:
+            # TODO this should catch ~any error
             if verbose: print 'ERROR'
             print '  > Could not download %s: %s' % (resource['url'],str(e))
     if verbose:
         print 'Committing database...'
     session.commit()
+
+def _trim_string(x, limit=50):
+    if len(x)<limit: return x
+    return x[:limit-3]+'...'
+
+def _object_summary(objects):
+    tmp = {}
+    for x in objects:
+        key = x.__tablename__
+        tmp[key] = tmp.get(key,0)+1
+    return ', '.join( ['%d %s' % (y,x) for x,y in sorted(tmp.items(),key=lambda (x,y):x) ] )
 
 def _scrape_resource(url):
     r = requests.get(url)

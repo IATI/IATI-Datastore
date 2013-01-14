@@ -26,3 +26,4 @@ def log(type, message, *args, **kwargs):
             _logger.addHandler(handler)
     getattr(_logger, type)(message.rstrip(), *args, **kwargs)
 
+from parser import Parser
