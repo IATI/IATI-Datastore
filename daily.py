@@ -50,6 +50,7 @@ def daily_crawler(debug_limit=None,verbose=False):
                     #session.delete(x)
                 for x in objects:
                     session.add( x )
+                    session.commit()
             else:
                 session.add( incoming[id] )
                 session.commit()
@@ -57,6 +58,7 @@ def daily_crawler(debug_limit=None,verbose=False):
                     if x.__tablename__=='activity':
                         assert x.parent_resource==id
                     session.add( x )
+                    session.commit()
             if verbose: print 'Done.'
             print '    Got:', _object_summary(objects)
         except IOError, e:

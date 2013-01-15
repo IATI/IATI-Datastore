@@ -10,24 +10,26 @@ class Parser:
         self.url = url
         self.source_name = url
         self.parent_resource_guid = parent_resource_guid
-        self.objects = []
 
     def parse(self):
         """Read an IATI-XML file and return a set of objects."""
         # Could throw lots of errors...
         parser = etree.XMLParser(ns_clean=True, recover=True)
         doc = etree.parse(self.url, parser)
-        for activity in doc.findall("iati-activity"):
+        all_objects = []
+        for xml_element in doc.findall("iati-activity"):
             try:
-                self._parse_activity(activity)
+                objects = self._parse_activity(xml_element)
+                all_objects.extend(objects)
             except (ValueError,AssertionError) as e:
+                traceback.print_exc()
                 log('warning','Activity skipped in: %s - %s' % (self.source_name, str(e)))
-        return self.objects
+        return all_objects
 
-    def _assert_unicode(self, _dict, tablename):
-        return
+    def _str_to_unicode(self, _dict):
         for key,value in _dict.iteritems():
-            assert type(value) is not str, 'Warning: %s.%s is of type String' % (tablename,key)
+            if type(value) is str:
+                _dict[key] = unicode(value)
 
     def _read_number(self, x):
         if x is None: return 0.0
@@ -81,7 +83,7 @@ class Parser:
         self._nodecpy(temp, optimised.get('receiver-org'), 'receiver_org', {'ref': 'ref'})
         temp['iati_identifier'] = activityiatiid
         # Create a model of the transaction
-        self._assert_unicode(temp,Transaction.__tablename__)
+        self._str_to_unicode(temp)
         return Transaction(**temp)
 
 
@@ -139,7 +141,7 @@ class Parser:
             'percentage': percentage,
             'vocabulary': vocab
         }
-        self._assert_unicode(tsector,Sector.__tablename__)
+        self._str_to_unicode(tsector)
         return Sector(**tsector)
 
     def _parse_relatedactivity(self, activityiatiid, ra):
@@ -149,90 +151,80 @@ class Parser:
             'relref': ra.get('ref'),
             'reltype': ra.get('type')                    
             }
-        self._assert_unicode(related_activity,RelatedActivity.__tablename__)
+        self._str_to_unicode(related_activity)
         return RelatedActivity(**related_activity)
 
-    def _parse_activity(self, activity):
+    def _parse_activity(self, xml_element):
         """TODO understand & document"""
-        out = {}
-        optimised = { x.tag : x for x in activity }
-        out['parent_resource'] = self.parent_resource_guid
-        out['source_file'] = self.source_name
-        out['default_currency'] = activity.get("default-currency")
-        self._nodecpy(out, optimised.get('reporting-org'), 'reporting_org', {'ref': 'ref', 'type': 'type'})
+        out = []
+        activity = {}
+        optimised = { x.tag : x for x in xml_element }
+        activity['parent_resource'] = self.parent_resource_guid
+        activity['source_file'] = self.source_name
+        activity['default_currency'] = xml_element.get("default-currency")
+        self._nodecpy(activity, optimised.get('reporting-org'), 'reporting_org', {'ref': 'ref', 'type': 'type'})
         
-        out['iati_identifier'] = unicode(activity.findtext('iati-identifier'))
-        if activity.findtext('activity-website'):
-            out['activity_website'] = activity.findtext('activity-website')
-        out['title'] = activity.findtext('title')
-        if activity.findtext('description'):
-            out['description'] = activity.findtext('description')
-        if activity.findtext('recipient-region'):
-            out['recipient_region'] = activity.findtext('recipient-region')
-            out['recipient_region_code'] = activity.find('recipient-region').get('code')
-        self._nodecpy(out, optimised.get('recipient-country'), 'recipient_country', {'code': 'code'})
-        self._nodecpy(out, optimised.get('collaboration_type'), 'collaboration_type', {'code': 'code'})
-        self._nodecpy(out, optimised.get('default-flow-type'), 'flow_type', {'code': 'code'})
-        self._nodecpy(out, optimised.get('default-finance-type'), 'finance_type', {'code': 'code'})
-        self._nodecpy(out, optimised.get('default-tied-status'), 'tied_status', {'code': 'code'})
-        self._nodecpy(out, optimised.get('default-aid-type'), 'aid_type', {'code':'code'})
-        self._nodecpy(out, optimised.get('activity-status'), 'status', {'code':'code'})
+        activity['iati_identifier'] = unicode(xml_element.findtext('iati-identifier'))
+        if xml_element.findtext('xml_element-website'):
+            activity['activity_website'] = xml_element.findtext('activity-website')
+        activity['title'] = xml_element.findtext('title')
+        if xml_element.findtext('description'):
+            activity['description'] = xml_element.findtext('description')
+        if xml_element.findtext('recipient-region'):
+            activity['recipient_region'] = xml_element.findtext('recipient-region')
+            activity['recipient_region_code'] = xml_element.find('recipient-region').get('code')
+        self._nodecpy(activity, optimised.get('recipient-country'), 'recipient_country', {'code': 'code'})
+        self._nodecpy(activity, optimised.get('collaboration_type'), 'collaboration_type', {'code': 'code'})
+        self._nodecpy(activity, optimised.get('default-flow-type'), 'flow_type', {'code': 'code'})
+        self._nodecpy(activity, optimised.get('default-finance-type'), 'finance_type', {'code': 'code'})
+        self._nodecpy(activity, optimised.get('default-tied-status'), 'tied_status', {'code': 'code'})
+        self._nodecpy(activity, optimised.get('default-aid-type'), 'aid_type', {'code':'code'})
+        self._nodecpy(activity, optimised.get('activity-status'), 'status', {'code':'code'})
         _activity_status = optimised.get('activity-status')
         assert _activity_status is not None, 'No value of "activity-status" found on this activity.'
-        out['status_code'] = _activity_status.get('code')
+        activity['status_code'] = _activity_status.get('code')
         # 'Legacy' properties are not part of the object model
-        #self._nodecpy(out, optimised.get('legacy-data'), 'legacy', {'name': 'name', 'value': 'value'})
+        #self._nodecpy(activity, optimised.get('legacy-data'), 'legacy', {'name': 'name', 'value': 'value'})
         
-        self._nodecpy(out, activity.find('participating-org[@role="Funding"]'), 'funding_org', {'ref': 'ref', 'type': 'type'})
-        self._nodecpy(out, activity.find('participating-org[@role="Extending"]'), 'extending_org', {'ref': 'ref', 'type': 'type'})
-        self._nodecpy(out, activity.find('participating-org[@role="Implementing"]'), 'implementing_org', {'ref': 'ref', 'type': 'type'})
+        self._nodecpy(activity, xml_element.find('participating-org[@role="Funding"]'), 'funding_org', {'ref': 'ref', 'type': 'type'})
+        self._nodecpy(activity, xml_element.find('participating-org[@role="Extending"]'), 'extending_org', {'ref': 'ref', 'type': 'type'})
+        self._nodecpy(activity, xml_element.find('participating-org[@role="Implementing"]'), 'implementing_org', {'ref': 'ref', 'type': 'type'})
        
-        self._nodecpy(out, activity.find('participating-org[@role="funding"]'), 'funding_org', {'ref': 'ref', 'type': 'type'})
-        self._nodecpy(out, activity.find('participating-org[@role="extending"]'), 'extending_org', {'ref': 'ref', 'type': 'type'})
-        self._nodecpy(out, activity.find('participating-org[@role="implementing"]'), 'implementing_org', {'ref': 'ref', 'type': 'type'})
+        self._nodecpy(activity, xml_element.find('participating-org[@role="funding"]'), 'funding_org', {'ref': 'ref', 'type': 'type'})
+        self._nodecpy(activity, xml_element.find('participating-org[@role="extending"]'), 'extending_org', {'ref': 'ref', 'type': 'type'})
+        self._nodecpy(activity, xml_element.find('participating-org[@role="implementing"]'), 'implementing_org', {'ref': 'ref', 'type': 'type'})
      
-        for date in activity.findall('activity-date'):
+        for date in xml_element.findall('activity-date'):
             try:
                 date_key = self._import_date_key(date)
                 date_value = self._import_date_value(date)
-                out[date_key] = date_value
+                activity[date_key] = date_value
             except ValueError:
                 pass
-        self._nodecpy(out, activity.find('contact-info/organisation'), 'contact_organisation', {})
-        self._nodecpy(out, activity.find('contact-info/mailing-address'), 'contact_mailing_address', {})
-        self._nodecpy(out, activity.find('contact-info/telephone'), 'contact_telephone', {})
-        self._nodecpy(out, activity.find('contact-info/email'), 'contact_email', {})
+        self._nodecpy(activity, xml_element.find('contact-info/organisation'), 'contact_organisation', {})
+        self._nodecpy(activity, xml_element.find('contact-info/mailing-address'), 'contact_mailing_address', {})
+        self._nodecpy(activity, xml_element.find('contact-info/telephone'), 'contact_telephone', {})
+        self._nodecpy(activity, xml_element.find('contact-info/email'), 'contact_email', {})
         
-        # SLIGHTLY HACKY:
-        """snd_level = 0
-        for policy_marker in activity.findall('policy-marker'):
+        # Drill down into sub-elements
+        for xml_sector in xml_element.findall('sector'):
             try:
-                sign = int(policy_marker.get('significance'))
-                if sign == 0:
-                    continue
-                if sign == 2:
-                    snd_level += 1
-                self._nodecpy(out, policy_marker,
-                    'policy_marker_' + policy_marker.get('code'), 
-                    {'vocabulary': 'vocabulary', 'significance': 'significance'})
+                sector = self._parse_sector(activity['iati_identifier'],xml_sector)
+                out.append(sector)
             except ValueError:
                 pass
-        """
-        for sector in activity.findall('sector'):
+        for xml_ra in xml_element.findall('related-activity'):
             try:
-                sector = self._parse_sector(out['iati_identifier'],sector)
-                self.objects.append(sector)
+                rela = self._parse_relatedactivity(activity['iati_identifier'],xml_ra)
+                out.append(rela)
             except ValueError:
                 pass
-        for ra in activity.findall('related-activity'):
+        for xml_transaction in xml_element.findall("transaction"):
             try:
-                rela = self._parse_relatedactivity(out['iati_identifier'],ra)
-                self.objects.append(rela)
+                transaction = self._parse_transaction(activity['iati_identifier'],xml_transaction)
+                out.append(transaction)
             except ValueError:
                 pass
-        for tx in activity.findall("transaction"):
-            transaction = self._parse_transaction(out['iati_identifier'],tx)
-            self.objects.append(transaction)
-        self._assert_unicode(out,Activity.__tablename__)
-        x = Activity(**out) 
-        self.objects.append(x)
+        self._str_to_unicode(activity)
+        out.append( Activity(**activity) )
+        return out
