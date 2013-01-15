@@ -1,3 +1,5 @@
+#!/usr/bin/env python 
+
 from iatilib import session
 from iatilib import Parser
 from iatilib.model import *
