@@ -9,20 +9,12 @@ class IndexedResource(Base):
     id = Column(UnicodeText, primary_key=True)
     url = Column(UnicodeText)
     last_modified = Column(DateTime)
-    def apply_update(self,other):
-        self.url = other.url
-        self.last_modified = other.last_modified
-
-class LogEntry(Base):
-    __tablename__ = 'logentry'
-    id = Column(Integer,primary_key=True)
-    timestamp = Column(DateTime)
-    text = Column(UnicodeText)
+    state = Column(Integer)
 
 class Activity(Base):
     __tablename__ = 'activity'
     id = Column(Integer, primary_key=True)
-    parent_resource = Column(UnicodeText, ForeignKey('indexed_resource.id'))
+    parent_resource = Column(UnicodeText, ForeignKey('indexed_resource.id'), nullable=False)
     # TODO remove
     package_id = Column(UnicodeText)
     # TODO remove
@@ -75,6 +67,7 @@ class Activity(Base):
 class Transaction(Base):
     __tablename__ = 'transaction'
     id = Column(Integer, primary_key=True)
+    parent_resource = Column(UnicodeText, ForeignKey('indexed_resource.id'), nullable=False)
     activity_id = Column(UnicodeText)
     value = Column(Float)
     iati_identifier = Column(UnicodeText, index=True)
@@ -105,6 +98,7 @@ class Transaction(Base):
 class Sector(Base):
     __tablename__ = 'sector'
     id = Column(Integer, primary_key=True)   
+    parent_resource = Column(UnicodeText, ForeignKey('indexed_resource.id'), nullable=False)
     activity_iati_identifier = Column(UnicodeText, index=True)
     name = Column(UnicodeText)
     vocabulary = Column(UnicodeText)
@@ -114,6 +108,7 @@ class Sector(Base):
 class RelatedActivity(Base):
     __tablename__ = 'relatedactivity'
     id = Column(Integer, primary_key=True)
+    parent_resource = Column(UnicodeText, ForeignKey('indexed_resource.id'), nullable=False)
     activity_id = Column(UnicodeText, index=True)
     reltext = Column(UnicodeText)
     relref = Column(UnicodeText)

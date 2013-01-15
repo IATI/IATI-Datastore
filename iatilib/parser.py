@@ -5,6 +5,12 @@ import traceback
 from model import *
 from . import log
 
+class ParseError(Exception):
+    def __init__(self, value):
+        self.value = value
+    def __str__(self):
+        return repr(self.value)
+
 class Parser:
     def __init__(self, url, parent_resource_guid):
         self.url = url
@@ -21,9 +27,11 @@ class Parser:
             try:
                 objects = self._parse_activity(xml_element)
                 all_objects.extend(objects)
+            except ParseError as e:
+                log('warning','Parse error in: %s - %s' % (self.source_name, str(e)))
             except (ValueError,AssertionError) as e:
                 traceback.print_exc()
-                log('warning','Activity skipped in: %s - %s' % (self.source_name, str(e)))
+                log('error','ERROR in activity: $Activity skipped in: %s - %s' % (self.source_name, str(e)))
         return all_objects
 
     def _str_to_unicode(self, _dict):
@@ -33,7 +41,8 @@ class Parser:
 
     def _read_number(self, x):
         if x is None: return 0.0
-        assert (type(x) is str) or (type(x) is unicode), type(x)
+        if not (type(x) is str) or (type(x) is unicode):
+            raise ParseError('Expected String/Unicode, got %s (value=%s)' % (type(x),x))
         x = x.replace(',','')
         return float(x)
 
@@ -82,6 +91,7 @@ class Parser:
         self._nodecpy(temp, optimised.get('provider-org'), 'provider_org', {'ref': 'ref'})
         self._nodecpy(temp, optimised.get('receiver-org'), 'receiver_org', {'ref': 'ref'})
         temp['iati_identifier'] = activityiatiid
+        temp['parent_resource'] = self.parent_resource_guid
         # Create a model of the transaction
         self._str_to_unicode(temp)
         return Transaction(**temp)
@@ -139,7 +149,8 @@ class Parser:
             'name': temp['sector'],
             'code': temp['sector_code'],
             'percentage': percentage,
-            'vocabulary': vocab
+            'vocabulary': vocab,
+            'parent_resource': self.parent_resource_guid
         }
         self._str_to_unicode(tsector)
         return Sector(**tsector)
@@ -149,7 +160,8 @@ class Parser:
         related_activity = {
             'activity_id': activityiatiid,
             'relref': ra.get('ref'),
-            'reltype': ra.get('type')                    
+            'reltype': ra.get('type'),
+            'parent_resource' : self.parent_resource_guid
             }
         self._str_to_unicode(related_activity)
         return RelatedActivity(**related_activity)
@@ -181,7 +193,8 @@ class Parser:
         self._nodecpy(activity, optimised.get('default-aid-type'), 'aid_type', {'code':'code'})
         self._nodecpy(activity, optimised.get('activity-status'), 'status', {'code':'code'})
         _activity_status = optimised.get('activity-status')
-        assert _activity_status is not None, 'No value of "activity-status" found on this activity.'
+        if _activity_status is None:
+            raise ParseError('No value of "activity-status" found on this activity.')
         activity['status_code'] = _activity_status.get('code')
         # 'Legacy' properties are not part of the object model
         #self._nodecpy(activity, optimised.get('legacy-data'), 'legacy', {'name': 'name', 'value': 'value'})
