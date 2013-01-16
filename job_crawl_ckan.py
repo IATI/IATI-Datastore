@@ -12,12 +12,13 @@ import json
 
 CKAN_API = 'http://iatiregistry.org/api'
 
-def crawl_ckan(debug_limit=None,verbose=False):
+def update_db(incoming, verbose=False):
+    """Update the DB's resources using the freshly obtained resources from CKAN."""
+    # Dict: The incoming resources from CKAN
+    incoming = { x['id'] : x for x in incoming }
     # Dict: The existing resources in the database
     existing = { x.id : x for x in session.query(IndexedResource) }
     known_deleted = set([ x.id for x in session.query(IndexedResource).filter(IndexedResource.state==-3) ])
-    # Dict: Fresh resources from the main registry
-    incoming = _scrape_resource_dict(debug_limit=debug_limit, verbose=verbose)
     # Use the unique IDs to examine the intersection/difference between EXISTING and INCOMING keys
     ex_k = set(existing.keys())
     in_k = set(incoming.keys())
@@ -28,8 +29,8 @@ def crawl_ckan(debug_limit=None,verbose=False):
         existing[id].state = -3 # 'Deleted'
     # Add new resources
     for id in additional_ids:
-        incoming[id].state = -1 # 'Created'
-        session.add( incoming[id] )
+        incoming[id]['state'] = -1 # 'Created'
+        session.add( IndexedResource(**incoming[id]) )
     # Tag existing resources if they have been modified
     count_updated = 0
     count_undeleted = 0
@@ -39,32 +40,33 @@ def crawl_ckan(debug_limit=None,verbose=False):
         if a.state==-3:
             count_undeleted += 1
             existing[id].state = -2 # 'Modified'
-            existing[id].url = incoming[id].url
-            existing[id].last_modified = incoming[id].last_modified
-        elif (not a.last_modified==b.last_modified):
+            existing[id].url = incoming[id]['url']
+            existing[id].last_modified = incoming[id]['last_modified']
+        elif (not a.last_modified==b['last_modified']):
             count_updated += 1
             existing[id].state = -2 # 'Modified'
-            existing[id].url = incoming[id].url
-            existing[id].last_modified = incoming[id].last_modified
+            existing[id].url = incoming[id]['url']
+            existing[id].last_modified = incoming[id]['last_modified']
     if verbose:
         print 'Resources: %d created, %d updated, %d deleted, %d undeleted' % (len(additional_ids), count_updated, len(deleted_ids), count_undeleted)
         print 'Committing database...'
     session.commit()
-    counts = dict( session.query(IndexedResource.state,func.count(IndexedResource.state)).group_by(IndexedResource.state))
-    print 'DB State:'
-    print '  %d awaiting download ("created")'%counts.get(-1,0)
-    print '  %d awaiting download ("updated")'%counts.get(-2,0)
-    print '  %d awaiting garbage collection'%counts.get(-3,0)
-    print '  %d processed.'%counts.get(1,0)
-    for (x,y) in counts.iteritems():
-        if x not in [-1,-2,-3,1]:
-            print '  %d in state %d'%(x,y)
+    if verbose:
+        counts = dict( session.query(IndexedResource.state,func.count(IndexedResource.state)).group_by(IndexedResource.state))
+        print 'DB State:'
+        print '  %d awaiting download ("created")'%counts.get(-1,0)
+        print '  %d awaiting download ("updated")'%counts.get(-2,0)
+        print '  %d awaiting garbage collection'%counts.get(-3,0)
+        print '  %d processed.'%counts.get(1,0)
+        for (x,y) in counts.iteritems():
+            if x not in [-1,-2,-3,1]:
+                print '  %d in state %d'%(x,y)
 
-def _scrape_resource_dict(debug_limit=None,verbose=False):
+def crawl_ckan(debug_limit=None,verbose=False):
     """Scrape an index of all resources from CKAN, including some metadata.
     Run time is 10-60m approximately."""
     registry = ckanclient.CkanClient(base_location=CKAN_API)
-    index = {}
+    index = []
     # Get the list of packages from CKAN
     pkg_names = registry.package_register_get()
     if debug_limit is not None:
@@ -77,20 +79,21 @@ def _scrape_resource_dict(debug_limit=None,verbose=False):
         pkg = registry.package_entity_get(pkg_names[i])
         last_modified_string = pkg.get('metadata_modified','')
         for resource in pkg.get('resources', []):
-            data = { 
+            index.append( {
                     'last_modified' : dateutil.parser.parse( last_modified_string ),
                     'id' : resource['id'],
                     'url' : resource['url']
-                    }
-            index[resource['id']] = IndexedResource(**data)
-        if verbose: print 'Done.'
+                })
+        if verbose: 
+            print 'Done.'
     return index
-
 
 if __name__=='__main__':
     parser = argparse.ArgumentParser(description='Crawl the IATI registry, looking for created/deleted/updated resources.')
     parser.add_argument('-d', '--debug', type=int, dest='debug_limit', help='Debug: Limit number of resources the crawler may access. Further resources are considered to be deleted.')
     parser.add_argument('-v', '--verbose', action='store_true', help='Verbose mode')
     arg = parser.parse_args()
-    crawl_ckan(debug_limit=arg.debug_limit,verbose=arg.verbose)
-
+    # Fetch dict: Fresh resources from the main registry
+    incoming = crawl_ckan(debug_limit=arg.debug_limit, verbose=arg.verbose)
+    # Update DB to reflect changes
+    update_db(incoming,verbose=arg.verbose)

@@ -9,8 +9,11 @@ db_url = os.environ.get('DATABASE_URL')
 database_echo = os.environ.get('DATABASE_ECHO', '').lower()=='true'
 assert db_url is not None, 'No DATABASE_URL defined in the environment.'
 
+# Create a static DB conncetion
 engine = create_engine(db_url,echo=database_echo)
 session = scoped_session(sessionmaker(engine))
+import model
+model.Base.metadata.create_all(engine)
 
 def log(type, message, *args, **kwargs):
     """Log into the internal iati logger."""

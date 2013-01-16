@@ -1,6 +1,6 @@
-from iatilib import frontend
-import unittest
-import json
+#from iatilib import frontend
+#import unittest
+#import json
 
 class IatiFrontendTestCase(unittest.TestCase):
     def setUp(self):

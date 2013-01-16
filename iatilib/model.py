@@ -2,7 +2,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column,Integer,DateTime,Date,BigInteger,Float,ForeignKey,Boolean,UnicodeText
 from . import engine
 
-Base = declarative_base(bind=engine)
+Base = declarative_base()
 
 class IndexedResource(Base):
     __tablename__ = 'indexed_resource'
@@ -113,6 +113,4 @@ class RelatedActivity(Base):
     reltext = Column(UnicodeText)
     relref = Column(UnicodeText)
     reltype = Column(UnicodeText)
-
-Base.metadata.create_all()
 
