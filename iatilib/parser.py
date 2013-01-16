@@ -83,6 +83,7 @@ class Parser:
         self._nodecpy(temp, optimised.get('transaction-type'), 'transaction_type', {'code': 'code'})
         self._nodecpy(temp, optimised.get('flow-type'), 'flow_type', {'code': 'code'})
         self._nodecpy(temp, optimised.get('finance-type'), 'finance_type', {'code': 'code'})
+        # TODO: This is an illegal keyword
         self._nodecpy(temp, optimised.get('tied-status'), 'tied_status', {'code': 'code'})
         self._nodecpy(temp, optimised.get('aid-type'), 'aid_type', {'code':'code'})
         if not (temp.has_key('transaction_date_iso')):
