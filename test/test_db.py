@@ -34,15 +34,15 @@ class CaseEmpty(DbTestCase):
 class CaseCrawlCkan(DbTestCase):
     # Various test fixtures
     def _data0(self): 
-        return [ {'id':u'id-one','last_modified':TIMESTAMP,'url':''}, 
-                 {'id':u'id-zero','last_modified':TIMESTAMP,'url':''} ]
+        return [ {'id':u'id-one','last_modified':TIMESTAMP,'url':u''}, 
+                 {'id':u'id-zero','last_modified':TIMESTAMP,'url':u''} ]
     def _data1(self): 
-        return [ {'id':u'id-zero','last_modified':TIMESTAMP,'url':''},
-                 {'id':u'id-one','last_modified':TIMESTAMP,'url':''}, 
-                 {'id':u'id-two','last_modified':TIMESTAMP,'url':''} ]
+        return [ {'id':u'id-zero','last_modified':TIMESTAMP,'url':u''},
+                 {'id':u'id-one','last_modified':TIMESTAMP,'url':u''}, 
+                 {'id':u'id-two','last_modified':TIMESTAMP,'url':u''} ]
     def _data2(self):
-        return [ {'id':u'id-two','last_modified':TIMESTAMP,'url':''},
-                 {'id':u'id-one','last_modified':TIMESTAMP,'url':''} ]
+        return [ {'id':u'id-two','last_modified':TIMESTAMP,'url':u''},
+                 {'id':u'id-one','last_modified':TIMESTAMP,'url':u''} ]
     # Setup and teardown
     def setUp(self):
         job_crawl_ckan.update_db(self._data0())
