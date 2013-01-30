@@ -13,6 +13,7 @@ import json
 def downloader(debug_limit=None,verbose=False):
     q = session.query(IndexedResource)\
             .filter(IndexedResource.state<=0)\
+            .filter(IndexedResource.state!=-3)\
             .limit(debug_limit)
     count_resources = q.count()
     if verbose:

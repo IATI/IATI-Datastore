@@ -46,11 +46,11 @@ class Parser:
         x = x.replace(',','')
         return float(x)
 
-    def _nodecpy(self, out, node, name, attrs=None, convert=unicode):
+    def _nodecpy(self, out, node, name, attrs=None):
         """TODO understand & document"""
         if ((node is None) or (node.text is None)):
             return
-        out[name] = convert(node.text)
+        out[name] = unicode(node.text)
         if attrs:
             for k, v in attrs.iteritems():
                 out[name + '_' + v] = unicode(node.get(k))
@@ -186,7 +186,7 @@ class Parser:
             activity['recipient_region'] = xml_element.findtext('recipient-region')
             activity['recipient_region_code'] = xml_element.find('recipient-region').get('code')
         self._nodecpy(activity, optimised.get('recipient-country'), 'recipient_country', {'code': 'code'})
-        self._nodecpy(activity, optimised.get('collaboration_type'), 'collaboration_type', {'code': 'code'})
+        self._nodecpy(activity, optimised.get('collaboration-type'), 'collaboration_type', {'code': 'code'})
         self._nodecpy(activity, optimised.get('default-flow-type'), 'flow_type', {'code': 'code'})
         self._nodecpy(activity, optimised.get('default-finance-type'), 'finance_type', {'code': 'code'})
         self._nodecpy(activity, optimised.get('default-tied-status'), 'tied_status', {'code': 'code'})
