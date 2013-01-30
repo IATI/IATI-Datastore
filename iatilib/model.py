@@ -63,6 +63,12 @@ class Activity(Base):
     tied_status = Column(UnicodeText)
     tied_status_code = Column(UnicodeText)
     activity_website = Column(UnicodeText)
+    def _json(self):
+        keys = filter(lambda x:x[0]!='_', dir(self))
+        keys.remove('metadata')
+        out = { x: getattr(self,x) for x in keys }
+        return out
+
 
 class Transaction(Base):
     __tablename__ = 'transaction'
@@ -93,6 +99,11 @@ class Transaction(Base):
     tied_status = Column(UnicodeText)
     tied_status_code = Column(UnicodeText)
     disbursement_channel_code = Column(UnicodeText)
+    def _json(self):
+        keys = filter(lambda x:x[0]!='_', dir(self))
+        keys.remove('metadata')
+        out = { x: getattr(self,x) for x in keys }
+        return out
 
 # Put everything into sectors table, and link back to activity. This will create a new unique sector per activity, which is OK for then importing back into OS but obviously you would probably want an activities_sectors table to handle a relationship between unique activities and unique sectors.
  

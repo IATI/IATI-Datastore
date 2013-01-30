@@ -1,5 +1,7 @@
 from iatilib import log
-from iatilib.frontend import app,session_local,session_live
+from iatilib import session
+from iatilib.model import *
+from iatilib.frontend import app
 from flask import request, make_response, escape
 from datetime import datetime,timedelta
 import json
@@ -12,42 +14,10 @@ from urllib import urlencode
 
 all_endpoints = []
 
-def session():
-    if 'live' in request.args:
-        return session_live
-    return session_local
-
 def endpoint(rule, **options):
     """Function decorator borrowed & modified from Flask core."""
     BASE='/api/1'
     def decorator(f):
-        @functools.wraps(f)
-        def wrapped_fn_raw(*args, **kwargs):
-            callback = request.args.get('callback')
-            try:
-                raw = f(*args, **kwargs)
-            except (AssertionError, ValueError) as e:
-                if request.args.get('_debug') is not None:
-                    raise e
-                raw = { 'ok': False, 'message' : e.message }
-            home_link = request.url_root+'api/1'
-            json_link = request.url.replace( request.base_url, request.base_url+'.json' )
-            xml_link = request.url.replace( request.base_url, request.base_url+'.xml' )
-            if type(raw) is not str:
-                raw = json.dumps(raw,indent=4)
-            html_string = """
-            <html>
-            <ul><li>API Home: <a href="%s">%s</a></li>
-                <li>Retrieve as XML: <a href="%s">%s</a></li>
-                <li>Retrieve as JSON: <a href="%s">%s</a></li>
-            </ul>
-            <hr/>Response:
-            <pre>%s</pre>
-            </html>'
-            """
-            response = make_response(html_string % (home_link,home_link,xml_link,xml_link,json_link,json_link,escape(raw)))
-            response.headers['content-type'] = 'text/html'
-            return response
         @functools.wraps(f)
         def wrapped_fn_xml(*args, **kwargs):
             callback = request.args.get('callback')
@@ -61,12 +31,32 @@ def endpoint(rule, **options):
             response.headers['content-type'] = 'text/xml'
             return response
         @functools.wraps(f)
+        def wrapped_fn_csv(*args, **kwargs):
+            try:
+                raw = f(*args, **kwargs) 
+                assert type(raw) is list, type(raw)
+            except (AssertionError, ValueError) as e:
+                if request.args.get('_debug') is not None:
+                    raise e
+                raw = [{ 'ok': False, 'message' : e.message }]
+            csv_headers = []
+            for x in raw: csv_headers += x.keys()
+            csv_headers = list(set(csv_headers))
+            response_text = ','.join(csv_headers) + '\n'
+            for x in raw:
+                response_text += ','.join( [str(x.get(key) or '') for key in csv_headers ] ) + '\n'
+            response = make_response(response_text)
+            response.headers['content-type'] = 'text/plain'
+            return response
+        @functools.wraps(f)
         def wrapped_fn_json(*args, **kwargs):
             callback = request.args.get('callback')
             try:
+                results = f(*args, **kwargs) 
                 raw = {
                         'ok': True, 
-                        'raw_xml' : f(*args, **kwargs) 
+                        'num_results': len(results), 
+                        'results' :results
                       }
             except (AssertionError, ValueError) as e:
                 if request.args.get('_debug') is not None:
@@ -84,7 +74,8 @@ def endpoint(rule, **options):
         # Bind to the root, JSON and CSV endpoints simultaneously
         app.add_url_rule(BASE+rule+'.json', endpoint+'.json', wrapped_fn_json, **options)
         app.add_url_rule(BASE+rule+'.xml', endpoint+'.xml', wrapped_fn_xml, **options)
-        app.add_url_rule(BASE+rule, endpoint, wrapped_fn_raw, **options)
+        app.add_url_rule(BASE+rule+'.csv', endpoint+'.csv', wrapped_fn_csv, **options)
+        app.add_url_rule(BASE+rule, endpoint, wrapped_fn_json, **options)
         return f
     return decorator
 
@@ -166,31 +157,41 @@ def index():
 @endpoint('/about')
 def about():
     # General status info
-    count_activity = session().query('count(//iati-activity)')
-    count_transaction = session().query('count(//transaction)')
+    count_activity = session.query(Activity).count()
+    count_transaction = session.query(Transaction).count()
     return {'ok':True,'status':'healthy','indexed_activities':count_activity,'indexed_transactions':count_transaction}
+
+#### URL: /transaction and /transactions
+
+@endpoint('/access/transactions')
+def transaction_list():
+    query = session.query(Transaction)
+    query = query.limit(20)
+    return [ x._json() for x in query ]
+
+@endpoint('/access/transaction/<id>')
+def transaction(id):
+    query = session.query(Transaction)\
+            .filter(Transaction.iati_identifier==id)
+    query = query.limit(20)
+    return [ x._json() for x in query ]
 
 #### URL: /activity and /activities
 
 @endpoint('/access/activities')
 def activities_list():
-    args = parse_args()
-    query = '//iati-activity' 
-    if args:
-        query += '[%s]' % args
-    log('info','/access/activities/: '+query)
-    result = session().query(query)
-    return result
+    query = session.query(Activity)
+    query = query.limit(20)
+    return [ x._json() for x in query ]
 
 @endpoint('/access/activity/<id>')
 def activity(id):
-    query = '//iati-activity[iati-identifier[text()=\'%s\']]' % id
-    log('info','/access/activity: '+query)
-    result = session().query(query)
-    return result
+    query = session.query(Activity)\
+            .filter(Activity.iati_identifier==id)
+    return [ x._json() for x in query ]
 
-@endpoint('/debug/args')
-def debug_args():
-    return {'raw':request.args, 'processed':parse_args()}
+## @endpoint('/debug/args')
+## def debug_args():
+##     return {'raw':request.args, 'processed':parse_args()}
 
 
