@@ -46,7 +46,7 @@ def endpoint(rule, **options):
             for x in raw:
                 response_text += ','.join( [str(x.get(key) or '') for key in csv_headers ] ) + '\n'
             response = make_response(response_text)
-            response.headers['content-type'] = 'text/plain'
+            response.headers['content-type'] = 'text/csv'
             return response
         @functools.wraps(f)
         def wrapped_fn_json(*args, **kwargs):
