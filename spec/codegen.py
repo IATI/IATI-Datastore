@@ -26,6 +26,7 @@ def _nav(x):
     typename = _typename(x)
     typeparser = ''
     if typename=='DateTime': typeparser = ', parser=_parse_datetime'
+    if typename=='Integer': typeparser = ', parser=_parse_int'
     if typename=='Float': typeparser = ', parser=_parse_float'
     if typename=='Boolean': typeparser = ', parser=_parse_boolean'
     if path[-1]=='text()':

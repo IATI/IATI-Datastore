@@ -181,7 +181,7 @@
     "classname": "Sector",
     "fields": [
         { "xml": "text()" }, 
-        { "xml": "@code" }, 
+        { "xml": "@code", "format":"Integer" }, 
         { "xml": "@vocabulary" }, 
         { "xml": "@percentage", "format": "Float" }, 
         { "xml": "@xml:lang" }

@@ -4,6 +4,7 @@ import tempfile
 import iatilib.parser
 import iso8601
 from datetime import datetime
+from iatilib import session
 
 # Hand-generated XML used to test the parser
 _fixture_xml = """
@@ -21,10 +22,7 @@ _fixture_xml = """
         <activity-website>
             fixture_activity_website__text
         </activity-website>
-        <reporting-org 
-          ref="fixture_reporting_org__ref" 
-          type="fixture_reporting_org__type"
-          xml:lang="fixture_reporting_org__lang">
+        <reporting-org ref="fixture_reporting_org__ref" type="fixture_reporting_org__type" xml:lang="fixture_reporting_org__lang">
             fixture_reporting_org__text
         </reporting-org>
         <recipient-country code="fixture_recipient_country__code" percentage="999003.03" xml:lang="fixture_recipient_country__lang">
@@ -189,7 +187,7 @@ _fixture_xml = """
                 fixture_disbursement_channel__text
             </disbursement-channel>
         </transaction>
-        <sector code="fixture_code" vocabulary="fixture_vocabulary" percentage="999012.12" xml:lang="fixture_lang">
+        <sector code="999013" vocabulary="fixture_vocabulary" percentage="999012.12" xml:lang="fixture_lang">
           fixture_text
         </sector>
         <participating-org ref="fixture_ref" type="fixture_type" role="fixture_role" xml:lang="fixture_lang">
@@ -210,6 +208,14 @@ _fixture_xml = """
 """
 
 class CaseParser(unittest.TestCase):
+    def setUp(self):
+        assert len( list(session.query(CodelistSector)) )==0
+        session.add( CodelistSector(code=999013) )
+        session.commit()
+    def tearDown(self):
+        session.query(CodelistSector).delete()
+        session.commit()
+
     def test_fixture_xml(self):
         temp = tempfile.NamedTemporaryFile()
         temp.write( _fixture_xml )
@@ -393,7 +399,7 @@ class CaseParser(unittest.TestCase):
         assert obj_dict['transaction'].disbursement_channel__lang == 'fixture_disbursement_channel__lang', obj_dict['transaction'].disbursement_channel__lang 
         ## Assertions: Sector object
         assert obj_dict['sector'].text == 'fixture_text', obj_dict['sector'].text 
-        assert obj_dict['sector'].code == 'fixture_code', obj_dict['sector'].code 
+        assert obj_dict['sector'].code == 999013, obj_dict['sector'].code 
         assert obj_dict['sector'].vocabulary == 'fixture_vocabulary', obj_dict['sector'].vocabulary 
         assert obj_dict['sector'].percentage == 999012.12, obj_dict['sector'].percentage 
         assert obj_dict['sector'].lang == 'fixture_lang', obj_dict['sector'].lang 

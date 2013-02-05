@@ -3,6 +3,7 @@ import model
 from . import log
 from datetime import datetime
 import iso8601
+from iatilib import session
 
 # ===========
 # Main method
@@ -23,6 +24,8 @@ def parse(url):
             activitydates  = [ model.ActivityDate._parse_xml(logger,x) for x in xml.findall('activity-date') ]
             contactinfos   = [ model.ContactInfo._parse_xml(logger,x) for x in xml.findall('contact-info') ]
             participatings = [ model.ParticipatingOrg._parse_xml(logger,x) for x in xml.findall('participating-org') ]
+            # ...then validate ...
+            _validate(activity,transactions,sectors,activitydates,contactinfos,participatings)
             # .. then update the global object set
             all_objects.append(activity)
             all_objects.extend(transactions)
@@ -56,8 +59,20 @@ def _parse_float(x):
     x = x.replace(',','')
     return float(x)
 
+def _parse_int(x):
+    if x is None: return 0
+    x = x.replace(',','')
+    return int(x)
+
 def _parse_datetime(x):
-    return iso8601.parse_date(x)
+    if x is None: return None
+    try:
+        if not ':' in x:
+            x += ' 00:00:00'
+        return iso8601.parse_date(x)
+    except:
+        raise ParseError('Could not parse ISO date "%s"' % x)
+
 
 def _parse_boolean(x):
     if x is None: return False
@@ -84,4 +99,12 @@ def _nav(logger, element, path, attrib=None, text=False, parser=None):
     if parser is not None:
         out = parser(out)
     return out
+
+def _validate(activity,transactions,sectors,activitydates,contactinfos,participatings):
+    valid_sectors = set([ x.code for x in session.query(model.CodelistSector) ])
+    assert len(valid_sectors), 'Found no CodelistSector'
+    for sector in sectors:
+        if sector.code==0: continue
+        if not (sector.code in valid_sectors):
+            raise ParseError('Invalid sector.code="%d" (text="%s")' % (sector.code,sector.text))
 
