@@ -1,0 +1,258 @@
+[
+    {
+        "xml": "@ref", 
+        "definition": "\n Machine-readable identification string for the business\n object being described.\n ", 
+        "format": "Text", 
+        "section": "", 
+        "item": "ref", 
+        "occur": "0..1"
+    }, 
+    {
+        "xml": "value/text()", 
+        "definition": "", 
+        "format": "xsd:integer", 
+        "section": "", 
+        "item": "", 
+        "occur": ""
+    }, 
+    {
+        "xml": "value/@currency", 
+        "definition": "\n An ISO 639 code for the original currency of the amount.\n This is required for all currency amounts unless the\n iati-activity/@default-currency attribute is specified.\n Currency codes are listed at\nhttp://iatistandard.org/codelists/currency\n ", 
+        "format": "Text", 
+        "section": "", 
+        "item": "currency", 
+        "occur": "0..1"
+    }, 
+    {
+        "xml": "value/@value-date", 
+        "definition": "\n The date that this value was set (to allow historical\n currency conversion). The date must be in ISO 8601\n format (YYYY-MM-DD).\n ", 
+        "format": "Text", 
+        "section": "", 
+        "item": "value-date", 
+        "occur": "1..1"
+    }, 
+    {
+        "xml": "description/text()", 
+        "definition": "\n Data type for an element that may contain human-readable text\n in different languages.\n ", 
+        "format": "mixed", 
+        "section": "", 
+        "item": "", 
+        "occur": ""
+    }, 
+    {
+        "xml": "description/@xml:lang", 
+        "definition": "ISO 2 letter code specifying the language of text in this element.", 
+        "format": "", 
+        "section": "", 
+        "item": "xml:lang", 
+        "occur": "0..1"
+    }, 
+    {
+        "xml": "transaction-type/text()", 
+        "definition": "\n Data type for an element that refers to an object that must\n have a code.\n ", 
+        "format": "mixed", 
+        "section": "", 
+        "item": "", 
+        "occur": ""
+    }, 
+    {
+        "xml": "transaction-type/@code", 
+        "definition": "\n Machine-readable code for the entity being described.\n ", 
+        "format": "Text", 
+        "section": "", 
+        "item": "code", 
+        "occur": "1..1"
+    }, 
+    {
+        "xml": "transaction-type/@xml:lang", 
+        "definition": "ISO 2 letter code specifying the language of text in this element.", 
+        "format": "", 
+        "section": "", 
+        "item": "xml:lang", 
+        "occur": "0..1"
+    }, 
+    {
+        "xml": "provider-org/text()", 
+        "definition": "", 
+        "format": "mixed", 
+        "section": "", 
+        "item": "", 
+        "occur": ""
+    }, 
+    {
+        "xml": "provider-org/@ref", 
+        "definition": "\n Machine-readable identification string for the business\n object being described.\n ", 
+        "format": "Text", 
+        "section": "", 
+        "item": "ref", 
+        "occur": "0..1"
+    }, 
+    {
+        "xml": "provider-org/@provider-activity-id", 
+        "definition": "\n The internal identifier used by the provider for\n its activity that provides the funds for this\n transaction (*not* the IATI activity identifier).\n ", 
+        "format": "Text", 
+        "section": "", 
+        "item": "provider-activity-id", 
+        "occur": "0..1"
+    }, 
+    {
+        "xml": "receiver-org/text()", 
+        "definition": "", 
+        "format": "mixed", 
+        "section": "", 
+        "item": "", 
+        "occur": ""
+    }, 
+    {
+        "xml": "receiver-org/@ref", 
+        "definition": "\n Machine-readable identification string for the business\n object being described.\n ", 
+        "format": "Text", 
+        "section": "", 
+        "item": "ref", 
+        "occur": "0..1"
+    }, 
+    {
+        "xml": "receiver-org/@receiver-activity-id", 
+        "definition": "\n The internal identifier used by the receiver\n organisation for its activity that receives the\n funds from this transaction (not to be confused\n with the IATI identifier for the target activity).\n ", 
+        "format": "Text", 
+        "section": "", 
+        "item": "receiver-activity-id", 
+        "occur": "0..1"
+    }, 
+    {
+        "xml": "transaction-date/text()", 
+        "definition": "", 
+        "format": "mixed", 
+        "section": "", 
+        "item": "", 
+        "occur": ""
+    }, 
+    {
+        "xml": "transaction-date/@iso-date", 
+        "definition": "\n The ISO 8601 version of the transaction date.\n ", 
+        "format": "Text", 
+        "section": "", 
+        "item": "iso-date", 
+        "occur": "1..1"
+    }, 
+    {
+        "xml": "flow-type/text()", 
+        "definition": "\n Data type for an element that refers to an object that must\n have a code.\n ", 
+        "format": "mixed", 
+        "section": "", 
+        "item": "", 
+        "occur": ""
+    }, 
+    {
+        "xml": "flow-type/@code", 
+        "definition": "\n Machine-readable code for the entity being described.\n ", 
+        "format": "Text", 
+        "section": "", 
+        "item": "code", 
+        "occur": "1..1"
+    }, 
+    {
+        "xml": "flow-type/@xml:lang", 
+        "definition": "ISO 2 letter code specifying the language of text in this element.", 
+        "format": "", 
+        "section": "", 
+        "item": "xml:lang", 
+        "occur": "0..1"
+    }, 
+    {
+        "xml": "aid-type/text()", 
+        "definition": "\n Data type for an element that refers to an object that must\n have a code.\n ", 
+        "format": "mixed", 
+        "section": "", 
+        "item": "", 
+        "occur": ""
+    }, 
+    {
+        "xml": "aid-type/@code", 
+        "definition": "\n Machine-readable code for the entity being described.\n ", 
+        "format": "Text", 
+        "section": "", 
+        "item": "code", 
+        "occur": "1..1"
+    }, 
+    {
+        "xml": "aid-type/@xml:lang", 
+        "definition": "ISO 2 letter code specifying the language of text in this element.", 
+        "format": "", 
+        "section": "", 
+        "item": "xml:lang", 
+        "occur": "0..1"
+    }, 
+    {
+        "xml": "finance-type/text()", 
+        "definition": "\n Data type for an element that refers to an object that must\n have a code.\n ", 
+        "format": "mixed", 
+        "section": "", 
+        "item": "", 
+        "occur": ""
+    }, 
+    {
+        "xml": "finance-type/@code", 
+        "definition": "\n Machine-readable code for the entity being described.\n ", 
+        "format": "Text", 
+        "section": "", 
+        "item": "code", 
+        "occur": "1..1"
+    }, 
+    {
+        "xml": "finance-type/@xml:lang", 
+        "definition": "ISO 2 letter code specifying the language of text in this element.", 
+        "format": "", 
+        "section": "", 
+        "item": "xml:lang", 
+        "occur": "0..1"
+    }, 
+    {
+        "xml": "tied-status/text()", 
+        "definition": "\n Data type for an element that refers to an object that must\n have a code.\n ", 
+        "format": "mixed", 
+        "section": "", 
+        "item": "", 
+        "occur": ""
+    }, 
+    {
+        "xml": "tied-status/@code", 
+        "definition": "\n Machine-readable code for the entity being described.\n ", 
+        "format": "Text", 
+        "section": "", 
+        "item": "code", 
+        "occur": "1..1"
+    }, 
+    {
+        "xml": "tied-status/@xml:lang", 
+        "definition": "ISO 2 letter code specifying the language of text in this element.", 
+        "format": "", 
+        "section": "", 
+        "item": "xml:lang", 
+        "occur": "0..1"
+    }, 
+    {
+        "xml": "disbursement-channel/text()", 
+        "definition": "\n Data type for an element that refers to an object that must\n have a code.\n ", 
+        "format": "mixed", 
+        "section": "", 
+        "item": "", 
+        "occur": ""
+    }, 
+    {
+        "xml": "disbursement-channel/@code", 
+        "definition": "\n Machine-readable code for the entity being described.\n ", 
+        "format": "Text", 
+        "section": "", 
+        "item": "code", 
+        "occur": "1..1"
+    }, 
+    {
+        "xml": "disbursement-channel/@xml:lang", 
+        "definition": "ISO 2 letter code specifying the language of text in this element.", 
+        "format": "", 
+        "section": "", 
+        "item": "xml:lang", 
+        "occur": "0..1"
+    }
+]

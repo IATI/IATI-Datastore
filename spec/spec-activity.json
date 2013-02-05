@@ -1,14 +1,6 @@
 [
     {
-        "xml": "iati-activity", 
-        "definition": "\n Top-level element for a single IATI activity report.\n ", 
-        "format": "", 
-        "section": "iati-activity", 
-        "item": "", 
-        "occur": "0..*"
-    }, 
-    {
-        "xml": "iati-activity/@version", 
+        "xml": "@version", 
         "definition": "\n A number indicating the IATI specification version in use.\n Defaults to \u201c1.0\u2033 if not specified. It is required to\n specify this attribute if the document is using features\n specific to an IATI specification other than the initial\n 1.0 version.\n ", 
         "format": "Decimal", 
         "section": "", 
@@ -16,7 +8,7 @@
         "occur": "0..1"
     }, 
     {
-        "xml": "iati-activity/@last-updated-datetime", 
+        "xml": "@last-updated-datetime", 
         "definition": "\n The last date/time that the data for this specific\n activity was updated. This date must change whenever the\n value of any field changes.\n ", 
         "format": "DateTime", 
         "section": "", 
@@ -24,7 +16,7 @@
         "occur": "0..1"
     }, 
     {
-        "xml": "iati-activity/@xml:lang", 
+        "xml": "@xml:lang", 
         "definition": "ISO 2 letter code specifying the language of text in this element.", 
         "format": "", 
         "section": "", 
@@ -32,7 +24,7 @@
         "occur": "0..1"
     }, 
     {
-        "xml": "iati-activity/@default-currency", 
+        "xml": "@default-currency", 
         "definition": "\n Default ISO 4217 currency code for all financial values in\n this activity report. See\nhttp://iatistandard.org/codelists/currency\n ", 
         "format": "Text", 
         "section": "", 
@@ -40,7 +32,7 @@
         "occur": "0..1"
     }, 
     {
-        "xml": "iati-activity/@hierarchy", 
+        "xml": "@hierarchy", 
         "definition": "\n Shortcut to show whether this is a parent or child\n activity, without having to evaluate related-activity\n elements.\n ", 
         "format": "xsd:int", 
         "section": "", 
@@ -48,20 +40,12 @@
         "occur": "0..1"
     }, 
     {
-        "xml": "iati-activity/@linked-data-uri", 
+        "xml": "@linked-data-uri", 
         "definition": "\n A Linked Data URI for a given activity (overrides\n iati-activities/@linked-data-default if set)\n ", 
         "format": "Text", 
         "section": "", 
         "item": "linked-data-uri", 
         "occur": "0..1"
-    }, 
-    {
-        "xml": "activity-website", 
-        "definition": "\n A link to a web site providing more information about the aid\n activity. Multiple versions of the link may appear for\n different languages.\n ", 
-        "format": "", 
-        "section": "activity-website", 
-        "item": "", 
-        "occur": "1..*"
     }, 
     {
         "xml": "activity-website/text()", 
@@ -70,14 +54,6 @@
         "section": "", 
         "item": "", 
         "occur": ""
-    }, 
-    {
-        "xml": "reporting-org", 
-        "definition": "\n The organisation issuing a report (not necessarily involved in\n the organisation or activity being described). May be a\n donor, fund, agency, etc. Specifying the @identifier and\n @role attributes is strongly recommended. May contain the\n organisation name as content.\n For the value of the @type attribute, see\nhttp://iatistandard.org/codelists/organisation-type\n For the value of the @ref attribute, see the list of\n officially-registered organizations at\nhttp://iatistandard.org/codelists/organisation\n ", 
-        "format": "", 
-        "section": "reporting-org", 
-        "item": "", 
-        "occur": "1..*"
     }, 
     {
         "xml": "reporting-org/text()", 
@@ -110,14 +86,6 @@
         "section": "", 
         "item": "xml:lang", 
         "occur": "0..1"
-    }, 
-    {
-        "xml": "participating-org", 
-        "definition": "\n An organisation (including the reporting organisation)\n involved with the activity. May be a donor, fund, agency,\n etc. Specifying the @identifier and @role attributes is\n strongly recommended. May contain the organisation name as\n content.\n For the value of the @type attribute, see\nhttp://iatistandard.org/codelists/organisation-type\n For the value of the @ref attribute, see the list of\n officially-registered organizations at\nhttp://iatistandard.org/codelists/organisation\n ", 
-        "format": "", 
-        "section": "participating-org", 
-        "item": "", 
-        "occur": "1..*"
     }, 
     {
         "xml": "participating-org/text()", 
@@ -160,14 +128,6 @@
         "occur": "0..1"
     }, 
     {
-        "xml": "recipient-country", 
-        "definition": "\n A partner country that will benefit from this activity. This\n element is primarily for administrative and geopolitical\n purposes. If a specific country is not known, the activity\n report can use the recipient-region element instead. For\n geographical location, use the location element.\n For the value of the @code attribute, see\nhttp://iatistandard.org/codelists/country\n ", 
-        "format": "", 
-        "section": "recipient-country", 
-        "item": "", 
-        "occur": "1..*"
-    }, 
-    {
         "xml": "recipient-country/text()", 
         "definition": "", 
         "format": "mixed", 
@@ -198,14 +158,6 @@
         "section": "", 
         "item": "xml:lang", 
         "occur": "0..1"
-    }, 
-    {
-        "xml": "recipient-region", 
-        "definition": "\n A geopolitical region (above the country level) that will\n benefit from this activity. This element is primarily for\n administrative and geopolitical purposes. If the specific\n country/-ies are known, the activity report can use the\n recipient-country element instead. For geographical location,\n use the location element.\n For the value of the @code attribute, see\nhttp://iatistandard.org/codelists/region\n ", 
-        "format": "", 
-        "section": "recipient-region", 
-        "item": "", 
-        "occur": "1..*"
     }, 
     {
         "xml": "recipient-region/text()", 
@@ -240,14 +192,6 @@
         "occur": "0..1"
     }, 
     {
-        "xml": "collaboration-type", 
-        "definition": "\n The type of collaboration involved in the project\u2019s\n disbursements, e.g. \u201cbilateral\u201d or \u201cmultilateral\u201d.\n For the value of the @code attribute, see\nhttp://iatistandard.org/codelists/collaboration_type\n ", 
-        "format": "", 
-        "section": "collaboration-type", 
-        "item": "", 
-        "occur": "1..*"
-    }, 
-    {
         "xml": "collaboration-type/text()", 
         "definition": "\n Data type for an element that refers to an object that must\n have a code.\n ", 
         "format": "mixed", 
@@ -270,14 +214,6 @@
         "section": "", 
         "item": "xml:lang", 
         "occur": "0..1"
-    }, 
-    {
-        "xml": "default-flow-type", 
-        "definition": "\n The type of assistance provided, e.g. Official Development\n Assistance (ODA). Type types will be defined by IATI.\n For the value of the @code attribute, see\nhttp://iatistandard.org/codelists/flow_type\n ", 
-        "format": "", 
-        "section": "default-flow-type", 
-        "item": "", 
-        "occur": "1..*"
     }, 
     {
         "xml": "default-flow-type/text()", 
@@ -304,14 +240,6 @@
         "occur": "0..1"
     }, 
     {
-        "xml": "default-aid-type", 
-        "definition": "\n The type of aid being supplied (budget support, debt relief,\n etc.). This element specifies a default for all the\n activity\u2019s financial transactions; it can be overridden at the\n individual transaction level.\n For the value of the @code attribute, see\nhttp://iatistandard.org/codelists/aid_type\n ", 
-        "format": "", 
-        "section": "default-aid-type", 
-        "item": "", 
-        "occur": "1..*"
-    }, 
-    {
         "xml": "default-aid-type/text()", 
         "definition": "\n Data type for an element that refers to an object that must\n have a code.\n ", 
         "format": "mixed", 
@@ -334,14 +262,6 @@
         "section": "", 
         "item": "xml:lang", 
         "occur": "0..1"
-    }, 
-    {
-        "xml": "default-finance-type", 
-        "definition": "\n The type of finance (e.g. debt relief). The types will be\n defined by IATI. This the default value for all transactions\n in the activity report; it can be overridded by individual\n transactions.\n For the value of the @code attribute, see\nhttp://iatistandard.org/codelists/finance_type\n ", 
-        "format": "", 
-        "section": "default-finance-type", 
-        "item": "", 
-        "occur": "1..*"
     }, 
     {
         "xml": "default-finance-type/text()", 
@@ -368,28 +288,12 @@
         "occur": "0..1"
     }, 
     {
-        "xml": "iati-identifier", 
-        "definition": "\n IATI identifier\n This element contains the official IATI identifier for an\n entity (activity or organisation). It must appear only once\n in the XML file, and is guaranteed unique across all entities\n of the same type (there will never be two organisations or\n activities with the same IATI identifier).\n ", 
-        "format": "", 
-        "section": "iati-identifier", 
-        "item": "", 
-        "occur": "1..*"
-    }, 
-    {
         "xml": "iati-identifier/text()", 
         "definition": "", 
         "format": "mixed", 
         "section": "", 
         "item": "", 
         "occur": ""
-    }, 
-    {
-        "xml": "other-identifier", 
-        "definition": "\n An alternative, non-IATI identifier for the activity. This\n identifier is not guaranteed to be unique or persistent (it\n depends on the owner organisation\u2019s policies, not IATI\u2019s).\n ", 
-        "format": "", 
-        "section": "other-identifier", 
-        "item": "", 
-        "occur": "1..*"
     }, 
     {
         "xml": "other-identifier/text()", 
@@ -416,14 +320,6 @@
         "occur": "0..1"
     }, 
     {
-        "xml": "title", 
-        "definition": "\n A short, human-readable title. May be repeated for different\n languages.\n ", 
-        "format": "", 
-        "section": "title", 
-        "item": "", 
-        "occur": "1..*"
-    }, 
-    {
         "xml": "title/text()", 
         "definition": "\n Data type for an element that may contain human-readable text\n in different languages.\n ", 
         "format": "mixed", 
@@ -438,14 +334,6 @@
         "section": "", 
         "item": "xml:lang", 
         "occur": "0..1"
-    }, 
-    {
-        "xml": "description", 
-        "definition": "\n A longer, human-readable description. May be repeated for\n different languages.\n ", 
-        "format": "", 
-        "section": "description", 
-        "item": "", 
-        "occur": "1..*"
     }, 
     {
         "xml": "description/text()", 
@@ -470,14 +358,6 @@
         "section": "", 
         "item": "xml:lang", 
         "occur": "0..1"
-    }, 
-    {
-        "xml": "sector", 
-        "definition": "\n Sector code and name. For the value of the @code attribute,\n see http://iatistandard.org/codelists/sector\n ", 
-        "format": "", 
-        "section": "sector", 
-        "item": "", 
-        "occur": "1..*"
     }, 
     {
         "xml": "sector/text()", 
@@ -520,14 +400,6 @@
         "occur": "0..1"
     }, 
     {
-        "xml": "activity-date", 
-        "definition": "\n Planned starting date for the activity in ISO 8601 date\n format, e.g. \u201c2010-10-01\u2033. For the value of the @type\n attribute, see\nhttp://iatistandard.org/codelists/activity_date_type\n ", 
-        "format": "", 
-        "section": "activity-date", 
-        "item": "", 
-        "occur": "1..*"
-    }, 
-    {
         "xml": "activity-date/text()", 
         "definition": "", 
         "format": "Text", 
@@ -560,14 +432,6 @@
         "occur": "0..1"
     }, 
     {
-        "xml": "activity-status", 
-        "definition": "\n The current status of the project (e.g. \u201cplanned\u201d), using a\n list defined by IATI. For the value of the @code attribute,\n see http://iatistandard.org/codelists/activity_status\n ", 
-        "format": "", 
-        "section": "activity-status", 
-        "item": "", 
-        "occur": "1..*"
-    }, 
-    {
         "xml": "activity-status/text()", 
         "definition": "\n Data type for an element that refers to an object that can\n have a code as well as human-readable text in different\n languages (e.g. a country or status).\n ", 
         "format": "mixed", 
@@ -592,36 +456,12 @@
         "occur": "0..1"
     }, 
     {
-        "xml": "contact-info", 
-        "definition": "\n Contact information for the project. Specify whatever is\n available.\n ", 
-        "format": "", 
-        "section": "contact-info", 
-        "item": "", 
-        "occur": "1..*"
-    }, 
-    {
-        "xml": "contact-info/organisation", 
-        "definition": "\n The organisation to contact for more information about the\n activity.\n ", 
-        "format": "", 
-        "section": "", 
-        "item": "organisation", 
-        "occur": "0..*"
-    }, 
-    {
         "xml": "contact-info/organisation/text()", 
         "definition": "\n Plain text content with no special attributes (e.g. xml:lang),\n though extended attributes are still allowed.\n ", 
         "format": "mixed", 
         "section": "", 
         "item": "", 
         "occur": ""
-    }, 
-    {
-        "xml": "contact-info/person-name", 
-        "definition": "\n The name of the contact person at the organisation.\n ", 
-        "format": "", 
-        "section": "", 
-        "item": "person-name", 
-        "occur": "0..*"
     }, 
     {
         "xml": "contact-info/person-name/text()", 
@@ -632,28 +472,12 @@
         "occur": ""
     }, 
     {
-        "xml": "contact-info/telephone", 
-        "definition": "\n The contact telephone number, if available. May be\n repeated for multiple numbers.\n ", 
-        "format": "", 
-        "section": "", 
-        "item": "telephone", 
-        "occur": "0..*"
-    }, 
-    {
         "xml": "contact-info/telephone/text()", 
         "definition": "", 
         "format": "mixed", 
         "section": "", 
         "item": "", 
         "occur": ""
-    }, 
-    {
-        "xml": "contact-info/email", 
-        "definition": "\n The contact email address, if available. May be\n repeated for multiple addresses.\n ", 
-        "format": "", 
-        "section": "", 
-        "item": "email", 
-        "occur": "0..*"
     }, 
     {
         "xml": "contact-info/email/text()", 
@@ -664,28 +488,12 @@
         "occur": ""
     }, 
     {
-        "xml": "contact-info/mailing-address", 
-        "definition": "\n The contact mailing address, if available.\n ", 
-        "format": "", 
-        "section": "", 
-        "item": "mailing-address", 
-        "occur": "0..*"
-    }, 
-    {
         "xml": "contact-info/mailing-address/text()", 
         "definition": "", 
         "format": "mixed", 
         "section": "", 
         "item": "", 
         "occur": ""
-    }, 
-    {
-        "xml": "default-tied-status", 
-        "definition": "\n Specify whether the aid is untied, tied, or partially tied,\n using a code list created by IATI. The content is free text\n that can optionally provide more detail. For the value of the\n @code attribute, see\nhttp://iatistandard.org/codelists/tied_status\n ", 
-        "format": "", 
-        "section": "default-tied-status", 
-        "item": "", 
-        "occur": "1..*"
     }, 
     {
         "xml": "default-tied-status/text()", 
@@ -710,14 +518,6 @@
         "section": "", 
         "item": "xml:lang", 
         "occur": "0..1"
-    }, 
-    {
-        "xml": "policy-marker", 
-        "definition": "\n A policy or theme addressed by the activity. A text\n description of the theme appears in the content, and a formal\n identifier appears in the @ref attribute. The @vocabulary\n attribute can also help to segment the markers into separate\n vocabularies. This element can be repeated for each policy\n marker. For the value of the @code attribute, see\nhttp://iatistandard.org/codelists/policy_marker\n ", 
-        "format": "", 
-        "section": "policy-marker", 
-        "item": "", 
-        "occur": "1..*"
     }, 
     {
         "xml": "policy-marker/text()", 
@@ -760,28 +560,12 @@
         "occur": "0..1"
     }, 
     {
-        "xml": "location", 
-        "definition": "\n A geographical location.\n ", 
-        "format": "", 
-        "section": "location", 
-        "item": "", 
-        "occur": "1..*"
-    }, 
-    {
         "xml": "location/@percentage", 
         "definition": "\n The percentage of the activity budget allocated to this location.\n ", 
         "format": "Integer", 
         "section": "", 
         "item": "percentage", 
         "occur": "0..1"
-    }, 
-    {
-        "xml": "location/location-type", 
-        "definition": "\n The type of location (e.g. \u201cPCL\u201d for a political\n entity), from an IATI-defined subset of the UCPD/Aiddata\n code list.\n See http://iatistandard.org/codelists/location_type\n ", 
-        "format": "", 
-        "section": "", 
-        "item": "location-type", 
-        "occur": "0..*"
     }, 
     {
         "xml": "location/location-type/text()", 
@@ -808,14 +592,6 @@
         "occur": "0..1"
     }, 
     {
-        "xml": "location/name", 
-        "definition": "\n The human-readable name for the location. May be\n repeated in different languages.\n ", 
-        "format": "", 
-        "section": "", 
-        "item": "name", 
-        "occur": "0..*"
-    }, 
-    {
         "xml": "location/name/text()", 
         "definition": "\n Data type for an element that may contain human-readable text\n in different languages.\n ", 
         "format": "mixed", 
@@ -832,14 +608,6 @@
         "occur": "0..1"
     }, 
     {
-        "xml": "location/description", 
-        "definition": "\n A human-readable description of the location.\n ", 
-        "format": "", 
-        "section": "", 
-        "item": "description", 
-        "occur": "0..*"
-    }, 
-    {
         "xml": "location/description/text()", 
         "definition": "\n Data type for an element that may contain human-readable text\n in different languages.\n ", 
         "format": "mixed", 
@@ -854,14 +622,6 @@
         "section": "", 
         "item": "xml:lang", 
         "occur": "0..1"
-    }, 
-    {
-        "xml": "location/administrative", 
-        "definition": "\n Administrative geographical information (e.g. city,\n subdivision, country). The content is a human-readable\n name for the location, while the attributes contain\n various levels of machine-readable ISO 3166-1 and UNSALB\n geographical codes.\n ", 
-        "format": "", 
-        "section": "", 
-        "item": "administrative", 
-        "occur": "0..*"
     }, 
     {
         "xml": "location/administrative/text()", 
@@ -896,14 +656,6 @@
         "occur": "0..1"
     }, 
     {
-        "xml": "location/coordinates", 
-        "definition": "\n Geodetic coordinates for the location (latitude, longitude).\n ", 
-        "format": "", 
-        "section": "", 
-        "item": "coordinates", 
-        "occur": "0..*"
-    }, 
-    {
         "xml": "location/coordinates/@latitude", 
         "definition": "\n The decimal latitude (north is positive), e.g. \u201c45.5\u2033\n for 45.5 degrees north (45 degrees 30 minutes).\n ", 
         "format": "Decimal", 
@@ -928,14 +680,6 @@
         "occur": "0..1"
     }, 
     {
-        "xml": "location/gazetteer-entry", 
-        "definition": "\n Identifier for this location\u2019s entry in a geographical\n gazetteer, such as GEOnet. The entry identifier is the\n element content.\n ", 
-        "format": "", 
-        "section": "", 
-        "item": "gazetteer-entry", 
-        "occur": "0..*"
-    }, 
-    {
         "xml": "location/gazetteer-entry/text()", 
         "definition": "", 
         "format": "mixed", 
@@ -950,366 +694,6 @@
         "section": "", 
         "item": "gazetteer-ref", 
         "occur": "1..1"
-    }, 
-    {
-        "xml": "transaction", 
-        "definition": "\n Committed or actual money flowing in or out of an aid\n activity.The @ref attribute allows uniquely identifying a\n transaction, to match it up with the corresponding in- or\n outflow in a different activity.\n ", 
-        "format": "", 
-        "section": "transaction", 
-        "item": "", 
-        "occur": "1..*"
-    }, 
-    {
-        "xml": "transaction/@ref", 
-        "definition": "\n Machine-readable identification string for the business\n object being described.\n ", 
-        "format": "Text", 
-        "section": "", 
-        "item": "ref", 
-        "occur": "0..1"
-    }, 
-    {
-        "xml": "transaction/value", 
-        "definition": "\n The amount of the contribution (or its value, if in\n kind).\n ", 
-        "format": "", 
-        "section": "", 
-        "item": "value", 
-        "occur": "..*"
-    }, 
-    {
-        "xml": "transaction/value/text()", 
-        "definition": "", 
-        "format": "xsd:integer", 
-        "section": "", 
-        "item": "", 
-        "occur": ""
-    }, 
-    {
-        "xml": "transaction/value/@currency", 
-        "definition": "\n An ISO 639 code for the original currency of the amount.\n This is required for all currency amounts unless the\n iati-activity/@default-currency attribute is specified.\n Currency codes are listed at\nhttp://iatistandard.org/codelists/currency\n ", 
-        "format": "Text", 
-        "section": "", 
-        "item": "currency", 
-        "occur": "0..1"
-    }, 
-    {
-        "xml": "transaction/value/@value-date", 
-        "definition": "\n The date that this value was set (to allow historical\n currency conversion). The date must be in ISO 8601\n format (YYYY-MM-DD).\n ", 
-        "format": "Text", 
-        "section": "", 
-        "item": "value-date", 
-        "occur": "1..1"
-    }, 
-    {
-        "xml": "transaction/description", 
-        "definition": "\n A human-readable description of the transaction.\n ", 
-        "format": "", 
-        "section": "", 
-        "item": "description", 
-        "occur": "..*"
-    }, 
-    {
-        "xml": "transaction/description/text()", 
-        "definition": "\n Data type for an element that may contain human-readable text\n in different languages.\n ", 
-        "format": "mixed", 
-        "section": "", 
-        "item": "", 
-        "occur": ""
-    }, 
-    {
-        "xml": "transaction/description/@xml:lang", 
-        "definition": "ISO 2 letter code specifying the language of text in this element.", 
-        "format": "", 
-        "section": "", 
-        "item": "xml:lang", 
-        "occur": "0..1"
-    }, 
-    {
-        "xml": "transaction/transaction-type", 
-        "definition": "\n The type of the transaction (e.g. commitment,\n disbursement, expenditure, etc.). The @ref attribute\n contains a code defined by IATI, and the content is an\n optional free-text description of the type.\n For the value of the @code attribute, see\nhttp://iatistandard.org/codelists/transaction_type\n ", 
-        "format": "", 
-        "section": "", 
-        "item": "transaction-type", 
-        "occur": "..*"
-    }, 
-    {
-        "xml": "transaction/transaction-type/text()", 
-        "definition": "\n Data type for an element that refers to an object that must\n have a code.\n ", 
-        "format": "mixed", 
-        "section": "", 
-        "item": "", 
-        "occur": ""
-    }, 
-    {
-        "xml": "transaction/transaction-type/@code", 
-        "definition": "\n Machine-readable code for the entity being described.\n ", 
-        "format": "Text", 
-        "section": "", 
-        "item": "code", 
-        "occur": "1..1"
-    }, 
-    {
-        "xml": "transaction/transaction-type/@xml:lang", 
-        "definition": "ISO 2 letter code specifying the language of text in this element.", 
-        "format": "", 
-        "section": "", 
-        "item": "xml:lang", 
-        "occur": "0..1"
-    }, 
-    {
-        "xml": "transaction/provider-org", 
-        "definition": "\n The organisation providing the money for the\n transaction (if omitted, the provider organisation is\n the reporting organisation).\n For the value of the @ref attribute, see the list of\n officially-registered organizations at\nhttp://iatistandard.org/codelists/organisation\n ", 
-        "format": "", 
-        "section": "", 
-        "item": "provider-org", 
-        "occur": "..*"
-    }, 
-    {
-        "xml": "transaction/provider-org/text()", 
-        "definition": "", 
-        "format": "mixed", 
-        "section": "", 
-        "item": "", 
-        "occur": ""
-    }, 
-    {
-        "xml": "transaction/provider-org/@ref", 
-        "definition": "\n Machine-readable identification string for the business\n object being described.\n ", 
-        "format": "Text", 
-        "section": "", 
-        "item": "ref", 
-        "occur": "0..1"
-    }, 
-    {
-        "xml": "transaction/provider-org/@provider-activity-id", 
-        "definition": "\n The internal identifier used by the provider for\n its activity that provides the funds for this\n transaction (*not* the IATI activity identifier).\n ", 
-        "format": "Text", 
-        "section": "", 
-        "item": "provider-activity-id", 
-        "occur": "0..1"
-    }, 
-    {
-        "xml": "transaction/receiver-org", 
-        "definition": "\n The organisation receiving the money from the\n transaction (if omitted, then the receiver\n organisation is the reporting organisation).\n For the value of the @ref attribute, see the list of\n officially-registered organizations at\nhttp://iatistandard.org/codelists/organisation\n ", 
-        "format": "", 
-        "section": "", 
-        "item": "receiver-org", 
-        "occur": "..*"
-    }, 
-    {
-        "xml": "transaction/receiver-org/text()", 
-        "definition": "", 
-        "format": "mixed", 
-        "section": "", 
-        "item": "", 
-        "occur": ""
-    }, 
-    {
-        "xml": "transaction/receiver-org/@ref", 
-        "definition": "\n Machine-readable identification string for the business\n object being described.\n ", 
-        "format": "Text", 
-        "section": "", 
-        "item": "ref", 
-        "occur": "0..1"
-    }, 
-    {
-        "xml": "transaction/receiver-org/@receiver-activity-id", 
-        "definition": "\n The internal identifier used by the receiver\n organisation for its activity that receives the\n funds from this transaction (not to be confused\n with the IATI identifier for the target activity).\n ", 
-        "format": "Text", 
-        "section": "", 
-        "item": "receiver-activity-id", 
-        "occur": "0..1"
-    }, 
-    {
-        "xml": "transaction/transaction-date", 
-        "definition": "\n A milestone date for this transaction (such as the\n decision date, disbursement date, etc.).\n ", 
-        "format": "", 
-        "section": "", 
-        "item": "transaction-date", 
-        "occur": "..*"
-    }, 
-    {
-        "xml": "transaction/transaction-date/text()", 
-        "definition": "", 
-        "format": "mixed", 
-        "section": "", 
-        "item": "", 
-        "occur": ""
-    }, 
-    {
-        "xml": "transaction/transaction-date/@iso-date", 
-        "definition": "\n The ISO 8601 version of the transaction date.\n ", 
-        "format": "Text", 
-        "section": "", 
-        "item": "iso-date", 
-        "occur": "1..1"
-    }, 
-    {
-        "xml": "transaction/flow-type", 
-        "definition": "\n Optional element to override the top-level\n default-flow-type element.\n For the value of the @code attribute, see\nhttp://iatistandard.org/codelists/flow_type\n ", 
-        "format": "", 
-        "section": "", 
-        "item": "flow-type", 
-        "occur": "..*"
-    }, 
-    {
-        "xml": "transaction/flow-type/text()", 
-        "definition": "\n Data type for an element that refers to an object that must\n have a code.\n ", 
-        "format": "mixed", 
-        "section": "", 
-        "item": "", 
-        "occur": ""
-    }, 
-    {
-        "xml": "transaction/flow-type/@code", 
-        "definition": "\n Machine-readable code for the entity being described.\n ", 
-        "format": "Text", 
-        "section": "", 
-        "item": "code", 
-        "occur": "1..1"
-    }, 
-    {
-        "xml": "transaction/flow-type/@xml:lang", 
-        "definition": "ISO 2 letter code specifying the language of text in this element.", 
-        "format": "", 
-        "section": "", 
-        "item": "xml:lang", 
-        "occur": "0..1"
-    }, 
-    {
-        "xml": "transaction/aid-type", 
-        "definition": "\n Optional element to override the top-level\n default-aid-type element (debt relief, etc.) on a\n transaction-by-transaction basis if needed.\n For the value of the @code attribute, see\nhttp://iatistandard.org/codelists/aid_type\n ", 
-        "format": "", 
-        "section": "", 
-        "item": "aid-type", 
-        "occur": "..*"
-    }, 
-    {
-        "xml": "transaction/aid-type/text()", 
-        "definition": "\n Data type for an element that refers to an object that must\n have a code.\n ", 
-        "format": "mixed", 
-        "section": "", 
-        "item": "", 
-        "occur": ""
-    }, 
-    {
-        "xml": "transaction/aid-type/@code", 
-        "definition": "\n Machine-readable code for the entity being described.\n ", 
-        "format": "Text", 
-        "section": "", 
-        "item": "code", 
-        "occur": "1..1"
-    }, 
-    {
-        "xml": "transaction/aid-type/@xml:lang", 
-        "definition": "ISO 2 letter code specifying the language of text in this element.", 
-        "format": "", 
-        "section": "", 
-        "item": "xml:lang", 
-        "occur": "0..1"
-    }, 
-    {
-        "xml": "transaction/finance-type", 
-        "definition": "\n Optional element to override the top-level\n default-finance-type element on a\n transaction-by-transaction basis, if needed.\n For the value of the @code attribute, see\nhttp://iatistandard.org/codelists/finance_type\n ", 
-        "format": "", 
-        "section": "", 
-        "item": "finance-type", 
-        "occur": "..*"
-    }, 
-    {
-        "xml": "transaction/finance-type/text()", 
-        "definition": "\n Data type for an element that refers to an object that must\n have a code.\n ", 
-        "format": "mixed", 
-        "section": "", 
-        "item": "", 
-        "occur": ""
-    }, 
-    {
-        "xml": "transaction/finance-type/@code", 
-        "definition": "\n Machine-readable code for the entity being described.\n ", 
-        "format": "Text", 
-        "section": "", 
-        "item": "code", 
-        "occur": "1..1"
-    }, 
-    {
-        "xml": "transaction/finance-type/@xml:lang", 
-        "definition": "ISO 2 letter code specifying the language of text in this element.", 
-        "format": "", 
-        "section": "", 
-        "item": "xml:lang", 
-        "occur": "0..1"
-    }, 
-    {
-        "xml": "transaction/tied-status", 
-        "definition": "\n Optional element to override the top-level\n default-tied-status element (pooled, etc.) on a\n transaction-by-transaction basis if needed.\n For the value of the @code attribute, see\nhttp://iatistandard.org/codelists/tied_status\n ", 
-        "format": "", 
-        "section": "", 
-        "item": "tied-status", 
-        "occur": "..*"
-    }, 
-    {
-        "xml": "transaction/tied-status/text()", 
-        "definition": "\n Data type for an element that refers to an object that must\n have a code.\n ", 
-        "format": "mixed", 
-        "section": "", 
-        "item": "", 
-        "occur": ""
-    }, 
-    {
-        "xml": "transaction/tied-status/@code", 
-        "definition": "\n Machine-readable code for the entity being described.\n ", 
-        "format": "Text", 
-        "section": "", 
-        "item": "code", 
-        "occur": "1..1"
-    }, 
-    {
-        "xml": "transaction/tied-status/@xml:lang", 
-        "definition": "ISO 2 letter code specifying the language of text in this element.", 
-        "format": "", 
-        "section": "", 
-        "item": "xml:lang", 
-        "occur": "0..1"
-    }, 
-    {
-        "xml": "transaction/disbursement-channel", 
-        "definition": "\n The channel through which the funds will flow for this\n transaction, from an IATI code list.\n ", 
-        "format": "", 
-        "section": "", 
-        "item": "disbursement-channel", 
-        "occur": "..*"
-    }, 
-    {
-        "xml": "transaction/disbursement-channel/text()", 
-        "definition": "\n Data type for an element that refers to an object that must\n have a code.\n ", 
-        "format": "mixed", 
-        "section": "", 
-        "item": "", 
-        "occur": ""
-    }, 
-    {
-        "xml": "transaction/disbursement-channel/@code", 
-        "definition": "\n Machine-readable code for the entity being described.\n ", 
-        "format": "Text", 
-        "section": "", 
-        "item": "code", 
-        "occur": "1..1"
-    }, 
-    {
-        "xml": "transaction/disbursement-channel/@xml:lang", 
-        "definition": "ISO 2 letter code specifying the language of text in this element.", 
-        "format": "", 
-        "section": "", 
-        "item": "xml:lang", 
-        "occur": "0..1"
-    }, 
-    {
-        "xml": "result", 
-        "definition": "\n A measurable result of aid work.\n ", 
-        "format": "", 
-        "section": "result", 
-        "item": "", 
-        "occur": "1..*"
     }, 
     {
         "xml": "result/@type", 
@@ -1328,14 +712,6 @@
         "occur": "0..1"
     }, 
     {
-        "xml": "result/title", 
-        "definition": "\n A short, human-readable title. May be repeated for different\n languages.\n ", 
-        "format": "", 
-        "section": "", 
-        "item": "title", 
-        "occur": "0..*"
-    }, 
-    {
         "xml": "result/title/text()", 
         "definition": "\n Data type for an element that may contain human-readable text\n in different languages.\n ", 
         "format": "mixed", 
@@ -1350,14 +726,6 @@
         "section": "", 
         "item": "xml:lang", 
         "occur": "0..1"
-    }, 
-    {
-        "xml": "result/description", 
-        "definition": "\n A longer, human-readable description. May be repeated for\n different languages.\n ", 
-        "format": "", 
-        "section": "", 
-        "item": "description", 
-        "occur": "0..*"
     }, 
     {
         "xml": "result/description/text()", 
@@ -1384,14 +752,6 @@
         "occur": "0..1"
     }, 
     {
-        "xml": "result/indicator", 
-        "definition": "\n The indicator(s) that meet the results. There can be\n multiple indicators for each result.\n ", 
-        "format": "", 
-        "section": "", 
-        "item": "indicator", 
-        "occur": "0..*"
-    }, 
-    {
         "xml": "result/indicator/@measure", 
         "definition": "\n The type of measurement for the indicator value\n e.g. unit, percentage, NDP.\n ", 
         "format": "Text", 
@@ -1408,14 +768,6 @@
         "occur": "0..1"
     }, 
     {
-        "xml": "result/indicator/title", 
-        "definition": "\n A short, human-readable title. May be repeated for different\n languages.\n ", 
-        "format": "", 
-        "section": "", 
-        "item": "title", 
-        "occur": "0..*"
-    }, 
-    {
         "xml": "result/indicator/title/text()", 
         "definition": "\n Data type for an element that may contain human-readable text\n in different languages.\n ", 
         "format": "mixed", 
@@ -1430,14 +782,6 @@
         "section": "", 
         "item": "xml:lang", 
         "occur": "0..1"
-    }, 
-    {
-        "xml": "result/indicator/description", 
-        "definition": "\n A longer, human-readable description. May be repeated for\n different languages.\n ", 
-        "format": "", 
-        "section": "", 
-        "item": "description", 
-        "occur": "0..*"
     }, 
     {
         "xml": "result/indicator/description/text()", 
@@ -1464,14 +808,6 @@
         "occur": "0..1"
     }, 
     {
-        "xml": "result/indicator/baseline", 
-        "definition": "\n The baseline value for the indicator\n ", 
-        "format": "", 
-        "section": "", 
-        "item": "baseline", 
-        "occur": "0..*"
-    }, 
-    {
         "xml": "result/indicator/baseline/@year", 
         "definition": "\n The year the baseline value was taken\n ", 
         "format": "Integer", 
@@ -1486,14 +822,6 @@
         "section": "", 
         "item": "value", 
         "occur": "1..1"
-    }, 
-    {
-        "xml": "result/indicator/baseline/comment", 
-        "definition": "\n A human-readable comment associated with a piece of aid information.\n ", 
-        "format": "", 
-        "section": "", 
-        "item": "comment", 
-        "occur": "0..*"
     }, 
     {
         "xml": "result/indicator/baseline/comment/text()", 
@@ -1512,22 +840,6 @@
         "occur": "0..1"
     }, 
     {
-        "xml": "result/indicator/period", 
-        "definition": "\n The period covered for the results\n reported. Multiple periods can be reported for a\n single indicator.\n ", 
-        "format": "", 
-        "section": "", 
-        "item": "period", 
-        "occur": "0..*"
-    }, 
-    {
-        "xml": "result/indicator/period/period-start", 
-        "definition": "\n The start of the reporting period\n ", 
-        "format": "", 
-        "section": "", 
-        "item": "period-start", 
-        "occur": "0..*"
-    }, 
-    {
         "xml": "result/indicator/period/period-start/text()", 
         "definition": "\n A date. The ISO 8601 date goes into the @iso-date attribute.\n The content may be free-form text.\n ", 
         "format": "mixed", 
@@ -1542,14 +854,6 @@
         "section": "", 
         "item": "iso-date", 
         "occur": "0..1"
-    }, 
-    {
-        "xml": "result/indicator/period/period-end", 
-        "definition": "\n The end of the reporting period\n ", 
-        "format": "", 
-        "section": "", 
-        "item": "period-end", 
-        "occur": "0..*"
     }, 
     {
         "xml": "result/indicator/period/period-end/text()", 
@@ -1568,28 +872,12 @@
         "occur": "0..1"
     }, 
     {
-        "xml": "result/indicator/period/target", 
-        "definition": "\n The target milestone for this period\n ", 
-        "format": "", 
-        "section": "", 
-        "item": "target", 
-        "occur": "0..*"
-    }, 
-    {
         "xml": "result/indicator/period/target/@value", 
         "definition": "\n The target value.\n ", 
         "format": "Text", 
         "section": "", 
         "item": "value", 
         "occur": "1..1"
-    }, 
-    {
-        "xml": "result/indicator/period/target/comment", 
-        "definition": "\n A human-readable comment associated with a piece of aid information.\n ", 
-        "format": "", 
-        "section": "", 
-        "item": "comment", 
-        "occur": "0..*"
     }, 
     {
         "xml": "result/indicator/period/target/comment/text()", 
@@ -1608,28 +896,12 @@
         "occur": "0..1"
     }, 
     {
-        "xml": "result/indicator/period/actual", 
-        "definition": "\n A record of the achieved result for this period.\n ", 
-        "format": "", 
-        "section": "", 
-        "item": "actual", 
-        "occur": "0..*"
-    }, 
-    {
         "xml": "result/indicator/period/actual/@value", 
         "definition": "\n The actual measure.\n ", 
         "format": "Text", 
         "section": "", 
         "item": "value", 
         "occur": "1..1"
-    }, 
-    {
-        "xml": "result/indicator/period/actual/comment", 
-        "definition": "\n A human-readable comment associated with a piece of aid information.\n ", 
-        "format": "", 
-        "section": "", 
-        "item": "comment", 
-        "occur": "0..*"
     }, 
     {
         "xml": "result/indicator/period/actual/comment/text()", 
@@ -1648,28 +920,12 @@
         "occur": "0..1"
     }, 
     {
-        "xml": "conditions", 
-        "definition": "\n Conditions attached to the activity.\n ", 
-        "format": "", 
-        "section": "conditions", 
-        "item": "", 
-        "occur": "1..*"
-    }, 
-    {
         "xml": "conditions/@attached", 
         "definition": "\n A yes/no (1/0) value stating whether there are conditions\n attached to the activity.\n ", 
         "format": "Boolean", 
         "section": "", 
         "item": "attached", 
         "occur": "1..1"
-    }, 
-    {
-        "xml": "conditions/condition", 
-        "definition": "\n Description of one condition attached to the activity.\n ", 
-        "format": "", 
-        "section": "", 
-        "item": "condition", 
-        "occur": "0..*"
     }, 
     {
         "xml": "conditions/condition/text()", 
@@ -1688,28 +944,12 @@
         "occur": "1..1"
     }, 
     {
-        "xml": "budget", 
-        "definition": "\n The value of the aid activity\u2019s budget for each financial year\n as in the original project document.\n ", 
-        "format": "", 
-        "section": "budget", 
-        "item": "", 
-        "occur": "1..*"
-    }, 
-    {
         "xml": "budget/@type", 
         "definition": "\n Free text describing the type of thing being referenced.\n ", 
         "format": "Text", 
         "section": "", 
         "item": "type", 
         "occur": "0..1"
-    }, 
-    {
-        "xml": "budget/period-start", 
-        "definition": "\n The starting date for the budget period, in ISO 8601\n format (e.g. 2010-04-01 for 1 April 2010). This element\n must be present.\n ", 
-        "format": "", 
-        "section": "", 
-        "item": "period-start", 
-        "occur": "0..*"
     }, 
     {
         "xml": "budget/period-start/text()", 
@@ -1728,14 +968,6 @@
         "occur": "0..1"
     }, 
     {
-        "xml": "budget/period-end", 
-        "definition": "\n The ending date for the budget period, in ISO 8601\n format (e.g. 2011-03-31 for 31 March 2011). This\n element must be present.\n ", 
-        "format": "", 
-        "section": "", 
-        "item": "period-end", 
-        "occur": "0..*"
-    }, 
-    {
         "xml": "budget/period-end/text()", 
         "definition": "\n A date. The ISO 8601 date goes into the @iso-date attribute.\n The content may be free-form text.\n ", 
         "format": "mixed", 
@@ -1750,14 +982,6 @@
         "section": "", 
         "item": "iso-date", 
         "occur": "0..1"
-    }, 
-    {
-        "xml": "budget/value", 
-        "definition": "\n The total value of the organisation\u2019s aid budget for\n this period. This element is required.\n ", 
-        "format": "", 
-        "section": "", 
-        "item": "value", 
-        "occur": "0..*"
     }, 
     {
         "xml": "budget/value/text()", 
@@ -1784,28 +1008,12 @@
         "occur": "1..1"
     }, 
     {
-        "xml": "planned-disbursement", 
-        "definition": "\n ", 
-        "format": "", 
-        "section": "planned-disbursement", 
-        "item": "", 
-        "occur": "1..*"
-    }, 
-    {
         "xml": "planned-disbursement/@updated", 
         "definition": "\n The date on which this line of information was last\n updated. Previous updates for the same period should also\n be reported.\n ", 
         "format": "Text", 
         "section": "", 
         "item": "updated", 
         "occur": "0..1"
-    }, 
-    {
-        "xml": "planned-disbursement/period-start", 
-        "definition": "\n The starting date for the disbursement period, in ISO 8601\n format (e.g. 2010-04-01 for 1 April 2010). This element\n must be present.\n ", 
-        "format": "", 
-        "section": "", 
-        "item": "period-start", 
-        "occur": "0..*"
     }, 
     {
         "xml": "planned-disbursement/period-start/text()", 
@@ -1824,14 +1032,6 @@
         "occur": "0..1"
     }, 
     {
-        "xml": "planned-disbursement/period-end", 
-        "definition": "\n The ending date for the disbursement period, in ISO 8601\n format (e.g. 2011-03-31 for 31 March 2011). This\n element must be present.\n ", 
-        "format": "", 
-        "section": "", 
-        "item": "period-end", 
-        "occur": "0..*"
-    }, 
-    {
         "xml": "planned-disbursement/period-end/text()", 
         "definition": "\n A date. The ISO 8601 date goes into the @iso-date attribute.\n The content may be free-form text.\n ", 
         "format": "mixed", 
@@ -1846,14 +1046,6 @@
         "section": "", 
         "item": "iso-date", 
         "occur": "0..1"
-    }, 
-    {
-        "xml": "planned-disbursement/value", 
-        "definition": "\n The amount to be disbursed in the specified currency.\n ", 
-        "format": "", 
-        "section": "", 
-        "item": "value", 
-        "occur": "0..*"
     }, 
     {
         "xml": "planned-disbursement/value/text()", 
@@ -1878,14 +1070,6 @@
         "section": "", 
         "item": "value-date", 
         "occur": "1..1"
-    }, 
-    {
-        "xml": "related-activity", 
-        "definition": "\n XX.XX Related Activity\n Another IATI activity related to this one. The \u2018type\u2019\n attribute describes the type of relationship (e.g. parent,\n sibling). This does not need to be used to express funding\n relationships, since those are covered in individual\n transactions.\n For the value of the @type attribute, see\nhttp://iatistandard.org/codelists/related_activity_type\n ", 
-        "format": "", 
-        "section": "related-activity", 
-        "item": "", 
-        "occur": "1..*"
     }, 
     {
         "xml": "related-activity/text()", 
@@ -1920,14 +1104,6 @@
         "occur": "0..1"
     }, 
     {
-        "xml": "document-link", 
-        "definition": "\n A categorized link to an external document.\n ", 
-        "format": "", 
-        "section": "document-link", 
-        "item": "", 
-        "occur": "1..*"
-    }, 
-    {
         "xml": "document-link/@url", 
         "definition": "\n The target URL of the external document, e.g. \u201chttp://www.example.org/doc.html\u201d.\n ", 
         "format": "xsd:anyURI", 
@@ -1944,14 +1120,6 @@
         "occur": "0..1"
     }, 
     {
-        "xml": "document-link/title", 
-        "definition": "\n A short, human-readable title. May be repeated for different\n languages.\n ", 
-        "format": "", 
-        "section": "", 
-        "item": "title", 
-        "occur": "1..*"
-    }, 
-    {
         "xml": "document-link/title/text()", 
         "definition": "\n Data type for an element that may contain human-readable text\n in different languages.\n ", 
         "format": "mixed", 
@@ -1966,14 +1134,6 @@
         "section": "", 
         "item": "xml:lang", 
         "occur": "0..1"
-    }, 
-    {
-        "xml": "document-link/category", 
-        "definition": "\n A category into which this document falls, using the\n IATI document category code list. Must be specified at\n least once, and may be repeated for multiple categories.\n For the value of the @code attribute, see\nhttp://iatistandard.org/codelists/document_category\n ", 
-        "format": "", 
-        "section": "", 
-        "item": "category", 
-        "occur": "1..*"
     }, 
     {
         "xml": "document-link/category/text()", 
@@ -2000,14 +1160,6 @@
         "occur": "0..1"
     }, 
     {
-        "xml": "document-link/language", 
-        "definition": "\n The ISO 639 language code for the target document, e.g. \u201cen\u201d.\n ", 
-        "format": "", 
-        "section": "", 
-        "item": "language", 
-        "occur": "1..*"
-    }, 
-    {
         "xml": "document-link/language/text()", 
         "definition": "\n Data type for an element that refers to an object that can\n have a code as well as human-readable text in different\n languages (e.g. a country or status).\n ", 
         "format": "mixed", 
@@ -2030,14 +1182,6 @@
         "section": "", 
         "item": "xml:lang", 
         "occur": "0..1"
-    }, 
-    {
-        "xml": "legacy-data", 
-        "definition": "\n Hold a single name=value pair of legacy data. This element is\n *not* for adding new data types; instead, it holds the\n original (non-IATI) value or code for an existing data type.\n ", 
-        "format": "", 
-        "section": "legacy-data", 
-        "item": "", 
-        "occur": "1..*"
     }, 
     {
         "xml": "legacy-data/text()", 
