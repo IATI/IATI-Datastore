@@ -2,6 +2,8 @@ from iatilib import log
 from iatilib import session
 from iatilib.model import *
 from iatilib.frontend import app
+from sqlalchemy import func
+from sqlalchemy.orm.collections import InstrumentedList
 from flask import request, make_response, escape
 from datetime import datetime,timedelta
 import json
@@ -52,17 +54,12 @@ def endpoint(rule, **options):
         def wrapped_fn_json(*args, **kwargs):
             callback = request.args.get('callback')
             try:
-                results = f(*args, **kwargs) 
-                raw = {
-                        'ok': True, 
-                        'num_results': len(results), 
-                        'results' :results
-                      }
+                response = f(*args, **kwargs) 
             except (AssertionError, ValueError) as e:
                 if request.args.get('_debug') is not None:
                     raise e
-                raw = { 'ok': False, 'message' : e.message }
-            response_text = json.dumps(raw)
+                response = { 'ok': False, 'message' : e.message }
+            response_text = json.dumps(response)
             if callback:
                 response_text = '%s(%s);' % (callback,response_text)
             response = make_response(response_text)
@@ -79,15 +76,38 @@ def endpoint(rule, **options):
         return f
     return decorator
 
-def json_obj(obj):
+def pure_obj(obj):
     keys = filter(lambda x:x[0]!='_', dir(obj))
     keys.remove('metadata')
-    out = { x: getattr(obj,x) for x in keys }
+    # Handle child relations
+    out = {}
+    for key in keys:
+        val = getattr(obj,key)
+        if type(val) is InstrumentedList:
+            out[key] = [ pure_obj(x) for x in val ]
+        elif type(val) is datetime:
+            out[key] = val.isoformat()
+        else:
+            out[key] = val
     return out
 
 ###########################################
 ####   IATI argument parser 
 ###########################################
+
+def _prepare(total=None, per_page=10):
+    """Prepare a response object based off the incoming args (assume pagination)"""
+    response = {}
+    response['ok'] = True
+    response['page'] = int(request.args.get('page',0))
+    response['per_page'] = int(request.args.get('per_page',per_page))
+    response['offset'] = response['per_page'] * response['page']
+    assert response['page']>=0, 'Page number out of range.'
+    assert response['per_page']>0, 'per_page out of range.'
+    if total:
+        response['total'] = total
+        response['last_page'] = max(0,total-1) / response['per_page']
+    return response
 
 def parse_args():
     """Turn the querystring into an XPath expression we can use to select elements.
@@ -166,6 +186,23 @@ def about():
     count_transaction = session.query(Transaction).count()
     return {'ok':True,'status':'healthy','indexed_activities':count_activity,'indexed_transactions':count_transaction}
 
+#### URL: /access/activities
+
+@endpoint('/access/activities')
+def activities_list():
+    query = session.query(Activity)
+    _country = request.args.get('country')
+    if _country is not None:
+        query = query.filter(func.lower(Activity.recipient_country__text).contains(_country.lower()))
+    _country_code = request.args.get('country_code')
+    if _country_code is not None:
+        query = query.filter(func.lower(Activity.recipient_country__code)==(_country_code.lower()))
+    response = _prepare(query.count())
+    query = query.offset(response['offset']).limit(response['per_page'])
+    response['results'] = [ pure_obj(x) for x in query ]
+    return response
+
+"""
 #### URL: /transaction and /transactions
 
 @endpoint('/access/transactions')
@@ -173,30 +210,5 @@ def transaction_list():
     query = session.query(Transaction)
     query = query.limit(20)
     return [ json_obj(x) for x in query ]
-
-@endpoint('/access/transaction/<id>')
-def transaction(id):
-    query = session.query(Transaction)\
-            .filter(Transaction.iati_identifier==id)
-    query = query.limit(20)
-    return [ json_obj(x) for x in query ]
-
-#### URL: /activity and /activities
-
-@endpoint('/access/activities')
-def activities_list():
-    query = session.query(Activity)
-    query = query.limit(20)
-    return [ json_obj(x) for x in query ]
-
-@endpoint('/access/activity/<id>')
-def activity(id):
-    query = session.query(Activity)\
-            .filter(Activity.iati_identifier==id)
-    return [ json_obj(x) for x in query ]
-
-## @endpoint('/debug/args')
-## def debug_args():
-##     return {'raw':request.args, 'processed':parse_args()}
-
+"""
 
