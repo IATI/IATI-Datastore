@@ -1,6 +1,5 @@
 from lxml import etree
 import model
-from . import log
 from datetime import datetime
 import iso8601
 from iatilib import session
@@ -14,7 +13,7 @@ def parse(url):
     parser = etree.XMLParser(ns_clean=True, recover=True)
     doc = etree.parse(url, parser)
     activities = []
-    logger = Logger('parse(\'%s\'): '%url)
+    logger = Logger()
     for xml in doc.findall("iati-activity"):
         try:
             # Parse first...
@@ -34,17 +33,18 @@ def parse(url):
             # .. then update the global object set
             activities.append(activity)
         except (ValueError,AssertionError) as e:
-            logger.log(str(e),level='error')
-    return activities
+            logger.log(unicode(e),level='error')
+    return activities, logger.errors
 
 # =========
 # Utilities
 # =========
 class Logger():
-    def __init__(self, prefix):
-        self.prefix = prefix
-    def log(self,string,level='warning'):
-        log(level,self.prefix+string)
+    def __init__(self):
+        self.errors = []
+    def log(self,text,level='warning'):
+        level = { 'warning': 1, 'error' : 2 }[level]
+        self.errors.append( model.LogError(text=unicode(text),level=level) )
 
 def _parse_float(logger,x):
     if x is None or x.strip()=='': return 0.0
@@ -52,7 +52,7 @@ def _parse_float(logger,x):
     try:
         return float(x)
     except ValueError, e:
-        logger.log(e)
+        logger.log(unicode(e))
         return 0
 
 def _parse_int(logger,x):
@@ -61,7 +61,7 @@ def _parse_int(logger,x):
     try:
         return int(x)
     except ValueError, e:
-        logger.log(e)
+        logger.log(unicode(e))
         return 0
 
 def _parse_datetime(logger,x):

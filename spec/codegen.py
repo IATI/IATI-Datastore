@@ -66,7 +66,7 @@ def codegen():
         print '    __tablename__ = \'%s\'' % spec['tablename']
         print '    id = Column(Integer, primary_key=True)'
         for x in spec.get('children',[]):
-            print '    %s = relationship("%s")' % (x['table'],x['class'])
+            print '    %s = relationship("%s",cascade="all")' % (x['table'],x['class'])
         if 'foreign_key' in spec:
             print '    parent_id = Column(%s, ForeignKey(\'%s\'), nullable=False)' % (spec['foreign_key'].get('format','Integer'), spec['foreign_key']['name'])
         for x in _model_fields(spec['fields']): print '    '+x

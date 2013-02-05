@@ -30,14 +30,19 @@ def download(debug_limit=None,verbose=False):
                 print 'Scrape [%d/%d] (%s) %s... ' % (i,count_resources,state_string,url),
                 sys.stdout.flush()
             # Download and import
-            activities = parser.parse(url)
+            activities,logerrors = parser.parse(url)
             print 'Done. Got:', _object_summary(activities)
             # Delete this resource's activities
             for activity in indexed_resource.activities:
                 session.delete(activity)
+            for error in indexed_resource.logerrors:
+                session.delete(error)
+            session.commit()
             # Add the new objects
             for activity in activities:
                 indexed_resource.activities.append( activity )
+            for error in logerrors:
+                indexed_resource.logerrors.append( error )
             indexed_resource.state=1
             session.commit()
         except IOError, e:
