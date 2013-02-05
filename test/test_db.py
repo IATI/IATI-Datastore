@@ -6,7 +6,7 @@ import job_crawl_ckan
 from datetime import datetime
 
 
-DB_OBJECTS = [IndexedResource,Transaction,Sector,RelatedActivity,Activity]
+DB_OBJECTS = [IndexedResource,Transaction,Sector,Activity]
 TIMESTAMP = datetime(day=31,month=1,year=2013)
 
 class DbTestCase(unittest.TestCase):

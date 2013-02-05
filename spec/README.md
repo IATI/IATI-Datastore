@@ -1,21 +1,16 @@
-Tools and datafiles used in extracting a list of all database fields required to store records.
-
 spec.json
 =========
-This is a JSON file scraped from http://iatistandard.org/activity-schema-table/
+The JSON format document controlling the database layout. It lists the XPaths to be parsed into database fields. Updating this file and re-running the code generator will alter the database structure and require the IATI database to be re-parsed.
+> Source: Originally scraped from http://iatistandard.org/activity-schema-table/ and modified by hand.
 I originally attempted to formulate this spec from the XSD files, but the XML is tricky to process due to its layers of inheritance and types; no Python library can juggle XSDs comfortably (except for use in verifying a .xml); and online tools are mostly Java-based class generators.
-A simpler approach is to extract the list of expected fields from IATI's HTML webpage. In the JS console:
 
-    // step 0: copy and paste the contents of http://code.jquery.com/jquery-1.9.0.min.js
-    all = []
-    readRow = function(i,tr) { var tds = $(tr).find('td'); var out = { section:$(tds[0]).text(), item:$(tds[1]).text(), definition:$(tds[2]).text(), format:$(tds[3]).text(), xml:$(tds[4]).text(), occur:$(tds[5]).text(),  }; all.push(out); }
-    $('#tblMain tr').each( readRow )
-    $('body').text( JSON.stringify(all) );
-    // final step: copy-paste the new page content into a .json textfile
-
-spec_to_python.py
-=================
-(TODO explain)
+codegen.py
+===========
+This outputs the model code to be pasted into model.py. This code is a direct consequence of the structure of spec.json, which attempts to balance the hierarchical nature of XML against the static fields of a database table. (Eg. most activities only have a single document-link node, therefore no need to add a one-to-many subtable for them).
+Usage:
+* Run from the root directory, eg. `python spec/codegen.py`
+* To update the db spec: Open up model.py and delete the lower part of the file (after the comment).
+* Replace with the output of codegen.py.
 
 
 

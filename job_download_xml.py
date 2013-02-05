@@ -38,8 +38,7 @@ def download(debug_limit=None,verbose=False):
             # Delete this resource's objects
             _delete_objects(Activity,indexed_resource.id)
             _delete_objects(Transaction,indexed_resource.id)
-            _delete_objects(Sector,indexed_resource.id)
-            _delete_objects(RelatedActivity,indexed_resource.id)
+            # TODO the others too!
             # Add the new objects
             for x in objects:
                 session.add( x )
