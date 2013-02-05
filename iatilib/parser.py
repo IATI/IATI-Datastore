@@ -77,6 +77,7 @@ def _nav(logger, element, path, attrib=None, text=False, parser=None):
     if text:
         out = element.text
     else:
+        if attrib=='xml:lang' : attrib='{http://www.w3.org/XML/1998/namespace}lang'
         out = element.attrib.get(attrib) 
     if out is not None:
         out = unicode(out).strip()
