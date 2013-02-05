@@ -1,5 +1,5 @@
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column,Integer,DateTime,Date,Float,ForeignKey,UnicodeText
+from sqlalchemy import Column,Integer,DateTime,Float,ForeignKey,UnicodeText,Boolean
 from . import engine
 
 Base = declarative_base()
@@ -11,102 +11,7 @@ class IndexedResource(Base):
     last_modified = Column(DateTime)
     state = Column(Integer)
 
-class Activity(Base):
-    __tablename__ = 'activity'
-    id = Column(Integer, primary_key=True)
-    parent_resource = Column(UnicodeText, ForeignKey('indexed_resource.id'), nullable=False)
-    # TODO remove
-    package_id = Column(UnicodeText)
-    # TODO remove
-    source_file = Column(UnicodeText)
-    activity_lang = Column(UnicodeText)
-    default_currency = Column(UnicodeText)
-    hierarchy = Column(UnicodeText)
-    last_updated = Column(UnicodeText)
-    reporting_org = Column(UnicodeText)
-    reporting_org_ref = Column(UnicodeText)
-    reporting_org_type = Column(UnicodeText)
-    funding_org = Column(UnicodeText)
-    funding_org_ref = Column(UnicodeText)
-    funding_org_type = Column(UnicodeText)
-    extending_org = Column(UnicodeText)
-    extending_org_ref = Column(UnicodeText)
-    extending_org_type = Column(UnicodeText)
-    implementing_org = Column(UnicodeText)
-    implementing_org_ref = Column(UnicodeText)
-    implementing_org_type = Column(UnicodeText)
-    recipient_region = Column(UnicodeText)
-    recipient_region_code = Column(UnicodeText)
-    recipient_country = Column(UnicodeText)
-    recipient_country_code = Column(UnicodeText)
-    collaboration_type = Column(UnicodeText)
-    collaboration_type_code = Column(UnicodeText)
-    flow_type = Column(UnicodeText)
-    flow_type_code = Column(UnicodeText)
-    aid_type = Column(UnicodeText)
-    aid_type_code = Column(UnicodeText)
-    finance_type = Column(UnicodeText)
-    finance_type_code = Column(UnicodeText)
-    iati_identifier = Column(UnicodeText, index=True)
-    title = Column(UnicodeText)
-    description = Column(UnicodeText)
-    date_start_actual = Column(UnicodeText)
-    date_start_planned = Column(UnicodeText)
-    date_end_actual = Column(UnicodeText)
-    date_end_planned = Column(UnicodeText)
-    status_code = Column(UnicodeText)
-    status = Column(UnicodeText)
-    contact_organisation = Column(UnicodeText)
-    contact_telephone = Column(UnicodeText)
-    contact_email = Column(UnicodeText)
-    contact_mailing_address = Column(UnicodeText)
-    tied_status = Column(UnicodeText)
-    tied_status_code = Column(UnicodeText)
-    activity_website = Column(UnicodeText)
-    def _json(self):
-        keys = filter(lambda x:x[0]!='_', dir(self))
-        keys.remove('metadata')
-        out = { x: getattr(self,x) for x in keys }
-        return out
-
-
-class Transaction(Base):
-    __tablename__ = 'transaction'
-    id = Column(Integer, primary_key=True)
-    parent_resource = Column(UnicodeText, ForeignKey('indexed_resource.id'), nullable=False)
-    activity_id = Column(UnicodeText)
-    value = Column(Float)
-    iati_identifier = Column(UnicodeText, index=True)
-    value_date = Column(UnicodeText)
-    value_currency = Column(UnicodeText)
-    transaction_type = Column(UnicodeText)
-    transaction_type_code = Column(UnicodeText)
-    provider_org = Column(UnicodeText)
-    provider_org_ref = Column(UnicodeText)
-    provider_org_type = Column(UnicodeText)
-    receiver_org = Column(UnicodeText)
-    receiver_org_ref = Column(UnicodeText)
-    receiver_org_type = Column(UnicodeText)
-    description = Column(UnicodeText)
-    transaction_date = Column(UnicodeText)
-    transaction_date_iso = Column(UnicodeText)
-    flow_type = Column(UnicodeText)
-    flow_type_code = Column(UnicodeText)
-    aid_type = Column(UnicodeText)
-    aid_type_code = Column(UnicodeText)
-    finance_type = Column(UnicodeText)
-    finance_type_code = Column(UnicodeText)
-    tied_status = Column(UnicodeText)
-    tied_status_code = Column(UnicodeText)
-    disbursement_channel_code = Column(UnicodeText)
-    def _json(self):
-        keys = filter(lambda x:x[0]!='_', dir(self))
-        keys.remove('metadata')
-        out = { x: getattr(self,x) for x in keys }
-        return out
-
 # Put everything into sectors table, and link back to activity. This will create a new unique sector per activity, which is OK for then importing back into OS but obviously you would probably want an activities_sectors table to handle a relationship between unique activities and unique sectors.
- 
 class Sector(Base):
     __tablename__ = 'sector'
     id = Column(Integer, primary_key=True)   
@@ -125,4 +30,211 @@ class RelatedActivity(Base):
     reltext = Column(UnicodeText)
     relref = Column(UnicodeText)
     reltype = Column(UnicodeText)
+
+
+# =============================================================
+# ========   Everything below is code-generated!   ============
+# ========   See /spec for how it's made.          ============
+# =============================================================
+# ==  eg. (1) delete everything below                        ==
+# ==      (2) put your cursor down there                     ==
+# ==      (3) execute vim command:                           ==
+# ==          :r ! python spec/codegen.py model              ==
+# =============================================================
+
+# These classes to be pasted into model.py
+# Autogenerated on 2013-02-05 00:05:05.056283
+class Activity(Base):
+    __tablename__ = 'activity'
+    id = Column(Integer, primary_key=True)
+    parent_resource = Column(UnicodeText, ForeignKey('indexed_resource.id'), nullable=False)
+    version = Column(Float)	# @version
+    last_updated_datetime = Column(DateTime)	# @last-updated-datetime
+    lang = Column(UnicodeText)	# @xml:lang
+    default_currency = Column(UnicodeText)	# @default-currency
+    hierarchy = Column(Float)	# @hierarchy
+    linked_data_uri = Column(UnicodeText)	# @linked-data-uri
+    activity_website__text = Column(UnicodeText)	# activity-website/text()
+    reporting_org__text = Column(UnicodeText)	# reporting-org/text()
+    reporting_org__ref = Column(UnicodeText)	# reporting-org/@ref
+    reporting_org__type = Column(UnicodeText)	# reporting-org/@type
+    reporting_org__lang = Column(UnicodeText)	# reporting-org/@xml:lang
+    participating_org__text = Column(UnicodeText)	# participating-org/text()
+    participating_org__ref = Column(UnicodeText)	# participating-org/@ref
+    participating_org__type = Column(UnicodeText)	# participating-org/@type
+    participating_org__role = Column(UnicodeText)	# participating-org/@role
+    participating_org__lang = Column(UnicodeText)	# participating-org/@xml:lang
+    recipient_country__text = Column(UnicodeText)	# recipient-country/text()
+    recipient_country__code = Column(UnicodeText)	# recipient-country/@code
+    recipient_country__percentage = Column(Float)	# recipient-country/@percentage
+    recipient_country__lang = Column(UnicodeText)	# recipient-country/@xml:lang
+    recipient_region__text = Column(UnicodeText)	# recipient-region/text()
+    recipient_region__code = Column(UnicodeText)	# recipient-region/@code
+    recipient_region__percentage = Column(Float)	# recipient-region/@percentage
+    recipient_region__lang = Column(UnicodeText)	# recipient-region/@xml:lang
+    collaboration_type__text = Column(UnicodeText)	# collaboration-type/text()
+    collaboration_type__code = Column(UnicodeText)	# collaboration-type/@code
+    collaboration_type__lang = Column(UnicodeText)	# collaboration-type/@xml:lang
+    default_flow_type__text = Column(UnicodeText)	# default-flow-type/text()
+    default_flow_type__code = Column(UnicodeText)	# default-flow-type/@code
+    default_flow_type__lang = Column(UnicodeText)	# default-flow-type/@xml:lang
+    default_aid_type__text = Column(UnicodeText)	# default-aid-type/text()
+    default_aid_type__code = Column(UnicodeText)	# default-aid-type/@code
+    default_aid_type__lang = Column(UnicodeText)	# default-aid-type/@xml:lang
+    default_finance_type__text = Column(UnicodeText)	# default-finance-type/text()
+    default_finance_type__code = Column(UnicodeText)	# default-finance-type/@code
+    default_finance_type__lang = Column(UnicodeText)	# default-finance-type/@xml:lang
+    iati_identifier__text = Column(UnicodeText)	# iati-identifier/text()
+    other_identifier__text = Column(UnicodeText)	# other-identifier/text()
+    other_identifier__owner_ref = Column(UnicodeText)	# other-identifier/@owner-ref
+    other_identifier__owner_name = Column(UnicodeText)	# other-identifier/@owner-name
+    title__text = Column(UnicodeText)	# title/text()
+    title__lang = Column(UnicodeText)	# title/@xml:lang
+    description__text = Column(UnicodeText)	# description/text()
+    description__type = Column(UnicodeText)	# description/@type
+    description__lang = Column(UnicodeText)	# description/@xml:lang
+    sector__text = Column(UnicodeText)	# sector/text()
+    sector__code = Column(UnicodeText)	# sector/@code
+    sector__vocabulary = Column(UnicodeText)	# sector/@vocabulary
+    sector__percentage = Column(Float)	# sector/@percentage
+    sector__lang = Column(UnicodeText)	# sector/@xml:lang
+    activity_date__text = Column(UnicodeText)	# activity-date/text()
+    activity_date__type = Column(UnicodeText)	# activity-date/@type
+    activity_date__iso_date = Column(UnicodeText)	# activity-date/@iso-date
+    activity_date__lang = Column(UnicodeText)	# activity-date/@xml:lang
+    activity_status__text = Column(UnicodeText)	# activity-status/text()
+    activity_status__code = Column(UnicodeText)	# activity-status/@code
+    activity_status__lang = Column(UnicodeText)	# activity-status/@xml:lang
+    contact_info__organisation__text = Column(UnicodeText)	# contact-info/organisation/text()
+    contact_info__person_name__text = Column(UnicodeText)	# contact-info/person-name/text()
+    contact_info__telephone__text = Column(UnicodeText)	# contact-info/telephone/text()
+    contact_info__email__text = Column(UnicodeText)	# contact-info/email/text()
+    contact_info__mailing_address__text = Column(UnicodeText)	# contact-info/mailing-address/text()
+    default_tied_status__text = Column(UnicodeText)	# default-tied-status/text()
+    default_tied_status__code = Column(UnicodeText)	# default-tied-status/@code
+    default_tied_status__lang = Column(UnicodeText)	# default-tied-status/@xml:lang
+    policy_marker__text = Column(UnicodeText)	# policy-marker/text()
+    policy_marker__code = Column(UnicodeText)	# policy-marker/@code
+    policy_marker__vocabulary = Column(UnicodeText)	# policy-marker/@vocabulary
+    policy_marker__significance = Column(UnicodeText)	# policy-marker/@significance
+    policy_marker__lang = Column(UnicodeText)	# policy-marker/@xml:lang
+    location__percentage = Column(Float)	# location/@percentage
+    location__location_type__text = Column(UnicodeText)	# location/location-type/text()
+    location__location_type__code = Column(UnicodeText)	# location/location-type/@code
+    location__location_type__lang = Column(UnicodeText)	# location/location-type/@xml:lang
+    location__name__text = Column(UnicodeText)	# location/name/text()
+    location__name__lang = Column(UnicodeText)	# location/name/@xml:lang
+    location__description__text = Column(UnicodeText)	# location/description/text()
+    location__description__lang = Column(UnicodeText)	# location/description/@xml:lang
+    location__administrative__text = Column(UnicodeText)	# location/administrative/text()
+    location__administrative__country = Column(UnicodeText)	# location/administrative/@country
+    location__administrative__adm1 = Column(UnicodeText)	# location/administrative/@adm1
+    location__administrative__adm2 = Column(UnicodeText)	# location/administrative/@adm2
+    location__coordinates__latitude = Column(Float)	# location/coordinates/@latitude
+    location__coordinates__longitude = Column(Float)	# location/coordinates/@longitude
+    location__coordinates__precision = Column(UnicodeText)	# location/coordinates/@precision
+    location__gazetteer_entry__text = Column(UnicodeText)	# location/gazetteer-entry/text()
+    location__gazetteer_entry__gazetteer_ref = Column(UnicodeText)	# location/gazetteer-entry/@gazetteer-ref
+    result__type = Column(UnicodeText)	# result/@type
+    result__aggregation_status = Column(Boolean)	# result/@aggregation-status
+    result__title__text = Column(UnicodeText)	# result/title/text()
+    result__title__lang = Column(UnicodeText)	# result/title/@xml:lang
+    result__description__text = Column(UnicodeText)	# result/description/text()
+    result__description__type = Column(UnicodeText)	# result/description/@type
+    result__description__lang = Column(UnicodeText)	# result/description/@xml:lang
+    result__indicator__measure = Column(UnicodeText)	# result/indicator/@measure
+    result__indicator__ascending = Column(Boolean)	# result/indicator/@ascending
+    result__indicator__title__text = Column(UnicodeText)	# result/indicator/title/text()
+    result__indicator__title__lang = Column(UnicodeText)	# result/indicator/title/@xml:lang
+    result__indicator__description__text = Column(UnicodeText)	# result/indicator/description/text()
+    result__indicator__description__type = Column(UnicodeText)	# result/indicator/description/@type
+    result__indicator__description__lang = Column(UnicodeText)	# result/indicator/description/@xml:lang
+    result__indicator__baseline__year = Column(Float)	# result/indicator/baseline/@year
+    result__indicator__baseline__value = Column(UnicodeText)	# result/indicator/baseline/@value
+    result__indicator__baseline__comment__text = Column(UnicodeText)	# result/indicator/baseline/comment/text()
+    result__indicator__baseline__comment__lang = Column(UnicodeText)	# result/indicator/baseline/comment/@xml:lang
+    result__indicator__period__period_start__text = Column(UnicodeText)	# result/indicator/period/period-start/text()
+    result__indicator__period__period_start__iso_date = Column(UnicodeText)	# result/indicator/period/period-start/@iso-date
+    result__indicator__period__period_end__text = Column(UnicodeText)	# result/indicator/period/period-end/text()
+    result__indicator__period__period_end__iso_date = Column(UnicodeText)	# result/indicator/period/period-end/@iso-date
+    result__indicator__period__target__value = Column(UnicodeText)	# result/indicator/period/target/@value
+    result__indicator__period__target__comment__text = Column(UnicodeText)	# result/indicator/period/target/comment/text()
+    result__indicator__period__target__comment__lang = Column(UnicodeText)	# result/indicator/period/target/comment/@xml:lang
+    result__indicator__period__actual__value = Column(UnicodeText)	# result/indicator/period/actual/@value
+    result__indicator__period__actual__comment__text = Column(UnicodeText)	# result/indicator/period/actual/comment/text()
+    result__indicator__period__actual__comment__lang = Column(UnicodeText)	# result/indicator/period/actual/comment/@xml:lang
+    conditions__attached = Column(Boolean)	# conditions/@attached
+    conditions__condition__text = Column(UnicodeText)	# conditions/condition/text()
+    conditions__condition__type = Column(UnicodeText)	# conditions/condition/@type
+    budget__type = Column(UnicodeText)	# budget/@type
+    budget__period_start__text = Column(UnicodeText)	# budget/period-start/text()
+    budget__period_start__iso_date = Column(UnicodeText)	# budget/period-start/@iso-date
+    budget__period_end__text = Column(UnicodeText)	# budget/period-end/text()
+    budget__period_end__iso_date = Column(UnicodeText)	# budget/period-end/@iso-date
+    budget__value__text = Column(Float)	# budget/value/text()
+    budget__value__currency = Column(UnicodeText)	# budget/value/@currency
+    budget__value__value_date = Column(UnicodeText)	# budget/value/@value-date
+    planned_disbursement__updated = Column(UnicodeText)	# planned-disbursement/@updated
+    planned_disbursement__period_start__text = Column(UnicodeText)	# planned-disbursement/period-start/text()
+    planned_disbursement__period_start__iso_date = Column(UnicodeText)	# planned-disbursement/period-start/@iso-date
+    planned_disbursement__period_end__text = Column(UnicodeText)	# planned-disbursement/period-end/text()
+    planned_disbursement__period_end__iso_date = Column(UnicodeText)	# planned-disbursement/period-end/@iso-date
+    planned_disbursement__value__text = Column(Float)	# planned-disbursement/value/text()
+    planned_disbursement__value__currency = Column(UnicodeText)	# planned-disbursement/value/@currency
+    planned_disbursement__value__value_date = Column(UnicodeText)	# planned-disbursement/value/@value-date
+    related_activity__text = Column(UnicodeText)	# related-activity/text()
+    related_activity__ref = Column(UnicodeText)	# related-activity/@ref
+    related_activity__type = Column(UnicodeText)	# related-activity/@type
+    related_activity__lang = Column(UnicodeText)	# related-activity/@xml:lang
+    document_link__url = Column(UnicodeText)	# document-link/@url
+    document_link__format = Column(UnicodeText)	# document-link/@format
+    document_link__title__text = Column(UnicodeText)	# document-link/title/text()
+    document_link__title__lang = Column(UnicodeText)	# document-link/title/@xml:lang
+    document_link__category__text = Column(UnicodeText)	# document-link/category/text()
+    document_link__category__code = Column(UnicodeText)	# document-link/category/@code
+    document_link__category__lang = Column(UnicodeText)	# document-link/category/@xml:lang
+    document_link__language__text = Column(UnicodeText)	# document-link/language/text()
+    document_link__language__code = Column(UnicodeText)	# document-link/language/@code
+    document_link__language__lang = Column(UnicodeText)	# document-link/language/@xml:lang
+    legacy_data__text = Column(UnicodeText)	# legacy-data/text()
+    legacy_data__name = Column(UnicodeText)	# legacy-data/@name
+    legacy_data__value = Column(UnicodeText)	# legacy-data/@value
+    legacy_data__iati_equivalent = Column(UnicodeText)	# legacy-data/@iati-equivalent
+
+class Transaction(Base):
+    __tablename__ = 'transaction'
+    id = Column(Integer, primary_key=True)
+    parent_resource = Column(UnicodeText, ForeignKey('indexed_resource.id'), nullable=False)
+    ref = Column(UnicodeText)	# @ref
+    value__text = Column(Float)	# value/text()
+    value__currency = Column(UnicodeText)	# value/@currency
+    value__value_date = Column(UnicodeText)	# value/@value-date
+    description__text = Column(UnicodeText)	# description/text()
+    description__lang = Column(UnicodeText)	# description/@xml:lang
+    transaction_type__text = Column(UnicodeText)	# transaction-type/text()
+    transaction_type__code = Column(UnicodeText)	# transaction-type/@code
+    transaction_type__lang = Column(UnicodeText)	# transaction-type/@xml:lang
+    provider_org__text = Column(UnicodeText)	# provider-org/text()
+    provider_org__ref = Column(UnicodeText)	# provider-org/@ref
+    provider_org__provider_activity_id = Column(UnicodeText)	# provider-org/@provider-activity-id
+    receiver_org__text = Column(UnicodeText)	# receiver-org/text()
+    receiver_org__ref = Column(UnicodeText)	# receiver-org/@ref
+    receiver_org__receiver_activity_id = Column(UnicodeText)	# receiver-org/@receiver-activity-id
+    transaction_date__text = Column(UnicodeText)	# transaction-date/text()
+    transaction_date__iso_date = Column(UnicodeText)	# transaction-date/@iso-date
+    flow_type__text = Column(UnicodeText)	# flow-type/text()
+    flow_type__code = Column(UnicodeText)	# flow-type/@code
+    flow_type__lang = Column(UnicodeText)	# flow-type/@xml:lang
+    aid_type__text = Column(UnicodeText)	# aid-type/text()
+    aid_type__code = Column(UnicodeText)	# aid-type/@code
+    aid_type__lang = Column(UnicodeText)	# aid-type/@xml:lang
+    finance_type__text = Column(UnicodeText)	# finance-type/text()
+    finance_type__code = Column(UnicodeText)	# finance-type/@code
+    finance_type__lang = Column(UnicodeText)	# finance-type/@xml:lang
+    tied_status__text = Column(UnicodeText)	# tied-status/text()
+    tied_status__code = Column(UnicodeText)	# tied-status/@code
+    tied_status__lang = Column(UnicodeText)	# tied-status/@xml:lang
+    disbursement_channel__text = Column(UnicodeText)	# disbursement-channel/text()
+    disbursement_channel__code = Column(UnicodeText)	# disbursement-channel/@code
+    disbursement_channel__lang = Column(UnicodeText)	# disbursement-channel/@xml:lang
 

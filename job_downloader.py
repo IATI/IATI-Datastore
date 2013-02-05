@@ -1,7 +1,6 @@
 #!/usr/bin/env python 
 
-from iatilib import session
-from iatilib import Parser
+from iatilib import session, parser
 from iatilib.model import *
 import dateutil.parser
 import traceback
@@ -31,9 +30,11 @@ def downloader(debug_limit=None,verbose=False):
                 print 'Scrape [%d/%d] (%s) %s... ' % (i,count_resources,state_string,url),
                 sys.stdout.flush()
             # Download and import
-            parser = Parser(url,indexed_resource.id)
-            objects = parser.parse()
+            objects = parser.parse(url)
             print 'Done. Got:', _object_summary(objects)
+            # Objects are not valid without some parent resource attached
+            for x in objects:
+                x.parent_resource = indexed_resource.id
             # Delete this resource's objects
             _delete_objects(Activity,indexed_resource.id)
             _delete_objects(Transaction,indexed_resource.id)
@@ -66,9 +67,9 @@ def _object_summary(objects):
 
 
 if __name__=='__main__':
-    parser = argparse.ArgumentParser(description='')
-    parser.add_argument('-d', '--debug', type=int, dest='debug_limit', help='Debug: Limit the number of records to be handled in this sweep.')
-    parser.add_argument('-v', '--verbose', action='store_true', help='Verbose mode')
-    arg = parser.parse_args()
+    argparser = argparse.ArgumentParser(description='')
+    argparser.add_argument('-d', '--debug', type=int, dest='debug_limit', help='Debug: Limit the number of records to be handled in this sweep.')
+    argparser.add_argument('-v', '--verbose', action='store_true', help='Verbose mode')
+    arg = argparser.parse_args()
     downloader(debug_limit=arg.debug_limit,verbose=arg.verbose)
 

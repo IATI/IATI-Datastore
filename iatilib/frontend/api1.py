@@ -79,6 +79,11 @@ def endpoint(rule, **options):
         return f
     return decorator
 
+def json_obj(obj):
+    keys = filter(lambda x:x[0]!='_', dir(obj))
+    keys.remove('metadata')
+    out = { x: getattr(obj,x) for x in keys }
+    return out
 
 ###########################################
 ####   IATI argument parser 
@@ -167,14 +172,14 @@ def about():
 def transaction_list():
     query = session.query(Transaction)
     query = query.limit(20)
-    return [ x._json() for x in query ]
+    return [ json_obj(x) for x in query ]
 
 @endpoint('/access/transaction/<id>')
 def transaction(id):
     query = session.query(Transaction)\
             .filter(Transaction.iati_identifier==id)
     query = query.limit(20)
-    return [ x._json() for x in query ]
+    return [ json_obj(x) for x in query ]
 
 #### URL: /activity and /activities
 
@@ -182,13 +187,13 @@ def transaction(id):
 def activities_list():
     query = session.query(Activity)
     query = query.limit(20)
-    return [ x._json() for x in query ]
+    return [ json_obj(x) for x in query ]
 
 @endpoint('/access/activity/<id>')
 def activity(id):
     query = session.query(Activity)\
             .filter(Activity.iati_identifier==id)
-    return [ x._json() for x in query ]
+    return [ json_obj(x) for x in query ]
 
 ## @endpoint('/debug/args')
 ## def debug_args():
