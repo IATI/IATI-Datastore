@@ -9,7 +9,7 @@ import argparse
 import sys
 import json
 
-def downloader(debug_limit=None,verbose=False):
+def download(debug_limit=None,verbose=False):
     q = session.query(IndexedResource)\
             .filter(IndexedResource.state<=0)\
             .filter(IndexedResource.state!=-3)\
@@ -71,5 +71,5 @@ if __name__=='__main__':
     argparser.add_argument('-d', '--debug', type=int, dest='debug_limit', help='Debug: Limit the number of records to be handled in this sweep.')
     argparser.add_argument('-v', '--verbose', action='store_true', help='Verbose mode')
     arg = argparser.parse_args()
-    downloader(debug_limit=arg.debug_limit,verbose=arg.verbose)
+    download(debug_limit=arg.debug_limit,verbose=arg.verbose)
 
