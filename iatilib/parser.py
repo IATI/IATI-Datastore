@@ -13,7 +13,7 @@ def parse(url):
     Or throw XML parse errors. Whatever."""
     parser = etree.XMLParser(ns_clean=True, recover=True)
     doc = etree.parse(url, parser)
-    all_objects = []
+    activities = []
     logger = Logger('parse(\'%s\'): '%url)
     for xml in doc.findall("iati-activity"):
         try:
@@ -26,18 +26,19 @@ def parse(url):
             participatings = [ model.ParticipatingOrg._parse_xml(logger,x) for x in xml.findall('participating-org') ]
             # ...then validate ...
             _validate(activity,transactions,sectors,activitydates,contactinfos,participatings)
+            # ...then foreignkey ...
+            for x in transactions: activity.transaction.append(x)
+            for x in sectors: activity.sector.append(x)
+            for x in activitydates: activity.activitydate.append(x)
+            for x in contactinfos: activity.contactinfo.append(x)
+            for x in participatings: activity.participatingorg.append(x)
             # .. then update the global object set
-            all_objects.append(activity)
-            all_objects.extend(transactions)
-            all_objects.extend(sectors)
-            all_objects.extend(activitydates)
-            all_objects.extend(contactinfos)
-            all_objects.extend(participatings)
+            activities.append(activity)
         except ParseError as e:
             logger.log(str(e))
         except (ValueError,AssertionError) as e:
             logger.log(str(e),level='error')
-    return all_objects
+    return activities
 
 # =========
 # Utilities
@@ -68,7 +69,9 @@ def _parse_datetime(x):
     if x is None: return None
     try:
         if not ':' in x:
-            x += ' 00:00:00'
+            if not x.endswith('Z'):
+                x+=' '
+            x += '00:00:00'
         return iso8601.parse_date(x)
     except:
         raise ParseError('Could not parse ISO date "%s"' % x)

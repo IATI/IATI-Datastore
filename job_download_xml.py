@@ -30,18 +30,14 @@ def download(debug_limit=None,verbose=False):
                 print 'Scrape [%d/%d] (%s) %s... ' % (i,count_resources,state_string,url),
                 sys.stdout.flush()
             # Download and import
-            objects = parser.parse(url)
-            print 'Done. Got:', _object_summary(objects)
-            # Objects are not valid without some parent resource attached
-            for x in objects:
-                x.parent_resource = indexed_resource.id
-            # Delete this resource's objects
-            _delete_objects(Activity,indexed_resource.id)
-            _delete_objects(Transaction,indexed_resource.id)
-            # TODO the others too!
+            activities = parser.parse(url)
+            print 'Done. Got:', _object_summary(activities)
+            # Delete this resource's activities
+            for activity in indexed_resource.activities:
+                session.delete(activity)
             # Add the new objects
-            for x in objects:
-                session.add( x )
+            for activity in activities:
+                indexed_resource.activities.append( activity )
             indexed_resource.state=1
             session.commit()
         except IOError, e:
@@ -51,9 +47,9 @@ def download(debug_limit=None,verbose=False):
             traceback.print_exc()
             print 'Uncaught error in: %s - %s' % (url, str(e))
 
-def _delete_objects(class_obj,resource_id):
-    for x in session.query(class_obj).filter(class_obj.parent_resource==resource_id):
-        session.delete(x)
+def _delete_objects(resource_id):
+    for activity in session.query(Activity).filter(Activity.parent_id==resource_id):
+        session.delete(activity)
 
 def _object_summary(objects):
     if objects==[]:

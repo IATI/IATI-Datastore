@@ -65,7 +65,10 @@ def codegen():
         print 'class %s(Base):' % spec['classname']
         print '    __tablename__ = \'%s\'' % spec['tablename']
         print '    id = Column(Integer, primary_key=True)'
-        print '    parent_resource = Column(UnicodeText, ForeignKey(\'indexed_resource.id\'), nullable=False)'
+        for x in spec.get('children',[]):
+            print '    %s = relationship("%s")' % (x['table'],x['class'])
+        if 'foreign_key' in spec:
+            print '    parent_id = Column(%s, ForeignKey(\'%s\'), nullable=False)' % (spec['foreign_key'].get('format','Integer'), spec['foreign_key']['name'])
         for x in _model_fields(spec['fields']): print '    '+x
         print '    @classmethod'
         print '    def _parse_xml(cls,logger,xml):'

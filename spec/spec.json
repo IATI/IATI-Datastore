@@ -2,6 +2,14 @@
   {
     "tablename": "activity",
     "classname": "Activity",
+    "foreign_key": {"name":"indexed_resource.id","format":"UnicodeText"},
+    "children": [ 
+        {"table":"transaction","class":"Transaction"},
+        {"table":"sector","class":"Sector"},
+        {"table":"participatingorg","class":"ParticipatingOrg"},
+        {"table":"contactinfo","class":"ContactInfo"},
+        {"table":"activitydate", "class":"ActivityDate"}
+    ],
     "fields": [
         { "xml": "@version", "format": "Float" }, 
         { "xml": "@last-updated-datetime", "format": "DateTime" }, 
@@ -141,6 +149,7 @@
   {
     "tablename": "transaction",
     "classname": "Transaction",
+    "foreign_key": {"name":"activity.id"},
     "fields": [
         { "xml": "@ref" }, 
         { "xml": "value/text()", "format": "Float" }, 
@@ -179,6 +188,7 @@
   {
     "tablename": "sector",
     "classname": "Sector",
+    "foreign_key": {"name":"activity.id"},
     "fields": [
         { "xml": "text()" }, 
         { "xml": "@code", "format":"Integer" }, 
@@ -190,6 +200,7 @@
   {
     "tablename": "activitydate",
     "classname": "ActivityDate",
+    "foreign_key": {"name":"activity.id"},
     "fields": [
         { "xml": "text()" }, 
         { "xml": "@type" }, 
@@ -200,6 +211,7 @@
   {
     "tablename": "contactinfo",
     "classname": "ContactInfo",
+    "foreign_key": {"name":"activity.id"},
     "fields": [
         { "xml": "organisation/text()" }, 
         { "xml": "person-name/text()" }, 
@@ -211,6 +223,7 @@
   {
     "tablename": "participatingorg",
     "classname": "ParticipatingOrg",
+    "foreign_key": {"name":"activity.id"},
     "fields": [
         { "xml": "text()" }, 
         { "xml": "@ref" }, 
