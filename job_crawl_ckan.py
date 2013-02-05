@@ -9,6 +9,7 @@ import argparse
 import sys
 import json
 
+CKAN_WEB_BASE = 'http://iatiregistry.org/dataset/%s'
 CKAN_API = 'http://iatiregistry.org/api'
 
 def update_db(incoming, verbose=False):
@@ -81,7 +82,8 @@ def crawl_ckan(debug_limit=None,verbose=False):
             index.append( {
                     'last_modified' : dateutil.parser.parse( last_modified_string ),
                     'id' : resource['id'],
-                    'url' : resource['url']
+                    'url' : resource['url'],
+                    'ckan_url' : CKAN_WEB_BASE % pkg.get('name',pkg['id'])
                 })
         if verbose: 
             print 'Done.'

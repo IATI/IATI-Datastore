@@ -13,6 +13,7 @@ class IndexedResource(Base):
     last_modified = Column(DateTime)
     state = Column(Integer)
     activities = relationship("Activity")
+    ckan_url = Column(UnicodeText)
 
 class CodelistSector(Base):
     __tablename__ = 'codelist_sector'
