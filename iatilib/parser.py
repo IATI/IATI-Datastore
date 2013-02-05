@@ -56,17 +56,17 @@ class Logger():
         log(level,self.prefix+string)
 
 def _parse_float(x):
-    if x is None: return 0.0
+    if x is None or x.strip()=='': return 0.0
     x = x.replace(',','')
     return float(x)
 
 def _parse_int(x):
-    if x is None: return 0
+    if x is None or x.strip()=='': return 0
     x = x.replace(',','')
     return int(x)
 
 def _parse_datetime(x):
-    if x is None: return None
+    if x is None or x.strip()=='': return None
     try:
         if not ':' in x:
             if not x.endswith('Z'):
@@ -76,9 +76,8 @@ def _parse_datetime(x):
     except:
         raise ParseError('Could not parse ISO date "%s"' % x)
 
-
 def _parse_boolean(x):
-    if x is None: return False
+    if x is None or x.strip()=='': return False
     x = x.lower().strip()
     if x=='true': return True
     if x=='false': return False
