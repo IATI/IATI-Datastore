@@ -47,10 +47,6 @@ def download(debug_limit=None,verbose=False):
             traceback.print_exc()
             print 'Uncaught error in: %s - %s' % (url, str(e))
 
-def _delete_objects(resource_id):
-    for activity in session.query(Activity).filter(Activity.parent_id==resource_id):
-        session.delete(activity)
-
 def _object_summary(objects):
     if objects==[]:
         return '(nothing)'
