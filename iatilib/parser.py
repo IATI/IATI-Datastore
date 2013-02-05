@@ -2,6 +2,7 @@ from lxml import etree
 import model
 from . import log
 from datetime import datetime
+import iso8601
 
 # ===========
 # Main method
@@ -56,7 +57,7 @@ def _parse_float(x):
     return float(x)
 
 def _parse_datetime(x):
-    return datetime.now()
+    return iso8601.parse_date(x)
 
 def _parse_boolean(x):
     if x is None: return False
