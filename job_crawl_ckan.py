@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 from iatilib import session
-from iatilib import Parser
 from iatilib.model import *
 from sqlalchemy import func
 import dateutil.parser
