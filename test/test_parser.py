@@ -14,7 +14,7 @@ _fixture_xml = """
       default-currency="fixture_default_currency" 
       xml:lang="fixture_lang" 
       linked-data-uri="fixture_linked_data_uri"
-      last-updated-datetime="2011-10-17T14:13:17">
+      last-updated-datetime="2012-01-14 15:16:17">
         <iati-identifier>
             fixture_iati_identifier__text
         </iati-identifier>
@@ -91,10 +91,10 @@ _fixture_xml = """
                     </comment>
                 </baseline>
                 <period>
-                    <period-start iso-date="fixture_result__indicator__period__period_start__iso_date">
+                    <period-start iso-date="2001-02-03 04:05:06">
                         fixture_result__indicator__period__period_start__text
                     </period-start>
-                    <period-end iso-date="fixture_result__indicator__period__period_end__iso_date">
+                    <period-end iso-date="2002-03-04 05:06:07">
                         fixture_result__indicator__period__period_end__text
                     </period-end>
                     <target value="fixture_result__indicator__period__target__value">
@@ -116,24 +116,24 @@ _fixture_xml = """
             </condition>
         </conditions>
         <budget type="fixture_budget__type">
-            <period-start iso-date="fixture_budget__period_start__iso_date">
+            <period-start iso-date="2003-04-05 06:07:08">
                 fixture_budget__period_start__text
             </period-start>
-            <period-end iso-date="fixture_budget__period_end__iso_date">
+            <period-end iso-date="2004-05-06 07:08:09">
                 fixture_budget__period_end__text
             </period-end>
-            <value currency="fixture_budget__value__currency" value-date="fixture_budget__value__value_date">
+            <value currency="fixture_budget__value__currency" value-date="2005-06-07 08:09:10">
                 999009.09
             </value>
         </budget>
         <planned-disbursement updated="fixture_planned_disbursement__updated">
-            <period-start iso-date="fixture_planned_disbursement__period_start__iso_date">
+            <period-start iso-date="2006-07-08 09:10:11">
                 fixture_planned_disbursement__period_start__text
             </period-start>
-            <period-end iso-date="fixture_planned_disbursement__period_end__iso_date">
+            <period-end iso-date="2007-08-09 10:11:12">
                 fixture_planned_disbursement__period_end__text
             </period-end>
-            <value currency="fixture_planned_disbursement__value__currency" value-date="fixture_planned_disbursement__value__value_date">
+            <value currency="fixture_planned_disbursement__value__currency" value-date="2008-09-10 11:12:13">
                 999010.10
             </value>
         </planned-disbursement>
@@ -155,7 +155,7 @@ _fixture_xml = """
             fixture_legacy_data__text
         </legacy-data>
         <transaction ref="fixture_ref">
-            <value currency="fixture_value__currency" value-date="fixture_value__value_date">
+            <value currency="fixture_value__currency" value-date="2009-10-11 12:13:14">
                 999011.11
             </value>
             <description xml:lang="fixture_description__lang">
@@ -170,7 +170,7 @@ _fixture_xml = """
             <receiver-org ref="fixture_receiver_org__ref" receiver-activity-id="fixture_receiver_org__receiver_activity_id">
                 fixture_receiver_org__text
             </receiver-org>
-            <transaction-date iso-date="fixture_transaction_date__iso_date">
+            <transaction-date iso-date="2010-11-12 13:14:15">
                 fixture_transaction_date__text
             </transaction-date>
             <flow-type code="fixture_flow_type__code" xml:lang="fixture_flow_type__lang">
@@ -202,7 +202,7 @@ _fixture_xml = """
             <email>fixture_email__text</email>
             <mailing-address>fixture_mailing_address__text</mailing-address>
         </contact-info>
-        <activity-date type="fixture_type" iso-date="fixture_iso_date" xml:lang="fixture_lang">
+        <activity-date type="fixture_type" iso-date="2011-12-13 14:15:16" xml:lang="fixture_lang">
             fixture_text
         </activity-date>
     </iati-activity>
@@ -226,7 +226,7 @@ class CaseParser(unittest.TestCase):
         assert found_keys==expected_keys, 'Missing objects: %s ' % ','.join(list(expected_keys-found_keys))
         ## Assertions: Activity object
         assert obj_dict['activity'].version == 999001.01, obj_dict['activity'].version 
-        assert obj_dict['activity'].last_updated_datetime == datetime(year=2011,month=10,day=17,hour=14,minute=13,second=17,tzinfo=iso8601.iso8601.UTC), obj_dict['activity'].last_updated_datetime 
+        assert obj_dict['activity'].last_updated_datetime == datetime(year=2012,month=1,day=14,hour=15,minute=16,second=17,tzinfo=iso8601.iso8601.UTC), obj_dict['activity'].last_updated_datetime 
         assert obj_dict['activity'].lang == 'fixture_lang', obj_dict['activity'].lang 
         assert obj_dict['activity'].default_currency == 'fixture_default_currency', obj_dict['activity'].default_currency 
         assert obj_dict['activity'].hierarchy == 999002.02, obj_dict['activity'].hierarchy 
@@ -312,9 +312,9 @@ class CaseParser(unittest.TestCase):
         assert obj_dict['activity'].result__indicator__baseline__comment__text == 'fixture_result__indicator__baseline__comment__text', obj_dict['activity'].result__indicator__baseline__comment__text 
         assert obj_dict['activity'].result__indicator__baseline__comment__lang == 'fixture_result__indicator__baseline__comment__lang', obj_dict['activity'].result__indicator__baseline__comment__lang 
         assert obj_dict['activity'].result__indicator__period__period_start__text == 'fixture_result__indicator__period__period_start__text', obj_dict['activity'].result__indicator__period__period_start__text 
-        assert obj_dict['activity'].result__indicator__period__period_start__iso_date == 'fixture_result__indicator__period__period_start__iso_date', obj_dict['activity'].result__indicator__period__period_start__iso_date 
+        assert obj_dict['activity'].result__indicator__period__period_start__iso_date == datetime(year=2001,month=2,day=3,hour=4,minute=5,second=6,tzinfo=iso8601.iso8601.UTC), obj_dict['activity'].result__indicator__period__period_start__iso_date 
         assert obj_dict['activity'].result__indicator__period__period_end__text == 'fixture_result__indicator__period__period_end__text', obj_dict['activity'].result__indicator__period__period_end__text 
-        assert obj_dict['activity'].result__indicator__period__period_end__iso_date == 'fixture_result__indicator__period__period_end__iso_date', obj_dict['activity'].result__indicator__period__period_end__iso_date 
+        assert obj_dict['activity'].result__indicator__period__period_end__iso_date == datetime(year=2002,month=3,day=4,hour=5,minute=6,second=7,tzinfo=iso8601.iso8601.UTC), obj_dict['activity'].result__indicator__period__period_end__iso_date 
         assert obj_dict['activity'].result__indicator__period__target__value == 'fixture_result__indicator__period__target__value', obj_dict['activity'].result__indicator__period__target__value 
         assert obj_dict['activity'].result__indicator__period__target__comment__text == 'fixture_result__indicator__period__target__comment__text', obj_dict['activity'].result__indicator__period__target__comment__text 
         assert obj_dict['activity'].result__indicator__period__target__comment__lang == 'fixture_result__indicator__period__target__comment__lang', obj_dict['activity'].result__indicator__period__target__comment__lang 
@@ -326,20 +326,20 @@ class CaseParser(unittest.TestCase):
         assert obj_dict['activity'].conditions__condition__type == 'fixture_conditions__condition__type', obj_dict['activity'].conditions__condition__type 
         assert obj_dict['activity'].budget__type == 'fixture_budget__type', obj_dict['activity'].budget__type 
         assert obj_dict['activity'].budget__period_start__text == 'fixture_budget__period_start__text', obj_dict['activity'].budget__period_start__text 
-        assert obj_dict['activity'].budget__period_start__iso_date == 'fixture_budget__period_start__iso_date', obj_dict['activity'].budget__period_start__iso_date 
+        assert obj_dict['activity'].budget__period_start__iso_date == datetime(year=2003,month=4,day=5,hour=6,minute=7,second=8,tzinfo=iso8601.iso8601.UTC), obj_dict['activity'].budget__period_start__iso_date 
         assert obj_dict['activity'].budget__period_end__text == 'fixture_budget__period_end__text', obj_dict['activity'].budget__period_end__text 
-        assert obj_dict['activity'].budget__period_end__iso_date == 'fixture_budget__period_end__iso_date', obj_dict['activity'].budget__period_end__iso_date 
+        assert obj_dict['activity'].budget__period_end__iso_date == datetime(year=2004,month=5,day=6,hour=7,minute=8,second=9,tzinfo=iso8601.iso8601.UTC), obj_dict['activity'].budget__period_end__iso_date 
         assert obj_dict['activity'].budget__value__text == 999009.09, obj_dict['activity'].budget__value__text 
         assert obj_dict['activity'].budget__value__currency == 'fixture_budget__value__currency', obj_dict['activity'].budget__value__currency 
-        assert obj_dict['activity'].budget__value__value_date == 'fixture_budget__value__value_date', obj_dict['activity'].budget__value__value_date 
+        assert obj_dict['activity'].budget__value__value_date == datetime(year=2005,month=6,day=7,hour=8,minute=9,second=10,tzinfo=iso8601.iso8601.UTC), obj_dict['activity'].budget__value__value_date 
         assert obj_dict['activity'].planned_disbursement__updated == 'fixture_planned_disbursement__updated', obj_dict['activity'].planned_disbursement__updated 
         assert obj_dict['activity'].planned_disbursement__period_start__text == 'fixture_planned_disbursement__period_start__text', obj_dict['activity'].planned_disbursement__period_start__text 
-        assert obj_dict['activity'].planned_disbursement__period_start__iso_date == 'fixture_planned_disbursement__period_start__iso_date', obj_dict['activity'].planned_disbursement__period_start__iso_date 
+        assert obj_dict['activity'].planned_disbursement__period_start__iso_date == datetime(year=2006,month=7,day=8,hour=9,minute=10,second=11,tzinfo=iso8601.iso8601.UTC), obj_dict['activity'].planned_disbursement__period_start__iso_date 
         assert obj_dict['activity'].planned_disbursement__period_end__text == 'fixture_planned_disbursement__period_end__text', obj_dict['activity'].planned_disbursement__period_end__text 
-        assert obj_dict['activity'].planned_disbursement__period_end__iso_date == 'fixture_planned_disbursement__period_end__iso_date', obj_dict['activity'].planned_disbursement__period_end__iso_date 
+        assert obj_dict['activity'].planned_disbursement__period_end__iso_date == datetime(year=2007,month=8,day=9,hour=10,minute=11,second=12,tzinfo=iso8601.iso8601.UTC), obj_dict['activity'].planned_disbursement__period_end__iso_date 
         assert obj_dict['activity'].planned_disbursement__value__text == 999010.1, obj_dict['activity'].planned_disbursement__value__text 
         assert obj_dict['activity'].planned_disbursement__value__currency == 'fixture_planned_disbursement__value__currency', obj_dict['activity'].planned_disbursement__value__currency 
-        assert obj_dict['activity'].planned_disbursement__value__value_date == 'fixture_planned_disbursement__value__value_date', obj_dict['activity'].planned_disbursement__value__value_date 
+        assert obj_dict['activity'].planned_disbursement__value__value_date == datetime(year=2008,month=9,day=10,hour=11,minute=12,second=13,tzinfo=iso8601.iso8601.UTC), obj_dict['activity'].planned_disbursement__value__value_date 
         assert obj_dict['activity'].related_activity__text == 'fixture_related_activity__text', obj_dict['activity'].related_activity__text 
         assert obj_dict['activity'].related_activity__ref == 'fixture_related_activity__ref', obj_dict['activity'].related_activity__ref 
         assert obj_dict['activity'].related_activity__type == 'fixture_related_activity__type', obj_dict['activity'].related_activity__type 
@@ -362,7 +362,7 @@ class CaseParser(unittest.TestCase):
         assert obj_dict['transaction'].ref == 'fixture_ref', obj_dict['transaction'].ref 
         assert obj_dict['transaction'].value__text == 999011.11, obj_dict['transaction'].value__text 
         assert obj_dict['transaction'].value__currency == 'fixture_value__currency', obj_dict['transaction'].value__currency 
-        assert obj_dict['transaction'].value__value_date == 'fixture_value__value_date', obj_dict['transaction'].value__value_date 
+        assert obj_dict['transaction'].value__value_date == datetime(year=2009,month=10,day=11,hour=12,minute=13,second=14,tzinfo=iso8601.iso8601.UTC), obj_dict['transaction'].value__value_date 
         assert obj_dict['transaction'].description__text == 'fixture_description__text', obj_dict['transaction'].description__text 
         assert obj_dict['transaction'].description__lang == 'fixture_description__lang', obj_dict['transaction'].description__lang 
         assert obj_dict['transaction'].transaction_type__text == 'fixture_transaction_type__text', obj_dict['transaction'].transaction_type__text 
@@ -375,7 +375,7 @@ class CaseParser(unittest.TestCase):
         assert obj_dict['transaction'].receiver_org__ref == 'fixture_receiver_org__ref', obj_dict['transaction'].receiver_org__ref 
         assert obj_dict['transaction'].receiver_org__receiver_activity_id == 'fixture_receiver_org__receiver_activity_id', obj_dict['transaction'].receiver_org__receiver_activity_id 
         assert obj_dict['transaction'].transaction_date__text == 'fixture_transaction_date__text', obj_dict['transaction'].transaction_date__text 
-        assert obj_dict['transaction'].transaction_date__iso_date == 'fixture_transaction_date__iso_date', obj_dict['transaction'].transaction_date__iso_date 
+        assert obj_dict['transaction'].transaction_date__iso_date == datetime(year=2010,month=11,day=12,hour=13,minute=14,second=15,tzinfo=iso8601.iso8601.UTC), obj_dict['transaction'].transaction_date__iso_date 
         assert obj_dict['transaction'].flow_type__text == 'fixture_flow_type__text', obj_dict['transaction'].flow_type__text 
         assert obj_dict['transaction'].flow_type__code == 'fixture_flow_type__code', obj_dict['transaction'].flow_type__code 
         assert obj_dict['transaction'].flow_type__lang == 'fixture_flow_type__lang', obj_dict['transaction'].flow_type__lang 
@@ -400,7 +400,7 @@ class CaseParser(unittest.TestCase):
         ## Assertions: ActivityDate object
         assert obj_dict['activitydate'].text == 'fixture_text', obj_dict['activitydate'].text 
         assert obj_dict['activitydate'].type == 'fixture_type', obj_dict['activitydate'].type 
-        assert obj_dict['activitydate'].iso_date == 'fixture_iso_date', obj_dict['activitydate'].iso_date 
+        assert obj_dict['activitydate'].iso_date == datetime(year=2011,month=12,day=13,hour=14,minute=15,second=16,tzinfo=iso8601.iso8601.UTC), obj_dict['activitydate'].iso_date 
         assert obj_dict['activitydate'].lang == 'fixture_lang', obj_dict['activitydate'].lang 
         ## Assertions: ContactInfo object
         assert obj_dict['contactinfo'].organisation__text == 'fixture_organisation__text', obj_dict['contactinfo'].organisation__text 
