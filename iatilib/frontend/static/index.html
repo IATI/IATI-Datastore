@@ -23,13 +23,12 @@
 <b>For more information:</b> <a href="http://iatistandard.org/">http://iatistandard.org/</a>
 <hr/>
         <h3>Version 1 Reference</h3><br/>
-        <h4>Intro</h4>
         <div class="accordion">
             <div class="accordion-group">
-                <div class="accordion-heading"><a href="#row5" class="accordion-toggle" data-toggle="collapse">
-                /api/1/about
+                <div class="accordion-heading"><a href="#row1" class="accordion-toggle" data-toggle="collapse">
+                About
                 </a></div>
-                <div class="accordion-body collapse" id="row5"><div class="accordion-inner">
+                <div class="accordion-body collapse" id="row1"><div class="accordion-inner">
                     <p class="description">Human-readable information about the API.</p>
 <div class="example"><a href="/api/1/about" title="Human-readable information about the API.">/api/1/about</a></div>
                 </div></div>
@@ -39,28 +38,66 @@
         <div class="accordion">
             <div class="accordion-group">
                 <div class="accordion-heading"><a href="#row2" class="accordion-toggle" data-toggle="collapse">
-                /api/1/access/activities
+                Basic Query
                 </a></div>
                 <div class="accordion-body collapse" id="row2"><div class="accordion-inner">
-<p class="description">List activity objects.</p>
+<p class="description">List activity objects. Note fields such as <em>total</em> (number of results), <em>last_page</em>, <em>per_page</em> etc.</p>
 <div class="example"><a href="/api/1/access/activities" title="All activities">/api/1/access/activities</a></div>
-<div class="example"><a title="Query for a particular activity" href="/api/1/access/activities?iati-identifier=GB-CHC-1074937-GPAF-IMP-035">/api/1/access/activities?iati-identifier=GB-CHC-1074937-GPAF-IMP-035</a></div>
-<div class="example"><a title="Query for activities by a given organisation" href="/api/1/access/activities?reporting-org=GB-CHC-1074937">/api/1/access/activities?reporting-org=GB-CHC-1074937</a></div>
-<div class="example"><a title="Query for activities with a budget containing a period-end of July 30th 2014" href="/api/1/access/activities?budget_period-end.iso-date=2014-06-30">/api/1/access/activities?budget_period-end.iso-date=2014-06-30</a></div>
-<div class="example"><a title="Query for activities with a budget containing a period-end of July 30th 2014 or March 31st 2015" href="/api/1/access/activities?budget_period-end.iso-date=2014-06-30|2015-03-31">/api/1/access/activities?budget_period-end.iso-date=2014-06-30|2015-03-31</a></div>
+<div class="example"><a title="Fifty activities per page" href="/api/1/access/activities?per_page=50">/api/1/access/activities?per_page=50</a></div>
+<div class="example"><a title="Twenty activities per page. Start on page&nbsp;seven." href="/api/1/access/activities?per_page=20&page=7">/api/1/access/activities?per_page=20&page=7</a></div>
                 </div></div>
             </div>
             <div class="accordion-group">
                 <div class="accordion-heading"><a href="#row3" class="accordion-toggle" data-toggle="collapse">
-                    /api/1/access/activity/<i>ID</i>
+                    Query by Country
                 </a></div>
                 <div class="accordion-body collapse" id="row3"><div class="accordion-inner">
-<p class="description">Fetch a specific activity by ID.</p>
-<div class="example"><a title="Fetch activity ID 'GB-CHC-1074937-GPAF-IMP-035'" href="/api/1/access/activity/GB-CHC-1074937-GPAF-IMP-035">/api/1/access/activity/GB-CHC-1074937-GPAF-IMP-035</a></div>
+                    <p class="description">Search <code>&lt;recipient-country&gt;</code> text, or look up by ISO code.</p>
+<div class="example"><a title="Fetch activities using Libya's country code." href="/api/1/access/activities?country_code=LY">/api/1/access/activities?country_code=LY</a></div>
+<div class="example"><a title="Case-insensitive text-search for 'libya'" href="/api/1/access/activities?country=libya">/api/1/access/activities?country=libya</a></div>
+                </div></div>
+            </div>
+            <div class="accordion-group">
+                <div class="accordion-heading"><a href="#row4" class="accordion-toggle" data-toggle="collapse">
+                    Query by Reporting Organisation
+                </a></div>
+                <div class="accordion-body collapse" id="row4"><div class="accordion-inner">
+                    <p class="description">Search <code>&lt;reporting-org&gt;</code> text, or look up by <code>ref</code> attribute.</p>
+<div class="example"><a title="Fetch activities reported by World&nbsp;Vision&nbsp;UK." href="/api/1/access/activities?reporting_org_ref=GB-CHC-285908">/api/1/access/activities?reporting_org_ref=GB-CHC-285908</a></div>
+<div class="example"><a title="Case-insensitive text-search activities reported by 'world bank' related organisations." href="/api/1/access/activities?reporting_org=world%20bank">/api/1/access/activities?reporting_org=world%20bank</a></div>
+                </div></div>
+            </div>
+            <div class="accordion-group">
+                <div class="accordion-heading"><a href="#row6" class="accordion-toggle" data-toggle="collapse">
+                    Query by Participating Organisation
+                </a></div>
+                <div class="accordion-body collapse" id="row6"><div class="accordion-inner">
+                    <p class="description">Search <code>&lt;participating-org&gt;</code> text, or look up by <code>ref</code> attribute.</p>
+<div class="example"><a title="Fetch activities involving the International Development Association." href="/api/1/access/activities?participating_org_ref=44002">/api/1/access/activities?participating_org_ref=44002</a></div>
+<div class="example"><a title="Case-insensitive text-search activities involving 'peace' related organisations." href="/api/1/access/activities?participating_org=peace">/api/1/access/activities?participating_org=peace</a></div>
+                </div></div>
+            </div>
+            <div class="accordion-group">
+                <div class="accordion-heading"><a href="#row7" class="accordion-toggle" data-toggle="collapse">
+                    Query by Sector
+                </a></div>
+                <div class="accordion-body collapse" id="row7"><div class="accordion-inner">
+                    <p class="description">Search for activities in a given sector.</p>
+<div class="example"><a title="Case-insensitive text-search for activities in the sanitation sector." href="/api/1/access/activities?sector=sanitation">/api/1/access/activities?sector=sanitation</a></div>
+<div class="example"><a title="Fetch activities in the 'Basic Health Infrastructure' sector." href="/api/1/access/activities?sector_code=12230">/api/1/access/activities?sector_code=12230</a></div>
+                </div></div>
+            </div>
+            <div class="accordion-group">
+                <div class="accordion-heading"><a href="#row8" class="accordion-toggle" data-toggle="collapse">
+                    Query by Date
+                </a></div>
+                <div class="accordion-body collapse" id="row8"><div class="accordion-inner">
+                    <p class="description">Search for activities occurring on a given date. The date must fall between <code>start-actual</code> (or <code>start-planned</code>) and <code>end-actual</code> (or <code>end-planned</code>).</p>
+<div class="example"><a title="Activities happening in the middle of 2009." href="/api/1/access/activities?date=2009-05-09">/api/1/access/activities?date=2009-05-09</a></div>
+<div class="example"><a title="Activities which were occurring at the start of 1995." href="/api/1/access/activities?date=1995-01-01Z15:30:00">/api/1/access/activities?date=1995-01-01Z15:30:00</a></div>
                 </div></div>
             </div>
         </div>
-
         <footer>
           <p>The IATI API is updated nightly. This is a collaboration between <a href="http://iatiregistry.org">IATI</a> and the <a href="http://okfn.org">Open Knowledge Foundation</a>.
         </footer>
