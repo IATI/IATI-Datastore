@@ -246,26 +246,8 @@ def activities_list():
                     or_(Start.type=='start-actual',Start.type=='start-planned'),\
                     Start.iso_date<_date)\
                     )
-    """
-    _XXX = request.args.get('XXX')
-    if _XXX is not None:
-        query = query.filter(XXX.parent_id==Activity.id)
-        query = query.filter( XXX.code==_XXX )
-        """
     # Prepare a response
     response = _prepare(query.count())
     query = query.offset(response['offset']).limit(response['per_page'])
     response['results'] = [ pure_obj(x) for x in query ]
     return response
-
-"""
-#### URL: /transaction and /transactions
-
-@endpoint('/access/transactions')
-def transaction_list():
-    query = session.query(Transaction)
-    query = query.limit(20)
-    return [ json_obj(x) for x in query ]
-"""
-
-
