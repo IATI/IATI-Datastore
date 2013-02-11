@@ -4,11 +4,11 @@
     "classname": "Activity",
     "foreign_key": {"name":"raw_xml_blob.id"},
     "children": [ 
-        {"table":"transaction","class":"Transaction"},
-        {"table":"sector","class":"Sector"},
-        {"table":"participatingorg","class":"ParticipatingOrg"},
-        {"table":"contactinfo","class":"ContactInfo"},
-        {"table":"activitydate", "class":"ActivityDate"}
+        {"table":"transaction","class":"Transaction","xpath":"transaction"},
+        {"table":"sector","class":"Sector","xpath":"sector"},
+        {"table":"participatingorg","class":"ParticipatingOrg","xpath":"participating-org"},
+        {"table":"contactinfo","class":"ContactInfo","xpath":"contact-info"},
+        {"table":"activitydate", "class":"ActivityDate","xpath":"activity-date"}
     ],
     "fields": [
         { "xml": "@version", "format": "Float" }, 
@@ -150,11 +150,11 @@
     "tablename": "transaction",
     "classname": "Transaction",
     "foreign_key": {"name":"activity.id"},
+    "children": [ 
+        {"table":"transaction_value","class":"TransactionValue","xpath":"value"}
+    ],
     "fields": [
         { "xml": "@ref" }, 
-        { "xml": "value/text()", "format": "Float" }, 
-        { "xml": "value/@currency" }, 
-        { "xml": "value/@value-date", "format": "DateTime"  }, 
         { "xml": "description/text()" }, 
         { "xml": "description/@xml:lang" }, 
         { "xml": "transaction-type/text()" }, 
@@ -183,6 +183,16 @@
         { "xml": "disbursement-channel/text()" }, 
         { "xml": "disbursement-channel/@code" }, 
         { "xml": "disbursement-channel/@xml:lang" }
+    ]
+  },
+  {
+    "tablename": "transaction_value",
+    "classname": "TransactionValue",
+    "foreign_key": {"name":"transaction.id"},
+    "fields": [
+        { "xml": "text()", "format": "Float" }, 
+        { "xml": "@currency" }, 
+        { "xml": "@value-date", "format": "DateTime"  }
     ]
   },
   {

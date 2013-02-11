@@ -74,7 +74,11 @@ def codegen():
         print '    def _parse_xml(cls,logger,xml):'
         print '        data = {}'
         for x in _parser_fields(spec['fields']): print '        '+x
-        print '        return %s(**data)' % spec['classname']
+        print '        out = %s(**data)' % spec['classname']
+        for x in spec.get('children',[]):
+            print '        for child_xml in xml.findall(\'%s\'):' % x['xpath']
+            print '            out.%s.append( %s._parse_xml(logger,child_xml) )' % (x['table'],x['class'])
+        print '        return out'
 
 if __name__=='__main__':
     codegen()

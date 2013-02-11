@@ -222,7 +222,6 @@ class CaseParser(unittest.TestCase):
     def test_fixture_xml(self):
         activity, errors = iatilib.parser.parse(_fixture_xml)
         assert len(errors)==0
-        assert len(activity.transaction)==1, len(activity.transaction)
         assert len(activity.activitydate)==1, len(activity.activitydate)
         assert len(activity.sector)==1, len(activity.sector)
         assert len(activity.contactinfo)==1, len(activity.contactinfo)
@@ -362,10 +361,8 @@ class CaseParser(unittest.TestCase):
         assert activity.legacy_data__value == 'fixture_legacy_data__value', obj_dict['activity'].legacy_data__value 
         assert activity.legacy_data__iati_equivalent == 'fixture_legacy_data__iati_equivalent', obj_dict['activity'].legacy_data__iati_equivalent 
         ## Assertions: Transaction object
+        assert len(activity.transaction)==1, len(activity.transaction)
         assert activity.transaction[0].ref == 'fixture_ref', obj_dict['transaction'].ref 
-        assert activity.transaction[0].value__text == 999011.11, obj_dict['transaction'].value__text 
-        assert activity.transaction[0].value__currency == 'fixture_value__currency', obj_dict['transaction'].value__currency 
-        assert activity.transaction[0].value__value_date == datetime(year=2009,month=10,day=11,hour=12,minute=13,second=14,tzinfo=iso8601.iso8601.UTC), obj_dict['transaction'].value__value_date 
         assert activity.transaction[0].description__text == 'fixture_description__text', obj_dict['transaction'].description__text 
         assert activity.transaction[0].description__lang == 'fixture_description__lang', obj_dict['transaction'].description__lang 
         assert activity.transaction[0].transaction_type__text == 'fixture_transaction_type__text', obj_dict['transaction'].transaction_type__text 
@@ -394,6 +391,10 @@ class CaseParser(unittest.TestCase):
         assert activity.transaction[0].disbursement_channel__text == 'fixture_disbursement_channel__text', obj_dict['transaction'].disbursement_channel__text 
         assert activity.transaction[0].disbursement_channel__code == 'fixture_disbursement_channel__code', obj_dict['transaction'].disbursement_channel__code 
         assert activity.transaction[0].disbursement_channel__lang == 'fixture_disbursement_channel__lang', obj_dict['transaction'].disbursement_channel__lang 
+        assert len(activity.transaction[0].transaction_value)==1
+        assert activity.transaction[0].transaction_value[0].text == 999011.11, obj_dict['transaction'].value__text 
+        assert activity.transaction[0].transaction_value[0].currency == 'fixture_value__currency', obj_dict['transaction'].value__currency 
+        assert activity.transaction[0].transaction_value[0].value_date == datetime(year=2009,month=10,day=11,hour=12,minute=13,second=14,tzinfo=iso8601.iso8601.UTC), obj_dict['transaction'].value__value_date 
         ## Assertions: Sector object
         assert activity.sector[0].text == 'fixture_text', obj_dict['sector'].text 
         assert activity.sector[0].code == 999013, obj_dict['sector'].code 

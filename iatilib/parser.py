@@ -10,19 +10,7 @@ from iatilib import session
 def parse(xml_string):
     xml = etree.fromstring(xml_string)
     logger = Logger()
-    # Parse first...
     activity = model.Activity._parse_xml(logger, xml)
-    for x in xml.findall('transaction'):
-        activity.transaction.append( model.Transaction._parse_xml(logger,x) )
-    for x in xml.findall('sector'):
-        activity.sector.append( model.Sector._parse_xml(logger,x) )
-    for x in xml.findall('activity-date'):
-        activity.activitydate.append( model.ActivityDate._parse_xml(logger,x) )
-    for x in xml.findall('contact-info'):
-        activity.contactinfo.append( model.ContactInfo._parse_xml(logger,x) )
-    for x in xml.findall('participating-org'):
-        activity.participatingorg.append( model.ParticipatingOrg._parse_xml(logger,x) )
-    # ...then validate ...
     _validate(logger,activity)
     return activity,logger.errors
 
