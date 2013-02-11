@@ -60,13 +60,21 @@ def codegen():
     print '#######'
     with open('spec/spec.json','r') as f:
         specs = json.load(f)
+    class_to_table = {x['classname']:x['tablename'] for x in specs}
+    # Augment the spec with backreferencing foreign keys
+    for spec in specs:
+        for child in spec.get('children',[]):
+            for x in specs:
+                if x['classname']==child['class']:
+                    x['foreign_key'] = {'name':spec['tablename']+'.id'}
     for spec in specs:
         print ''
         print 'class %s(Base):' % spec['classname']
         print '    __tablename__ = \'%s\'' % spec['tablename']
         print '    id = Column(Integer, primary_key=True)'
         for x in spec.get('children',[]):
-            print '    %s = relationship("%s",cascade="all")' % (x['table'],x['class'])
+            tablename = class_to_table[x['class']]
+            print '    %s = relationship("%s",cascade="all")' % (tablename,x['class'])
         if 'foreign_key' in spec:
             print '    parent_id = Column(%s, ForeignKey(\'%s\'), nullable=False)' % (spec['foreign_key'].get('format','Integer'), spec['foreign_key']['name'])
         for x in _model_fields(spec['fields']): print '    '+x
@@ -77,7 +85,7 @@ def codegen():
         print '        out = %s(**data)' % spec['classname']
         for x in spec.get('children',[]):
             print '        for child_xml in xml.findall(\'%s\'):' % x['xpath']
-            print '            out.%s.append( %s._parse_xml(logger,child_xml) )' % (x['table'],x['class'])
+            print '            out.%s.append( %s._parse_xml(logger,child_xml) )' % (class_to_table[x['class']],x['class'])
         print '        return out'
 
 if __name__=='__main__':

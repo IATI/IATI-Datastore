@@ -4,11 +4,11 @@
     "classname": "Activity",
     "foreign_key": {"name":"raw_xml_blob.id"},
     "children": [ 
-        {"table":"transaction","class":"Transaction","xpath":"transaction"},
-        {"table":"sector","class":"Sector","xpath":"sector"},
-        {"table":"participatingorg","class":"ParticipatingOrg","xpath":"participating-org"},
-        {"table":"contactinfo","class":"ContactInfo","xpath":"contact-info"},
-        {"table":"activitydate", "class":"ActivityDate","xpath":"activity-date"}
+        {"class":"Transaction","xpath":"transaction"},
+        {"class":"Sector","xpath":"sector"},
+        {"class":"ParticipatingOrg","xpath":"participating-org"},
+        {"class":"ContactInfo","xpath":"contact-info"},
+        {"class":"ActivityDate","xpath":"activity-date"}
     ],
     "fields": [
         { "xml": "@version", "format": "Float" }, 
@@ -149,9 +149,8 @@
   {
     "tablename": "transaction",
     "classname": "Transaction",
-    "foreign_key": {"name":"activity.id"},
     "children": [ 
-        {"table":"transaction_value","class":"TransactionValue","xpath":"value"}
+        {"class":"TransactionValue","xpath":"value"}
     ],
     "fields": [
         { "xml": "@ref" }, 
@@ -188,7 +187,6 @@
   {
     "tablename": "transaction_value",
     "classname": "TransactionValue",
-    "foreign_key": {"name":"transaction.id"},
     "fields": [
         { "xml": "text()", "format": "Float" }, 
         { "xml": "@currency" }, 
@@ -198,7 +196,6 @@
   {
     "tablename": "sector",
     "classname": "Sector",
-    "foreign_key": {"name":"activity.id"},
     "fields": [
         { "xml": "text()" }, 
         { "xml": "@code", "format":"Integer" }, 
@@ -210,7 +207,6 @@
   {
     "tablename": "activitydate",
     "classname": "ActivityDate",
-    "foreign_key": {"name":"activity.id"},
     "fields": [
         { "xml": "text()" }, 
         { "xml": "@type" }, 
@@ -221,7 +217,6 @@
   {
     "tablename": "contactinfo",
     "classname": "ContactInfo",
-    "foreign_key": {"name":"activity.id"},
     "fields": [
         { "xml": "organisation/text()" }, 
         { "xml": "person-name/text()" }, 
@@ -233,7 +228,6 @@
   {
     "tablename": "participatingorg",
     "classname": "ParticipatingOrg",
-    "foreign_key": {"name":"activity.id"},
     "fields": [
         { "xml": "text()" }, 
         { "xml": "@ref" }, 
