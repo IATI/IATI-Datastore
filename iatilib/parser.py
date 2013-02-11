@@ -79,8 +79,6 @@ def _nav(logger, element, path, attrib=None, text=False, parser=None):
     for x in path:
         subelement = element.findall(x)
         if len(subelement)==0: return None
-        if len(subelement)>1:
-            logger.log('Found multiple %s in path %s' % (x,'/'.join(path)))
         element = subelement[0]
     if text:
         out = element.text
