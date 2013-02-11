@@ -2,7 +2,7 @@
   {
     "tablename": "activity",
     "classname": "Activity",
-    "foreign_key": {"name":"indexed_resource.id","format":"UnicodeText"},
+    "foreign_key": {"name":"raw_xml_blob.id"},
     "children": [ 
         {"table":"transaction","class":"Transaction"},
         {"table":"sector","class":"Sector"},

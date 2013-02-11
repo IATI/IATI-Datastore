@@ -2,6 +2,7 @@
 
 from iatilib import session
 from iatilib.model import *
+from iatilib.magic_numbers import *
 from sqlalchemy import func
 import dateutil.parser
 import ckanclient
@@ -18,7 +19,7 @@ def update_db(incoming, verbose=False):
     incoming = { x['id'] : x for x in incoming }
     # Dict: The existing resources in the database
     existing = { x.id : x for x in session.query(IndexedResource) }
-    known_deleted = set([ x.id for x in session.query(IndexedResource).filter(IndexedResource.state==-3) ])
+    known_deleted = set([ x.id for x in session.query(IndexedResource).filter(IndexedResource.state==CKAN_DELETED) ])
     # Use the unique IDs to examine the intersection/difference between EXISTING and INCOMING keys
     ex_k = set(existing.keys())
     in_k = set(incoming.keys())
@@ -26,10 +27,10 @@ def update_db(incoming, verbose=False):
     additional_ids = in_k - ex_k
     # Tag deleted resources
     for id in deleted_ids:
-        existing[id].state = -3 # 'Deleted'
+        existing[id].state = CKAN_DELETED
     # Add new resources
     for id in additional_ids:
-        incoming[id]['state'] = -1 # 'Created'
+        incoming[id]['state'] = CKAN_NEW
         session.add( IndexedResource(**incoming[id]) )
     # Tag existing resources if they have been modified
     count_updated = 0
@@ -39,12 +40,12 @@ def update_db(incoming, verbose=False):
         b = incoming[id]
         if a.state==-3:
             count_undeleted += 1
-            existing[id].state = -2 # 'Modified'
+            existing[id].state = CKAN_UPDATED
             existing[id].url = incoming[id]['url']
             existing[id].last_modified = incoming[id]['last_modified']
         elif (not a.last_modified==b['last_modified']):
             count_updated += 1
-            existing[id].state = -2 # 'Modified'
+            existing[id].state = CKAN_UPDATED
             existing[id].url = incoming[id]['url']
             existing[id].last_modified = incoming[id]['last_modified']
     if verbose:
@@ -54,12 +55,13 @@ def update_db(incoming, verbose=False):
     if verbose:
         counts = dict( session.query(IndexedResource.state,func.count(IndexedResource.state)).group_by(IndexedResource.state))
         print 'DB State:'
-        print '  %d awaiting download ("created")'%counts.get(-1,0)
-        print '  %d awaiting download ("updated")'%counts.get(-2,0)
-        print '  %d awaiting garbage collection'%counts.get(-3,0)
-        print '  %d processed.'%counts.get(1,0)
+        print '  %d awaiting download ("created")'%counts.get(CKAN_NEW,0)
+        print '  %d awaiting download ("updated")'%counts.get(CKAN_UPDATED,0)
+        print '  %d awaiting garbage collection'%counts.get(CKAN_DELETED,0)
+        print '  %d stuck downloading'%counts.get(BEING_DOWNLOADED,0)
+        print '  %d processed.'%counts.get(READY,0)
         for (x,y) in counts.iteritems():
-            if x not in [-1,-2,-3,1]:
+            if x not in [CKAN_NEW,CKAN_UPDATED,CKAN_DELETED,BEING_DOWNLOADED,READY]:
                 print '  %d in state %d'%(x,y)
 
 def crawl_ckan(debug_limit=None,verbose=False):

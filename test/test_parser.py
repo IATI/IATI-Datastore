@@ -7,224 +7,221 @@ from datetime import datetime
 from iatilib import session
 
 # Hand-generated XML used to test the parser
-_fixture_xml = """
-<iati-activities>
-    <iati-activity 
-      version="999001.01" 
-      hierarchy="999002.02" 
-      default-currency="fixture_default_currency" 
-      xml:lang="fixture_lang" 
-      linked-data-uri="fixture_linked_data_uri"
-      last-updated-datetime="2012-01-14 15:16:17">
-        <iati-identifier>
-            fixture_iati_identifier__text
-        </iati-identifier>
-        <activity-website>
-            fixture_activity_website__text
-        </activity-website>
-        <reporting-org ref="fixture_reporting_org__ref" type="fixture_reporting_org__type" xml:lang="fixture_reporting_org__lang">
-            fixture_reporting_org__text
-        </reporting-org>
-        <recipient-country code="fixture_recipient_country__code" percentage="999003.03" xml:lang="fixture_recipient_country__lang">
-            fixture_recipient_country__text
-        </recipient-country>
-        <recipient-region code="fixture_recipient_region__code" percentage="999004.04" xml:lang="fixture_recipient_region__lang">
-            fixture_recipient_region__text
-        </recipient-region>
-        <title xml:lang="fixture_title__lang">
-            fixture_title__text
+_fixture_xml = u"""
+<iati-activity 
+  version="999001.01" 
+  hierarchy="999002.02" 
+  default-currency="fixture_default_currency" 
+  xml:lang="fixture_lang" 
+  linked-data-uri="fixture_linked_data_uri"
+  last-updated-datetime="2012-01-14 15:16:17">
+    <iati-identifier>
+        fixture_iati_identifier__text
+    </iati-identifier>
+    <activity-website>
+        fixture_activity_website__text
+    </activity-website>
+    <reporting-org ref="fixture_reporting_org__ref" type="fixture_reporting_org__type" xml:lang="fixture_reporting_org__lang">
+        fixture_reporting_org__text
+    </reporting-org>
+    <recipient-country code="fixture_recipient_country__code" percentage="999003.03" xml:lang="fixture_recipient_country__lang">
+        fixture_recipient_country__text
+    </recipient-country>
+    <recipient-region code="fixture_recipient_region__code" percentage="999004.04" xml:lang="fixture_recipient_region__lang">
+        fixture_recipient_region__text
+    </recipient-region>
+    <title xml:lang="fixture_title__lang">
+        fixture_title__text
+    </title>
+    <description type="fixture_description__type" xml:lang="fixture_description__lang">
+        fixture_description__text
+    </description>
+    <activity-status code="fixture_activity_status__code" xml:lang="fixture_activity_status__lang">
+        fixture_activity_status__text
+    </activity-status>
+    <collaboration-type code="fixture_collaboration_type__code" xml:lang="fixture_collaboration_type__lang">
+        fixture_collaboration_type__text
+    </collaboration-type>
+    <default-flow-type code="fixture_default_flow_type__code" xml:lang="fixture_default_flow_type__lang">
+        fixture_default_flow_type__text
+    </default-flow-type>
+    <default-aid-type code="fixture_default_aid_type__code" xml:lang="fixture_default_aid_type__lang">
+        fixture_default_aid_type__text
+    </default-aid-type>
+    <default-finance-type code="fixture_default_finance_type__code" xml:lang="fixture_default_finance_type__lang">
+        fixture_default_finance_type__text
+    </default-finance-type>
+    <default-tied-status code="fixture_default_tied_status__code" xml:lang="fixture_default_tied_status__lang">
+        fixture_default_tied_status__text
+    </default-tied-status>
+    <policy-marker code="fixture_policy_marker__code" significance="fixture_policy_marker__significance" vocabulary="fixture_policy_marker__vocabulary" xml:lang="fixture_policy_marker__lang">
+        fixture_policy_marker__text
+    </policy-marker>
+    <location percentage="999005.05">
+        <location-type code="fixture_location__location_type__code" xml:lang="fixture_location__location_type__lang">fixture_location__location_type__text</location-type>
+        <name xml:lang="fixture_location__name__lang">fixture_location__name__text</name>
+        <description xml:lang="fixture_location__description__lang">fixture_location__description__text</description>
+        <administrative country="fixture_location__administrative__country" adm1="fixture_location__administrative__adm1" adm2="fixture_location__administrative__adm2">fixture_location__administrative__text</administrative>
+        <coordinates latitude="999006.06" longitude="999007.07" precision="fixture_location__coordinates__precision" />
+        <gazetteer-entry gazetteer-ref="fixture_location__gazetteer_entry__gazetteer_ref">fixture_location__gazetteer_entry__text</gazetteer-entry>
+    </location>
+    <other-identifier owner-ref="fixture_other_identifier__owner_ref" owner-name="fixture_other_identifier__owner_name">
+        fixture_other_identifier__text
+    </other-identifier>
+    <result type="fixture_result__type" aggregation-status="true">
+        <title xml:lang="fixture_result__title__lang">
+            fixture_result__title__text
         </title>
-        <description type="fixture_description__type" xml:lang="fixture_description__lang">
+        <description type="fixture_result__description__type" xml:lang="fixture_result__description__lang">
+            fixture_result__description__text
+        </description>
+        <indicator measure="fixture_result__indicator__measure" ascending="true">
+            <title xml:lang="fixture_result__indicator__title__lang">
+                fixture_result__indicator__title__text
+            </title>
+            <description type="fixture_result__indicator__description__type" xml:lang="fixture_result__indicator__description__lang">
+                fixture_result__indicator__description__text
+            </description>
+            <baseline year="1999" value="fixture_result__indicator__baseline__value">
+                <comment xml:lang="fixture_result__indicator__baseline__comment__lang">
+                    fixture_result__indicator__baseline__comment__text
+                </comment>
+            </baseline>
+            <period>
+                <period-start iso-date="2001-02-03 04:05:06">
+                    fixture_result__indicator__period__period_start__text
+                </period-start>
+                <period-end iso-date="2002-03-04 05:06:07">
+                    fixture_result__indicator__period__period_end__text
+                </period-end>
+                <target value="fixture_result__indicator__period__target__value">
+                    <comment xml:lang="fixture_result__indicator__period__target__comment__lang">
+                        fixture_result__indicator__period__target__comment__text
+                    </comment>
+                </target>
+                <actual value="fixture_result__indicator__period__actual__value">
+                    <comment xml:lang="fixture_result__indicator__period__actual__comment__lang">
+                        fixture_result__indicator__period__actual__comment__text
+                    </comment>
+                </actual>
+            </period>
+        </indicator>
+    </result>
+    <conditions attached="true">
+        <condition type="fixture_conditions__condition__type">
+            fixture_conditions__condition__text
+        </condition>
+    </conditions>
+    <budget type="fixture_budget__type">
+        <period-start iso-date="2003-04-05 06:07:08">
+            fixture_budget__period_start__text
+        </period-start>
+        <period-end iso-date="2004-05-06 07:08:09">
+            fixture_budget__period_end__text
+        </period-end>
+        <value currency="fixture_budget__value__currency" value-date="2005-06-07 08:09:10">
+            999009.09
+        </value>
+    </budget>
+    <planned-disbursement updated="fixture_planned_disbursement__updated">
+        <period-start iso-date="2006-07-08 09:10:11">
+            fixture_planned_disbursement__period_start__text
+        </period-start>
+        <period-end iso-date="2007-08-09 10:11:12">
+            fixture_planned_disbursement__period_end__text
+        </period-end>
+        <value currency="fixture_planned_disbursement__value__currency" value-date="2008-09-10 11:12:13">
+            999010.10
+        </value>
+    </planned-disbursement>
+    <related-activity ref="fixture_related_activity__ref" type="fixture_related_activity__type" xml:lang="fixture_related_activity__lang">
+        fixture_related_activity__text
+    </related-activity>
+    <document-link url="fixture_document_link__url" format="fixture_document_link__format">
+        <title xml:lang="fixture_document_link__title__lang">
+            fixture_document_link__title__text
+        </title>
+        <category code="fixture_document_link__category__code" xml:lang="fixture_document_link__category__lang">
+            fixture_document_link__category__text
+        </category>
+        <language code="fixture_document_link__language__code" xml:lang="fixture_document_link__language__lang">
+            fixture_document_link__language__text
+        </language>
+    </document-link>
+    <legacy-data name="fixture_legacy_data__name" value="fixture_legacy_data__value" iati-equivalent="fixture_legacy_data__iati_equivalent">
+        fixture_legacy_data__text
+    </legacy-data>
+    <transaction ref="fixture_ref">
+        <value currency="fixture_value__currency" value-date="2009-10-11 12:13:14">
+            999011.11
+        </value>
+        <description xml:lang="fixture_description__lang">
             fixture_description__text
         </description>
-        <activity-status code="fixture_activity_status__code" xml:lang="fixture_activity_status__lang">
-            fixture_activity_status__text
-        </activity-status>
-        <collaboration-type code="fixture_collaboration_type__code" xml:lang="fixture_collaboration_type__lang">
-            fixture_collaboration_type__text
-        </collaboration-type>
-        <default-flow-type code="fixture_default_flow_type__code" xml:lang="fixture_default_flow_type__lang">
-            fixture_default_flow_type__text
-        </default-flow-type>
-        <default-aid-type code="fixture_default_aid_type__code" xml:lang="fixture_default_aid_type__lang">
-            fixture_default_aid_type__text
-        </default-aid-type>
-        <default-finance-type code="fixture_default_finance_type__code" xml:lang="fixture_default_finance_type__lang">
-            fixture_default_finance_type__text
-        </default-finance-type>
-        <default-tied-status code="fixture_default_tied_status__code" xml:lang="fixture_default_tied_status__lang">
-            fixture_default_tied_status__text
-        </default-tied-status>
-        <policy-marker code="fixture_policy_marker__code" significance="fixture_policy_marker__significance" vocabulary="fixture_policy_marker__vocabulary" xml:lang="fixture_policy_marker__lang">
-            fixture_policy_marker__text
-        </policy-marker>
-        <location percentage="999005.05">
-            <location-type code="fixture_location__location_type__code" xml:lang="fixture_location__location_type__lang">fixture_location__location_type__text</location-type>
-            <name xml:lang="fixture_location__name__lang">fixture_location__name__text</name>
-            <description xml:lang="fixture_location__description__lang">fixture_location__description__text</description>
-            <administrative country="fixture_location__administrative__country" adm1="fixture_location__administrative__adm1" adm2="fixture_location__administrative__adm2">fixture_location__administrative__text</administrative>
-            <coordinates latitude="999006.06" longitude="999007.07" precision="fixture_location__coordinates__precision" />
-            <gazetteer-entry gazetteer-ref="fixture_location__gazetteer_entry__gazetteer_ref">fixture_location__gazetteer_entry__text</gazetteer-entry>
-        </location>
-        <other-identifier owner-ref="fixture_other_identifier__owner_ref" owner-name="fixture_other_identifier__owner_name">
-            fixture_other_identifier__text
-        </other-identifier>
-        <result type="fixture_result__type" aggregation-status="true">
-            <title xml:lang="fixture_result__title__lang">
-                fixture_result__title__text
-            </title>
-            <description type="fixture_result__description__type" xml:lang="fixture_result__description__lang">
-                fixture_result__description__text
-            </description>
-            <indicator measure="fixture_result__indicator__measure" ascending="true">
-                <title xml:lang="fixture_result__indicator__title__lang">
-                    fixture_result__indicator__title__text
-                </title>
-                <description type="fixture_result__indicator__description__type" xml:lang="fixture_result__indicator__description__lang">
-                    fixture_result__indicator__description__text
-                </description>
-                <baseline year="1999" value="fixture_result__indicator__baseline__value">
-                    <comment xml:lang="fixture_result__indicator__baseline__comment__lang">
-                        fixture_result__indicator__baseline__comment__text
-                    </comment>
-                </baseline>
-                <period>
-                    <period-start iso-date="2001-02-03 04:05:06">
-                        fixture_result__indicator__period__period_start__text
-                    </period-start>
-                    <period-end iso-date="2002-03-04 05:06:07">
-                        fixture_result__indicator__period__period_end__text
-                    </period-end>
-                    <target value="fixture_result__indicator__period__target__value">
-                        <comment xml:lang="fixture_result__indicator__period__target__comment__lang">
-                            fixture_result__indicator__period__target__comment__text
-                        </comment>
-                    </target>
-                    <actual value="fixture_result__indicator__period__actual__value">
-                        <comment xml:lang="fixture_result__indicator__period__actual__comment__lang">
-                            fixture_result__indicator__period__actual__comment__text
-                        </comment>
-                    </actual>
-                </period>
-            </indicator>
-        </result>
-        <conditions attached="true">
-            <condition type="fixture_conditions__condition__type">
-                fixture_conditions__condition__text
-            </condition>
-        </conditions>
-        <budget type="fixture_budget__type">
-            <period-start iso-date="2003-04-05 06:07:08">
-                fixture_budget__period_start__text
-            </period-start>
-            <period-end iso-date="2004-05-06 07:08:09">
-                fixture_budget__period_end__text
-            </period-end>
-            <value currency="fixture_budget__value__currency" value-date="2005-06-07 08:09:10">
-                999009.09
-            </value>
-        </budget>
-        <planned-disbursement updated="fixture_planned_disbursement__updated">
-            <period-start iso-date="2006-07-08 09:10:11">
-                fixture_planned_disbursement__period_start__text
-            </period-start>
-            <period-end iso-date="2007-08-09 10:11:12">
-                fixture_planned_disbursement__period_end__text
-            </period-end>
-            <value currency="fixture_planned_disbursement__value__currency" value-date="2008-09-10 11:12:13">
-                999010.10
-            </value>
-        </planned-disbursement>
-        <related-activity ref="fixture_related_activity__ref" type="fixture_related_activity__type" xml:lang="fixture_related_activity__lang">
-            fixture_related_activity__text
-        </related-activity>
-        <document-link url="fixture_document_link__url" format="fixture_document_link__format">
-            <title xml:lang="fixture_document_link__title__lang">
-                fixture_document_link__title__text
-            </title>
-            <category code="fixture_document_link__category__code" xml:lang="fixture_document_link__category__lang">
-                fixture_document_link__category__text
-            </category>
-            <language code="fixture_document_link__language__code" xml:lang="fixture_document_link__language__lang">
-                fixture_document_link__language__text
-            </language>
-        </document-link>
-        <legacy-data name="fixture_legacy_data__name" value="fixture_legacy_data__value" iati-equivalent="fixture_legacy_data__iati_equivalent">
-            fixture_legacy_data__text
-        </legacy-data>
-        <transaction ref="fixture_ref">
-            <value currency="fixture_value__currency" value-date="2009-10-11 12:13:14">
-                999011.11
-            </value>
-            <description xml:lang="fixture_description__lang">
-                fixture_description__text
-            </description>
-            <transaction-type code="fixture_transaction_type__code" xml:lang="fixture_transaction_type__lang">
-                fixture_transaction_type__text
-            </transaction-type>
-            <provider-org ref="fixture_provider_org__ref" provider-activity-id="fixture_provider_org__provider_activity_id">
-                fixture_provider_org__text
-            </provider-org>
-            <receiver-org ref="fixture_receiver_org__ref" receiver-activity-id="fixture_receiver_org__receiver_activity_id">
-                fixture_receiver_org__text
-            </receiver-org>
-            <transaction-date iso-date="2010-11-12 13:14:15">
-                fixture_transaction_date__text
-            </transaction-date>
-            <flow-type code="fixture_flow_type__code" xml:lang="fixture_flow_type__lang">
-                fixture_flow_type__text
-            </flow-type>
-            <aid-type code="fixture_aid_type__code" xml:lang="fixture_aid_type__lang">
-                fixture_aid_type__text
-            </aid-type>
-            <finance-type code="fixture_finance_type__code" xml:lang="fixture_finance_type__lang">
-                fixture_finance_type__text
-            </finance-type>
-            <tied-status code="fixture_tied_status__code" xml:lang="fixture_tied_status__lang">
-                fixture_tied_status__text
-            </tied-status>
-            <disbursement-channel code="fixture_disbursement_channel__code" xml:lang="fixture_disbursement_channel__lang">
-                fixture_disbursement_channel__text
-            </disbursement-channel>
-        </transaction>
-        <sector code="999013" vocabulary="fixture_vocabulary" percentage="999012.12" xml:lang="fixture_lang">
-          fixture_text
-        </sector>
-        <participating-org ref="fixture_ref" type="fixture_type" role="fixture_role" xml:lang="fixture_lang">
-          fixture_text
-        </participating-org>
-        <contact-info>
-            <organisation>fixture_organisation__text</organisation>
-            <person-name>fixture_person_name__text</person-name>
-            <telephone>fixture_telephone__text</telephone>
-            <email>fixture_email__text</email>
-            <mailing-address>fixture_mailing_address__text</mailing-address>
-        </contact-info>
-        <activity-date type="fixture_type" iso-date="2011-12-13 14:15:16" xml:lang="fixture_lang">
-            fixture_text
-        </activity-date>
-    </iati-activity>
-</iati-activities>
+        <transaction-type code="fixture_transaction_type__code" xml:lang="fixture_transaction_type__lang">
+            fixture_transaction_type__text
+        </transaction-type>
+        <provider-org ref="fixture_provider_org__ref" provider-activity-id="fixture_provider_org__provider_activity_id">
+            fixture_provider_org__text
+        </provider-org>
+        <receiver-org ref="fixture_receiver_org__ref" receiver-activity-id="fixture_receiver_org__receiver_activity_id">
+            fixture_receiver_org__text
+        </receiver-org>
+        <transaction-date iso-date="2010-11-12 13:14:15">
+            fixture_transaction_date__text
+        </transaction-date>
+        <flow-type code="fixture_flow_type__code" xml:lang="fixture_flow_type__lang">
+            fixture_flow_type__text
+        </flow-type>
+        <aid-type code="fixture_aid_type__code" xml:lang="fixture_aid_type__lang">
+            fixture_aid_type__text
+        </aid-type>
+        <finance-type code="fixture_finance_type__code" xml:lang="fixture_finance_type__lang">
+            fixture_finance_type__text
+        </finance-type>
+        <tied-status code="fixture_tied_status__code" xml:lang="fixture_tied_status__lang">
+            fixture_tied_status__text
+        </tied-status>
+        <disbursement-channel code="fixture_disbursement_channel__code" xml:lang="fixture_disbursement_channel__lang">
+            fixture_disbursement_channel__text
+        </disbursement-channel>
+    </transaction>
+    <sector code="999013" vocabulary="fixture_vocabulary" percentage="999012.12" xml:lang="fixture_lang">
+      fixture_text
+    </sector>
+    <participating-org ref="fixture_ref" type="fixture_type" role="fixture_role" xml:lang="fixture_lang">
+      fixture_text
+    </participating-org>
+    <contact-info>
+        <organisation>fixture_organisation__text</organisation>
+        <person-name>fixture_person_name__text</person-name>
+        <telephone>fixture_telephone__text</telephone>
+        <email>fixture_email__text</email>
+        <mailing-address>fixture_mailing_address__text</mailing-address>
+    </contact-info>
+    <activity-date type="fixture_type" iso-date="2011-12-13 14:15:16" xml:lang="fixture_lang">
+        fixture_text
+    </activity-date>
+</iati-activity>
 """
 
 class CaseParser(unittest.TestCase):
     def setUp(self):
         assert len( list(session.query(CodelistSector)) )==0
         session.add( CodelistSector(code=999013) )
+        assert len( list(session.query(IndexedResource)) )==0
+        session.add( IndexedResource(id=u'999999') )
         session.commit()
     def tearDown(self):
         session.query(CodelistSector).delete()
+        session.query(IndexedResource).delete()
         session.commit()
+        assert len( list(session.query(IndexedResource)) )==0
+        assert len( list(session.query(CodelistSector)) )==0
 
     def test_fixture_xml(self):
-        temp = tempfile.NamedTemporaryFile()
-        temp.write( _fixture_xml )
-        temp.flush()
-        url = 'file://%s' % temp.name
-        activity = iatilib.parser.parse(url)
-        temp.close()
-        assert len(activity)==1, 'Parse error'
-        activity = activity[0]
+        activity, errors = iatilib.parser.parse(_fixture_xml)
+        assert len(errors)==0
         assert len(activity.transaction)==1, len(activity.transaction)
         assert len(activity.activitydate)==1, len(activity.activitydate)
         assert len(activity.sector)==1, len(activity.sector)
@@ -420,3 +417,40 @@ class CaseParser(unittest.TestCase):
         assert activity.participatingorg[0].type == 'fixture_type', obj_dict['participatingorg'].type 
         assert activity.participatingorg[0].role == 'fixture_role', obj_dict['participatingorg'].role 
         assert activity.participatingorg[0].lang == 'fixture_lang', obj_dict['participatingorg'].lang 
+
+    def test_commit_to_db(self):
+        xmlblob = RawXmlBlob(raw_xml = _fixture_xml, parent_id=u'999999')
+        session.add(xmlblob)
+        session.commit()
+        activity, errors = iatilib.parser.parse(xmlblob.raw_xml)
+        xmlblob.activity = activity
+        assert len(errors)==0, len(errors)
+        session.commit()
+        assert session.query(Activity).count()==1
+        assert session.query(Transaction).count()==1
+        session.delete(xmlblob.activity)
+        session.commit()
+        assert session.query(Activity).count()==0
+        assert session.query(Transaction).count()==0
+        assert xmlblob.activity is None
+        session.delete(xmlblob)
+        session.commit()
+        assert session.query(RawXmlBlob).count()==0
+
+    def test_double_commit_to_db(self):
+        xmlblob = RawXmlBlob(raw_xml = _fixture_xml,parent_id=u'999999') 
+        xmlblob.activity,errors = iatilib.parser.parse(xmlblob.raw_xml)
+        session.add(xmlblob)
+        session.commit()
+        assert session.query(Activity).count()==1
+        assert session.query(Transaction).count()==1
+        session.delete(xmlblob.activity)
+        xmlblob.activity,errors = iatilib.parser.parse(xmlblob.raw_xml)
+        session.commit()
+        assert session.query(Activity).count()==1
+        assert session.query(Transaction).count()==1
+        session.delete(xmlblob)
+        session.commit()
+        assert session.query(RawXmlBlob).count()==0
+        assert session.query(Activity).count()==0
+        assert session.query(Transaction).count()==0

@@ -7,34 +7,24 @@ from iatilib import session
 # ===========
 # Main method
 # ===========
-def parse(url):
-    """Read an IATI-XML file and return a set of objects.
-    Or throw XML parse errors. Whatever."""
-    parser = etree.XMLParser(ns_clean=True, recover=True)
-    doc = etree.parse(url, parser)
-    activities = []
+def parse(xml_string):
+    xml = etree.fromstring(xml_string)
     logger = Logger()
-    for xml in doc.findall("iati-activity"):
-        try:
-            # Parse first...
-            activity = model.Activity._parse_xml(logger, xml)
-            for x in xml.findall('transaction'):
-                activity.transaction.append( model.Transaction._parse_xml(logger,x) )
-            for x in xml.findall('sector'):
-                activity.sector.append( model.Sector._parse_xml(logger,x) )
-            for x in xml.findall('activity-date'):
-                activity.activitydate.append( model.ActivityDate._parse_xml(logger,x) )
-            for x in xml.findall('contact-info'):
-                activity.contactinfo.append( model.ContactInfo._parse_xml(logger,x) )
-            for x in xml.findall('participating-org'):
-                activity.participatingorg.append( model.ParticipatingOrg._parse_xml(logger,x) )
-            # ...then validate ...
-            _validate(logger,activity)
-            # .. then update the global object set
-            activities.append(activity)
-        except (ValueError,AssertionError) as e:
-            logger.log(unicode(e),level='error')
-    return activities, logger.errors
+    # Parse first...
+    activity = model.Activity._parse_xml(logger, xml)
+    for x in xml.findall('transaction'):
+        activity.transaction.append( model.Transaction._parse_xml(logger,x) )
+    for x in xml.findall('sector'):
+        activity.sector.append( model.Sector._parse_xml(logger,x) )
+    for x in xml.findall('activity-date'):
+        activity.activitydate.append( model.ActivityDate._parse_xml(logger,x) )
+    for x in xml.findall('contact-info'):
+        activity.contactinfo.append( model.ContactInfo._parse_xml(logger,x) )
+    for x in xml.findall('participating-org'):
+        activity.participatingorg.append( model.ParticipatingOrg._parse_xml(logger,x) )
+    # ...then validate ...
+    _validate(logger,activity)
+    return activity,logger.errors
 
 # =========
 # Utilities
