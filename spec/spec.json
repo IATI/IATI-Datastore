@@ -150,38 +150,20 @@
     "tablename": "transaction",
     "classname": "Transaction",
     "children": [ 
-        {"class":"TransactionValue","xpath":"value"}
+        {"class":"TransactionValue","xpath":"value"},
+        {"class":"TransactionDescription","xpath":"description"},
+        {"class":"TransactionType","xpath":"transaction-type"},
+        {"class":"TransactionProviderOrg","xpath":"provider-org"},
+        {"class":"TransactionReceiverOrg","xpath":"receiver-org"},
+        {"class":"TransactionDate","xpath":"transaction-date"},
+        {"class":"TransactionFlowType","xpath":"flow-type"},
+        {"class":"TransactionAidType","xpath":"aid-type"},
+        {"class":"TransactionFinanceType","xpath":"finance-type"},
+        {"class":"TransactionTiedStatus","xpath":"tied-status"},
+        {"class":"TransactionDisbursementChannel","xpath":"disbursement-channel"}
     ],
     "fields": [
-        { "xml": "@ref" }, 
-        { "xml": "description/text()" }, 
-        { "xml": "description/@xml:lang" }, 
-        { "xml": "transaction-type/text()" }, 
-        { "xml": "transaction-type/@code" }, 
-        { "xml": "transaction-type/@xml:lang" }, 
-        { "xml": "provider-org/text()" }, 
-        { "xml": "provider-org/@ref" }, 
-        { "xml": "provider-org/@provider-activity-id" }, 
-        { "xml": "receiver-org/text()" }, 
-        { "xml": "receiver-org/@ref" }, 
-        { "xml": "receiver-org/@receiver-activity-id" }, 
-        { "xml": "transaction-date/text()" }, 
-        { "xml": "transaction-date/@iso-date", "format": "DateTime"  }, 
-        { "xml": "flow-type/text()" }, 
-        { "xml": "flow-type/@code" }, 
-        { "xml": "flow-type/@xml:lang" }, 
-        { "xml": "aid-type/text()" }, 
-        { "xml": "aid-type/@code" }, 
-        { "xml": "aid-type/@xml:lang" }, 
-        { "xml": "finance-type/text()" }, 
-        { "xml": "finance-type/@code" }, 
-        { "xml": "finance-type/@xml:lang" }, 
-        { "xml": "tied-status/text()" }, 
-        { "xml": "tied-status/@code" }, 
-        { "xml": "tied-status/@xml:lang" }, 
-        { "xml": "disbursement-channel/text()" }, 
-        { "xml": "disbursement-channel/@code" }, 
-        { "xml": "disbursement-channel/@xml:lang" }
+        { "xml": "@ref" }
     ]
   },
   {
@@ -191,6 +173,94 @@
         { "xml": "text()", "format": "Float" }, 
         { "xml": "@currency" }, 
         { "xml": "@value-date", "format": "DateTime"  }
+    ]
+  },
+  {
+    "tablename": "transaction_description",
+    "classname": "TransactionDescription",
+    "fields": [
+        { "xml": "text()" }, 
+        { "xml": "@xml:lang" }
+    ]
+  },
+  {
+    "tablename": "transaction_type",
+    "classname": "TransactionType",
+    "fields": [
+        { "xml": "text()" }, 
+        { "xml": "@code" }, 
+        { "xml": "@xml:lang" }
+    ]
+  },
+  {
+    "tablename": "transaction_provider_org",
+    "classname": "TransactionProviderOrg",
+    "fields": [
+        { "xml": "text()" }, 
+        { "xml": "@ref" }, 
+        { "xml": "@provider-activity-id" }
+    ]
+  },
+  {
+    "tablename": "transaction_receiver_org",
+    "classname": "TransactionReceiverOrg",
+    "fields": [
+        { "xml": "text()" }, 
+        { "xml": "@ref" }, 
+        { "xml": "@receiver-activity-id" }
+    ]
+  },
+  {
+    "tablename": "transaction_date",
+    "classname": "TransactionDate",
+    "fields": [
+        { "xml": "text()" }, 
+        { "xml": "@iso-date", "format": "DateTime"  }
+    ]
+  },
+  {
+    "tablename": "transaction_flow_type",
+    "classname": "TransactionFlowType",
+    "fields": [
+        { "xml": "text()" }, 
+        { "xml": "@code" }, 
+        { "xml": "@xml:lang" }
+    ]
+  },
+  {
+    "tablename": "transaction_aid_type",
+    "classname": "TransactionAidType",
+    "fields": [
+        { "xml": "text()" }, 
+        { "xml": "@code" }, 
+        { "xml": "@xml:lang" }
+    ]
+  },
+  {
+    "tablename": "transaction_finance_type",
+    "classname": "TransactionFinanceType",
+    "fields": [
+        { "xml": "text()" }, 
+        { "xml": "@code" }, 
+        { "xml": "@xml:lang" }
+    ]
+  },
+  {
+    "tablename": "transaction_tied_status",
+    "classname": "TransactionTiedStatus",
+    "fields": [
+        { "xml": "text()" }, 
+        { "xml": "@code" }, 
+        { "xml": "@xml:lang" }
+    ]
+  },
+  {
+    "tablename": "transaction_disbursement_channel",
+    "classname": "TransactionDisbursementChannel",
+    "fields": [
+        { "xml": "text()" }, 
+        { "xml": "@code" }, 
+        { "xml": "@xml:lang" }
     ]
   },
   {
@@ -217,12 +287,48 @@
   {
     "tablename": "contactinfo",
     "classname": "ContactInfo",
+    "children": [
+        { "class":"ContactInfoOrganisation", "xpath": "organisation" }, 
+        { "class":"ContactInfoPerson", "xpath": "person-name" }, 
+        { "class":"ContactInfoTelephone", "xpath": "telephone" }, 
+        { "class":"ContactInfoEmail", "xpath": "email" }, 
+        { "class":"ContactInfoMail", "xpath": "mailing-address" }
+    ],
+    "fields": []
+  },
+  {
+    "tablename": "contactinfo_organisation",
+    "classname": "ContactInfoOrganisation",
     "fields": [
-        { "xml": "organisation/text()" }, 
-        { "xml": "person-name/text()" }, 
-        { "xml": "telephone/text()" }, 
-        { "xml": "email/text()" }, 
-        { "xml": "mailing-address/text()" }
+        { "xml": "text()" }
+    ]
+  },
+  {
+    "tablename": "contactinfo_person",
+    "classname": "ContactInfoPerson",
+    "fields": [
+        { "xml": "text()" }
+    ]
+  },
+  {
+    "tablename": "contactinfo_telephone",
+    "classname": "ContactInfoTelephone",
+    "fields": [
+        { "xml": "text()" }
+    ]
+  },
+  {
+    "tablename": "contactinfo_email",
+    "classname": "ContactInfoEmail",
+    "fields": [
+        { "xml": "text()" }
+    ]
+  },
+  {
+    "tablename": "contactinfo_mail",
+    "classname": "ContactInfoMail",
+    "fields": [
+        { "xml": "text()" }
     ]
   },
   {
