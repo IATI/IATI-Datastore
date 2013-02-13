@@ -31,7 +31,7 @@ def parse_loop(debug_limit=None,verbose=False):
             for line in traceback.generate_plaintext_traceback():
                 print line
             session.rollback()
-            activity.parsed = False
+            xmlblob.parsed = False
             session.commit()
         parsed += 1
         if (debug_limit is not None) and parsed >= debug_limit:
