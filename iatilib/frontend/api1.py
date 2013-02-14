@@ -6,12 +6,14 @@ from sqlalchemy import func
 from sqlalchemy.orm import aliased
 from sqlalchemy.orm.collections import InstrumentedList
 from sqlalchemy.sql.expression import and_, or_
-from flask import request, make_response, escape
+from flask import request, make_response, escape, Blueprint
 from datetime import datetime,timedelta
 import json
 import functools
 import iso8601
 from urllib import urlencode
+
+api = Blueprint('api', __name__)
 
 ##################################################
 ####           Utilities
@@ -24,40 +26,10 @@ def endpoint(rule, **options):
     BASE='/api/1'
     def decorator(f):
         @functools.wraps(f)
-        def wrapped_fn_xml(*args, **kwargs):
-            callback = request.args.get('callback')
-            try:
-                raw = f(*args, **kwargs)
-            except (AssertionError, ValueError) as e:
-                if request.args.get('_debug') is not None:
-                    raise e
-                raw = { 'ok': False, 'message' : e.message }
-            response = make_response(raw)
-            response.headers['content-type'] = 'text/xml'
-            return response
-        @functools.wraps(f)
-        def wrapped_fn_csv(*args, **kwargs):
-            try:
-                raw = f(*args, **kwargs) 
-                assert type(raw) is list, type(raw)
-            except (AssertionError, ValueError) as e:
-                if request.args.get('_debug') is not None:
-                    raise e
-                raw = [{ 'ok': False, 'message' : e.message }]
-            csv_headers = []
-            for x in raw: csv_headers += x.keys()
-            csv_headers = list(set(csv_headers))
-            response_text = ','.join(csv_headers) + '\n'
-            for x in raw:
-                response_text += ','.join( [str(x.get(key) or '') for key in csv_headers ] ) + '\n'
-            response = make_response(response_text)
-            response.headers['content-type'] = 'text/csv'
-            return response
-        @functools.wraps(f)
         def wrapped_fn_json(*args, **kwargs):
             callback = request.args.get('callback')
             try:
-                response = f(*args, **kwargs) 
+                response = f(*args, **kwargs)
             except (AssertionError, ValueError) as e:
                 if request.args.get('_debug') is not None:
                     raise e
@@ -72,10 +44,7 @@ def endpoint(rule, **options):
         # Add this endpoint to the list
         all_endpoints.append(BASE+rule)
         # Bind to the root, JSON and CSV endpoints simultaneously
-        app.add_url_rule(BASE+rule+'.json', endpoint+'.json', wrapped_fn_json, **options)
-        app.add_url_rule(BASE+rule+'.xml', endpoint+'.xml', wrapped_fn_xml, **options)
-        app.add_url_rule(BASE+rule+'.csv', endpoint+'.csv', wrapped_fn_csv, **options)
-        app.add_url_rule(BASE+rule, endpoint, wrapped_fn_json, **options)
+        api.add_url_rule(BASE+rule, endpoint, wrapped_fn_json, **options)
         return f
     return decorator
 
@@ -95,7 +64,7 @@ def pure_obj(obj):
     return out
 
 ###########################################
-####   IATI argument parser 
+####   IATI argument parser
 ###########################################
 
 def _prepare(total=None, per_page=10):
@@ -156,13 +125,13 @@ def parse_args():
         # Left hand side of the query's equals sign
         lhs = clean_parent(xParent,xChild,xProperty)\
                 + clean_child(xChild,xChild,xProperty)\
-                + clean_property(xProperty,xChild,xProperty) 
+                + clean_property(xProperty,xChild,xProperty)
         # Nested OR groups within AND groups...
         _or      = lambda x : x[0] if len(x)==1 else '(%s)' % ' or '.join(x)
         _and     = lambda x : x[0] if len(x)==1 else '(%s)' % ' and '.join(x)
         or_string  = lambda x:  _or( [    lhs+'=\''+y+'\'' for y in x.split('|') ] )
         and_string = lambda x: _and( [ or_string(y) for y in x.split('+') ] )
-        # input:   ?field=aa||bb+cc   
+        # input:   ?field=aa||bb+cc
         # output:  ((field/text()=aa or field/text()=bb) and (field.text()=cc))
         out.append(and_string(value))
     return ' and '.join(out)

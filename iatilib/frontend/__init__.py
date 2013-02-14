@@ -8,5 +8,6 @@ app = Flask('iatilib.frontend')
 def homepage():
     return app.send_static_file('index.html')
 
-# Patch the app with API v1 endpoints
-import api1
+from .api1 import api
+
+app.register_blueprint(api)
