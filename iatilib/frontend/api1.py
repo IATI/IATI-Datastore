@@ -139,17 +139,6 @@ def parse_args():
 
 
 
-
-##################################################
-####           URL: /
-##################################################
-@endpoint('/')
-def index():
-    # Root of the API lists all available endpoints
-    rules = [x.rule for x in app.url_map.iter_rules()]
-    #all_endpoints = [request.url_root[:-1]+x for x in rules if x.startswith('/api/1')]
-    return {'version':'1.0','ok':True,'endpoints':all_endpoints}
-
 #### URL: /about
 
 @endpoint('/about')
@@ -216,8 +205,14 @@ def activities_list():
                     or_(Start.type=='start-actual',Start.type=='start-planned'),\
                     Start.iso_date<_date)\
                     )
+    if request.path.endswith(".xml"):
+        return xml_response(query)
     # Prepare a response
     response = _prepare(query.count())
     query = query.offset(response['offset']).limit(response['per_page'])
     response['results'] = [ pure_obj(x) for x in query ]
     return response
+
+
+def xml_response(query):
+    return ""

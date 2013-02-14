@@ -1,11 +1,5 @@
 #!/usr/bin/env python
+import subprocess
 
-import os
-import unittest
-import test
-#from test.test_frontend import *
-from test.test_db import *
-from test.test_parser import *
-
-if __name__ == '__main__':
-    unittest.main()
+print "run python -m unittest discover to run tests"
+subprocess.call("python -m unittest discover", shell=True)

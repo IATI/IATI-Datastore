@@ -1,0 +1,267 @@
+<!--
+    Simple test
+
+    >>> count(result/result-activities/iati-activity) == 1
+
+
+-->
+<iati-activities>
+<iati-activity default-currency="USD" last-updated-datetime="2012-09-25" xml:lang="en" hierarchy="1">
+<reporting-org ref="47045" type="40">The Global Fund to Fight AIDS, Tuberculosis and Malaria</reporting-org>
+<iati-identifier>47045-ARM-202-G05-H-00</iati-identifier>
+<title xml:lang="en">Support to the National Program on the Response to HIV Epicemic in the Republic of Armenia</title>
+<description type="1">While Armenia is still a country with a concentrated HIV epidemic, it has seen a substantial growth of identified HIV cases over the past six years, partially due to increased voluntary counseling and testing services. This program implemented by the Ministry of Health aims to accelerate the reduction of the HIV epidemic in the country by providing antiretroviral treatment for those who need it, universal access to counseling and testing among pregnant women and general population, HIV prevention activities among prisoners and mobile populations, methadone substitution treatment, HIV education in school settings, strengthening of national information, monitoring and evaluation, laboratory and procurement and supply management systems.</description>
+<activity-status code="2">Implementation</activity-status>
+<activity-date type="start-actual" iso-date="2009-10-01" />
+<contact-info>
+<organization>The Global Fund to Fight AIDS, Tuberculosis and Malaria</organization>
+<person-name>Elena, Zaytseva</person-name>
+<email>Elena.Zaytseva@theglobalfund.org</email>
+</contact-info>
+<participating-org role="Funding" ref="47045" xml:lang="en">The Global Fund to Fight AIDS, Tuberculosis and Malaria</participating-org>
+<participating-org role="Implementing" type="Government" xml:lang="en">Ministry of Health of Armenia</participating-org>
+<recipient-country code="AM">Armenia</recipient-country>
+<default-finance-type code="110">Aid grant excluding debt reorganisation</default-finance-type>
+<default-aid-type code="C01">Project-type interventions</default-aid-type>
+<default-tied-status code="5">Untied</default-tied-status>
+<budget type="Original">
+<period-end iso-date="2012-09-30" />
+<value currency="USD">253482</value>
+</budget>
+<budget type="Original">
+<period-end iso-date="2012-03-31" />
+<value currency="USD">1257879</value>
+</budget>
+<budget type="Original">
+<period-end iso-date="2011-09-30" />
+<value currency="USD">221019</value>
+</budget>
+<budget type="Original">
+<period-end iso-date="2011-03-31" />
+<value currency="USD">969178</value>
+</budget>
+<budget type="Original">
+<period-end iso-date="2010-09-30" />
+<value currency="USD">300295</value>
+</budget>
+<budget type="Original">
+<period-end iso-date="2010-03-31" />
+<value currency="USD">1840852</value>
+</budget>
+<transaction>
+<transaction-type code="C">Commitment</transaction-type>
+<value value-date="2009-10-01" currency="USD">3991675</value>
+<transaction-date iso-date="2009-10-01" />
+</transaction>
+<transaction>
+<transaction-type code="D">Disbursement</transaction-type>
+<value value-date="2012-08-20" currency="USD">64442</value>
+<transaction-date iso-date="2012-08-20" />
+<disbursement-channel code="2">Money is disbursed directly to the implementing institution and managed through a separate bank account</disbursement-channel>
+</transaction>
+<transaction>
+<transaction-type code="D">Disbursement</transaction-type>
+<value value-date="2012-07-13" currency="USD">999258</value>
+<transaction-date iso-date="2012-07-13" />
+<disbursement-channel code="2">Money is disbursed directly to the implementing institution and managed through a separate bank account</disbursement-channel>
+</transaction>
+<transaction>
+<transaction-type code="D">Disbursement</transaction-type>
+<value value-date="2012-02-06" currency="USD">436846</value>
+<transaction-date iso-date="2012-02-06" />
+<disbursement-channel code="2">Money is disbursed directly to the implementing institution and managed through a separate bank account</disbursement-channel>
+</transaction>
+<transaction>
+<transaction-type code="D">Disbursement</transaction-type>
+<value value-date="2011-10-26" currency="USD">104609</value>
+<transaction-date iso-date="2011-10-26" />
+<disbursement-channel code="2">Money is disbursed directly to the implementing institution and managed through a separate bank account</disbursement-channel>
+</transaction>
+<transaction>
+<transaction-type code="D">Disbursement</transaction-type>
+<value value-date="2011-08-02" currency="USD">1044007</value>
+<transaction-date iso-date="2011-08-02" />
+<disbursement-channel code="2">Money is disbursed directly to the implementing institution and managed through a separate bank account</disbursement-channel>
+</transaction>
+<transaction>
+<transaction-type code="D">Disbursement</transaction-type>
+<value value-date="2011-04-15" currency="USD">7749</value>
+<transaction-date iso-date="2011-04-15" />
+<disbursement-channel code="2">Money is disbursed directly to the implementing institution and managed through a separate bank account</disbursement-channel>
+</transaction>
+<transaction>
+<transaction-type code="D">Disbursement</transaction-type>
+<value value-date="2010-12-15" currency="USD">7170</value>
+<transaction-date iso-date="2010-12-15" />
+<disbursement-channel code="2">Money is disbursed directly to the implementing institution and managed through a separate bank account</disbursement-channel>
+</transaction>
+<transaction>
+<transaction-type code="D">Disbursement</transaction-type>
+<value value-date="2010-10-13" currency="USD">8013</value>
+<transaction-date iso-date="2010-10-13" />
+<disbursement-channel code="2">Money is disbursed directly to the implementing institution and managed through a separate bank account</disbursement-channel>
+</transaction>
+<transaction>
+<transaction-type code="D">Disbursement</transaction-type>
+<value value-date="2010-09-21" currency="USD">66308</value>
+<transaction-date iso-date="2010-09-21" />
+<disbursement-channel code="2">Money is disbursed directly to the implementing institution and managed through a separate bank account</disbursement-channel>
+</transaction>
+<transaction>
+<transaction-type code="D">Disbursement</transaction-type>
+<value value-date="2010-08-30" currency="USD">70450</value>
+<transaction-date iso-date="2010-08-30" />
+<disbursement-channel code="2">Money is disbursed directly to the implementing institution and managed through a separate bank account</disbursement-channel>
+</transaction>
+<transaction>
+<transaction-type code="D">Disbursement</transaction-type>
+<value value-date="2010-03-23" currency="USD">30777</value>
+<transaction-date iso-date="2010-03-23" />
+<disbursement-channel code="2">Money is disbursed directly to the implementing institution and managed through a separate bank account</disbursement-channel>
+</transaction>
+<transaction>
+<transaction-type code="D">Disbursement</transaction-type>
+<value value-date="2010-01-15" currency="USD">36992</value>
+<transaction-date iso-date="2010-01-15" />
+<disbursement-channel code="2">Money is disbursed directly to the implementing institution and managed through a separate bank account</disbursement-channel>
+</transaction>
+<transaction>
+<transaction-type code="D">Disbursement</transaction-type>
+<value value-date="2009-12-10" currency="USD">1927444</value>
+<transaction-date iso-date="2009-12-10" />
+<disbursement-channel code="2">Money is disbursed directly to the implementing institution and managed through a separate bank account</disbursement-channel>
+</transaction>
+<document-link url="http://www.theglobalfund.org/grantDocuments/ARM-R02-HA_Proposal_0_en">
+<language>en</language>
+<category code="A02">Objectives / Purpose of activity</category>
+<title xml:lang="en">Original Proposal</title>
+</document-link>
+<document-link url="http://www.theglobalfund.org/grantDocuments/ARM-R02-HA_RCCProposal_0_en">
+<language>en</language>
+<category code="A02">Objectives / Purpose of activity</category>
+<title xml:lang="en">RCC Proposal</title>
+</document-link>
+<document-link url="http://www.theglobalfund.org/grantDocuments/ARM-202-G05-H-00_GPR_0_en">
+<language>en</language>
+<category code="A07">Review of project performance and evaluation</category>
+<title xml:lang="en">Grant Performance Report</title>
+</document-link>
+<document-link url="http://www.theglobalfund.org/grantDocuments/ARM-202-G05-H-00_DR_1_en">
+<language>en</language>
+<category code="A07">Review of project performance and evaluation</category>
+<title xml:lang="en">Disbursement Request 1</title>
+</document-link>
+<result type="Output" aggregation-status="false">
+<indicator measure="text" ascending="false">
+<title>Number of adults and children with advanced HIV infection currently receiving antiretroviral therapy</title>
+<period>
+<period-start iso-date="2012-04-01" />
+<period-end iso-date="2012-09-30" />
+<target value="350" />
+<actual value="360" />
+</period>
+</indicator>
+</result>
+<result type="Output" aggregation-status="false">
+<indicator measure="text" ascending="false">
+<title>Number of Government Personnel Trained on HIV prevention and treatment
+</title>
+<period>
+<period-start iso-date="2012-04-01" />
+<period-end iso-date="2012-09-30" />
+<target value="180" />
+<actual value="187" />
+</period>
+</indicator>
+</result>
+<result type="Output" aggregation-status="false">
+<indicator measure="text" ascending="false">
+<title>Number of Health Service Personnel trained in stigma reduction</title>
+<period>
+<period-start iso-date="2012-04-01" />
+<period-end iso-date="2012-09-30" />
+<target value="500" />
+<actual value="547" />
+</period>
+</indicator>
+</result>
+<result type="Output" aggregation-status="false">
+<indicator measure="text" ascending="false">
+<title>Number of HIV tests performed among pregnant women</title>
+<period>
+<period-start iso-date="2012-04-01" />
+<period-end iso-date="2012-09-30" />
+<target value="20,000" />
+<actual value="24,055" />
+</period>
+</indicator>
+</result>
+<result type="Output" aggregation-status="false">
+<indicator measure="text" ascending="false">
+<title>Number of IDUs provided Opiate Substitution Therapy</title>
+<period>
+<period-start iso-date="2012-04-01" />
+<period-end iso-date="2012-09-30" />
+<target value="275" />
+<actual value="173" />
+</period>
+</indicator>
+</result>
+<result type="Output" aggregation-status="false">
+<indicator measure="text" ascending="false">
+<title>Number of Laboratory Technicians Trained</title>
+<period>
+<period-start iso-date="2012-04-01" />
+<period-end iso-date="2012-09-30" />
+<target value="100" />
+<actual value="107" />
+</period>
+</indicator>
+</result>
+<result type="Output" aggregation-status="false">
+<indicator measure="text" ascending="false">
+<title>Number of Migrants reached with HIV preventive programs</title>
+<period>
+<period-start iso-date="2012-04-01" />
+<period-end iso-date="2012-09-30" />
+<target value="22,500" />
+<actual value="0" />
+</period>
+</indicator>
+</result>
+<result type="Output" aggregation-status="false">
+<indicator measure="text" ascending="false">
+<title>Number of opportunistic infection cases among PLHIV treated</title>
+<period>
+<period-start iso-date="2012-04-01" />
+<period-end iso-date="2012-09-30" />
+<target value="300" />
+<actual value="81" />
+</period>
+</indicator>
+</result>
+<result type="Output" aggregation-status="false">
+<indicator measure="text" ascending="false">
+<title>Number of Prisoners reached with HIV preventive programs</title>
+<period>
+<period-start iso-date="2012-04-01" />
+<period-end iso-date="2012-09-30" />
+<target value="850" />
+<actual value="1,110" />
+</period>
+</indicator>
+</result>
+<result type="Output" aggregation-status="false">
+<indicator measure="text" ascending="false">
+<title>Number of teachers trained</title>
+<period>
+<period-start iso-date="2012-04-01" />
+<period-end iso-date="2012-09-30" />
+<target value="1,540" />
+<actual value="1,433" />
+</period>
+</indicator>
+</result>
+<activity-website>http://portfolio.theglobalfund.org/en/Grant/Index/ARM-202-G05-H-00</activity-website>
+</iati-activity>
+</iati-activities>

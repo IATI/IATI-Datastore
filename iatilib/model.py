@@ -3,7 +3,6 @@ from flask.ext.sqlalchemy import SQLAlchemy
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from sqlalchemy import Column,Integer,DateTime,Float,ForeignKey,UnicodeText,Boolean
-from parser import _nav, _parse_float, _parse_int, _parse_datetime, _parse_boolean
 
 from . import db
 
@@ -99,6 +98,7 @@ class Activity(db.Model):
     linked_data_uri = Column(UnicodeText)	# @linked-data-uri
     @classmethod
     def _parse_xml(cls,logger,xml):
+        from parser import _nav, _parse_float, _parse_int, _parse_datetime, _parse_boolean
         data = {}
         data['version'] = _nav(logger, xml, [], attrib='version', parser=_parse_float)
         data['last_updated_datetime'] = _nav(logger, xml, [], attrib='last-updated-datetime', parser=_parse_datetime)
@@ -183,6 +183,7 @@ class Transaction(db.Model):
     ref = Column(UnicodeText)	# @ref
     @classmethod
     def _parse_xml(cls,logger,xml):
+        from parser import _nav, _parse_float, _parse_int, _parse_datetime, _parse_boolean
         data = {}
         data['ref'] = _nav(logger, xml, [], attrib='ref')
         out = Transaction(**data)
@@ -219,6 +220,7 @@ class TransactionValue(db.Model):
     value_date = Column(DateTime)	# @value-date
     @classmethod
     def _parse_xml(cls,logger,xml):
+        from parser import _nav, _parse_float, _parse_int, _parse_datetime, _parse_boolean
         data = {}
         data['text'] = _nav(logger, xml, [], text=True, parser=_parse_float)
         data['currency'] = _nav(logger, xml, [], attrib='currency')
@@ -234,6 +236,7 @@ class TransactionDescription(db.Model):
     lang = Column(UnicodeText)	# @xml:lang
     @classmethod
     def _parse_xml(cls,logger,xml):
+        from parser import _nav, _parse_float, _parse_int, _parse_datetime, _parse_boolean
         data = {}
         data['text'] = _nav(logger, xml, [], text=True)
         data['lang'] = _nav(logger, xml, [], attrib='xml:lang')
@@ -249,6 +252,7 @@ class TransactionType(db.Model):
     lang = Column(UnicodeText)	# @xml:lang
     @classmethod
     def _parse_xml(cls,logger,xml):
+        from parser import _nav, _parse_float, _parse_int, _parse_datetime, _parse_boolean
         data = {}
         data['text'] = _nav(logger, xml, [], text=True)
         data['code'] = _nav(logger, xml, [], attrib='code')
@@ -265,6 +269,7 @@ class TransactionProviderOrg(db.Model):
     provider_activity_id = Column(UnicodeText)	# @provider-activity-id
     @classmethod
     def _parse_xml(cls,logger,xml):
+        from parser import _nav, _parse_float, _parse_int, _parse_datetime, _parse_boolean
         data = {}
         data['text'] = _nav(logger, xml, [], text=True)
         data['ref'] = _nav(logger, xml, [], attrib='ref')
@@ -281,6 +286,7 @@ class TransactionReceiverOrg(db.Model):
     receiver_activity_id = Column(UnicodeText)	# @receiver-activity-id
     @classmethod
     def _parse_xml(cls,logger,xml):
+        from parser import _nav, _parse_float, _parse_int, _parse_datetime, _parse_boolean
         data = {}
         data['text'] = _nav(logger, xml, [], text=True)
         data['ref'] = _nav(logger, xml, [], attrib='ref')
@@ -296,6 +302,7 @@ class TransactionDate(db.Model):
     iso_date = Column(DateTime)	# @iso-date
     @classmethod
     def _parse_xml(cls,logger,xml):
+        from parser import _nav, _parse_float, _parse_int, _parse_datetime, _parse_boolean
         data = {}
         data['text'] = _nav(logger, xml, [], text=True)
         data['iso_date'] = _nav(logger, xml, [], attrib='iso-date', parser=_parse_datetime)
@@ -311,6 +318,7 @@ class TransactionFlowType(db.Model):
     lang = Column(UnicodeText)	# @xml:lang
     @classmethod
     def _parse_xml(cls,logger,xml):
+        from parser import _nav, _parse_float, _parse_int, _parse_datetime, _parse_boolean
         data = {}
         data['text'] = _nav(logger, xml, [], text=True)
         data['code'] = _nav(logger, xml, [], attrib='code')
@@ -327,6 +335,7 @@ class TransactionAidType(db.Model):
     lang = Column(UnicodeText)	# @xml:lang
     @classmethod
     def _parse_xml(cls,logger,xml):
+        from parser import _nav, _parse_float, _parse_int, _parse_datetime, _parse_boolean
         data = {}
         data['text'] = _nav(logger, xml, [], text=True)
         data['code'] = _nav(logger, xml, [], attrib='code')
@@ -343,6 +352,7 @@ class TransactionFinanceType(db.Model):
     lang = Column(UnicodeText)	# @xml:lang
     @classmethod
     def _parse_xml(cls,logger,xml):
+        from parser import _nav, _parse_float, _parse_int, _parse_datetime, _parse_boolean
         data = {}
         data['text'] = _nav(logger, xml, [], text=True)
         data['code'] = _nav(logger, xml, [], attrib='code')
@@ -359,6 +369,7 @@ class TransactionTiedStatus(db.Model):
     lang = Column(UnicodeText)	# @xml:lang
     @classmethod
     def _parse_xml(cls,logger,xml):
+        from parser import _nav, _parse_float, _parse_int, _parse_datetime, _parse_boolean
         data = {}
         data['text'] = _nav(logger, xml, [], text=True)
         data['code'] = _nav(logger, xml, [], attrib='code')
@@ -375,6 +386,7 @@ class TransactionDisbursementChannel(db.Model):
     lang = Column(UnicodeText)	# @xml:lang
     @classmethod
     def _parse_xml(cls,logger,xml):
+        from parser import _nav, _parse_float, _parse_int, _parse_datetime, _parse_boolean
         data = {}
         data['text'] = _nav(logger, xml, [], text=True)
         data['code'] = _nav(logger, xml, [], attrib='code')
@@ -393,6 +405,7 @@ class Sector(db.Model):
     lang = Column(UnicodeText)	# @xml:lang
     @classmethod
     def _parse_xml(cls,logger,xml):
+        from parser import _nav, _parse_float, _parse_int, _parse_datetime, _parse_boolean
         data = {}
         data['text'] = _nav(logger, xml, [], text=True)
         data['code'] = _nav(logger, xml, [], attrib='code', parser=_parse_int)
@@ -412,6 +425,7 @@ class ActivityDate(db.Model):
     lang = Column(UnicodeText)	# @xml:lang
     @classmethod
     def _parse_xml(cls,logger,xml):
+        from parser import _nav, _parse_float, _parse_int, _parse_datetime, _parse_boolean
         data = {}
         data['text'] = _nav(logger, xml, [], text=True)
         data['type'] = _nav(logger, xml, [], attrib='type')
@@ -431,6 +445,7 @@ class ContactInfo(db.Model):
     parent_id = Column(Integer, ForeignKey('activity.id'), nullable=False)
     @classmethod
     def _parse_xml(cls,logger,xml):
+        from parser import _nav, _parse_float, _parse_int, _parse_datetime, _parse_boolean
         data = {}
         out = ContactInfo(**data)
         for child_xml in xml.findall('organisation'):
@@ -452,6 +467,7 @@ class ContactInfoOrganisation(db.Model):
     text = Column(UnicodeText)	# text()
     @classmethod
     def _parse_xml(cls,logger,xml):
+        from parser import _nav, _parse_float, _parse_int, _parse_datetime, _parse_boolean
         data = {}
         data['text'] = _nav(logger, xml, [], text=True)
         out = ContactInfoOrganisation(**data)
@@ -464,6 +480,7 @@ class ContactInfoPerson(db.Model):
     text = Column(UnicodeText)	# text()
     @classmethod
     def _parse_xml(cls,logger,xml):
+        from parser import _nav, _parse_float, _parse_int, _parse_datetime, _parse_boolean
         data = {}
         data['text'] = _nav(logger, xml, [], text=True)
         out = ContactInfoPerson(**data)
@@ -476,6 +493,7 @@ class ContactInfoTelephone(db.Model):
     text = Column(UnicodeText)	# text()
     @classmethod
     def _parse_xml(cls,logger,xml):
+        from parser import _nav, _parse_float, _parse_int, _parse_datetime, _parse_boolean
         data = {}
         data['text'] = _nav(logger, xml, [], text=True)
         out = ContactInfoTelephone(**data)
@@ -488,6 +506,7 @@ class ContactInfoEmail(db.Model):
     text = Column(UnicodeText)	# text()
     @classmethod
     def _parse_xml(cls,logger,xml):
+        from parser import _nav, _parse_float, _parse_int, _parse_datetime, _parse_boolean
         data = {}
         data['text'] = _nav(logger, xml, [], text=True)
         out = ContactInfoEmail(**data)
@@ -500,6 +519,7 @@ class ContactInfoMail(db.Model):
     text = Column(UnicodeText)	# text()
     @classmethod
     def _parse_xml(cls,logger,xml):
+        from parser import _nav, _parse_float, _parse_int, _parse_datetime, _parse_boolean
         data = {}
         data['text'] = _nav(logger, xml, [], text=True)
         out = ContactInfoMail(**data)
@@ -516,6 +536,7 @@ class ParticipatingOrg(db.Model):
     lang = Column(UnicodeText)	# @xml:lang
     @classmethod
     def _parse_xml(cls,logger,xml):
+        from parser import _nav, _parse_float, _parse_int, _parse_datetime, _parse_boolean
         data = {}
         data['text'] = _nav(logger, xml, [], text=True)
         data['ref'] = _nav(logger, xml, [], attrib='ref')
@@ -535,6 +556,7 @@ class ReportingOrg(db.Model):
     lang = Column(UnicodeText)	# @xml:lang
     @classmethod
     def _parse_xml(cls,logger,xml):
+        from parser import _nav, _parse_float, _parse_int, _parse_datetime, _parse_boolean
         data = {}
         data['text'] = _nav(logger, xml, [], text=True)
         data['ref'] = _nav(logger, xml, [], attrib='ref')
@@ -553,6 +575,7 @@ class RecipientCountry(db.Model):
     lang = Column(UnicodeText)	# @xml:lang
     @classmethod
     def _parse_xml(cls,logger,xml):
+        from parser import _nav, _parse_float, _parse_int, _parse_datetime, _parse_boolean
         data = {}
         data['text'] = _nav(logger, xml, [], text=True)
         data['code'] = _nav(logger, xml, [], attrib='code')
@@ -571,6 +594,7 @@ class RecipientRegion(db.Model):
     lang = Column(UnicodeText)	# @xml:lang
     @classmethod
     def _parse_xml(cls,logger,xml):
+        from parser import _nav, _parse_float, _parse_int, _parse_datetime, _parse_boolean
         data = {}
         data['text'] = _nav(logger, xml, [], text=True)
         data['code'] = _nav(logger, xml, [], attrib='code')
@@ -588,6 +612,7 @@ class CollaborationType(db.Model):
     lang = Column(UnicodeText)	# @xml:lang
     @classmethod
     def _parse_xml(cls,logger,xml):
+        from parser import _nav, _parse_float, _parse_int, _parse_datetime, _parse_boolean
         data = {}
         data['text'] = _nav(logger, xml, [], text=True)
         data['code'] = _nav(logger, xml, [], attrib='code')
@@ -604,6 +629,7 @@ class DefaultFlowType(db.Model):
     lang = Column(UnicodeText)	# @xml:lang
     @classmethod
     def _parse_xml(cls,logger,xml):
+        from parser import _nav, _parse_float, _parse_int, _parse_datetime, _parse_boolean
         data = {}
         data['text'] = _nav(logger, xml, [], text=True)
         data['code'] = _nav(logger, xml, [], attrib='code')
@@ -620,6 +646,7 @@ class DefaultAidType(db.Model):
     lang = Column(UnicodeText)	# @xml:lang
     @classmethod
     def _parse_xml(cls,logger,xml):
+        from parser import _nav, _parse_float, _parse_int, _parse_datetime, _parse_boolean
         data = {}
         data['text'] = _nav(logger, xml, [], text=True)
         data['code'] = _nav(logger, xml, [], attrib='code')
@@ -636,6 +663,7 @@ class DefaultFinanceType(db.Model):
     lang = Column(UnicodeText)	# @xml:lang
     @classmethod
     def _parse_xml(cls,logger,xml):
+        from parser import _nav, _parse_float, _parse_int, _parse_datetime, _parse_boolean
         data = {}
         data['text'] = _nav(logger, xml, [], text=True)
         data['code'] = _nav(logger, xml, [], attrib='code')
@@ -650,6 +678,7 @@ class IatiIdentifier(db.Model):
     text = Column(UnicodeText)	# text()
     @classmethod
     def _parse_xml(cls,logger,xml):
+        from parser import _nav, _parse_float, _parse_int, _parse_datetime, _parse_boolean
         data = {}
         data['text'] = _nav(logger, xml, [], text=True)
         out = IatiIdentifier(**data)
@@ -664,6 +693,7 @@ class OtherIdentifier(db.Model):
     owner_name = Column(UnicodeText)	# @owner-name
     @classmethod
     def _parse_xml(cls,logger,xml):
+        from parser import _nav, _parse_float, _parse_int, _parse_datetime, _parse_boolean
         data = {}
         data['text'] = _nav(logger, xml, [], text=True)
         data['owner_ref'] = _nav(logger, xml, [], attrib='owner-ref')
@@ -679,6 +709,7 @@ class Title(db.Model):
     lang = Column(UnicodeText)	# @xml:lang
     @classmethod
     def _parse_xml(cls,logger,xml):
+        from parser import _nav, _parse_float, _parse_int, _parse_datetime, _parse_boolean
         data = {}
         data['text'] = _nav(logger, xml, [], text=True)
         data['lang'] = _nav(logger, xml, [], attrib='xml:lang')
@@ -694,6 +725,7 @@ class Description(db.Model):
     lang = Column(UnicodeText)	# @xml:lang
     @classmethod
     def _parse_xml(cls,logger,xml):
+        from parser import _nav, _parse_float, _parse_int, _parse_datetime, _parse_boolean
         data = {}
         data['text'] = _nav(logger, xml, [], text=True)
         data['type'] = _nav(logger, xml, [], attrib='type')
@@ -710,6 +742,7 @@ class ActivityStatus(db.Model):
     lang = Column(UnicodeText)	# @xml:lang
     @classmethod
     def _parse_xml(cls,logger,xml):
+        from parser import _nav, _parse_float, _parse_int, _parse_datetime, _parse_boolean
         data = {}
         data['text'] = _nav(logger, xml, [], text=True)
         data['code'] = _nav(logger, xml, [], attrib='code')
@@ -726,6 +759,7 @@ class DefaultTiedStatus(db.Model):
     lang = Column(UnicodeText)	# @xml:lang
     @classmethod
     def _parse_xml(cls,logger,xml):
+        from parser import _nav, _parse_float, _parse_int, _parse_datetime, _parse_boolean
         data = {}
         data['text'] = _nav(logger, xml, [], text=True)
         data['code'] = _nav(logger, xml, [], attrib='code')
@@ -744,6 +778,7 @@ class PolicyMarker(db.Model):
     lang = Column(UnicodeText)	# @xml:lang
     @classmethod
     def _parse_xml(cls,logger,xml):
+        from parser import _nav, _parse_float, _parse_int, _parse_datetime, _parse_boolean
         data = {}
         data['text'] = _nav(logger, xml, [], text=True)
         data['code'] = _nav(logger, xml, [], attrib='code')
@@ -760,6 +795,7 @@ class Website(db.Model):
     text = Column(UnicodeText)	# text()
     @classmethod
     def _parse_xml(cls,logger,xml):
+        from parser import _nav, _parse_float, _parse_int, _parse_datetime, _parse_boolean
         data = {}
         data['text'] = _nav(logger, xml, [], text=True)
         out = Website(**data)
@@ -778,6 +814,7 @@ class Location(db.Model):
     percentage = Column(Float)	# @percentage
     @classmethod
     def _parse_xml(cls,logger,xml):
+        from parser import _nav, _parse_float, _parse_int, _parse_datetime, _parse_boolean
         data = {}
         data['percentage'] = _nav(logger, xml, [], attrib='percentage', parser=_parse_float)
         out = Location(**data)
@@ -806,6 +843,7 @@ class Result(db.Model):
     aggregation_status = Column(Boolean)	# @aggregation-status
     @classmethod
     def _parse_xml(cls,logger,xml):
+        from parser import _nav, _parse_float, _parse_int, _parse_datetime, _parse_boolean
         data = {}
         data['type'] = _nav(logger, xml, [], attrib='type')
         data['aggregation_status'] = _nav(logger, xml, [], attrib='aggregation-status', parser=_parse_boolean)
@@ -826,6 +864,7 @@ class Conditions(db.Model):
     attached = Column(Boolean)	# @attached
     @classmethod
     def _parse_xml(cls,logger,xml):
+        from parser import _nav, _parse_float, _parse_int, _parse_datetime, _parse_boolean
         data = {}
         data['attached'] = _nav(logger, xml, [], attrib='attached', parser=_parse_boolean)
         out = Conditions(**data)
@@ -843,6 +882,7 @@ class Budget(db.Model):
     type = Column(UnicodeText)	# @type
     @classmethod
     def _parse_xml(cls,logger,xml):
+        from parser import _nav, _parse_float, _parse_int, _parse_datetime, _parse_boolean
         data = {}
         data['type'] = _nav(logger, xml, [], attrib='type')
         out = Budget(**data)
@@ -864,6 +904,7 @@ class PlannedDisbursement(db.Model):
     updated = Column(UnicodeText)	# @updated
     @classmethod
     def _parse_xml(cls,logger,xml):
+        from parser import _nav, _parse_float, _parse_int, _parse_datetime, _parse_boolean
         data = {}
         data['updated'] = _nav(logger, xml, [], attrib='updated')
         out = PlannedDisbursement(**data)
@@ -885,6 +926,7 @@ class RelatedActivity(db.Model):
     lang = Column(UnicodeText)	# @xml:lang
     @classmethod
     def _parse_xml(cls,logger,xml):
+        from parser import _nav, _parse_float, _parse_int, _parse_datetime, _parse_boolean
         data = {}
         data['text'] = _nav(logger, xml, [], text=True)
         data['ref'] = _nav(logger, xml, [], attrib='ref')
@@ -904,6 +946,7 @@ class DocumentLink(db.Model):
     format = Column(UnicodeText)	# @format
     @classmethod
     def _parse_xml(cls,logger,xml):
+        from parser import _nav, _parse_float, _parse_int, _parse_datetime, _parse_boolean
         data = {}
         data['url'] = _nav(logger, xml, [], attrib='url')
         data['format'] = _nav(logger, xml, [], attrib='format')
@@ -926,6 +969,7 @@ class LegacyData(db.Model):
     iati_equivalent = Column(UnicodeText)	# @iati-equivalent
     @classmethod
     def _parse_xml(cls,logger,xml):
+        from parser import _nav, _parse_float, _parse_int, _parse_datetime, _parse_boolean
         data = {}
         data['text'] = _nav(logger, xml, [], text=True)
         data['name'] = _nav(logger, xml, [], attrib='name')
@@ -943,6 +987,7 @@ class LocationType(db.Model):
     lang = Column(UnicodeText)	# @xml:lang
     @classmethod
     def _parse_xml(cls,logger,xml):
+        from parser import _nav, _parse_float, _parse_int, _parse_datetime, _parse_boolean
         data = {}
         data['text'] = _nav(logger, xml, [], text=True)
         data['code'] = _nav(logger, xml, [], attrib='code')
@@ -958,6 +1003,7 @@ class LocationName(db.Model):
     lang = Column(UnicodeText)	# @xml:lang
     @classmethod
     def _parse_xml(cls,logger,xml):
+        from parser import _nav, _parse_float, _parse_int, _parse_datetime, _parse_boolean
         data = {}
         data['text'] = _nav(logger, xml, [], text=True)
         data['lang'] = _nav(logger, xml, [], attrib='xml:lang')
@@ -972,6 +1018,7 @@ class LocationDescription(db.Model):
     lang = Column(UnicodeText)	# @xml:lang
     @classmethod
     def _parse_xml(cls,logger,xml):
+        from parser import _nav, _parse_float, _parse_int, _parse_datetime, _parse_boolean
         data = {}
         data['text'] = _nav(logger, xml, [], text=True)
         data['lang'] = _nav(logger, xml, [], attrib='xml:lang')
@@ -988,6 +1035,7 @@ class LocationAdministrative(db.Model):
     adm2 = Column(UnicodeText)	# @adm2
     @classmethod
     def _parse_xml(cls,logger,xml):
+        from parser import _nav, _parse_float, _parse_int, _parse_datetime, _parse_boolean
         data = {}
         data['text'] = _nav(logger, xml, [], text=True)
         data['country'] = _nav(logger, xml, [], attrib='country')
@@ -1005,6 +1053,7 @@ class LocationCoordinates(db.Model):
     precision = Column(UnicodeText)	# @precision
     @classmethod
     def _parse_xml(cls,logger,xml):
+        from parser import _nav, _parse_float, _parse_int, _parse_datetime, _parse_boolean
         data = {}
         data['latitude'] = _nav(logger, xml, [], attrib='latitude', parser=_parse_float)
         data['longitude'] = _nav(logger, xml, [], attrib='longitude', parser=_parse_float)
@@ -1020,6 +1069,7 @@ class LocationGazetteerEntry(db.Model):
     gazetteer_ref = Column(UnicodeText)	# @gazetteer-ref
     @classmethod
     def _parse_xml(cls,logger,xml):
+        from parser import _nav, _parse_float, _parse_int, _parse_datetime, _parse_boolean
         data = {}
         data['text'] = _nav(logger, xml, [], text=True)
         data['gazetteer_ref'] = _nav(logger, xml, [], attrib='gazetteer-ref')
@@ -1034,6 +1084,7 @@ class ResultTitle(db.Model):
     lang = Column(UnicodeText)	# @xml:lang
     @classmethod
     def _parse_xml(cls,logger,xml):
+        from parser import _nav, _parse_float, _parse_int, _parse_datetime, _parse_boolean
         data = {}
         data['text'] = _nav(logger, xml, [], text=True)
         data['lang'] = _nav(logger, xml, [], attrib='xml:lang')
@@ -1049,6 +1100,7 @@ class ResultDescription(db.Model):
     lang = Column(UnicodeText)	# @xml:lang
     @classmethod
     def _parse_xml(cls,logger,xml):
+        from parser import _nav, _parse_float, _parse_int, _parse_datetime, _parse_boolean
         data = {}
         data['text'] = _nav(logger, xml, [], text=True)
         data['type'] = _nav(logger, xml, [], attrib='type')
@@ -1068,6 +1120,7 @@ class ResultIndicator(db.Model):
     ascending = Column(Boolean)	# @ascending
     @classmethod
     def _parse_xml(cls,logger,xml):
+        from parser import _nav, _parse_float, _parse_int, _parse_datetime, _parse_boolean
         data = {}
         data['measure'] = _nav(logger, xml, [], attrib='measure')
         data['ascending'] = _nav(logger, xml, [], attrib='ascending', parser=_parse_boolean)
@@ -1090,6 +1143,7 @@ class ResultIndicatorTitle(db.Model):
     lang = Column(UnicodeText)	# @xml:lang
     @classmethod
     def _parse_xml(cls,logger,xml):
+        from parser import _nav, _parse_float, _parse_int, _parse_datetime, _parse_boolean
         data = {}
         data['text'] = _nav(logger, xml, [], text=True)
         data['lang'] = _nav(logger, xml, [], attrib='xml:lang')
@@ -1105,6 +1159,7 @@ class ResultIndicatorDescription(db.Model):
     lang = Column(UnicodeText)	# @xml:lang
     @classmethod
     def _parse_xml(cls,logger,xml):
+        from parser import _nav, _parse_float, _parse_int, _parse_datetime, _parse_boolean
         data = {}
         data['text'] = _nav(logger, xml, [], text=True)
         data['type'] = _nav(logger, xml, [], attrib='type')
@@ -1121,6 +1176,7 @@ class ResultIndicatorBaseline(db.Model):
     value = Column(UnicodeText)	# @value
     @classmethod
     def _parse_xml(cls,logger,xml):
+        from parser import _nav, _parse_float, _parse_int, _parse_datetime, _parse_boolean
         data = {}
         data['year'] = _nav(logger, xml, [], attrib='year', parser=_parse_float)
         data['value'] = _nav(logger, xml, [], attrib='value')
@@ -1139,6 +1195,7 @@ class ResultIndicatorPeriod(db.Model):
     parent_id = Column(Integer, ForeignKey('result_indicator.id'), nullable=False)
     @classmethod
     def _parse_xml(cls,logger,xml):
+        from parser import _nav, _parse_float, _parse_int, _parse_datetime, _parse_boolean
         data = {}
         out = ResultIndicatorPeriod(**data)
         for child_xml in xml.findall('period-start'):
@@ -1159,6 +1216,7 @@ class ResultIndicatorBaselineComment(db.Model):
     lang = Column(UnicodeText)	# @xml:lang
     @classmethod
     def _parse_xml(cls,logger,xml):
+        from parser import _nav, _parse_float, _parse_int, _parse_datetime, _parse_boolean
         data = {}
         data['text'] = _nav(logger, xml, [], text=True)
         data['lang'] = _nav(logger, xml, [], attrib='xml:lang')
@@ -1173,6 +1231,7 @@ class ResultIndicatorPeriodStart(db.Model):
     iso_date = Column(DateTime)	# @iso-date
     @classmethod
     def _parse_xml(cls,logger,xml):
+        from parser import _nav, _parse_float, _parse_int, _parse_datetime, _parse_boolean
         data = {}
         data['text'] = _nav(logger, xml, [], text=True)
         data['iso_date'] = _nav(logger, xml, [], attrib='iso-date', parser=_parse_datetime)
@@ -1187,6 +1246,7 @@ class ResultIndicatorPeriodEnd(db.Model):
     iso_date = Column(DateTime)	# @iso-date
     @classmethod
     def _parse_xml(cls,logger,xml):
+        from parser import _nav, _parse_float, _parse_int, _parse_datetime, _parse_boolean
         data = {}
         data['text'] = _nav(logger, xml, [], text=True)
         data['iso_date'] = _nav(logger, xml, [], attrib='iso-date', parser=_parse_datetime)
@@ -1201,6 +1261,7 @@ class ResultIndicatorPeriodTarget(db.Model):
     value = Column(UnicodeText)	# @value
     @classmethod
     def _parse_xml(cls,logger,xml):
+        from parser import _nav, _parse_float, _parse_int, _parse_datetime, _parse_boolean
         data = {}
         data['value'] = _nav(logger, xml, [], attrib='value')
         out = ResultIndicatorPeriodTarget(**data)
@@ -1216,6 +1277,7 @@ class ResultIndicatorPeriodActual(db.Model):
     value = Column(UnicodeText)	# @value
     @classmethod
     def _parse_xml(cls,logger,xml):
+        from parser import _nav, _parse_float, _parse_int, _parse_datetime, _parse_boolean
         data = {}
         data['value'] = _nav(logger, xml, [], attrib='value')
         out = ResultIndicatorPeriodActual(**data)
@@ -1231,6 +1293,7 @@ class ResultIndicatorPeriodTargetComment(db.Model):
     lang = Column(UnicodeText)	# @xml:lang
     @classmethod
     def _parse_xml(cls,logger,xml):
+        from parser import _nav, _parse_float, _parse_int, _parse_datetime, _parse_boolean
         data = {}
         data['text'] = _nav(logger, xml, [], text=True)
         data['lang'] = _nav(logger, xml, [], attrib='xml:lang')
@@ -1245,6 +1308,7 @@ class ResultIndicatorPeriodActualComment(db.Model):
     lang = Column(UnicodeText)	# @xml:lang
     @classmethod
     def _parse_xml(cls,logger,xml):
+        from parser import _nav, _parse_float, _parse_int, _parse_datetime, _parse_boolean
         data = {}
         data['text'] = _nav(logger, xml, [], text=True)
         data['lang'] = _nav(logger, xml, [], attrib='xml:lang')
@@ -1259,6 +1323,7 @@ class Condition(db.Model):
     type = Column(UnicodeText)	# @type
     @classmethod
     def _parse_xml(cls,logger,xml):
+        from parser import _nav, _parse_float, _parse_int, _parse_datetime, _parse_boolean
         data = {}
         data['text'] = _nav(logger, xml, [], text=True)
         data['type'] = _nav(logger, xml, [], attrib='type')
@@ -1273,6 +1338,7 @@ class BudgetPeriodStart(db.Model):
     iso_date = Column(DateTime)	# @iso-date
     @classmethod
     def _parse_xml(cls,logger,xml):
+        from parser import _nav, _parse_float, _parse_int, _parse_datetime, _parse_boolean
         data = {}
         data['text'] = _nav(logger, xml, [], text=True)
         data['iso_date'] = _nav(logger, xml, [], attrib='iso-date', parser=_parse_datetime)
@@ -1287,6 +1353,7 @@ class BudgetPeriodEnd(db.Model):
     iso_date = Column(DateTime)	# @iso-date
     @classmethod
     def _parse_xml(cls,logger,xml):
+        from parser import _nav, _parse_float, _parse_int, _parse_datetime, _parse_boolean
         data = {}
         data['text'] = _nav(logger, xml, [], text=True)
         data['iso_date'] = _nav(logger, xml, [], attrib='iso-date', parser=_parse_datetime)
@@ -1302,6 +1369,7 @@ class BudgetValue(db.Model):
     value_date = Column(DateTime)	# @value-date
     @classmethod
     def _parse_xml(cls,logger,xml):
+        from parser import _nav, _parse_float, _parse_int, _parse_datetime, _parse_boolean
         data = {}
         data['text'] = _nav(logger, xml, [], text=True, parser=_parse_float)
         data['currency'] = _nav(logger, xml, [], attrib='currency')
@@ -1317,6 +1385,7 @@ class PlannedDisbursementPeriodStart(db.Model):
     iso_date = Column(DateTime)	# @iso-date
     @classmethod
     def _parse_xml(cls,logger,xml):
+        from parser import _nav, _parse_float, _parse_int, _parse_datetime, _parse_boolean
         data = {}
         data['text'] = _nav(logger, xml, [], text=True)
         data['iso_date'] = _nav(logger, xml, [], attrib='iso-date', parser=_parse_datetime)
@@ -1331,6 +1400,7 @@ class PlannedDisbursementPeriodEnd(db.Model):
     iso_date = Column(DateTime)	# @iso-date
     @classmethod
     def _parse_xml(cls,logger,xml):
+        from parser import _nav, _parse_float, _parse_int, _parse_datetime, _parse_boolean
         data = {}
         data['text'] = _nav(logger, xml, [], text=True)
         data['iso_date'] = _nav(logger, xml, [], attrib='iso-date', parser=_parse_datetime)
@@ -1346,6 +1416,7 @@ class PlannedDisbursementValue(db.Model):
     value_date = Column(DateTime)	# @value-date
     @classmethod
     def _parse_xml(cls,logger,xml):
+        from parser import _nav, _parse_float, _parse_int, _parse_datetime, _parse_boolean
         data = {}
         data['text'] = _nav(logger, xml, [], text=True, parser=_parse_float)
         data['currency'] = _nav(logger, xml, [], attrib='currency')
@@ -1361,6 +1432,7 @@ class DocumentLinkTitle(db.Model):
     lang = Column(UnicodeText)	# @xml:lang
     @classmethod
     def _parse_xml(cls,logger,xml):
+        from parser import _nav, _parse_float, _parse_int, _parse_datetime, _parse_boolean
         data = {}
         data['text'] = _nav(logger, xml, [], text=True)
         data['lang'] = _nav(logger, xml, [], attrib='xml:lang')
@@ -1376,6 +1448,7 @@ class DocumentLinkCategory(db.Model):
     lang = Column(UnicodeText)	# @xml:lang
     @classmethod
     def _parse_xml(cls,logger,xml):
+        from parser import _nav, _parse_float, _parse_int, _parse_datetime, _parse_boolean
         data = {}
         data['text'] = _nav(logger, xml, [], text=True)
         data['code'] = _nav(logger, xml, [], attrib='code')
@@ -1392,6 +1465,7 @@ class DocumentLinkLanguage(db.Model):
     lang = Column(UnicodeText)	# @xml:lang
     @classmethod
     def _parse_xml(cls,logger,xml):
+        from parser import _nav, _parse_float, _parse_int, _parse_datetime, _parse_boolean
         data = {}
         data['text'] = _nav(logger, xml, [], text=True)
         data['code'] = _nav(logger, xml, [], attrib='code')
