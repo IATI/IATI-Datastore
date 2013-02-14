@@ -1,7 +1,6 @@
 from iatilib import log
 from iatilib import session
 from iatilib.model import *
-from iatilib.frontend import app
 from sqlalchemy import func
 from sqlalchemy.orm import aliased
 from sqlalchemy.orm.collections import InstrumentedList
