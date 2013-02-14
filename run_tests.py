@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 
 import os
-os.environ['DATABASE_URL']='sqlite:///:memory:'
-
 import unittest
 import test
 #from test.test_frontend import *

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from iatilib import session
+from iatilib import db
 from iatilib.model import *
 from iatilib.magic_numbers import *
 from sqlalchemy import func
@@ -18,8 +18,8 @@ def update_db(incoming, verbose=False):
     # Dict: The incoming resources from CKAN
     incoming = { x['id'] : x for x in incoming }
     # Dict: The existing resources in the database
-    existing = { x.id : x for x in session.query(IndexedResource) }
-    known_deleted = set([ x.id for x in session.query(IndexedResource).filter(IndexedResource.state==CKAN_DELETED) ])
+    existing = { x.id : x for x in db.session.query(IndexedResource) }
+    known_deleted = set([ x.id for x in db.session.query(IndexedResource).filter(IndexedResource.state==CKAN_DELETED) ])
     # Use the unique IDs to examine the intersection/difference between EXISTING and INCOMING keys
     ex_k = set(existing.keys())
     in_k = set(incoming.keys())
@@ -31,7 +31,7 @@ def update_db(incoming, verbose=False):
     # Add new resources
     for id in additional_ids:
         incoming[id]['state'] = CKAN_NEW
-        session.add( IndexedResource(**incoming[id]) )
+        db.session.add( IndexedResource(**incoming[id]) )
     # Tag existing resources if they have been modified
     count_updated = 0
     count_undeleted = 0
@@ -51,9 +51,9 @@ def update_db(incoming, verbose=False):
     if verbose:
         print 'Resources: %d created, %d updated, %d deleted, %d undeleted' % (len(additional_ids), count_updated, len(deleted_ids), count_undeleted)
         print 'Committing database...'
-    session.commit()
+    db.session.commit()
     if verbose:
-        counts = dict( session.query(IndexedResource.state,func.count(IndexedResource.state)).group_by(IndexedResource.state))
+        counts = dict( db.session.query(IndexedResource.state,func.count(IndexedResource.state)).group_by(IndexedResource.state))
         print 'DB State:'
         print '  %d awaiting download ("created")'%counts.get(CKAN_NEW,0)
         print '  %d awaiting download ("updated")'%counts.get(CKAN_UPDATED,0)
@@ -87,7 +87,7 @@ def crawl_ckan(debug_limit=None,verbose=False):
                     'url' : resource['url'],
                     'ckan_url' : CKAN_WEB_BASE % pkg.get('name',pkg['id'])
                 })
-        if verbose: 
+        if verbose:
             print 'Done.'
     return index
 

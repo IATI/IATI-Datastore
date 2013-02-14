@@ -4,15 +4,17 @@ import tempfile
 import iatilib.parser
 import iso8601
 from datetime import datetime
-from iatilib import session
+from iatilib import db
+
+from . import AppTestCase
 
 # Hand-generated XML used to test the parser
 _fixture_xml = u"""
-<iati-activity 
-  version="999001.01" 
-  hierarchy="999002.02" 
-  default-currency="fixture_default_currency" 
-  xml:lang="fixture_lang" 
+<iati-activity
+  version="999001.01"
+  hierarchy="999002.02"
+  default-currency="fixture_default_currency"
+  xml:lang="fixture_lang"
   linked-data-uri="fixture_linked_data_uri"
   last-updated-datetime="2012-01-14 15:16:17">
     <iati-identifier>
@@ -205,26 +207,27 @@ _fixture_xml = u"""
 </iati-activity>
 """
 
-class CaseParser(unittest.TestCase):
+class CaseParser(AppTestCase):
     def setUp(self):
-        assert len( list(session.query(CodelistSector)) )==0
-        session.add( CodelistSector(code=999013) )
-        assert len( list(session.query(IndexedResource)) )==0
-        session.add( IndexedResource(id=u'999999') )
-        session.commit()
+        super(CaseParser, self).setUp()
+        assert len( list(db.session.query(CodelistSector)) )==0
+        db.session.add( CodelistSector(code=999013) )
+        assert len( list(db.session.query(IndexedResource)) )==0
+        db.session.add( IndexedResource(id=u'999999') )
+        db.session.commit()
     def tearDown(self):
-        session.query(CodelistSector).delete()
-        session.query(IndexedResource).delete()
-        session.commit()
-        assert len( list(session.query(IndexedResource)) )==0
-        assert len( list(session.query(CodelistSector)) )==0
+        db.session.query(CodelistSector).delete()
+        db.session.query(IndexedResource).delete()
+        db.session.commit()
+        assert len( list(db.session.query(IndexedResource)) )==0
+        assert len( list(db.session.query(CodelistSector)) )==0
 
     def test_fixture_xml(self):
         activity, errors = iatilib.parser.parse(_fixture_xml)
         assert len(errors)==0
         ## Assertions: Activity object
         assert activity.version == 999001.01
-        assert activity.last_updated_datetime == datetime(year=2012,month=1,day=14,hour=15,minute=16,second=17,tzinfo=iso8601.iso8601.UTC), obj_dict['activity'].last_updated_datetime 
+        assert activity.last_updated_datetime == datetime(year=2012,month=1,day=14,hour=15,minute=16,second=17,tzinfo=iso8601.iso8601.UTC), obj_dict['activity'].last_updated_datetime
         assert activity.lang == 'fixture_lang'
         assert activity.default_currency == 'fixture_default_currency'
         assert activity.hierarchy == 999002.02
@@ -489,37 +492,37 @@ class CaseParser(unittest.TestCase):
 
     def test_commit_to_db(self):
         xmlblob = RawXmlBlob(raw_xml = _fixture_xml, parent_id=u'999999')
-        session.add(xmlblob)
-        session.commit()
+        db.session.add(xmlblob)
+        db.session.commit()
         activity, errors = iatilib.parser.parse(xmlblob.raw_xml)
         xmlblob.activity = activity
         assert len(errors)==0, len(errors)
-        session.commit()
-        assert session.query(Activity).count()==1
-        assert session.query(Transaction).count()==1
-        session.delete(xmlblob.activity)
-        session.commit()
-        assert session.query(Activity).count()==0
-        assert session.query(Transaction).count()==0
+        db.session.commit()
+        assert db.session.query(Activity).count()==1
+        assert db.session.query(Transaction).count()==1
+        db.session.delete(xmlblob.activity)
+        db.session.commit()
+        assert db.session.query(Activity).count()==0
+        assert db.session.query(Transaction).count()==0
         assert xmlblob.activity is None
-        session.delete(xmlblob)
-        session.commit()
-        assert session.query(RawXmlBlob).count()==0
+        db.session.delete(xmlblob)
+        db.session.commit()
+        assert db.session.query(RawXmlBlob).count()==0
 
     def test_double_commit_to_db(self):
-        xmlblob = RawXmlBlob(raw_xml = _fixture_xml,parent_id=u'999999') 
+        xmlblob = RawXmlBlob(raw_xml = _fixture_xml,parent_id=u'999999')
         xmlblob.activity,errors = iatilib.parser.parse(xmlblob.raw_xml)
-        session.add(xmlblob)
-        session.commit()
-        assert session.query(Activity).count()==1
-        assert session.query(Transaction).count()==1
-        session.delete(xmlblob.activity)
+        db.session.add(xmlblob)
+        db.session.commit()
+        assert db.session.query(Activity).count()==1
+        assert db.session.query(Transaction).count()==1
+        db.session.delete(xmlblob.activity)
         xmlblob.activity,errors = iatilib.parser.parse(xmlblob.raw_xml)
-        session.commit()
-        assert session.query(Activity).count()==1
-        assert session.query(Transaction).count()==1
-        session.delete(xmlblob)
-        session.commit()
-        assert session.query(RawXmlBlob).count()==0
-        assert session.query(Activity).count()==0
-        assert session.query(Transaction).count()==0
+        db.session.commit()
+        assert db.session.query(Activity).count()==1
+        assert db.session.query(Transaction).count()==1
+        db.session.delete(xmlblob)
+        db.session.commit()
+        assert db.session.query(RawXmlBlob).count()==0
+        assert db.session.query(Activity).count()==0
+        assert db.session.query(Transaction).count()==0

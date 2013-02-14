@@ -1,5 +1,5 @@
 from iatilib import log
-from iatilib import session
+from iatilib import db
 from iatilib.model import *
 from sqlalchemy import func
 from sqlalchemy.orm import aliased
@@ -58,6 +58,8 @@ def pure_obj(obj):
             out[key] = [ pure_obj(x) for x in val ]
         elif type(val) is datetime:
             out[key] = val.isoformat()
+        elif key in ("query", "query_class"):
+            pass
         else:
             out[key] = val
     return out
@@ -153,15 +155,15 @@ def index():
 @endpoint('/about')
 def about():
     # General status info
-    count_activity = session.query(Activity).count()
-    count_transaction = session.query(Transaction).count()
+    count_activity = db.session.query(Activity).count()
+    count_transaction = db.session.query(Transaction).count()
     return {'ok':True,'status':'healthy','indexed_activities':count_activity,'indexed_transactions':count_transaction}
 
 #### URL: /access/activities
 
 @endpoint('/access/activities')
 def activities_list():
-    query = session.query(Activity)
+    query = db.session.query(Activity)
     # Filter by country
     _country = request.args.get('country')
     if _country is not None:

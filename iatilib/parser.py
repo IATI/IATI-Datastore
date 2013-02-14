@@ -2,7 +2,7 @@ from lxml import etree
 import model
 from datetime import datetime
 import iso8601
-from iatilib import session
+from iatilib import db
 
 # ===========
 # Main method
@@ -72,7 +72,7 @@ def _nav(logger, element, path, attrib=None, text=False, parser=None):
         out = element.text
     else:
         if attrib=='xml:lang' : attrib='{http://www.w3.org/XML/1998/namespace}lang'
-        out = element.attrib.get(attrib) 
+        out = element.attrib.get(attrib)
     if out is not None:
         out = unicode(out).strip()
     if parser is not None:
@@ -80,7 +80,7 @@ def _nav(logger, element, path, attrib=None, text=False, parser=None):
     return out
 
 def _validate(logger,activity):
-    valid_sectors = set([ x.code for x in session.query(model.CodelistSector) ])
+    valid_sectors = set([ x.code for x in db.session.query(model.CodelistSector) ])
     assert len(valid_sectors), 'Found no CodelistSector'
     for sector in activity.sector:
         if sector.code==0: continue
