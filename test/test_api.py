@@ -20,27 +20,29 @@ class TestAbout(ClientTestCase):
         self.assertEquals(200, resp.status_code)
 
 
-class TestEmptyDb(ClientTestCase):
-    def test_json_http_ok(self):
-        resp = self.client.get('/api/1/access/activities')
+class TestEmptyDb_JSON(ClientTestCase):
+    url = '/api/1/access/activities'
+
+    def test_http_ok(self):
+        resp = self.client.get(self.url)
         self.assertEquals(200, resp.status_code)
 
     def tests_json_decode(self):
-        resp = self.client.get('/api/1/access/activities')
+        resp = self.client.get(self.url)
         self.assert_(json.loads(resp.data))
 
     def test_json_ok(self):
-        resp = self.client.get('/api/1/access/activities')
+        resp = self.client.get(self.url)
         js = json.loads(resp.data)
         self.assertTrue(js["ok"])
 
     def test_json_results(self):
-        resp = self.client.get('/api/1/access/activities')
+        resp = self.client.get(self.url)
         js = json.loads(resp.data)
         self.assertEquals(js["results"], [])
 
 
-class TestEmptyDbXML(ClientTestCase):
+class TestEmptyDb_XML(ClientTestCase):
     """
     Raw XML for empty db.
 
@@ -52,24 +54,28 @@ class TestEmptyDbXML(ClientTestCase):
        </result-activities>
     </result>
     """
+    url = '/api/1/access/activities.xml'
+
     def test_http_ok(self):
-        resp = self.client.get('/api/1/access/activities.xml')
+        resp = self.client.get(self.url)
         self.assertEquals(200, resp.status_code)
 
     def test_decode(self):
-        resp = self.client.get('/api/1/access/activities.xml')
+        resp = self.client.get(self.url)
         # an ElementTree node object does not test as true
         self.assert_(hasattr(ET.fromstring(resp.data), "tag"))
 
     def test_resp_ok(self):
-        resp = self.client.get('/api/1/access/activities.xml')
+        resp = self.client.get(self.url)
         xml = ET.fromstring(resp.data)
         self.assertTrue(xml.find('ok').text == 'True')
 
     def test_results(self):
-        resp = self.client.get('/api/1/access/activities.xml')
+        resp = self.client.get(self.url)
         xml = ET.fromstring(resp.data)
         self.assertEquals(xml.findall('result-activities'), [])
+
+
 
 
 class TestSingleActivity(ClientTestCase):
