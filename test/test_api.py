@@ -40,14 +40,36 @@ class TestEmptyDb(ClientTestCase):
         self.assertEquals(js["results"], [])
 
 
-
 class TestEmptyDbXML(ClientTestCase):
-    def _test_http_ok(self):
+    """
+    Raw XML for empty db.
+
+    Basic layout (see: https://github.com/okfn/iati-datastore/issues/14)
+    <result>
+       <page>5</page>
+       ...metadata here...
+       <result-activities>...concatted string...
+       </result-activities>
+    </result>
+    """
+    def test_http_ok(self):
         resp = self.client.get('/api/1/access/activities.xml')
         self.assertEquals(200, resp.status_code)
 
+    def test_decode(self):
+        resp = self.client.get('/api/1/access/activities.xml')
+        # an ElementTree node object does not test as true
+        self.assert_(hasattr(ET.fromstring(resp.data), "tag"))
 
+    def test_resp_ok(self):
+        resp = self.client.get('/api/1/access/activities.xml')
+        xml = ET.fromstring(resp.data)
+        self.assertTrue(xml.find('ok').text == 'True')
 
+    def test_results(self):
+        resp = self.client.get('/api/1/access/activities.xml')
+        xml = ET.fromstring(resp.data)
+        self.assertEquals(xml.findall('result-activities'), [])
 
 
 class TestSingleActivity(ClientTestCase):

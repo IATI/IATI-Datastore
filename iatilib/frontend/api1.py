@@ -5,7 +5,7 @@ from sqlalchemy import func
 from sqlalchemy.orm import aliased
 from sqlalchemy.orm.collections import InstrumentedList
 from sqlalchemy.sql.expression import and_, or_
-from flask import request, make_response, escape, Blueprint
+from flask import request, make_response, escape, Blueprint, jsonify
 from datetime import datetime,timedelta
 import json
 import functools
@@ -42,8 +42,8 @@ def endpoint(rule, **options):
         endpoint = options.pop('endpoint', BASE+rule)
         # Add this endpoint to the list
         all_endpoints.append(BASE+rule)
-        # Bind to the root, JSON and CSV endpoints simultaneously
-        api.add_url_rule(BASE+rule, endpoint, wrapped_fn_json, **options)
+        api.add_url_rule(BASE + rule, endpoint, wrapped_fn_json, **options)
+        api.add_url_rule(BASE + rule + "<path:format>", endpoint, wrapped_fn_json, **options)
         return f
     return decorator
 
@@ -138,20 +138,23 @@ def parse_args():
     return ' and '.join(out)
 
 
-
-#### URL: /about
-
-@endpoint('/about')
+@api.route('/api/1/about')
 def about():
     # General status info
     count_activity = db.session.query(Activity).count()
     count_transaction = db.session.query(Transaction).count()
-    return {'ok':True,'status':'healthy','indexed_activities':count_activity,'indexed_transactions':count_transaction}
+    return jsonify(
+        ok=True,
+        status='healthy',
+        indexed_activities=count_activity,
+        indexed_transactions=count_transaction
+        )
 
-#### URL: /access/activities
 
-@endpoint('/access/activities')
-def activities_list():
+
+@api.route('/api/1/access/activities', defaults={"format": ".json"})
+@api.route('/api/1/access/activities<format>')
+def activities_list(format):
     query = db.session.query(Activity)
     # Filter by country
     _country = request.args.get('country')
@@ -205,14 +208,18 @@ def activities_list():
                     or_(Start.type=='start-actual',Start.type=='start-planned'),\
                     Start.iso_date<_date)\
                     )
-    if request.path.endswith(".xml"):
-        return xml_response(query)
     # Prepare a response
     response = _prepare(query.count())
     query = query.offset(response['offset']).limit(response['per_page'])
     response['results'] = [ pure_obj(x) for x in query ]
-    return response
+
+    if format == ".xml":
+        return "<x><ok>True</ok></x>"
+    return jsonify(
+        ok=True,
+        results = [ pure_obj(x) for x in query ]
+        )
 
 
 def xml_response(query):
-    return ""
+    return "<x />"
