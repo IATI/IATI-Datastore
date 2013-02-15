@@ -215,8 +215,8 @@ def activities_list(format):
 
     if format == ".xml":
         out = "<x><ok>True</ok><result-activity>"
-        if query.count() > 0:
-            out += query.one().raw_xml.raw_xml
+        for activity in query:
+            out += activity.raw_xml.raw_xml
         out += "</result-activity></x>"
         return out
     return jsonify(

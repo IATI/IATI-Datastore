@@ -82,24 +82,25 @@ def fixture_filename(fix_name):
 
 
 def load_fix(fix_name):
-    fix_xml = ET.parse(fixture_filename(fix_name))
-    activity_xml = fix_xml.find('iati-activity')
-
     # can be anything, there just needs to be > 0
     db.session.add(CodelistSector(code=47045))
     ir = IndexedResource(id=u"TEST")
-    blob = RawXmlBlob(
-        parent=ir,
-        raw_xml=ET.tostring(
-            activity_xml,
-            encoding='utf-8').decode('utf-8'))
-    db.session.add_all([ir, blob])
-    db.session.commit()
 
-    activity, errors = parser.parse(blob.raw_xml)
-    activity.parent_id = blob.id
-    db.session.add(activity)
-    db.session.commit()
+    fix_xml = ET.parse(fixture_filename(fix_name))
+
+    for activity_xml in fix_xml.findall('iati-activity'):
+        blob = RawXmlBlob(
+            parent=ir,
+            raw_xml=ET.tostring(
+                activity_xml,
+                encoding='utf-8').decode('utf-8'))
+        db.session.add(blob)
+        db.session.commit()
+
+        activity, errors = parser.parse(blob.raw_xml)
+        activity.parent_id = blob.id
+        db.session.add(activity)
+        db.session.commit()
 
 
 class TestSingleActivity(ClientTestCase):
@@ -131,6 +132,36 @@ class TestSingleActivity(ClientTestCase):
     def test_json_activity_data(self):
         load_fix("single_activity.xml")
         exp = json.load(open(fixture_filename("single_activity.out.json")))
+        resp = self.client.get('/api/1/access/activities')
+        js = json.loads(resp.data)
+        self.assertEquals(exp["results"], js["results"])
+
+
+class TestManyActivities(ClientTestCase):
+    def test_xml_activity_count(self):
+        load_fix("many_activities.xml")
+        resp = self.client.get('/api/1/access/activities.xml')
+        xml = ET.fromstring(resp.data)
+        self.assertEquals(2, len(xml.findall('.//iati-activity')))
+
+    def test_xml_activity_data(self):
+        load_fix("many_activities.xml")
+        in_xml = ET.parse(fixture_filename("many_activities.xml"))
+        resp = self.client.get('/api/1/access/activities.xml')
+        xml = ET.fromstring(resp.data)
+        self.assertEquals(
+            ET.tostring(in_xml.find('.//iati-activity')),
+            ET.tostring(xml.find('.//iati-activity')))
+
+    def test_json_activity_count(self):
+        load_fix("many_activities.xml")
+        resp = self.client.get('/api/1/access/activities')
+        js = json.loads(resp.data)
+        self.assertEquals(2, len(js["results"]))
+
+    def test_json_activity_data(self):
+        load_fix("many_activities.xml")
+        exp = json.load(open(fixture_filename("many_activities.out.json")))
         resp = self.client.get('/api/1/access/activities')
         js = json.loads(resp.data)
         self.assertEquals(exp["results"], js["results"])
