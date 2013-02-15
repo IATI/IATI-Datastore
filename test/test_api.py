@@ -178,3 +178,11 @@ class TestManyActivities(ClientTestCase):
         resp = self.client.get('/api/1/access/activities')
         js = json.loads(resp.data)
         self.assertEquals(exp["results"], js["results"])
+
+
+class TestFilter(ClientTestCase):
+    def test_1(self):
+        load_fix("many_activities.xml")
+        resp = self.client.get('/api/1/access/activities?country_code=MW')
+        js = json.loads(resp.data)
+        self.assertEquals(2, len(js["results"]))

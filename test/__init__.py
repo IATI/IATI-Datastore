@@ -14,6 +14,10 @@ class AppTestCase(unittest.TestCase):
             SQLALCHEMY_DATABASE_URI='sqlite:///:memory:')
         create_db()
 
+    def tearDown(self):
+        db.session.remove()
+        db.drop_all()
+
 
 class ClientTestCase(AppTestCase):
     def setUp(self):

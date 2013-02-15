@@ -4,6 +4,8 @@ import json
 import iatilib
 
 from iatilib import db
+from .import dsfilter
+
 
 def create_app(**config):
     app = Flask('iatilib.frontend')
