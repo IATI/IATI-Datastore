@@ -218,12 +218,10 @@ def activities_list(format):
         for activity in query:
             out += activity.raw_xml.raw_xml
         out += "</result-activity></x>"
-        return out
+        resp = make_response(out)
+        resp.headers['Content-Type'] = "application/xml"
+        return resp
     return jsonify(
         ok=True,
         results = [ pure_obj(x) for x in query ]
         )
-
-
-def xml_response(query):
-    return "<x />"

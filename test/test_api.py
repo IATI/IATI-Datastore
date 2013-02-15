@@ -27,6 +27,10 @@ class TestEmptyDb_JSON(ClientTestCase):
         resp = self.client.get(self.url)
         self.assertEquals(200, resp.status_code)
 
+    def test_content_type(self):
+        resp = self.client.get(self.url)
+        self.assertEquals("application/json", resp.content_type)
+
     def tests_json_decode(self):
         resp = self.client.get(self.url)
         self.assert_(json.loads(resp.data))
@@ -59,6 +63,10 @@ class TestEmptyDb_XML(ClientTestCase):
     def test_http_ok(self):
         resp = self.client.get(self.url)
         self.assertEquals(200, resp.status_code)
+
+    def test_content_type(self):
+        resp = self.client.get(self.url)
+        self.assertEquals("application/xml", resp.content_type)
 
     def test_decode(self):
         resp = self.client.get(self.url)
