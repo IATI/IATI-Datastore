@@ -211,17 +211,16 @@ def activities_list(format):
     # Prepare a response
     response = _prepare(query.count())
     query = query.offset(response['offset']).limit(response['per_page'])
-    response['results'] = [ pure_obj(x) for x in query ]
 
     if format == ".xml":
-        out = "<x><ok>True</ok><result-activity>"
+        out = "<result><ok>True</ok><result-activity>"
         for activity in query:
             out += activity.raw_xml.raw_xml
-        out += "</result-activity></x>"
+        out += "</result-activity></result>"
         resp = make_response(out)
         resp.headers['Content-Type'] = "application/xml"
         return resp
     return jsonify(
         ok=True,
-        results = [ pure_obj(x) for x in query ]
+        results=[pure_obj(x) for x in query]
         )

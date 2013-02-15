@@ -83,6 +83,11 @@ class TestEmptyDb_XML(ClientTestCase):
         xml = ET.fromstring(resp.data)
         self.assertEquals(xml.findall('result-activities'), [])
 
+    def test_root_element(self):
+        resp = self.client.get(self.url)
+        xml = ET.fromstring(resp.data)
+        self.assertEquals(xml.tag, "result")
+
 
 def fixture_filename(fix_name):
     return os.path.join(
