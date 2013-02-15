@@ -14,38 +14,6 @@ from urllib import urlencode
 
 api = Blueprint('api', __name__)
 
-##################################################
-####           Utilities
-##################################################
-
-all_endpoints = []
-
-def endpoint(rule, **options):
-    """Function decorator borrowed & modified from Flask core."""
-    BASE='/api/1'
-    def decorator(f):
-        @functools.wraps(f)
-        def wrapped_fn_json(*args, **kwargs):
-            callback = request.args.get('callback')
-            try:
-                response = f(*args, **kwargs)
-            except (AssertionError, ValueError) as e:
-                if request.args.get('_debug') is not None:
-                    raise e
-                response = { 'ok': False, 'message' : e.message }
-            response_text = json.dumps(response)
-            if callback:
-                response_text = '%s(%s);' % (callback,response_text)
-            response = make_response(response_text)
-            response.headers['content-type'] = 'application/json'
-            return response
-        endpoint = options.pop('endpoint', BASE+rule)
-        # Add this endpoint to the list
-        all_endpoints.append(BASE+rule)
-        api.add_url_rule(BASE + rule, endpoint, wrapped_fn_json, **options)
-        api.add_url_rule(BASE + rule + "<path:format>", endpoint, wrapped_fn_json, **options)
-        return f
-    return decorator
 
 def pure_obj(obj):
     keys = filter(lambda x:x[0]!='_', dir(obj))
@@ -64,9 +32,6 @@ def pure_obj(obj):
             out[key] = val
     return out
 
-###########################################
-####   IATI argument parser
-###########################################
 
 def _prepare(total=None, per_page=10):
     """Prepare a response object based off the incoming args (assume pagination)"""
@@ -81,61 +46,6 @@ def _prepare(total=None, per_page=10):
         response['total'] = total
         response['last_page'] = max(0,total-1) / response['per_page']
     return response
-
-def parse_args():
-    """Turn the querystring into an XPath expression we can use to select elements.
-    See the querystring section of the IATI document:
-    https://docs.google.com/document/d/1gxvmYZSDXBTSMAU16bxfFd-hn1lYVY1c2olkXbuPBj4/edit
-    Plenty of special cases apply!
-    """
-    def clean_parent(parent, child, property):
-        if parent:
-            return parent+'/'
-        return ''
-    def clean_child(parent, child, property):
-        if child=='sector':
-            return 'sector[@vocabulary=\'DAC\']'
-        return child
-    def clean_property(parent, child, property):
-        if property=='text':
-            return '/text()'
-        if property:
-            return '/@'+property
-        if child=='sector' \
-                or child=='recipient-country':
-            return '/@code'
-        if child=='participating-org'\
-                or child=='reporting-org':
-            return '/@ref'
-        return '/text()'
-    def split(key):
-        # Split out the parent xPath element
-        split_parent = key.split('_')
-        assert len(split_parent)<=2, 'Bad parameter: %s' % key
-        xParent = split_parent[0] if len(split_parent)==2 else None
-        # Split out the child xPath element
-        split_child = split_parent[-1].split('.')
-        assert len(split_child)<=2, 'Bad parameter: %s' % key
-        xChild = split_child[0]
-        xProperty = split_child[1] if len(split_child)>1 else None
-        return xParent, xChild, xProperty
-    # Create an array of xpath strings...
-    out = []
-    for key,value in sorted(request.args.items(), key=lambda x:x[0]):
-        xParent, xChild, xProperty = split(key)
-        # Left hand side of the query's equals sign
-        lhs = clean_parent(xParent,xChild,xProperty)\
-                + clean_child(xChild,xChild,xProperty)\
-                + clean_property(xProperty,xChild,xProperty)
-        # Nested OR groups within AND groups...
-        _or      = lambda x : x[0] if len(x)==1 else '(%s)' % ' or '.join(x)
-        _and     = lambda x : x[0] if len(x)==1 else '(%s)' % ' and '.join(x)
-        or_string  = lambda x:  _or( [    lhs+'=\''+y+'\'' for y in x.split('|') ] )
-        and_string = lambda x: _and( [ or_string(y) for y in x.split('+') ] )
-        # input:   ?field=aa||bb+cc
-        # output:  ((field/text()=aa or field/text()=bb) and (field.text()=cc))
-        out.append(and_string(value))
-    return ' and '.join(out)
 
 
 @api.route('/api/1/about')
