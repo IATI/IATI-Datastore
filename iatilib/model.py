@@ -17,13 +17,20 @@ class IndexedResource(db.Model):
     xml_blobs = relationship("RawXmlBlob",cascade="all")
     logerrors = relationship("LogError",cascade="all")
 
+
 class RawXmlBlob(db.Model):
     __tablename__ = 'raw_xml_blob'
     parent_id = Column(UnicodeText, ForeignKey('indexed_resource.id'), nullable=False)
     id = Column(Integer, primary_key=True)
     raw_xml = Column(UnicodeText)
     parsed = Column(Boolean)
-    activity = relationship("Activity",cascade="all",uselist=False)
+    activity = relationship(
+        "Activity",
+        cascade="all",
+        uselist=False,
+        backref="raw_xml")
+    parent = relationship('IndexedResource')
+
 
 class LogError(db.Model):
     __tablename__ = 'logerror'

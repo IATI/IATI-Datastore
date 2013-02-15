@@ -5,7 +5,7 @@ from xml.etree import ElementTree as ET
 
 from test import AppTestCase
 from iatilib import parser, db
-from iatilib.model import Activity, CodelistSector, IndexedResource
+from iatilib.model import (Activity, CodelistSector, IndexedResource, RawXmlBlob)
 
 
 class ClientTestCase(AppTestCase):
@@ -76,53 +76,61 @@ class TestEmptyDb_XML(ClientTestCase):
         self.assertEquals(xml.findall('result-activities'), [])
 
 
+def fixture_filename(fix_name):
+    return os.path.join(
+            os.path.dirname(__file__), "fixtures", fix_name)
+
+
+def load_fix(fix_name):
+    fix_xml = ET.parse(fixture_filename(fix_name))
+    activity_xml = fix_xml.find('iati-activity')
+
+    # can be anything, there just needs to be > 0
+    db.session.add(CodelistSector(code=47045))
+    ir = IndexedResource(id=u"TEST")
+    blob = RawXmlBlob(
+        parent=ir,
+        raw_xml=ET.tostring(
+            activity_xml,
+            encoding='utf-8').decode('utf-8'))
+    db.session.add_all([ir, blob])
+    db.session.commit()
+
+    activity, errors = parser.parse(blob.raw_xml)
+    activity.parent_id = blob.id
+    db.session.add(activity)
+    db.session.commit()
 
 
 class TestSingleActivity(ClientTestCase):
     """
-    The json and xml reprisentations of a single activity.
+    Different reprisentations of the same input activity
     """
-    @expectedFailure
-    def test_root_node(self):
+
+    def test_xml_activity_count(self):
+        load_fix("single_activity.xml")
         resp = self.client.get('/api/1/access/activities.xml')
         xml = ET.fromstring(resp.data)
-        self.assertEquals(xml.tag, 'result')
+        self.assertEquals(1, len(xml.findall('.//iati-activity')))
 
-    @expectedFailure
-    def test_load_doc(self):
-        # can be anything, there just needs to be > 0
-        db.session.add(CodelistSector(code=47045))
-        db.session.add(IndexedResource(id=u"TEST"))
-        db.session.commit()
-
-        def load_fix():
-            fix = "test_1.xml"
-            xml = ET.parse(os.path.join(
-                os.path.dirname(__file__), "acc_tests", fix))
-            return ET.tostring(xml.find('iati-activity'))
-        activity, errors = parser.parse(load_fix())
-        activity.parent_id = db.db.session.query(IndexedResource).one().id
-        db.session.add(activity)
-        db.session.commit()
-        self.assertEquals(db.session.query(Activity).count(), 1)
-
-    @expectedFailure
-    def test_load_doc_api(self):
-        # can be anything, there just needs to be > 0
-        db.session.add(CodelistSector(code=47045))
-        db.session.add(IndexedResource(id=u"TEST"))
-        db.session.commit()
-
-        def load_fix():
-            fix = "test_1.xml"
-            xml = ET.parse(os.path.join(
-                os.path.dirname(__file__), "acc_tests", fix))
-            return ET.tostring(xml.find('iati-activity'))
-        activity, errors = parser.parse(load_fix())
-        activity.parent_id = db.session.query(IndexedResource).one().id
-        db.session.add(activity)
-        db.session.commit()
-
+    def test_xml_activity_data(self):
+        load_fix("single_activity.xml")
+        in_xml = ET.parse(fixture_filename("single_activity.xml"))
         resp = self.client.get('/api/1/access/activities.xml')
         xml = ET.fromstring(resp.data)
-        self.assert_(xml.find('iati-activity'))
+        self.assertEquals(
+            ET.tostring(in_xml.find('.//iati-activity')),
+            ET.tostring(xml.find('.//iati-activity')))
+
+    def test_json_activity_count(self):
+        load_fix("single_activity.xml")
+        resp = self.client.get('/api/1/access/activities')
+        js = json.loads(resp.data)
+        self.assertEquals(1, len(js["results"]))
+
+    def test_json_activity_data(self):
+        load_fix("single_activity.xml")
+        exp = json.load(open(fixture_filename("single_activity.out.json")))
+        resp = self.client.get('/api/1/access/activities')
+        js = json.loads(resp.data)
+        self.assertEquals(exp["results"], js["results"])

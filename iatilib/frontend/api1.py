@@ -58,7 +58,7 @@ def pure_obj(obj):
             out[key] = [ pure_obj(x) for x in val ]
         elif type(val) is datetime:
             out[key] = val.isoformat()
-        elif key in ("query", "query_class"):
+        elif key in ("query", "query_class", "raw_xml"):
             pass
         else:
             out[key] = val
@@ -214,7 +214,11 @@ def activities_list(format):
     response['results'] = [ pure_obj(x) for x in query ]
 
     if format == ".xml":
-        return "<x><ok>True</ok></x>"
+        out = "<x><ok>True</ok><result-activity>"
+        if query.count() > 0:
+            out += query.one().raw_xml.raw_xml
+        out += "</result-activity></x>"
+        return out
     return jsonify(
         ok=True,
         results = [ pure_obj(x) for x in query ]
