@@ -1,8 +1,8 @@
-import os
-from sqlalchemy import *
-from sqlalchemy.orm import sessionmaker, scoped_session
+from flask.ext.sqlalchemy import SQLAlchemy
 
+db = SQLAlchemy()
 _logger = None
+
 
 def log(type, message, *args, **kwargs):
     """Log into the internal iati logger."""
@@ -17,20 +17,3 @@ def log(type, message, *args, **kwargs):
             handler = logging.StreamHandler()
             _logger.addHandler(handler)
     getattr(_logger, type)(message.rstrip(), *args, **kwargs)
-
-
-# Parse environment
-db_url = os.environ.get('DATABASE_URL')
-database_echo = os.environ.get('DATABASE_ECHO', '').lower()=='true'
-assert db_url is not None, 'No DATABASE_URL defined in the environment.'
-
-
-from flask.ext.sqlalchemy import SQLAlchemy
-db = SQLAlchemy()
-
-# Create a static DB conncetion
-#engine = db.engine
-#session = db.session
-#import model
-#model.Base.metadata.create_all(engine)
-
