@@ -54,7 +54,7 @@ def activities_list(format):
     query = dsfilter.activities(request.args)
     pagination = query.paginate(
         int(request.args.get("page", 1)),
-        int(request.args.get("per_page", 100)),
+        int(request.args.get("per_page", 50)),
         )
 
     if format == ".xml":
