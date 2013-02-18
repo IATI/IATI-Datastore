@@ -192,7 +192,10 @@ class TestFilter(ClientTestCase):
 
 class TestPagination(ClientTestCase):
     @mock.patch('iatilib.frontend.api1.dsfilter.activities')
-    def test_1(self, mock):
+    def test_defaults(self, mock):
         self.client.get('/api/1/access/activities')
         self.assertEquals(1, mock.return_value.paginate.call_count)
 
+    def test_missing_page(self):
+        resp = self.client.get('/api/1/access/activities?page=2')
+        self.assertEquals(404, resp.status_code)
