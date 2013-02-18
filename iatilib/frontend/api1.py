@@ -52,10 +52,14 @@ def about():
 @api.route('/api/1/access/activities<format>')
 def activities_list(format):
     query = dsfilter.activities(request.args)
+    pagination = query.paginate(
+        request.args.get("page", 1),
+        request.args.get("per_page", 100),
+        )
 
     if format == ".xml":
         out = "<result><ok>True</ok><result-activity>"
-        for activity in query:
+        for activity in pagination.items:
             out += activity.raw_xml.raw_xml
         out += "</result-activity></result>"
         resp = make_response(out)
@@ -63,5 +67,5 @@ def activities_list(format):
         return resp
     return jsonify(
         ok=True,
-        results=[pure_obj(x) for x in query]
+        results=[pure_obj(x) for x in pagination.items]
         )

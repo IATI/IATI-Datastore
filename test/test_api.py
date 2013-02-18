@@ -3,6 +3,8 @@ from unittest import expectedFailure
 import json
 from xml.etree import ElementTree as ET
 
+import mock
+
 from test import AppTestCase
 from iatilib import parser, db
 from iatilib.model import (Activity, CodelistSector, IndexedResource, RawXmlBlob)
@@ -186,3 +188,11 @@ class TestFilter(ClientTestCase):
         resp = self.client.get('/api/1/access/activities?country_code=MW')
         js = json.loads(resp.data)
         self.assertEquals(2, len(js["results"]))
+
+
+class TestPagination(ClientTestCase):
+    @mock.patch('iatilib.frontend.api1.dsfilter.activities')
+    def test_1(self, mock):
+        self.client.get('/api/1/access/activities')
+        self.assertEquals(1, mock.return_value.paginate.call_count)
+
