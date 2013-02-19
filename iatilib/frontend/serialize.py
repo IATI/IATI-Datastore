@@ -1,7 +1,7 @@
 from datetime import datetime
 from collections import OrderedDict
 import json as jsonlib
-import csv as csvlib
+import unicodecsv
 from StringIO import StringIO
 
 from sqlalchemy.orm.collections import InstrumentedList
@@ -26,14 +26,14 @@ def first_text(attr):
 
 def csv(query):
     fields = OrderedDict((
-        ("iati-identifier", first_text("iatiidentifier")),
-        ("reporting-org", first_text("reportingorg")),
-        ("title", first_text("title")),
-        ("start-planned", date("start-planned")),
+        (u"iati-identifier", first_text(u"iatiidentifier")),
+        (u"reporting-org", first_text(u"reportingorg")),
+        (u"title", first_text(u"title")),
+        (u"start-planned", date(u"start-planned")),
         ))
 
     out = StringIO()
-    writer = csvlib.writer(out)
+    writer = unicodecsv.writer(out, encoding='utf-8')
     writer.writerow(fields.keys())
     for activity in query:
         row = [accessor(activity) for accessor in fields.values()]

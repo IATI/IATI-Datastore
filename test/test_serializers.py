@@ -2,7 +2,7 @@ import datetime
 from StringIO import StringIO
 from unittest import TestCase
 from functools import partial
-import csv
+import unicodecsv
 
 from .factories import create_activity
 from iatilib.frontend import serialize
@@ -10,7 +10,7 @@ from iatilib.frontend import serialize
 
 def load_csv(data):
     sio = StringIO(data)
-    return list(csv.DictReader(sio))
+    return list(unicodecsv.DictReader(sio, encoding="utf-8"))
 
 create_activity = partial(create_activity, _commit=False)
 
@@ -57,3 +57,7 @@ class TestCSVSerializer(TestCase):
     def test_quoting(self):
         data = self.process([create_activity(reporting_org__text=u"l,r")])
         self.assertField({"reporting-org": "l,r"}, data[0])
+
+    def test_unicode(self):
+        data = self.process([create_activity(reporting_org__text=u"\u2603")])
+        self.assertField({"reporting-org": u"\u2603"}, data[0])

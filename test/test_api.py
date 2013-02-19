@@ -189,19 +189,20 @@ class TestManyActivities(ClientTestCase):
         self.assertEquals(2, len(list(reader)))
 
 
-class TestFilter(ClientTestCase):
-    def test_1(self):
-        load_fix("many_activities.xml")
-        resp = self.client.get('/api/1/access/activities?country_code=MW')
-        js = json.loads(resp.data)
-        self.assertEquals(2, len(js["results"]))
-
-
 class TestView(ClientTestCase):
     @mock.patch('iatilib.frontend.api1.validators.activity_api_args')
     def test_validator_called(self, mock):
         self.client.get('/api/1/access/activities')
         self.assertEquals(1, mock.call_count)
+
+    @mock.patch('iatilib.frontend.api1.dsfilter.activities')
+    def test_filter_called(self, mock):
+        self.client.get('/api/1/access/activities?country_code=MW')
+        self.assertEquals(1, mock.call_count)
+
+    def test_invalid_format(self):
+        resp = self.client.get('/api/1/access/activities.zzz')
+        self.assertEquals(404, resp.status_code)
 
 
 class TestPagination(ClientTestCase):
@@ -214,3 +215,6 @@ class TestPagination(ClientTestCase):
         resp = self.client.get('/api/1/access/activities?page=2')
         self.assertEquals(404, resp.status_code)
 
+    def test_invalid_page(self):
+        resp = self.client.get('/api/1/access/activities?page=-1')
+        self.assertEquals(404, resp.status_code)
