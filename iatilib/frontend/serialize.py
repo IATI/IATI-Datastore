@@ -1,6 +1,8 @@
 from datetime import datetime
 from collections import OrderedDict
 import json as jsonlib
+import csv as csvlib
+from StringIO import StringIO
 
 from sqlalchemy.orm.collections import InstrumentedList
 
@@ -30,11 +32,13 @@ def csv(query):
         ("start-planned", date("start-planned")),
         ))
 
-    rows = []
+    out = StringIO()
+    writer = csvlib.writer(out)
+    writer.writerow(fields.keys())
     for activity in query:
         row = [accessor(activity) for accessor in fields.values()]
-        rows.append(",".join(row))
-    return ",".join(fields.keys()) + "\n" + "\n".join(rows)
+        writer.writerow(row)
+    return out.getvalue()
 
 
 def xml(items):

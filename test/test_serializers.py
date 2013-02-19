@@ -53,3 +53,7 @@ class TestCSVSerializer(TestCase):
         data = self.process([create_activity(
             start_planned=datetime.date(2012, 1, 1))])
         self.assertField({"start-planned": "2012-01-01"}, data[0])
+
+    def test_quoting(self):
+        data = self.process([create_activity(reporting_org__text=u"l,r")])
+        self.assertField({"reporting-org": "l,r"}, data[0])
