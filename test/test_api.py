@@ -190,6 +190,13 @@ class TestFilter(ClientTestCase):
         self.assertEquals(2, len(js["results"]))
 
 
+class TestView(ClientTestCase):
+    @mock.patch('iatilib.frontend.api1.validators.activity_api_args')
+    def test_validator_called(self, mock):
+        self.client.get('/api/1/access/activities')
+        self.assertEquals(1, mock.call_count)
+
+
 class TestPagination(ClientTestCase):
     @mock.patch('iatilib.frontend.api1.dsfilter.activities')
     def test_defaults(self, mock):
@@ -199,3 +206,4 @@ class TestPagination(ClientTestCase):
     def test_missing_page(self):
         resp = self.client.get('/api/1/access/activities?page=2')
         self.assertEquals(404, resp.status_code)
+

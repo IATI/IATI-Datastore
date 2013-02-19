@@ -12,7 +12,10 @@ import functools
 import iso8601
 from urllib import urlencode
 
+from werkzeug.datastructures import MultiDict
+
 from . import dsfilter
+from . import validators
 
 api = Blueprint('api', __name__)
 
@@ -51,10 +54,11 @@ def about():
 @api.route('/api/1/access/activities', defaults={"format": ".json"})
 @api.route('/api/1/access/activities<format>')
 def activities_list(format):
-    query = dsfilter.activities(request.args)
+    valid_args = validators.activity_api_args(MultiDict(request.args))
+    query = dsfilter.activities(valid_args)
     pagination = query.paginate(
-        int(request.args.get("page", 1)),
-        int(request.args.get("per_page", 50)),
+        valid_args.get("page", 1),
+        valid_args.get("per_page", 50),
         )
 
     if format == ".xml":
