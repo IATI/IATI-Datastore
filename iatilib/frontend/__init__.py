@@ -24,5 +24,5 @@ def create_app(**config):
 
     from .api1 import api
 
-    app.register_blueprint(api)
+    app.register_blueprint(api, url_prefix="/api/1")
     return app

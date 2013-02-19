@@ -38,7 +38,7 @@ def pure_obj(obj):
     return out
 
 
-@api.route('/api/1/about')
+@api.route('/about')
 def about():
     # General status info
     count_activity = db.session.query(Activity).count()
@@ -51,8 +51,8 @@ def about():
         )
 
 
-@api.route('/api/1/access/activities', defaults={"format": ".json"})
-@api.route('/api/1/access/activities<format>')
+@api.route('/access/activities', defaults={"format": ".json"})
+@api.route('/access/activities<format>')
 def activities_list(format):
     valid_args = validators.activity_api_args(MultiDict(request.args))
     query = dsfilter.activities(valid_args)
