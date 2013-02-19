@@ -1,13 +1,14 @@
 import os
-from unittest import expectedFailure
 import json
 from xml.etree import ElementTree as ET
+import csv
+from StringIO import StringIO
 
 import mock
 
 from test import AppTestCase
 from iatilib import parser, db
-from iatilib.model import (Activity, CodelistSector, IndexedResource, RawXmlBlob)
+from iatilib.model import (CodelistSector, IndexedResource, RawXmlBlob)
 
 
 class ClientTestCase(AppTestCase):
@@ -180,6 +181,12 @@ class TestManyActivities(ClientTestCase):
         resp = self.client.get('/api/1/access/activities')
         js = json.loads(resp.data)
         self.assertEquals(exp["results"], js["results"])
+
+    def test_csv_activity_count(self):
+        load_fix("many_activities.xml")
+        resp = self.client.get('/api/1/access/activities.csv')
+        reader = csv.DictReader(StringIO(resp.data))
+        self.assertEquals(2, len(list(reader)))
 
 
 class TestFilter(ClientTestCase):

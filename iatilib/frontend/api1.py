@@ -1,7 +1,3 @@
-from datetime import datetime
-
-from sqlalchemy.orm.collections import InstrumentedList
-
 from flask import request, make_response, Blueprint, jsonify
 from werkzeug.datastructures import MultiDict
 
@@ -9,28 +5,10 @@ from werkzeug.datastructures import MultiDict
 from iatilib import db
 from iatilib.model import Activity, Transaction
 
-from . import dsfilter
-from . import validators
+from . import dsfilter, validators, serialize
+
 
 api = Blueprint('api', __name__)
-
-
-def pure_obj(obj):
-    keys = filter(lambda x:x[0]!='_', dir(obj))
-    keys.remove('metadata')
-    # Handle child relations
-    out = {}
-    for key in keys:
-        val = getattr(obj,key)
-        if type(val) is InstrumentedList:
-            out[key] = [ pure_obj(x) for x in val ]
-        elif type(val) is datetime:
-            out[key] = val.isoformat()
-        elif key in ("query", "query_class", "raw_xml"):
-            pass
-        else:
-            out[key] = val
-    return out
 
 
 @api.route('/about')
@@ -56,15 +34,13 @@ def activities_list(format):
         valid_args.get("per_page", 50),
         )
 
-    if format == ".xml":
-        out = "<result><ok>True</ok><result-activity>"
-        for activity in pagination.items:
-            out += activity.raw_xml.raw_xml
-        out += "</result-activity></result>"
-        resp = make_response(out)
-        resp.headers['Content-Type'] = "application/xml"
-        return resp
-    return jsonify(
-        ok=True,
-        results=[pure_obj(x) for x in pagination.items]
-        )
+    forms = {
+        ".xml": (serialize.xml, "application/xml"),
+        ".json": (serialize.json, "application/json"),  # rfc4627
+        ".csv": (serialize.csv, "text/csv")  # rfc4180
+    }
+
+    serializer, content_type = forms[format]
+    resp = make_response(serializer(pagination.items))
+    resp.headers['Content-Type'] = content_type
+    return resp
