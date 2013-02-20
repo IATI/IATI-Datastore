@@ -7,6 +7,24 @@ from StringIO import StringIO
 from sqlalchemy.orm.collections import InstrumentedList
 
 
+def pure_obj(obj):
+    keys = filter(lambda x: x[0] != '_', dir(obj))
+    keys.remove('metadata')
+    # Handle child relations
+    out = {}
+    for key in keys:
+        val = getattr(obj, key)
+        if type(val) is InstrumentedList:
+            out[key] = [pure_obj(x) for x in val]
+        elif type(val) is datetime:
+            out[key] = val.isoformat()
+        elif key in ("query", "query_class", "parent"):
+            pass
+        else:
+            out[key] = val
+    return out
+
+
 def date(date_type):
     def accessor(activity):
         dates = [d.iso_date.strftime("%Y-%m-%d")
@@ -42,28 +60,10 @@ def csv(query):
 
 
 def xml(items):
-    out = "<result><ok>True</ok><result-activity>"
+    out = u"<result><ok>True</ok><result-activity>"
     for activity in items:
-        out += activity.raw_xml.raw_xml
-    out += "</result-activity></result>"
-    return out
-
-
-def pure_obj(obj):
-    keys = filter(lambda x: x[0] != '_', dir(obj))
-    keys.remove('metadata')
-    # Handle child relations
-    out = {}
-    for key in keys:
-        val = getattr(obj, key)
-        if type(val) is InstrumentedList:
-            out[key] = [pure_obj(x) for x in val]
-        elif type(val) is datetime:
-            out[key] = val.isoformat()
-        elif key in ("query", "query_class", "raw_xml"):
-            pass
-        else:
-            out[key] = val
+        out += activity.parent.raw_xml
+    out += u"</result-activity></result>"
     return out
 
 

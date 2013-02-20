@@ -20,6 +20,7 @@ def create_activity(_commit=True, **args):
         "reporting_org__text": u"RO-TEXT",
         "iatiidentifier__text": u"iati id",
         "title__text": u"title test",
+        "parent__raw_xml": u"<test />",
         }
     data = dict(defaults, **args)
 
@@ -27,22 +28,19 @@ def create_activity(_commit=True, **args):
         ir = IndexedResource.query.filter_by(id=u"TEST").first()
     if not _commit or not ir:
         ir = IndexedResource(id=u"TEST")
-    blob = RawXmlBlob(
-        parent=ir,
-            raw_xml=u"<test />")
 
-    if _commit:
-        db.session.add(blob)
-        db.session.commit()
-        db.session.refresh(blob)
-
-    act = Activity(parent_id=blob.id)
+    act = Activity()
     act.reportingorg = [ReportingOrg(
         ref=data["reporting_org__ref"],
         text=data["reporting_org__text"]
         )]
     act.iatiidentifier = [IatiIdentifier(text=data["iatiidentifier__text"])]
     act.title = [Title(text=data["title__text"])]
+    act.parent = RawXmlBlob(
+        parent=ir,
+        raw_xml=data["parent__raw_xml"]
+        )
+
     for dparam in date_names:
         if dparam in data:
             act.date.append(ActivityDate(
@@ -51,6 +49,9 @@ def create_activity(_commit=True, **args):
                 parent_id=act.id,
             ))
     if _commit:
+        db.session.add(act.parent)
+        db.session.commit()
+        act.parent_id = act.parent.id
         db.session.add(act)
         db.session.commit()
         db.session.refresh(act)

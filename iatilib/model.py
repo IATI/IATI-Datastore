@@ -28,7 +28,7 @@ class RawXmlBlob(db.Model):
         "Activity",
         cascade="all",
         uselist=False,
-        backref="raw_xml")
+        backref="parent")
     parent = relationship('IndexedResource')
 
 

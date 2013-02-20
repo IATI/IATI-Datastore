@@ -3,6 +3,8 @@ from StringIO import StringIO
 from unittest import TestCase
 from functools import partial
 import unicodecsv
+from xml.etree import ElementTree as ET
+
 
 from .factories import create_activity
 from iatilib.frontend import serialize
@@ -61,3 +63,30 @@ class TestCSVSerializer(TestCase):
     def test_unicode(self):
         data = self.process([create_activity(reporting_org__text=u"\u2603")])
         self.assertField({"reporting-org": u"\u2603"}, data[0])
+
+
+class TestXMLSerializer(TestCase):
+    def process(self, items):
+        return ET.fromstring(serialize.xml(items).encode("utf-8"))
+
+    def test_raw(self):
+        # the xml that's output is the stuff in raw_xml
+        data = self.process([
+            create_activity(activity_parent__raw_xml=u"<test />")
+            ])
+        self.assert_(data.find(".//test") is not None)
+
+    def test_unicode(self):
+        data = self.process([
+            create_activity(parent__raw_xml=u"<test>\u2603</test>")
+            ])
+        self.assertEquals(u"\u2603", data.find(".//test").text)
+
+    def test_namespace(self):
+        # raw xml that goes in with a ns prefix should come out with one
+        # (even though it's meaningless without the ns declaration)
+        # it's lousy to do this with string tests, but ET/Expat really
+        # doesn't want to load xml with unbound prefixes
+        items = [create_activity(parent__raw_xml=u"<t:test />")]
+        ser_data = serialize.xml(items)
+        self.assertIn("t:test", ser_data)
