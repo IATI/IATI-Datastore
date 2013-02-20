@@ -92,6 +92,27 @@ class TestEmptyDb_XML(ClientTestCase):
         self.assertEquals(xml.tag, "result")
 
 
+class TestEmptyDb_CSV(ClientTestCase):
+    """
+    CSV for empty db
+    """
+    url = '/api/1/access/activities.csv'
+
+    def test_http_ok(self):
+        resp = self.client.get(self.url)
+        self.assertEquals(200, resp.status_code)
+
+    def test_content_type(self):
+        resp = self.client.get(self.url)
+        self.assertEquals("text/csv", resp.content_type)
+
+    def test_fields(self):
+        resp = self.client.get(self.url)
+        headers = next(csv.reader(StringIO(resp.data)))
+        for exp in ["start-planned", "start-actual"]:
+            self.assertIn(exp, headers)
+
+
 def fixture_filename(fix_name):
     return os.path.join(
             os.path.dirname(__file__), "fixtures", fix_name)

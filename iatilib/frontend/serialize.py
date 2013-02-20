@@ -48,6 +48,9 @@ def csv(query):
         (u"reporting-org", first_text(u"reportingorg")),
         (u"title", first_text(u"title")),
         (u"start-planned", date(u"start-planned")),
+        (u"end-planned", date(u"end-planned")),
+        (u"start-actual", date(u"start-actual")),
+        (u"end-planned", date(u"end-planned")),
         ))
 
     out = StringIO()
