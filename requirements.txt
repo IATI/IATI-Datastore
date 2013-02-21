@@ -13,4 +13,4 @@ unicodecsv==0.9.4
 voluptuous==0.6
 Flask-Script==0.5.3
 prettytable==0.7
-
+alembic==0.4.2
