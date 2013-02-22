@@ -6,16 +6,19 @@ from StringIO import StringIO
 
 from sqlalchemy.orm.collections import InstrumentedList
 
+from iatilib import model
+
 
 def pure_obj(obj):
-    keys = filter(lambda x: x[0] != '_', dir(obj))
-    keys.remove('metadata')
+    keys = [a for a in dir(obj) if not a.startswith("_") and a != "metadata"]
     # Handle child relations
     out = {}
     for key in keys:
         val = getattr(obj, key)
         if type(val) is InstrumentedList:
             out[key] = [pure_obj(x) for x in val]
+        elif type(val) in (model.TransactionValue, model.TransactionType):
+            out[key] = [pure_obj(val)]
         elif type(val) is datetime:
             out[key] = val.isoformat()
         elif key in ("query", "query_class", "parent"):
@@ -42,11 +45,33 @@ def first_text(attr):
     return accessor
 
 
+def delim(activity_attr, child_attr):
+    def accessor(activity):
+        return ";".join("%s" % getattr(c, child_attr)
+            for c in getattr(activity, activity_attr))
+    return accessor
+
+
+def total_disbersment(activity):
+    if len(set(t.value.currency for t in activity.transaction)) > 1:
+        return "!Mixed currency"
+    return sum(t.value.text for t in activity.transaction)
+
+
 def csv(query):
     fields = OrderedDict((
         (u"iati-identifier", first_text(u"iatiidentifier")),
         (u"reporting-org", first_text(u"reportingorg")),
         (u"title", first_text(u"title")),
+        (u"description", first_text(u"description")),
+        (u"recipient-country-code", delim("recipientcountry", "code")),
+        (u"recipient-country", delim("recipientcountry", "text")),
+        (u"recipient-country-percentage",
+            delim("recipientcountry", "percentage")),
+        (u"sector-code", delim("sector", "code")),
+        (u"sector", delim("sector", "text")),
+        (u"sector-percentage", delim("sector", "percentage")),
+        (u"total-disbersment", total_disbersment),
         (u"start-planned", date(u"start-planned")),
         (u"end-planned", date(u"end-planned")),
         (u"start-actual", date(u"start-actual")),

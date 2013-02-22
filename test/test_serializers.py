@@ -6,7 +6,7 @@ import unicodecsv
 from xml.etree import ElementTree as ET
 
 
-from .factories import create_activity
+from .factories import create_activity, create_recepient_country, create_sector
 from iatilib.frontend import serialize
 
 
@@ -14,10 +14,12 @@ def load_csv(data):
     sio = StringIO(data)
     return list(unicodecsv.DictReader(sio, encoding="utf-8"))
 
-create_activity = partial(create_activity, _commit=False)
+
+for factory in (create_activity, create_recepient_country, create_sector):
+    globals()[factory.__name__] = partial(factory, _commit=False)
 
 
-class TestCSVSerializer(TestCase):
+class CSVTstMixin(TestCase):
     def process(self, data):
         return load_csv(serialize.csv(data))
 
@@ -27,6 +29,8 @@ class TestCSVSerializer(TestCase):
         self.assertIn(key, row)
         self.assertEquals(row[key], val)
 
+
+class TestCSVSerializer(CSVTstMixin, TestCase):
     def test_empty(self):
         data = self.process([])
         self.assertEquals(0, len(data))
@@ -38,18 +42,6 @@ class TestCSVSerializer(TestCase):
     def test_len_many(self):
         data = self.process([create_activity(), create_activity()])
         self.assertEquals(2, len(data))
-
-    def test_field_1(self):
-        data = self.process([create_activity(iatiidentifier__text="TEST")])
-        self.assertField({"iati-identifier": "TEST"}, data[0])
-
-    def test_field_2(self):
-        data = self.process([create_activity(reporting_org__text="TESTRO")])
-        self.assertField({"reporting-org": "TESTRO"}, data[0])
-
-    def test_field_3(self):
-        data = self.process([create_activity(title__text="testtt")])
-        self.assertField({"title": "testtt"}, data[0])
 
     def test_date_field(self):
         data = self.process([create_activity(
@@ -63,6 +55,128 @@ class TestCSVSerializer(TestCase):
     def test_unicode(self):
         data = self.process([create_activity(reporting_org__text=u"\u2603")])
         self.assertField({"reporting-org": u"\u2603"}, data[0])
+
+
+class TestCSVExample(CSVTstMixin, TestCase):
+    # these tests are based around an example from IATI
+    # https://docs.google.com/a/okfn.org/spreadsheet/ccc?key=0AqR8dXc6Ji4JdHJIWDJtaXhBV0IwOG56N0p1TE04V2c#gid=4
+
+    def test_iati_identifier(self):
+        data = self.process([create_activity(iatiidentifier__text="GB-1-123")])
+        self.assertField({"iati-identifier": "GB-1-123"}, data[0])
+
+    def test_title(self):
+        data = self.process([create_activity(title__text="Project 123")])
+        self.assertField({"title": "Project 123"}, data[0])
+
+    def test_description(self):
+        data = self.process([create_activity(
+            description__text="Description of Project 123")])
+        self.assertField({"description": "Description of Project 123"}, data[0])
+
+    def test_recepient_country_code(self):
+        act = create_activity()
+        act.recipientcountry = [
+            create_recepient_country(code="KE", text="Kenya"),
+            create_recepient_country(code="UG", text="Uganda"),
+        ]
+        data = self.process([act])
+        self.assertField({
+            "recipient-country-code": "KE;UG"}, data[0])
+
+    def test_recepient_country(self):
+        act = create_activity()
+        act.recipientcountry = [
+            create_recepient_country(code="KE", text="Kenya"),
+            create_recepient_country(code="UG", text="Uganda"),
+        ]
+        data = self.process([act])
+        self.assertField({
+            "recipient-country": "Kenya;Uganda"}, data[0])
+
+    def test_recepient_country_percentage(self):
+        act = create_activity()
+        act.recipientcountry = [
+            create_recepient_country(percentage=80),
+            create_recepient_country(percentage=20),
+        ]
+        data = self.process([act])
+        self.assertField({"recipient-country-percentage": "80;20"}, data[0])
+
+    def test_sector_code(self):
+        act = create_activity()
+        act.sector = [
+            create_sector(code="11130"),
+            create_sector(code="11220"),
+        ]
+        data = self.process([act])
+        self.assertField({"sector-code": "11130;11220"}, data[0])
+
+    def test_sector(self):
+        act = create_activity()
+        act.sector = [
+            create_sector(text="Teacher Training"),
+            create_sector(text="Primary Education"),
+        ]
+        data = self.process([act])
+        self.assertField(
+            {"sector": "Teacher Training;Primary Education"},
+            data[0])
+
+    def test_sector_percentage(self):
+        act = create_activity()
+        act.sector = [
+            create_sector(percentage=60),
+            create_sector(percentage=40)
+        ]
+        data = self.process([act])
+        self.assertField({"sector-percentage": "60;40"}, data[0])
+
+    def test_total_disbersment(self):
+        from . import factories as fac
+        act = create_activity()
+        act.transaction = [
+            fac.TransactionFactory.build(
+                type__code="D",
+                value__text=130000
+                ),
+        ]
+        data = self.process([act])
+        self.assertField({"total-disbersment": "130000"}, data[0])
+
+    def test_total_disbersment_many_trans(self):
+        from . import factories as fac
+        act = create_activity()
+        act.transaction = [
+            fac.TransactionFactory.build(
+                type__code="D",
+                value__text=2
+                ),
+            fac.TransactionFactory.build(
+                type__code="D",
+                value__text=1
+                ),
+        ]
+        data = self.process([act])
+        self.assertField({"total-disbersment": "3"}, data[0])
+
+    def test_total_disbersment_many_currencies(self):
+        from . import factories as fac
+        act = create_activity()
+        act.transaction = [
+            fac.TransactionFactory.build(
+                type__code="D",
+                value__text=2,
+                value__currency="USD",
+                ),
+            fac.TransactionFactory.build(
+                type__code="D",
+                value__text=1,
+                value__currency="AUD"
+                ),
+        ]
+        data = self.process([act])
+        self.assertField({"total-disbersment": "!Mixed currency"}, data[0])
 
 
 class TestXMLSerializer(TestCase):

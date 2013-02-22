@@ -1,7 +1,8 @@
 from iatilib.frontend import db
 from iatilib.model import (
-    Activity, ActivityDate, IndexedResource, RawXmlBlob,
-    RecipientCountry, ReportingOrg, IatiIdentifier, Title)
+    Activity, ActivityDate, IndexedResource, RawXmlBlob, Sector,
+    RecipientCountry, ReportingOrg, IatiIdentifier, Title, Description,
+    TransactionType, Transaction, TransactionValue)
 
 
 def create_activity(_commit=True, **args):
@@ -21,6 +22,7 @@ def create_activity(_commit=True, **args):
         "iatiidentifier__text": u"iati id",
         "title__text": u"title test",
         "parent__raw_xml": u"<test />",
+        "description__text": u"test desc",
         }
     data = dict(defaults, **args)
 
@@ -36,6 +38,7 @@ def create_activity(_commit=True, **args):
         )]
     act.iatiidentifier = [IatiIdentifier(text=data["iatiidentifier__text"])]
     act.title = [Title(text=data["title__text"])]
+    act.description = [Description(text=data["description__text"])]
     act.parent = RawXmlBlob(
         parent=ir,
         raw_xml=data["parent__raw_xml"]
@@ -55,10 +58,49 @@ def create_activity(_commit=True, **args):
         db.session.add(act)
         db.session.commit()
         db.session.refresh(act)
-        db.session.add(RecipientCountry(
+        db.session.add(create_recepient_country(
             code=data["recipient_country__code"],
             text=data["recipient_country__text"],
             parent_id=act.id
             ))
         db.session.commit()
     return act
+
+
+def create_recepient_country(_commit=True, **args):
+    defaults = {
+        "code": "TST",
+        "text": "test country",
+        "percentage": 100
+    }
+    data = dict(defaults, **args)
+    rc = RecipientCountry(**data)
+    if _commit:
+        db.session.add(rc)
+        db.session.commit()
+    return rc
+
+
+def create_sector(_commit=True, **args):
+    assert _commit == False
+    defaults = {
+        "code": u"TST",
+        }
+    data = dict(defaults, **args)
+    return Sector(**data)
+
+
+import factory
+
+
+class TransactionTypeFactory(factory.Factory):
+    code = "TST"
+
+
+class TransactionValueFactory(factory.Factory):
+    pass
+
+
+class TransactionFactory(factory.Factory):
+    type = factory.SubFactory(TransactionTypeFactory)
+    value = factory.SubFactory(TransactionValueFactory)

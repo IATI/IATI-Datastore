@@ -418,10 +418,9 @@ class CaseParser(AppTestCase):
         assert len(activity.transaction[0].description)==1
         assert activity.transaction[0].description[0].text == 'fixture_description__text'
         assert activity.transaction[0].description[0].lang == 'fixture_description__lang'
-        assert len(activity.transaction[0].type)==1
-        assert activity.transaction[0].type[0].text == 'fixture_transaction_type__text'
-        assert activity.transaction[0].type[0].code == 'fixture_transaction_type__code'
-        assert activity.transaction[0].type[0].lang == 'fixture_transaction_type__lang'
+        assert activity.transaction[0].type.text == 'fixture_transaction_type__text'
+        assert activity.transaction[0].type.code == 'fixture_transaction_type__code'
+        assert activity.transaction[0].type.lang == 'fixture_transaction_type__lang'
         assert len(activity.transaction[0].provider_org)==1
         assert activity.transaction[0].provider_org[0].text == 'fixture_provider_org__text'
         assert activity.transaction[0].provider_org[0].ref == 'fixture_provider_org__ref'
@@ -453,10 +452,9 @@ class CaseParser(AppTestCase):
         assert activity.transaction[0].disbursement_channel[0].text == 'fixture_disbursement_channel__text'
         assert activity.transaction[0].disbursement_channel[0].code == 'fixture_disbursement_channel__code'
         assert activity.transaction[0].disbursement_channel[0].lang == 'fixture_disbursement_channel__lang'
-        assert len(activity.transaction[0].value)==1
-        assert activity.transaction[0].value[0].text == 999011.11
-        assert activity.transaction[0].value[0].currency == 'fixture_value__currency'
-        assert activity.transaction[0].value[0].value_date == datetime(year=2009,month=10,day=11,hour=12,minute=13,second=14,tzinfo=iso8601.iso8601.UTC)
+        assert activity.transaction[0].value.text == 999011.11
+        assert activity.transaction[0].value.currency == 'fixture_value__currency'
+        assert activity.transaction[0].value.value_date == datetime(year=2009,month=10,day=11,hour=12,minute=13,second=14,tzinfo=iso8601.iso8601.UTC)
         ## Assertions: Sector object
         assert len(activity.sector)==1, len(activity.sector)
         assert activity.sector[0].text == 'fixture_text'
