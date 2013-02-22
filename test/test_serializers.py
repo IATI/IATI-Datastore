@@ -56,6 +56,13 @@ class TestCSVSerializer(CSVTstMixin, TestCase):
         data = self.process([create_activity(reporting_org__text=u"\u2603")])
         self.assertField({"reporting-org": u"\u2603"}, data[0])
 
+    def test_no_description(self):
+        # Description is an optional thing
+        act = create_activity()
+        act.description = []
+        data = self.process([act])
+        self.assertField({"description": ""}, data[0])
+
 
 class TestCSVExample(CSVTstMixin, TestCase):
     # these tests are based around an example from IATI

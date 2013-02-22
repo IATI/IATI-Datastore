@@ -41,7 +41,10 @@ def date(date_type):
 
 def first_text(attr):
     def accessor(activity):
-        return getattr(activity, attr)[0].text or ""
+        val = getattr(activity, attr)
+        if len(val):
+            return val[0].text or ""
+        return ""
     return accessor
 
 
