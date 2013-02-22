@@ -1,14 +1,13 @@
 """Add indexes
 
 Revision ID: 3aa6477364
-Revises: 2555d5665657
 Create Date: 2013-02-21 14:13:32.505089
 
 """
 
 # revision identifiers, used by Alembic.
 revision = '3aa6477364'
-down_revision = '2555d5665657'
+down_revision = None
 
 from alembic import op
 import sqlalchemy as sa
