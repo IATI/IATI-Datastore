@@ -18,7 +18,7 @@ def pure_obj(obj):
         if type(val) is InstrumentedList:
             out[key] = [pure_obj(x) for x in val]
         elif type(val) in (model.TransactionValue, model.TransactionType):
-            out[key] = [pure_obj(val)]
+            out[key] = pure_obj(val)
         elif type(val) is datetime:
             out[key] = val.isoformat()
         elif key in ("query", "query_class", "parent"):

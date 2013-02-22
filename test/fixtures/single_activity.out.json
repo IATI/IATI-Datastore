@@ -285,25 +285,21 @@
           "ref": null,
           "description": [],
           "aid_type": [],
-          "type": [
-            {
-              "lang": null,
-              "parent_id": 1,
-              "code": "C",
-              "id": 1,
-              "text": "Commitment"
-            }
-          ],
+          "type": {
+            "lang": null,
+            "parent_id": 1,
+            "code": "C",
+            "id": 1,
+            "text": "Commitment"
+          },
           "finance_type": [],
-          "value": [
-            {
-              "value_date": "2009-10-01T00:00:00",
-              "currency": "USD",
-              "id": 1,
-              "parent_id": 1,
-              "text": 3991675.0
-            }
-          ],
+          "value": {
+            "value_date": "2009-10-01T00:00:00",
+            "currency": "USD",
+            "id": 1,
+            "parent_id": 1,
+            "text": 3991675.0
+          },
           "disbursement_channel": [],
           "receiver_org": [],
           "parent_id": 1,
@@ -324,25 +320,21 @@
           "ref": null,
           "description": [],
           "aid_type": [],
-          "type": [
-            {
-              "lang": null,
-              "parent_id": 2,
-              "code": "D",
-              "id": 2,
-              "text": "Disbursement"
-            }
-          ],
+          "type": {
+            "lang": null,
+            "parent_id": 2,
+            "code": "D",
+            "id": 2,
+            "text": "Disbursement"
+          },
           "finance_type": [],
-          "value": [
-            {
-              "value_date": "2012-08-20T00:00:00",
-              "currency": "USD",
-              "id": 2,
-              "parent_id": 2,
-              "text": 64442.0
-            }
-          ],
+          "value": {
+            "value_date": "2012-08-20T00:00:00",
+            "currency": "USD",
+            "id": 2,
+            "parent_id": 2,
+            "text": 64442.0
+          },
           "disbursement_channel": [
             {
               "lang": null,
@@ -371,25 +363,21 @@
           "ref": null,
           "description": [],
           "aid_type": [],
-          "type": [
-            {
-              "lang": null,
-              "parent_id": 3,
-              "code": "D",
-              "id": 3,
-              "text": "Disbursement"
-            }
-          ],
+          "type": {
+            "lang": null,
+            "parent_id": 3,
+            "code": "D",
+            "id": 3,
+            "text": "Disbursement"
+          },
           "finance_type": [],
-          "value": [
-            {
-              "value_date": "2012-07-13T00:00:00",
-              "currency": "USD",
-              "id": 3,
-              "parent_id": 3,
-              "text": 999258.0
-            }
-          ],
+          "value": {
+            "value_date": "2012-07-13T00:00:00",
+            "currency": "USD",
+            "id": 3,
+            "parent_id": 3,
+            "text": 999258.0
+          },
           "disbursement_channel": [
             {
               "lang": null,
@@ -418,25 +406,21 @@
           "ref": null,
           "description": [],
           "aid_type": [],
-          "type": [
-            {
-              "lang": null,
-              "parent_id": 4,
-              "code": "D",
-              "id": 4,
-              "text": "Disbursement"
-            }
-          ],
+          "type": {
+            "lang": null,
+            "parent_id": 4,
+            "code": "D",
+            "id": 4,
+            "text": "Disbursement"
+          },
           "finance_type": [],
-          "value": [
-            {
-              "value_date": "2012-02-06T00:00:00",
-              "currency": "USD",
-              "id": 4,
-              "parent_id": 4,
-              "text": 436846.0
-            }
-          ],
+          "value": {
+            "value_date": "2012-02-06T00:00:00",
+            "currency": "USD",
+            "id": 4,
+            "parent_id": 4,
+            "text": 436846.0
+          },
           "disbursement_channel": [
             {
               "lang": null,
@@ -465,25 +449,21 @@
           "ref": null,
           "description": [],
           "aid_type": [],
-          "type": [
-            {
-              "lang": null,
-              "parent_id": 5,
-              "code": "D",
-              "id": 5,
-              "text": "Disbursement"
-            }
-          ],
+          "type": {
+            "lang": null,
+            "parent_id": 5,
+            "code": "D",
+            "id": 5,
+            "text": "Disbursement"
+          },
           "finance_type": [],
-          "value": [
-            {
-              "value_date": "2011-10-26T00:00:00",
-              "currency": "USD",
-              "id": 5,
-              "parent_id": 5,
-              "text": 104609.0
-            }
-          ],
+          "value": {
+            "value_date": "2011-10-26T00:00:00",
+            "currency": "USD",
+            "id": 5,
+            "parent_id": 5,
+            "text": 104609.0
+          },
           "disbursement_channel": [
             {
               "lang": null,
@@ -512,25 +492,21 @@
           "ref": null,
           "description": [],
           "aid_type": [],
-          "type": [
-            {
-              "lang": null,
-              "parent_id": 6,
-              "code": "D",
-              "id": 6,
-              "text": "Disbursement"
-            }
-          ],
+          "type": {
+            "lang": null,
+            "parent_id": 6,
+            "code": "D",
+            "id": 6,
+            "text": "Disbursement"
+          },
           "finance_type": [],
-          "value": [
-            {
-              "value_date": "2011-08-02T00:00:00",
-              "currency": "USD",
-              "id": 6,
-              "parent_id": 6,
-              "text": 1044007.0
-            }
-          ],
+          "value": {
+            "value_date": "2011-08-02T00:00:00",
+            "currency": "USD",
+            "id": 6,
+            "parent_id": 6,
+            "text": 1044007.0
+          },
           "disbursement_channel": [
             {
               "lang": null,
@@ -559,25 +535,21 @@
           "ref": null,
           "description": [],
           "aid_type": [],
-          "type": [
-            {
-              "lang": null,
-              "parent_id": 7,
-              "code": "D",
-              "id": 7,
-              "text": "Disbursement"
-            }
-          ],
+          "type": {
+            "lang": null,
+            "parent_id": 7,
+            "code": "D",
+            "id": 7,
+            "text": "Disbursement"
+          },
           "finance_type": [],
-          "value": [
-            {
-              "value_date": "2011-04-15T00:00:00",
-              "currency": "USD",
-              "id": 7,
-              "parent_id": 7,
-              "text": 7749.0
-            }
-          ],
+          "value": {
+            "value_date": "2011-04-15T00:00:00",
+            "currency": "USD",
+            "id": 7,
+            "parent_id": 7,
+            "text": 7749.0
+          },
           "disbursement_channel": [
             {
               "lang": null,
@@ -606,25 +578,21 @@
           "ref": null,
           "description": [],
           "aid_type": [],
-          "type": [
-            {
-              "lang": null,
-              "parent_id": 8,
-              "code": "D",
-              "id": 8,
-              "text": "Disbursement"
-            }
-          ],
+          "type": {
+            "lang": null,
+            "parent_id": 8,
+            "code": "D",
+            "id": 8,
+            "text": "Disbursement"
+          },
           "finance_type": [],
-          "value": [
-            {
-              "value_date": "2010-12-15T00:00:00",
-              "currency": "USD",
-              "id": 8,
-              "parent_id": 8,
-              "text": 7170.0
-            }
-          ],
+          "value": {
+            "value_date": "2010-12-15T00:00:00",
+            "currency": "USD",
+            "id": 8,
+            "parent_id": 8,
+            "text": 7170.0
+          },
           "disbursement_channel": [
             {
               "lang": null,
@@ -653,25 +621,21 @@
           "ref": null,
           "description": [],
           "aid_type": [],
-          "type": [
-            {
-              "lang": null,
-              "parent_id": 9,
-              "code": "D",
-              "id": 9,
-              "text": "Disbursement"
-            }
-          ],
+          "type": {
+            "lang": null,
+            "parent_id": 9,
+            "code": "D",
+            "id": 9,
+            "text": "Disbursement"
+          },
           "finance_type": [],
-          "value": [
-            {
-              "value_date": "2010-10-13T00:00:00",
-              "currency": "USD",
-              "id": 9,
-              "parent_id": 9,
-              "text": 8013.0
-            }
-          ],
+          "value": {
+            "value_date": "2010-10-13T00:00:00",
+            "currency": "USD",
+            "id": 9,
+            "parent_id": 9,
+            "text": 8013.0
+          },
           "disbursement_channel": [
             {
               "lang": null,
@@ -700,25 +664,21 @@
           "ref": null,
           "description": [],
           "aid_type": [],
-          "type": [
-            {
-              "lang": null,
-              "parent_id": 10,
-              "code": "D",
-              "id": 10,
-              "text": "Disbursement"
-            }
-          ],
+          "type": {
+            "lang": null,
+            "parent_id": 10,
+            "code": "D",
+            "id": 10,
+            "text": "Disbursement"
+          },
           "finance_type": [],
-          "value": [
-            {
-              "value_date": "2010-09-21T00:00:00",
-              "currency": "USD",
-              "id": 10,
-              "parent_id": 10,
-              "text": 66308.0
-            }
-          ],
+          "value": {
+            "value_date": "2010-09-21T00:00:00",
+            "currency": "USD",
+            "id": 10,
+            "parent_id": 10,
+            "text": 66308.0
+          },
           "disbursement_channel": [
             {
               "lang": null,
@@ -747,25 +707,21 @@
           "ref": null,
           "description": [],
           "aid_type": [],
-          "type": [
-            {
-              "lang": null,
-              "parent_id": 11,
-              "code": "D",
-              "id": 11,
-              "text": "Disbursement"
-            }
-          ],
+          "type": {
+            "lang": null,
+            "parent_id": 11,
+            "code": "D",
+            "id": 11,
+            "text": "Disbursement"
+          },
           "finance_type": [],
-          "value": [
-            {
-              "value_date": "2010-08-30T00:00:00",
-              "currency": "USD",
-              "id": 11,
-              "parent_id": 11,
-              "text": 70450.0
-            }
-          ],
+          "value": {
+            "value_date": "2010-08-30T00:00:00",
+            "currency": "USD",
+            "id": 11,
+            "parent_id": 11,
+            "text": 70450.0
+          },
           "disbursement_channel": [
             {
               "lang": null,
@@ -794,25 +750,21 @@
           "ref": null,
           "description": [],
           "aid_type": [],
-          "type": [
-            {
-              "lang": null,
-              "parent_id": 12,
-              "code": "D",
-              "id": 12,
-              "text": "Disbursement"
-            }
-          ],
+          "type": {
+            "lang": null,
+            "parent_id": 12,
+            "code": "D",
+            "id": 12,
+            "text": "Disbursement"
+          },
           "finance_type": [],
-          "value": [
-            {
-              "value_date": "2010-03-23T00:00:00",
-              "currency": "USD",
-              "id": 12,
-              "parent_id": 12,
-              "text": 30777.0
-            }
-          ],
+          "value": {
+            "value_date": "2010-03-23T00:00:00",
+            "currency": "USD",
+            "id": 12,
+            "parent_id": 12,
+            "text": 30777.0
+          },
           "disbursement_channel": [
             {
               "lang": null,
@@ -841,25 +793,21 @@
           "ref": null,
           "description": [],
           "aid_type": [],
-          "type": [
-            {
-              "lang": null,
-              "parent_id": 13,
-              "code": "D",
-              "id": 13,
-              "text": "Disbursement"
-            }
-          ],
+          "type": {
+            "lang": null,
+            "parent_id": 13,
+            "code": "D",
+            "id": 13,
+            "text": "Disbursement"
+          },
           "finance_type": [],
-          "value": [
-            {
-              "value_date": "2010-01-15T00:00:00",
-              "currency": "USD",
-              "id": 13,
-              "parent_id": 13,
-              "text": 36992.0
-            }
-          ],
+          "value": {
+            "value_date": "2010-01-15T00:00:00",
+            "currency": "USD",
+            "id": 13,
+            "parent_id": 13,
+            "text": 36992.0
+          },
           "disbursement_channel": [
             {
               "lang": null,
@@ -888,25 +836,21 @@
           "ref": null,
           "description": [],
           "aid_type": [],
-          "type": [
-            {
-              "lang": null,
-              "parent_id": 14,
-              "code": "D",
-              "id": 14,
-              "text": "Disbursement"
-            }
-          ],
+          "type": {
+            "lang": null,
+            "parent_id": 14,
+            "code": "D",
+            "id": 14,
+            "text": "Disbursement"
+          },
           "finance_type": [],
-          "value": [
-            {
-              "value_date": "2009-12-10T00:00:00",
-              "currency": "USD",
-              "id": 14,
-              "parent_id": 14,
-              "text": 1927444.0
-            }
-          ],
+          "value": {
+            "value_date": "2009-12-10T00:00:00",
+            "currency": "USD",
+            "id": 14,
+            "parent_id": 14,
+            "text": 1927444.0
+          },
           "disbursement_channel": [
             {
               "lang": null,
@@ -1690,7 +1634,7 @@
                       "value": "1,540"
                     }
                   ],
-                  "start": [
+  "start": [
                     {
                       "parent_id": 10,
                       "id": 10,
