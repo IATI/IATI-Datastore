@@ -69,7 +69,7 @@ class TestEmptyDb_XML(ClientTestCase):
 
     def test_content_type(self):
         resp = self.client.get(self.url)
-        self.assertEquals("application/xml", resp.content_type)
+        self.assertEquals("application/xml; charset=utf-8", resp.content_type)
 
     def test_decode(self):
         resp = self.client.get(self.url)
@@ -104,7 +104,7 @@ class TestEmptyDb_CSV(ClientTestCase):
 
     def test_content_type(self):
         resp = self.client.get(self.url)
-        self.assertEquals("text/csv", resp.content_type)
+        self.assertEquals("text/csv; charset=utf-8", resp.content_type)
 
     def test_fields(self):
         resp = self.client.get(self.url)

@@ -1,4 +1,4 @@
-from flask import request, make_response, Blueprint, jsonify, abort
+from flask import request, Response, Blueprint, jsonify, abort
 from werkzeug.datastructures import MultiDict
 
 
@@ -47,9 +47,5 @@ def activities_list(format):
         valid_args.get("per_page", 50),
         )
 
-
-
-    serializer, content_type = forms[format]
-    resp = make_response(serializer(pagination.items))
-    resp.headers['Content-Type'] = content_type
-    return resp
+    serializer, mimetype = forms[format]
+    return Response(serializer(pagination.items), mimetype=mimetype)
