@@ -1,3 +1,5 @@
+import factory
+
 from iatilib.frontend import db
 from iatilib.model import (
     Activity, ActivityDate, IndexedResource, RawXmlBlob, Sector,
@@ -58,7 +60,7 @@ def create_activity(_commit=True, **args):
         db.session.add(act)
         db.session.commit()
         db.session.refresh(act)
-        db.session.add(create_recepient_country(
+        db.session.add(RecipientCountryFactory.build(
             code=data["recipient_country__code"],
             text=data["recipient_country__text"],
             parent_id=act.id
@@ -67,34 +69,18 @@ def create_activity(_commit=True, **args):
     return act
 
 
-def create_recepient_country(_commit=True, **args):
-    defaults = {
-        "code": "TST",
-        "text": "test country",
-        "percentage": 100
-    }
-    data = dict(defaults, **args)
-    rc = RecipientCountry(**data)
-    if _commit:
-        db.session.add(rc)
-        db.session.commit()
-    return rc
+class RecipientCountryFactory(factory.Factory):
+    code = u"TST"
+    text = u"test country"
+    percentage = 100
 
 
-def create_sector(_commit=True, **args):
-    assert _commit == False
-    defaults = {
-        "code": u"TST",
-        }
-    data = dict(defaults, **args)
-    return Sector(**data)
-
-
-import factory
+class SectorFactory(factory.Factory):
+    code = u"TST"
 
 
 class TransactionTypeFactory(factory.Factory):
-    code = "TST"
+    code = u"TST"
 
 
 class TransactionValueFactory(factory.Factory):

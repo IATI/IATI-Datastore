@@ -5,8 +5,8 @@ from functools import partial
 import unicodecsv
 from xml.etree import ElementTree as ET
 
-
-from .factories import create_activity, create_recepient_country, create_sector
+from . import factories as fac
+from .factories import create_activity
 from iatilib.frontend import serialize
 
 
@@ -15,7 +15,7 @@ def load_csv(data):
     return list(unicodecsv.DictReader(sio, encoding="utf-8"))
 
 
-for factory in (create_activity, create_recepient_country, create_sector):
+for factory in (create_activity,):
     globals()[factory.__name__] = partial(factory, _commit=False)
 
 
@@ -77,8 +77,8 @@ class TestCSVExample(CSVTstMixin, TestCase):
     def test_recepient_country_code(self):
         act = create_activity()
         act.recipientcountry = [
-            create_recepient_country(code="KE", text="Kenya"),
-            create_recepient_country(code="UG", text="Uganda"),
+            fac.RecipientCountryFactory.build(code="KE", text="Kenya"),
+            fac.RecipientCountryFactory.build(code="UG", text="Uganda"),
         ]
         data = self.process([act])
         self.assertField({
@@ -87,8 +87,8 @@ class TestCSVExample(CSVTstMixin, TestCase):
     def test_recepient_country(self):
         act = create_activity()
         act.recipientcountry = [
-            create_recepient_country(code="KE", text="Kenya"),
-            create_recepient_country(code="UG", text="Uganda"),
+            fac.RecipientCountryFactory.build(code="KE", text="Kenya"),
+            fac.RecipientCountryFactory.build(code="UG", text="Uganda"),
         ]
         data = self.process([act])
         self.assertField({
@@ -97,8 +97,8 @@ class TestCSVExample(CSVTstMixin, TestCase):
     def test_recepient_country_percentage(self):
         act = create_activity()
         act.recipientcountry = [
-            create_recepient_country(percentage=80),
-            create_recepient_country(percentage=20),
+            fac.RecipientCountryFactory.build(percentage=80),
+            fac.RecipientCountryFactory.build(percentage=20),
         ]
         data = self.process([act])
         self.assertField({"recipient-country-percentage": "80;20"}, data[0])
@@ -106,8 +106,8 @@ class TestCSVExample(CSVTstMixin, TestCase):
     def test_sector_code(self):
         act = create_activity()
         act.sector = [
-            create_sector(code="11130"),
-            create_sector(code="11220"),
+            fac.SectorFactory.build(code="11130"),
+            fac.SectorFactory.build(code="11220"),
         ]
         data = self.process([act])
         self.assertField({"sector-code": "11130;11220"}, data[0])
@@ -115,8 +115,8 @@ class TestCSVExample(CSVTstMixin, TestCase):
     def test_sector(self):
         act = create_activity()
         act.sector = [
-            create_sector(text="Teacher Training"),
-            create_sector(text="Primary Education"),
+            fac.SectorFactory.build(text="Teacher Training"),
+            fac.SectorFactory.build(text="Primary Education"),
         ]
         data = self.process([act])
         self.assertField(
@@ -126,14 +126,13 @@ class TestCSVExample(CSVTstMixin, TestCase):
     def test_sector_percentage(self):
         act = create_activity()
         act.sector = [
-            create_sector(percentage=60),
-            create_sector(percentage=40)
+            fac.SectorFactory.build(percentage=60),
+            fac.SectorFactory.build(percentage=40)
         ]
         data = self.process([act])
         self.assertField({"sector-percentage": "60;40"}, data[0])
 
     def test_total_disbersment(self):
-        from . import factories as fac
         act = create_activity()
         act.transaction = [
             fac.TransactionFactory.build(
@@ -145,7 +144,6 @@ class TestCSVExample(CSVTstMixin, TestCase):
         self.assertField({"total-disbersment": "130000"}, data[0])
 
     def test_total_disbersment_many_trans(self):
-        from . import factories as fac
         act = create_activity()
         act.transaction = [
             fac.TransactionFactory.build(
