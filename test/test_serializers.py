@@ -314,6 +314,16 @@ class TestTotalInterestRepayment(CSVTstMixin, TotalFieldMixin, TestCase):
     csv_field = "total-Interest Repayment"
 
 
+class TestTotalLoanRepayment(CSVTstMixin, TotalFieldMixin, TestCase):
+    transaction_code = "LR"
+    csv_field = "total-Loan Repayment"
+
+
+class TestTotalReimbursement(CSVTstMixin, TotalFieldMixin, TestCase):
+    transaction_code = "R"
+    csv_field = "total-Reimbursement"
+
+
 class TestXMLSerializer(TestCase):
     def process(self, items):
         return ET.fromstring(serialize.xml(items).encode("utf-8"))

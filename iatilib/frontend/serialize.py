@@ -23,7 +23,8 @@ def pure_obj(obj):
             out[key] = val.isoformat()
         elif key in (
             "query", "query_class", "parent", "disbursements", "expenditures",
-            "incoming_funds", "interest_repayment"
+            "incoming_funds", "interest_repayment", "loan_repayments",
+            "reembursements"
             ):
             pass
         else:
@@ -90,6 +91,8 @@ def csv(query):
         (u"total-expenditure", total("expenditures")),
         (u"total-Incoming Funds", total("incoming_funds")),
         (u"total-Interest Repayment", total("interest_repayment")),
+        (u"total-Loan Repayment", total("loan_repayments")),
+        (u"total-Reimbursement", total("reembursements")),
         (u"start-planned", date(u"start-planned")),
         (u"end-planned", date(u"end-planned")),
         (u"start-actual", date(u"start-actual")),

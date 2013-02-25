@@ -50,6 +50,14 @@ class CodelistSector(db.Model):
     category_description = Column(UnicodeText)
 
 
+class TransactionType(object):
+    def __init__(self, type_code):
+        self.type_code = type_code
+
+    def __get__(self, obj, type=None):
+        return [t for t in obj.transaction if t.type.code == self.type_code]
+
+
 class Activity(db.Model):
     __tablename__ = 'activity'
     id = Column(Integer, primary_key=True)
@@ -89,21 +97,12 @@ class Activity(db.Model):
     hierarchy = Column(Float)	# @hierarchy
     linked_data_uri = Column(UnicodeText)	# @linked-data-uri
 
-    @property
-    def disbursements(self):
-        return [t for t in self.transaction if t.type.code == 'D']
-
-    @property
-    def expenditures(self):
-        return [t for t in self.transaction if t.type.code == 'E']
-
-    @property
-    def incoming_funds(self):
-        return [t for t in self.transaction if t.type.code == 'IF']
-
-    @property
-    def interest_repayment(self):
-        return [t for t in self.transaction if t.type.code == 'IR']
+    disbursements = TransactionType('D')
+    expenditures = TransactionType('E')
+    incoming_funds = TransactionType('IF')
+    interest_repayment = TransactionType('IR')
+    loan_repayments = TransactionType('LR')
+    reembursements = TransactionType('R')
 
     @classmethod
     def _parse_xml(cls,logger,xml):
