@@ -61,6 +61,12 @@ def total_disbursement(activity):
     return sum(t.value.text for t in activity.transaction)
 
 
+def currency(activity):
+    if len(set(t.value.currency for t in activity.transaction)) > 1:
+        return "!Mixed currency"
+    return next(iter(set(t.value.currency for t in activity.transaction)), None)
+
+
 def csv(query):
     fields = OrderedDict((
         (u"iati-identifier", first_text(u"iatiidentifier")),
@@ -74,6 +80,7 @@ def csv(query):
         (u"sector-code", delim("sector", "code")),
         (u"sector", delim("sector", "text")),
         (u"sector-percentage", delim("sector", "percentage")),
+        (u"currency", currency),
         (u"total-disbursement", total_disbursement),
         (u"start-planned", date(u"start-planned")),
         (u"end-planned", date(u"end-planned")),

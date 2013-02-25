@@ -183,6 +183,49 @@ class TestCSVExample(CSVTstMixin, TestCase):
         data = self.process([act])
         self.assertField({"total-disbursement": "!Mixed currency"}, data[0])
 
+    def test_currency(self):
+        act = create_activity()
+        act.transaction = [
+            fac.TransactionFactory.build(
+                type__code="D",
+                value__text=130000,
+                value__currency="USD"
+                ),
+        ]
+        data = self.process([act])
+        self.assertField({"currency": "USD"}, data[0])
+
+    def test_currency_mixed(self):
+        act = create_activity()
+        act.transaction = [
+            fac.TransactionFactory.build(
+                type__code="D",
+                value__text=130000,
+                value__currency="USD"
+                ),
+            fac.TransactionFactory.build(
+                type__code="D",
+                value__text=130000,
+                value__currency="AUD"
+                ),
+        ]
+        data = self.process([act])
+        self.assertField({"currency": "!Mixed currency"}, data[0])
+
+    def test_currency_missing(self):
+        # If there is no default currency specified on the activity and
+        # none on the transaction then we end up with a missing currency.
+        act = create_activity()
+        act.transaction = [
+            fac.TransactionFactory.build(
+                type__code="D",
+                value__text=130000,
+                value__currency=None
+                ),
+        ]
+        data = self.process([act])
+        self.assertField({"currency": ""}, data[0])
+
 
 class TestXMLSerializer(TestCase):
     def process(self, items):
