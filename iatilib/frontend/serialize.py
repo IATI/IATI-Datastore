@@ -21,7 +21,7 @@ def pure_obj(obj):
             out[key] = pure_obj(val)
         elif type(val) is datetime:
             out[key] = val.isoformat()
-        elif key in ("query", "query_class", "parent"):
+        elif key in ("query", "query_class", "parent", "disbursements", "expenditures"):
             pass
         else:
             out[key] = val
@@ -56,9 +56,15 @@ def delim(activity_attr, child_attr):
 
 
 def total_disbursement(activity):
-    if len(set(t.value.currency for t in activity.transaction)) > 1:
+    if len(set(t.value.currency for t in activity.disbursements)) > 1:
         return "!Mixed currency"
-    return sum(t.value.text for t in activity.transaction)
+    return sum(t.value.text for t in activity.disbursements)
+
+
+def total_expenditure(activity):
+    if len(set(t.value.currency for t in activity.expenditures)) > 1:
+        return "!Mixed currency"
+    return sum(t.value.text for t in activity.expenditures)
 
 
 def currency(activity):
@@ -82,6 +88,7 @@ def csv(query):
         (u"sector-percentage", delim("sector", "percentage")),
         (u"currency", currency),
         (u"total-disbursement", total_disbursement),
+        (u"total-expenditure", total_expenditure),
         (u"start-planned", date(u"start-planned")),
         (u"end-planned", date(u"end-planned")),
         (u"start-actual", date(u"start-actual")),

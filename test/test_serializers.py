@@ -226,6 +226,37 @@ class TestCSVExample(CSVTstMixin, TestCase):
         data = self.process([act])
         self.assertField({"currency": ""}, data[0])
 
+    def test_total_expenditure(self):
+        act = create_activity()
+        act.transaction = [
+            fac.TransactionFactory.build(
+                type__code="E",
+                value__text=2,
+                value__currency="USD",
+                ),
+        ]
+        data = self.process([act])
+        self.assertField({"total-expenditure": "2"}, data[0])
+
+    def test_mixed_transation_types(self):
+        act = create_activity()
+        act.transaction = [
+            fac.TransactionFactory.build(
+                type__code="D",
+                value__text=1,
+                value__currency="USD"
+                ),
+            fac.TransactionFactory.build(
+                type__code="E",
+                value__text=2,
+                value__currency="USD"
+                ),
+        ]
+        data = self.process([act])
+        self.assertField({"currency": "USD"}, data[0])
+        self.assertField({"total-disbursement": "1"}, data[0])
+        self.assertField({"total-expenditure": "2"}, data[0])
+
 
 class TestXMLSerializer(TestCase):
     def process(self, items):

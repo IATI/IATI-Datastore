@@ -88,6 +88,16 @@ class Activity(db.Model):
     default_currency = Column(UnicodeText)	# @default-currency
     hierarchy = Column(Float)	# @hierarchy
     linked_data_uri = Column(UnicodeText)	# @linked-data-uri
+
+    @property
+    def disbursements(self):
+        return [t for t in self.transaction if t.type.code == 'D']
+
+    @property
+    def expenditures(self):
+        return [t for t in self.transaction if t.type.code == 'E']
+
+
     @classmethod
     def _parse_xml(cls,logger,xml):
         from parser import _nav, _parse_float, _parse_int, _parse_datetime, _parse_boolean
