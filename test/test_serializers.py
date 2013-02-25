@@ -139,50 +139,6 @@ class TestCSVExample(CSVTstMixin, TestCase):
         data = self.process([act])
         self.assertField({"sector-percentage": "60;40"}, data[0])
 
-    def test_total_disbursement(self):
-        act = create_activity()
-        act.transaction = [
-            fac.TransactionFactory.build(
-                type__code="D",
-                value__text=130000
-                ),
-        ]
-        data = self.process([act])
-        self.assertField({"total-disbursement": "130000"}, data[0])
-
-    def test_total_disbursement_many_trans(self):
-        act = create_activity()
-        act.transaction = [
-            fac.TransactionFactory.build(
-                type__code="D",
-                value__text=2
-                ),
-            fac.TransactionFactory.build(
-                type__code="D",
-                value__text=1
-                ),
-        ]
-        data = self.process([act])
-        self.assertField({"total-disbursement": "3"}, data[0])
-
-    def test_total_disbursement_many_currencies(self):
-        from . import factories as fac
-        act = create_activity()
-        act.transaction = [
-            fac.TransactionFactory.build(
-                type__code="D",
-                value__text=2,
-                value__currency="USD",
-                ),
-            fac.TransactionFactory.build(
-                type__code="D",
-                value__text=1,
-                value__currency="AUD"
-                ),
-        ]
-        data = self.process([act])
-        self.assertField({"total-disbursement": "!Mixed currency"}, data[0])
-
     def test_currency(self):
         act = create_activity()
         act.transaction = [
@@ -226,18 +182,6 @@ class TestCSVExample(CSVTstMixin, TestCase):
         data = self.process([act])
         self.assertField({"currency": ""}, data[0])
 
-    def test_total_expenditure(self):
-        act = create_activity()
-        act.transaction = [
-            fac.TransactionFactory.build(
-                type__code="E",
-                value__text=2,
-                value__currency="USD",
-                ),
-        ]
-        data = self.process([act])
-        self.assertField({"total-expenditure": "2"}, data[0])
-
     def test_mixed_transation_types(self):
         act = create_activity()
         act.transaction = [
@@ -254,13 +198,13 @@ class TestCSVExample(CSVTstMixin, TestCase):
         ]
         data = self.process([act])
         self.assertField({"currency": "USD"}, data[0])
-        self.assertField({"total-disbursement": "1"}, data[0])
-        self.assertField({"total-expenditure": "2"}, data[0])
+        self.assertField({"total-Disbursement": "1"}, data[0])
+        self.assertField({"total-Expenditure": "2"}, data[0])
 
 
 class TotalFieldMixin(object):
     # There are six total fields that behave identicaly
-    def test_total_disbursement(self):
+    def test_total(self):
         act = create_activity()
         act.transaction = [
             fac.TransactionFactory.build(
@@ -271,7 +215,7 @@ class TotalFieldMixin(object):
         data = self.process([act])
         self.assertField({self.csv_field: "130000"}, data[0])
 
-    def test_total_disbursement_many_trans(self):
+    def test_many_trans(self):
         act = create_activity()
         act.transaction = [
             fac.TransactionFactory.build(
@@ -286,7 +230,7 @@ class TotalFieldMixin(object):
         data = self.process([act])
         self.assertField({self.csv_field: "3"}, data[0])
 
-    def test_total_disbursement_many_currencies(self):
+    def test_many_currencies(self):
         act = create_activity()
         act.transaction = [
             fac.TransactionFactory.build(
@@ -302,6 +246,16 @@ class TotalFieldMixin(object):
         ]
         data = self.process([act])
         self.assertField({self.csv_field: "!Mixed currency"}, data[0])
+
+
+class TestTotalDisbursement(CSVTstMixin, TotalFieldMixin, TestCase):
+    transaction_code = "D"
+    csv_field = "total-Disbursement"
+
+
+class TestTotalExpenditure(CSVTstMixin, TotalFieldMixin, TestCase):
+    transaction_code = "E"
+    csv_field = "total-Expenditure"
 
 
 class TestTotalIncomingFunds(CSVTstMixin, TotalFieldMixin, TestCase):
