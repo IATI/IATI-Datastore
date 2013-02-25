@@ -139,7 +139,7 @@ class TestCSVExample(CSVTstMixin, TestCase):
         data = self.process([act])
         self.assertField({"sector-percentage": "60;40"}, data[0])
 
-    def test_total_disbersment(self):
+    def test_total_disbursement(self):
         act = create_activity()
         act.transaction = [
             fac.TransactionFactory.build(
@@ -148,9 +148,9 @@ class TestCSVExample(CSVTstMixin, TestCase):
                 ),
         ]
         data = self.process([act])
-        self.assertField({"total-disbersment": "130000"}, data[0])
+        self.assertField({"total-disbursement": "130000"}, data[0])
 
-    def test_total_disbersment_many_trans(self):
+    def test_total_disbursement_many_trans(self):
         act = create_activity()
         act.transaction = [
             fac.TransactionFactory.build(
@@ -163,9 +163,9 @@ class TestCSVExample(CSVTstMixin, TestCase):
                 ),
         ]
         data = self.process([act])
-        self.assertField({"total-disbersment": "3"}, data[0])
+        self.assertField({"total-disbursement": "3"}, data[0])
 
-    def test_total_disbersment_many_currencies(self):
+    def test_total_disbursement_many_currencies(self):
         from . import factories as fac
         act = create_activity()
         act.transaction = [
@@ -181,7 +181,7 @@ class TestCSVExample(CSVTstMixin, TestCase):
                 ),
         ]
         data = self.process([act])
-        self.assertField({"total-disbersment": "!Mixed currency"}, data[0])
+        self.assertField({"total-disbursement": "!Mixed currency"}, data[0])
 
 
 class TestXMLSerializer(TestCase):

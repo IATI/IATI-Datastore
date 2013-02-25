@@ -55,7 +55,7 @@ def delim(activity_attr, child_attr):
     return accessor
 
 
-def total_disbersment(activity):
+def total_disbursement(activity):
     if len(set(t.value.currency for t in activity.transaction)) > 1:
         return "!Mixed currency"
     return sum(t.value.text for t in activity.transaction)
@@ -74,7 +74,7 @@ def csv(query):
         (u"sector-code", delim("sector", "code")),
         (u"sector", delim("sector", "text")),
         (u"sector-percentage", delim("sector", "percentage")),
-        (u"total-disbersment", total_disbersment),
+        (u"total-disbursement", total_disbursement),
         (u"start-planned", date(u"start-planned")),
         (u"end-planned", date(u"end-planned")),
         (u"start-actual", date(u"start-actual")),
