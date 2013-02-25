@@ -97,6 +97,13 @@ class Activity(db.Model):
     def expenditures(self):
         return [t for t in self.transaction if t.type.code == 'E']
 
+    @property
+    def incoming_funds(self):
+        return [t for t in self.transaction if t.type.code == 'IF']
+
+    @property
+    def interest_repayment(self):
+        return [t for t in self.transaction if t.type.code == 'IR']
 
     @classmethod
     def _parse_xml(cls,logger,xml):

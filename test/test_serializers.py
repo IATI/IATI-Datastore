@@ -258,6 +258,62 @@ class TestCSVExample(CSVTstMixin, TestCase):
         self.assertField({"total-expenditure": "2"}, data[0])
 
 
+class TotalFieldMixin(object):
+    # There are six total fields that behave identicaly
+    def test_total_disbursement(self):
+        act = create_activity()
+        act.transaction = [
+            fac.TransactionFactory.build(
+                type__code=self.transaction_code,
+                value__text=130000
+                ),
+        ]
+        data = self.process([act])
+        self.assertField({self.csv_field: "130000"}, data[0])
+
+    def test_total_disbursement_many_trans(self):
+        act = create_activity()
+        act.transaction = [
+            fac.TransactionFactory.build(
+                type__code=self.transaction_code,
+                value__text=2
+                ),
+            fac.TransactionFactory.build(
+                type__code=self.transaction_code,
+                value__text=1
+                ),
+        ]
+        data = self.process([act])
+        self.assertField({self.csv_field: "3"}, data[0])
+
+    def test_total_disbursement_many_currencies(self):
+        act = create_activity()
+        act.transaction = [
+            fac.TransactionFactory.build(
+                type__code=self.transaction_code,
+                value__text=2,
+                value__currency="USD",
+                ),
+            fac.TransactionFactory.build(
+                type__code=self.transaction_code,
+                value__text=1,
+                value__currency="AUD"
+                ),
+        ]
+        data = self.process([act])
+        self.assertField({self.csv_field: "!Mixed currency"}, data[0])
+
+
+class TestTotalIncomingFunds(CSVTstMixin, TotalFieldMixin, TestCase):
+    transaction_code = "IF"
+    csv_field = "total-Incoming Funds"
+
+
+class TestTotalInterestRepayment(CSVTstMixin, TotalFieldMixin, TestCase):
+    transaction_code = "IR"
+    csv_field = "total-Interest Repayment"
+
+
 class TestXMLSerializer(TestCase):
     def process(self, items):
         return ET.fromstring(serialize.xml(items).encode("utf-8"))

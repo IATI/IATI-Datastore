@@ -21,7 +21,10 @@ def pure_obj(obj):
             out[key] = pure_obj(val)
         elif type(val) is datetime:
             out[key] = val.isoformat()
-        elif key in ("query", "query_class", "parent", "disbursements", "expenditures"):
+        elif key in (
+            "query", "query_class", "parent", "disbursements", "expenditures",
+            "incoming_funds", "interest_repayment"
+            ):
             pass
         else:
             out[key] = val
@@ -55,16 +58,12 @@ def delim(activity_attr, child_attr):
     return accessor
 
 
-def total_disbursement(activity):
-    if len(set(t.value.currency for t in activity.disbursements)) > 1:
-        return "!Mixed currency"
-    return sum(t.value.text for t in activity.disbursements)
-
-
-def total_expenditure(activity):
-    if len(set(t.value.currency for t in activity.expenditures)) > 1:
-        return "!Mixed currency"
-    return sum(t.value.text for t in activity.expenditures)
+def total(column):
+    def accessor(activity):
+        if len(set(t.value.currency for t in getattr(activity, column))) > 1:
+            return "!Mixed currency"
+        return sum(t.value.text for t in getattr(activity, column))
+    return accessor
 
 
 def currency(activity):
@@ -87,8 +86,10 @@ def csv(query):
         (u"sector", delim("sector", "text")),
         (u"sector-percentage", delim("sector", "percentage")),
         (u"currency", currency),
-        (u"total-disbursement", total_disbursement),
-        (u"total-expenditure", total_expenditure),
+        (u"total-disbursement", total("disbursements")),
+        (u"total-expenditure", total("expenditures")),
+        (u"total-Incoming Funds", total("incoming_funds")),
+        (u"total-Interest Repayment", total("interest_repayment")),
         (u"start-planned", date(u"start-planned")),
         (u"end-planned", date(u"end-planned")),
         (u"start-actual", date(u"start-actual")),
