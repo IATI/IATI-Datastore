@@ -1,4 +1,4 @@
-from lxml import etree
+from defusedxml import lxml as etree
 import model
 from datetime import datetime
 import iso8601
