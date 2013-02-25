@@ -1,27 +1,26 @@
-
 API Endpoints
 =============
 
     access/
-        /activities
+        /activity
         /activity/<id>
-        /transactions
+        /transaction
         /transaction/<id>                   # Have to invent an ID here
-        /organisations/
+        /organisation/
         /organisation/<reporting-org-ref>   # {reporting-org/@ref}
-        /participating-orgs                 # eg. ?role=Funding
+        /participating-org                 # eg. ?role=Funding
         /participating-org/<id>
-        /sectors/<vocab>
+        /sector/<vocab>
         /sector/<vocab>/<code>              # what is this?
-        /recipient-countries                # I just made this up because I can
-        /recipient-regions                  # I just made this up because I can
+        /recipient-country                # I just made this up because I can
+        /recipient-region                  # I just made this up because I can
         /recipient-country/<code> 
         /recipient-region/<code> 
 
     aggregate/
-        /activities/                        # Count activities
-        /transactions                       # Count transactions
-        /organisations                      # Count organisations
+        /activity/                        # Count activities
+        /transaction                       # Count transactions
+        /organisation                      # Count organisations
 
     provenance/                             # TODO later
 
