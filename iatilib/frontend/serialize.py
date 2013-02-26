@@ -34,11 +34,9 @@ def pure_obj(obj):
 
 def date(date_type):
     def accessor(activity):
-        dates = [d.iso_date.strftime("%Y-%m-%d")
-                 for d in activity.date
-                 if d.type == date_type]
-        if dates:
-            return dates[0]
+        dates = [d.iso_date for d in activity.date if d.type == date_type]
+        if dates and dates[0]:
+            return dates[0].strftime("%Y-%m-%d")
         return ""
     return accessor
 
