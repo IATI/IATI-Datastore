@@ -94,7 +94,7 @@ def csv(query):
         (u"start-planned", date(u"start-planned")),
         (u"end-planned", date(u"end-planned")),
         (u"start-actual", date(u"start-actual")),
-        (u"end-planned", date(u"end-planned")),
+        (u"end-actual", date(u"end-actual")),
         ))
 
     out = StringIO()

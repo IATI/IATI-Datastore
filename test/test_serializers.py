@@ -85,6 +85,11 @@ class TestCSVExample(CSVTstMixin, TestCase):
             description__text="Description of Project 123")])
         self.assertField({"description": "Description of Project 123"}, data[0])
 
+    def test_end_actual(self):
+        data = self.process([create_activity(
+            end_actual=datetime.date(2012, 1, 1))])
+        self.assertField({"end-actual": "2012-01-01"}, data[0])
+
     def test_recepient_country_code(self):
         act = create_activity()
         act.recipientcountry = [
