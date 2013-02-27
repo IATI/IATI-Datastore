@@ -3,6 +3,8 @@ import sys
 import traceback
 import argparse
 
+import sqlalchemy as sa
+
 from iatilib import db, parser
 from iatilib.model import RawXmlBlob
 
@@ -10,7 +12,10 @@ from iatilib.model import RawXmlBlob
 def parse_loop(debug_limit=None, verbose=False, fail_fast=False):
     parsed = 0
     while True:
-        q = RawXmlBlob.query.filter(RawXmlBlob.parsed == False)
+        # yuck. Order by random is baaaad for Postgres, but it will stop one
+        # broken record holding up parsing all of them.
+        q = RawXmlBlob.query.filter(RawXmlBlob.parsed == False)\
+            .order_by(sa.func.random())
         if verbose:
             print '%d blobs need to be parsed.' % q.count()
         xmlblob = q.first()
