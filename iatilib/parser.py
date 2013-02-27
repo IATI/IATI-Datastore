@@ -4,15 +4,14 @@ from datetime import datetime
 import iso8601
 from iatilib import db
 
-# ===========
-# Main method
-# ===========
-def parse(xml_string):
+
+def parse(xml_string, validate=True):
     xml = etree.fromstring(xml_string)
     logger = Logger()
     activity = model.Activity._parse_xml(logger, xml)
-    _validate(logger,activity)
-    return activity,logger.errors
+    if validate:
+        _validate(logger, activity)
+    return activity, logger.errors
 
 # =========
 # Utilities

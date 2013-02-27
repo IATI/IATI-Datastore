@@ -116,7 +116,7 @@ class Activity(db.Model):
         data['linked_data_uri'] = _nav(logger, xml, [], attrib='linked-data-uri')
         out = Activity(**data)
         for child_xml in xml.findall('transaction'):
-            out.transaction.append( Transaction._parse_xml(logger,child_xml) )
+            out.transaction.append(Transaction._parse_xml(logger, child_xml, activity_etree=xml))
         for child_xml in xml.findall('sector'):
             out.sector.append( Sector._parse_xml(logger,child_xml) )
         for child_xml in xml.findall('participating-org'):
@@ -189,14 +189,15 @@ class Transaction(db.Model):
     disbursement_channel = relationship("TransactionDisbursementChannel",cascade="all")
     parent_id = Column(Integer, ForeignKey('activity.id'), nullable=False)
     ref = Column(UnicodeText)	# @ref
+
     @classmethod
-    def _parse_xml(cls,logger,xml):
+    def _parse_xml(cls, logger, xml, activity_etree):
         from parser import _nav, _parse_float, _parse_int, _parse_datetime, _parse_boolean
         data = {}
         data['ref'] = _nav(logger, xml, [], attrib='ref')
         out = Transaction(**data)
         for child_xml in xml.findall('value'):
-            out.value = TransactionValue._parse_xml(logger,child_xml)
+            out.value = TransactionValue._parse_xml(logger, child_xml, activity_etree)
         for child_xml in xml.findall('description'):
             out.description.append( TransactionDescription._parse_xml(logger,child_xml) )
         for child_xml in xml.findall('transaction-type'):
@@ -226,12 +227,15 @@ class TransactionValue(db.Model):
     text = Column(Float)	# text()
     currency = Column(UnicodeText)	# @currency
     value_date = Column(DateTime)	# @value-date
+
     @classmethod
-    def _parse_xml(cls,logger,xml):
-        from parser import _nav, _parse_float, _parse_int, _parse_datetime, _parse_boolean
+    def _parse_xml(cls, logger, xml, activity_etree):
+        from parser import _nav, _parse_float, _parse_datetime
         data = {}
         data['text'] = _nav(logger, xml, [], text=True, parser=_parse_float)
-        data['currency'] = _nav(logger, xml, [], attrib='currency')
+        data['currency'] = (
+            _nav(logger, xml, [], attrib='currency') or
+            _nav(logger, activity_etree, [], attrib="default-currency"))
         data['value_date'] = _nav(logger, xml, [], attrib='value-date', parser=_parse_datetime)
         out = TransactionValue(**data)
         return out

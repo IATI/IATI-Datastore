@@ -5,7 +5,6 @@ import iatilib.parser
 import iso8601
 from datetime import datetime
 from iatilib import db
-from defusedxml import EntitiesForbidden
 
 from . import AppTestCase
 
@@ -526,15 +525,5 @@ class CaseParser(AppTestCase):
         assert db.session.query(Activity).count()==0
         assert db.session.query(Transaction).count()==0
 
-    def test_defused_xml(self):
-        # Avoid some well-known xml attacks
-        # https://bitbucket.org/tiran/defusedxml/overview
-        bomb = """<!DOCTYPE bomb [
-            <!ENTITY a "xxxxxxx... a couple of ten thousand chars">
-            ]>
-            <bomb>&a;&a;&a;... repeat</bomb>"""
-
-        with self.assertRaises(EntitiesForbidden):
-            iatilib.parser.parse(bomb)
 
 
