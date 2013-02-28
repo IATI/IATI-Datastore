@@ -25,7 +25,7 @@ class TestParser(AppTestCase):
         with self.assertRaises(EntitiesForbidden):
             parser.parse(bomb)
 
-    def test_foo(self):
+    def test_default_currency(self):
         activity, errors = parser.parse(
             open(fixture_filename("default_currency.xml")).read(),
             validate=False)
