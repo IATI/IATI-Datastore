@@ -16,3 +16,6 @@ prettytable==0.7
 alembic==0.4.2
 gunicorn==0.17.2
 defusedxml==0.3
+
+# should not be pinned, see https://devcenter.heroku.com/articles/newrelic
+newrelic
