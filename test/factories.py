@@ -1,3 +1,5 @@
+import uuid
+
 import factory
 
 from iatilib.frontend import db
@@ -5,6 +7,26 @@ from iatilib.model import (
     Activity, ActivityDate, IndexedResource, RawXmlBlob, Sector,
     RecipientCountry, ReportingOrg, IatiIdentifier, Title, Description,
     TransactionType, Transaction, TransactionValue)
+
+
+def sa_creation(model, **kw):
+    instance = model(**kw)
+    db.session.add(instance)
+    db.session.commit()
+    db.session.refresh(instance)
+    return instance
+
+factory.Factory.set_creation_function(sa_creation)
+
+
+class IndexedResourceFactory(factory.Factory):
+    id = factory.LazyAttribute(lambda i: uuid.uuid4().hex.decode('ascii'))
+    url = u"http://test"
+
+
+class RawXmlBlobFactory(factory.Factory):
+    indexedresource = factory.SubFactory(IndexedResourceFactory)
+    parsed = False
 
 
 def create_activity(_commit=True, **args):

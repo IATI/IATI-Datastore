@@ -1,19 +1,17 @@
 import os
+import codecs
+from unittest import TestCase
 
-from lxml import etree as ET
 from defusedxml import EntitiesForbidden
 
 from . import AppTestCase
+from . import factories as fac
 
 from iatilib import parser
 
 
-def fixture_filename(fix_name):
-    return os.path.join(
-            os.path.dirname(__file__), "fixtures", fix_name)
-
-
-class TestParser(AppTestCase):
+class TestParser(TestCase):
+    # no need for this to set the app up, so just a TestCase
     def test_defused_xml(self):
         # Avoid some well-known xml attacks
         # https://bitbucket.org/tiran/defusedxml/overview
@@ -30,3 +28,26 @@ class TestParser(AppTestCase):
             open(fixture_filename("default_currency.xml")).read(),
             validate=False)
         self.assertEquals(activity.transaction[0].value.currency, "USD")
+
+
+def fixture_filename(fix_name):
+    return os.path.join(
+        os.path.dirname(__file__), "fixtures", fix_name)
+
+
+def fixture(fix_name, encoding='utf-8'):
+    return codecs.open(fixture_filename(fix_name), encoding=encoding).read()
+
+
+class TestParserModels(AppTestCase):
+    # these do need db access
+    def test_new_activity(self):
+        # new activities should have been inserted when they are
+        # returned by the parser.
+        blob = fac.RawXmlBlobFactory.create(
+            parsed=False,
+            raw_xml=fixture("default_currency.xml"),
+        )
+        activity = parser.parse_blob(blob, validate=False)
+        self.assertNotEquals(None, activity.id)
+

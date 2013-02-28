@@ -13,6 +13,19 @@ def parse(xml_string, validate=True):
         _validate(logger, activity)
     return activity, logger.errors
 
+
+def parse_blob(raw_xml_blob, validate=True):
+    raw_xml_blob.parsed = True
+    db.session.commit()
+    # Recursively delete associated Activity/Transaction/etc objects
+    raw_xml_blob.activity = None
+    # Parse new objects into the db
+    activity, errors = parse(raw_xml_blob.raw_xml, validate=validate)
+    raw_xml_blob.activity = activity
+    db.session.commit()
+    return activity
+
+
 # =========
 # Utilities
 # =========

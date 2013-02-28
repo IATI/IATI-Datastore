@@ -22,13 +22,7 @@ def parse_loop(debug_limit=None, verbose=False, fail_fast=False):
         if xmlblob is None:
             return
         try:
-            # Lock this xmlblob so parallel threads dont pick it up
-            xmlblob.parsed = True
-            db.session.commit()
-            # Recursively delete associated Activity/Transaction/etc objects
-            xmlblob.activity = None
-            # Parse new objects into the db
-            xmlblob.activity, errors = parser.parse(xmlblob.raw_xml)
+            xmlblob.activity = parser.parse_blob(xmlblob)
             db.session.commit()
         except Exception:
             db.session.rollback()

@@ -14,8 +14,11 @@ class IndexedResource(db.Model):
     last_modified = Column(DateTime)
     state = Column(Integer)
     ckan_url = Column(UnicodeText)
-    xml_blobs = relationship("RawXmlBlob",cascade="all")
-    logerrors = relationship("LogError",cascade="all")
+    xml_blobs = relationship(
+        "RawXmlBlob",
+        cascade="all",
+        backref="indexedresource")
+    logerrors = relationship("LogError", cascade="all")
 
 
 class RawXmlBlob(db.Model):
