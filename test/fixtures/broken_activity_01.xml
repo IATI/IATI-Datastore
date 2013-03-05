@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<iati-activity default-currency="USD" last-updated-datetime="2011-11-06T00:00:00" hierarchy="2">
+  <reporting-org ref="41114" type="40">United Nations Development Programme</reporting-org>
+  <iati-identifier>41114-00073223</iati-identifier>
+  <title>Samoa Tsunami Early Recovery P</title>
+  <description>Samoa Tsunami Early Recovery Project.</description>
+  <collaboration-type code="4">Multilateral outflows</collaboration-type>
+  <default-flow-type code="10">ODA</default-flow-type>
+  <default-finance-type code="110">Grant</default-finance-type>
+  <default-aid-type code="C01">Project Type Interventions</default-aid-type>
+  <default-tied-status code="5">Untied</default-tied-status>
+  <recipient-country code="WS">Samoa</recipient-country>
+  <transaction>
+    <transaction-type code="E">Expenditure</transaction-type>
+    <value value-date="2010-12-31">289808</value>
+    <transaction-date>2010</transaction-date>
+  </transaction>
+</iati-activity>

@@ -51,3 +51,15 @@ class TestParserModels(AppTestCase):
         activity = parser.parse_blob(blob, validate=False)
         self.assertNotEquals(None, activity.id)
 
+    def test_broke_activity_01(self):
+        from iatilib import db
+        from iatilib import model
+        db.session.add(model.CodelistSector())
+        db.session.commit()
+        blob = fac.RawXmlBlobFactory.create(
+            parsed=True,
+            raw_xml=fixture("broken_activity_01.xml"),
+            activity=fac.create_activity()
+        )
+        activity = parser.parse_blob(blob)
+        self.assertNotEquals(None, activity.id)

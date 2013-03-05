@@ -2,6 +2,7 @@
 import sys
 import traceback
 import argparse
+import random
 
 import sqlalchemy as sa
 
@@ -14,11 +15,10 @@ def parse_loop(debug_limit=None, verbose=False, fail_fast=False):
     while True:
         # yuck. Order by random is baaaad for Postgres, but it will stop one
         # broken record holding up parsing all of them.
-        q = RawXmlBlob.query.filter(RawXmlBlob.parsed == False)\
-            .order_by(sa.func.random())
+        q = RawXmlBlob.query.filter_by(parsed=False)
         if verbose:
             print '%d blobs need to be parsed.' % q.count()
-        xmlblob = q.first()
+        xmlblob = random.choice(q.limit(100).all())
         if xmlblob is None:
             return
         try:

@@ -1,8 +1,12 @@
+import logging
+
 from defusedxml import lxml as etree
 import model
 from datetime import datetime
 import iso8601
 from iatilib import db
+
+log = logging.getLogger('parser')
 
 
 def parse(xml_string, validate=True):
@@ -15,15 +19,27 @@ def parse(xml_string, validate=True):
 
 
 def parse_blob(raw_xml_blob, validate=True):
+    raw_xml_blob = db.session.merge(raw_xml_blob)
     raw_xml_blob.parsed = True
     db.session.commit()
     # Recursively delete associated Activity/Transaction/etc objects
-    raw_xml_blob.activity = None
+    if raw_xml_blob.activity:
+        db.session.delete(raw_xml_blob.activity)
     # Parse new objects into the db
     activity, errors = parse(raw_xml_blob.raw_xml, validate=validate)
     raw_xml_blob.activity = activity
+    raw_xml_blob.parsed = True
     db.session.commit()
     return activity
+
+
+# here for bulk parsing
+def parse_job(raw_xml_blob_id):
+    from iatilib.frontend import create_app
+    app = create_app()
+    with app.test_request_context():
+        raw_xml_blob = model.RawXmlBlob.query.get(raw_xml_blob_id)
+        return parse_blob(raw_xml_blob)
 
 
 # =========
