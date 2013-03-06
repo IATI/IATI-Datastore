@@ -1,24 +1,37 @@
 IATI Datastore
 ==============
 
-The IATI datastore is running on [Heroku](http://heroku.com), using a Postgres database updated by a nightly scraper (`job_crawl_ckan` and `job_download_xml`).
+The International Aid Transparency Initiative (IATI) aims to make aims
+to make information about aid spending easier to access. To this end,
+they publish the [IATI standardd](http://iatistandard.org) and keep a
+[registry of data that form](http://www.iatiregistry.org).
 
-Link to documentation: http://iati-datastore.herokuapp.com
+The *IATI Datastore* is provided to help users of IATI's data access the
+extracts they are interested in. A public instance is available here:
 
-### DB Notes
+http://iati-datastore.herokuapp.com
 
-`IndexedResource` objects have an associated `state` field, which amounts to a magic number (see `iatilib/magic_numbers.py`):
 
-     1   |  OK. Resource was downloaded and indexed.
-         |  (Can be discovered via the API).
-     0   |  INVALID STATE
-         |  (Malformed; misbehaving CKAN crawler?)
-    -1   |  Freshly discovered resource.
-         |  (Downloader thread needs to fetch this)
-    -2   |  last_modified has changed on CKAN.
-         |  (Downloader thread needs to fetch this)
-    -3   |  Not seen in last crawl of CKAN.
-         |  (deleted? should be removed from DB?)
-    -4   |  A downloader thread is trying to download this.
-         |  (And it might have crashed...)
+Operation
+=========
+
+* `job_1_crawl_ckan.py` Gets the urls of documents stored in IATI format
+* `job_2_download_xml.py` Downloads the documents into the db
+* `job_3_parse.py` Parses the documents into the db
+
+These jobs all run regularly.
+
+
+Installation
+============
+
+* Clone the source
+* Install requirements `pip install -e requirements_dev.txt`.
+* Run the tests `python -m unittest discover` or `nosetests` if you prefer
+  (they will use an in-memory sqlite db)
+* Create a test database (we use postgres), and set an environment variable
+  `DATABASE_URL` to something like `postgres:///iati-ds`.
+* Run `python manage.py runserver` to create the db and run a test server
+* Run `python create_codelists.py` to add some lookup tables.
+* Go to http://127.0.0.1:5000
 
