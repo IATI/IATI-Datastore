@@ -5,8 +5,8 @@ from functools import partial
 import unicodecsv
 from xml.etree import ElementTree as ET
 
-from . import factories as fac
-from .factories import create_activity
+from test import factories as fac
+from test.factories import create_activity
 from iatilib.frontend import serialize
 
 
