@@ -57,7 +57,7 @@ def parse_blob(blob_id, pdb=False):
         except ImportError:
             import pdb
             pdb.set_trace()
-    activity = parser.parse_blob(blob)
+    activity, errors = parser.parse(blob.raw_xml)
     print "activity", activity
     print "activity.id", activity.id
     print "errors", errors
@@ -83,21 +83,23 @@ def redis_connect():
 @manager.command
 def bulk_parse(max_blobs=None):
     "Enque jobs to parse all unparsed blobs"
+    if max_blobs:
+        max_blobs = int(max_blobs)
     q = rq.Queue(connection=redis_connect())
     query = RawXmlBlob.query.filter_by(parsed=False)
     print "There are %d blobs that need to be parsed" % query.count()
-    if max_blobs:
-        max_blobs = min(max_blobs, query.count())
-    else:
+    if not max_blobs:
         max_blobs = query.count()
-    for off in xrange(0, max_blobs, 1000):
-        print "Enquing from offset %d" % off
-        for blob in query.offset(off).limit(1000):
-            q.enqueue_call(func=parser.parse_job, args=(blob.id,), result_ttl=0)
+    print "Enquing upto %d blobs" % max_blobs
+    for blob in query.limit(max_blobs):
+        q.enqueue_call(
+            func=parser.parse_job,
+            args=(blob.id,),
+            result_ttl=0)
 
 
 @manager.command
-def bulk_parse_failiures(max_blobs=None):
+def bulk_parse_failiures():
     "Print the blob ids that failed to parse"
     failed_q = rq.Queue("failed", connection=redis_connect())
     job = failed_q.dequeue()
