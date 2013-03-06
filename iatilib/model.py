@@ -64,7 +64,10 @@ class TransactionType(object):
 class Activity(db.Model):
     __tablename__ = 'activity'
     id = Column(Integer, primary_key=True)
-    transaction = relationship("Transaction",cascade="all")
+    transaction = relationship(
+        "Transaction",
+        cascade="all",
+        backref="activity")
     sector = relationship("Sector",cascade="all")
     participatingorg = relationship("ParticipatingOrg",cascade="all")
     contactinfo = relationship("ContactInfo",cascade="all")

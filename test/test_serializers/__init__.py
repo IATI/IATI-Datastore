@@ -10,7 +10,10 @@ def load_csv(data):
 
 class CSVTstMixin(object):
     def process(self, data):
-        raise NotImplemented
+        return load_csv(self.serialize(data))
+
+    def serialize(self, data):
+        raise Exception("Not Implemented")
 
     def assertField(self, mapping, row):
         assert len(mapping) == 1

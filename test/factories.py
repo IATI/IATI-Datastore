@@ -91,6 +91,10 @@ def create_activity(_commit=True, **args):
     return act
 
 
+class ActivityFactory(factory.Factory):
+    pass
+
+
 class RecipientCountryFactory(factory.Factory):
     code = u"TST"
     text = u"test country"
@@ -112,3 +116,4 @@ class TransactionValueFactory(factory.Factory):
 class TransactionFactory(factory.Factory):
     type = factory.SubFactory(TransactionTypeFactory)
     value = factory.SubFactory(TransactionValueFactory)
+    activity = factory.SubFactory(ActivityFactory)

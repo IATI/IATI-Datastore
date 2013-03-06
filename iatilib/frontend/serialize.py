@@ -24,7 +24,7 @@ def pure_obj(obj):
         elif key in (
             "query", "query_class", "parent", "disbursements", "expenditures",
             "incoming_funds", "interest_repayment", "loan_repayments",
-            "reembursements"
+            "reembursements", "activity"
             ):
             pass
         else:
@@ -96,6 +96,27 @@ def csv(query):
         (u"start-actual", date(u"start-actual")),
         (u"end-actual", date(u"end-actual")),
         ))
+
+    out = StringIO()
+    writer = unicodecsv.writer(out, encoding='utf-8')
+    writer.writerow(fields.keys())
+    for activity in query:
+        row = [accessor(activity) for accessor in fields.values()]
+        writer.writerow(row)
+    return out.getvalue()
+
+
+def default_currency(transaction):
+    return transaction.activity.default_currency
+
+def transaction_type(transaction):
+    return "D"
+
+def transaction_csv(query):
+    fields = OrderedDict((
+        (u'transaction-type', transaction_type),
+        (u"default-currency", default_currency),
+    ))
 
     out = StringIO()
     writer = unicodecsv.writer(out, encoding='utf-8')
