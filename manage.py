@@ -1,7 +1,9 @@
 import os
 import rq
 import urlparse
+import codecs
 
+import requests
 import redis
 import sqlalchemy as sa
 import prettytable
@@ -9,8 +11,8 @@ from flask.ext.script import Manager
 
 
 from iatilib.frontend import create_app, db
-from iatilib import magic_numbers, parser
-from iatilib.model import IndexedResource, RawXmlBlob
+from iatilib import magic_numbers, parser, codelists
+
 
 manager = Manager(create_app())
 
@@ -115,6 +117,21 @@ def rqworker(burst=False):
     with rq.Connection(redis_connect()):
         worker = rq.Worker(rq.Queue())
         worker.work(burst=burst)
+
+
+@manager.command
+def download_codelists():
+    for name, url in codelists.urls.items():
+        filename = "iatilib/codelists/%s.csv" % name
+        if os.path.exists(filename) and os.path.getsize(filename) > 0:
+            print filename, "exists, skipping"
+        else:
+            print "Downloading", name
+            resp = requests.get(url)
+            resp.raise_for_status()
+            assert len(resp.text) > 0, "Response is empty"
+            with codecs.open(filename, "w", encoding="utf-8") as cl:
+                cl.write(resp.text)
 
 
 if __name__ == "__main__":

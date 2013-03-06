@@ -11,13 +11,14 @@ def create_db():
 class AppTestCase(unittest.TestCase):
     def setUp(self):
         self.app = create_app(
-            SQLALCHEMY_DATABASE_URI='sqlite:///:memory:')
+            SQLALCHEMY_DATABASE_URI='sqlite:///:memory:',
+        )
         create_db()
 
     def tearDown(self):
         db.session.remove()
         db.drop_all()
-
+        db.session._unique_cache = {}
 
 class ClientTestCase(AppTestCase):
     def setUp(self):

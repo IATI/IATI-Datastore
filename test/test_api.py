@@ -4,11 +4,11 @@ from xml.etree import ElementTree as ET
 import csv
 from StringIO import StringIO
 
+from unittest import skip
 import mock
 
 from test import AppTestCase
 from iatilib import parser, db
-from iatilib.model import (CodelistSector, IndexedResource, RawXmlBlob)
 
 
 class ClientTestCase(AppTestCase):
@@ -23,6 +23,7 @@ class TestAbout(ClientTestCase):
         self.assertEquals(200, resp.status_code)
 
 
+@skip("e2e")
 class TestEmptyDb_JSON(ClientTestCase):
     url = '/api/1/access/activities'
 
@@ -49,6 +50,7 @@ class TestEmptyDb_JSON(ClientTestCase):
         self.assertEquals(js["results"], [])
 
 
+@skip("e2e")
 class TestEmptyDb_XML(ClientTestCase):
     """
     Raw XML for empty db.
@@ -92,6 +94,7 @@ class TestEmptyDb_XML(ClientTestCase):
         self.assertEquals(xml.tag, "result")
 
 
+@skip("e2e")
 class TestEmptyDb_CSV(ClientTestCase):
     """
     CSV for empty db
@@ -140,6 +143,7 @@ def load_fix(fix_name):
         db.session.commit()
 
 
+@skip("e2e")
 class TestSingleActivity(ClientTestCase):
     """
     Different reprisentations of the same input activity
@@ -174,6 +178,7 @@ class TestSingleActivity(ClientTestCase):
         self.assertEquals(exp["results"], js["results"])
 
 
+@skip("e2e")
 class TestManyActivities(ClientTestCase):
     def test_xml_activity_count(self):
         load_fix("many_activities.xml")
@@ -226,6 +231,7 @@ class TestView(ClientTestCase):
         self.assertEquals(404, resp.status_code)
 
 
+@skip("e2e")
 class TestPagination(ClientTestCase):
     @mock.patch('iatilib.frontend.api1.dsfilter.activities')
     def test_defaults(self, mock):

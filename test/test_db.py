@@ -2,18 +2,20 @@ import iatilib
 from iatilib import db
 from iatilib.model import *
 import unittest
+from unittest import skip
 import job_1_crawl_ckan
 from datetime import datetime
 
 from . import AppTestCase
 
-DB_OBJECTS = [IndexedResource,Transaction,Sector,Activity]
+#DB_OBJECTS = [IndexedResource,Transaction,Sector,Activity]
 TIMESTAMP = datetime(day=31,month=1,year=2013)
 
 class DbTestCase(AppTestCase):
     pass
 
 # An empty database should be empty
+@skip("test db")
 class CaseEmpty(DbTestCase):
     def test_health(self):
         q = db.session.query(IndexedResource)
@@ -21,6 +23,7 @@ class CaseEmpty(DbTestCase):
         assert count == 0, count
 
 # Build up a DB and delete it again
+@skip("ckan_crawl")
 class CaseCrawlCkan(DbTestCase):
     # Various test fixtures
     def _data0(self):

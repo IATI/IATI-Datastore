@@ -1,12 +1,11 @@
-import uuid
+import datetime
 
 import factory
 
+from iatilib import codelists
 from iatilib.frontend import db
 from iatilib.model import (
-    Activity, ActivityDate, IndexedResource, RawXmlBlob, Sector,
-    RecipientCountry, ReportingOrg, IatiIdentifier, Title, Description,
-    TransactionType, Transaction, TransactionValue)
+    Activity, Transaction, Organisation, SectorPercentage, CountryPercentage)
 
 
 def sa_creation(model, **kw):
@@ -19,101 +18,34 @@ def sa_creation(model, **kw):
 factory.Factory.set_creation_function(sa_creation)
 
 
-class IndexedResourceFactory(factory.Factory):
-    id = factory.LazyAttribute(lambda i: uuid.uuid4().hex.decode('ascii'))
-    url = u"http://test"
+def create_activity():
+    raise Exception("create_activity")
 
 
-class RawXmlBlobFactory(factory.Factory):
-    indexedresource = factory.SubFactory(IndexedResourceFactory)
-    parsed = False
+class CountryPercentageFactory(factory.Factory):
+    country = codelists.Country.united_states
+    percentage = 0
 
 
-def create_activity(_commit=True, **args):
-    # map param name to db date type col-value
-    date_names = {
-        "start_planned": u"start-planned",
-        "end_planned": u"end-planned",
-        "start_actual": u"start-actual",
-        "end_actual": u"end-actual",
-    }
+class SectorPercentageFactory(factory.Factory):
+    sector = codelists.Sector.teacher_training
+    percentage = 0
 
-    defaults = {
-        "recipient_country__code": u"TST",
-        "recipient_country__text": u"Test",
-        "reporting_org__ref": u"T RO REF",
-        "reporting_org__text": u"RO-TEXT",
-        "iatiidentifier__text": u"iati id",
-        "title__text": u"title test",
-        "parent__raw_xml": u"<test />",
-        "description__text": u"test desc",
-        }
-    data = dict(defaults, **args)
 
-    if _commit:
-        ir = IndexedResource.query.filter_by(id=u"TEST").first()
-    if not _commit or not ir:
-        ir = IndexedResource(id=u"TEST")
-
-    act = Activity()
-    act.reportingorg = [ReportingOrg(
-        ref=data["reporting_org__ref"],
-        text=data["reporting_org__text"]
-        )]
-    act.iatiidentifier = [IatiIdentifier(text=data["iatiidentifier__text"])]
-    act.title = [Title(text=data["title__text"])]
-    act.description = [Description(text=data["description__text"])]
-    act.parent = RawXmlBlob(
-        parent=ir,
-        raw_xml=data["parent__raw_xml"]
-        )
-
-    for dparam in date_names:
-        if dparam in data:
-            act.date.append(ActivityDate(
-                type=date_names[dparam],
-                iso_date=data[dparam],
-                parent_id=act.id,
-            ))
-    if _commit:
-        db.session.add(act.parent)
-        db.session.commit()
-        act.parent_id = act.parent.id
-        db.session.add(act)
-        db.session.commit()
-        db.session.refresh(act)
-        db.session.add(RecipientCountryFactory.build(
-            code=data["recipient_country__code"],
-            text=data["recipient_country__text"],
-            parent_id=act.id
-            ))
-        db.session.commit()
-    return act
+class OrganisationFactory(factory.Factory):
+    ref = factory.Sequence(lambda n: u'test-org-{0}'.format(n))
+    name = u"test org"
 
 
 class ActivityFactory(factory.Factory):
-    pass
-
-
-class RecipientCountryFactory(factory.Factory):
-    code = u"TST"
-    text = u"test country"
-    percentage = 100
-
-
-class SectorFactory(factory.Factory):
-    code = u"TST"
-
-
-class TransactionTypeFactory(factory.Factory):
-    code = u"TST"
-
-
-class TransactionValueFactory(factory.Factory):
-    pass
+    iati_identifier = factory.Sequence(lambda n: u'test-act-{0}'.format(n))
+    reporting_org = factory.SubFactory(OrganisationFactory)
+    raw_xml = u"<test />"
 
 
 class TransactionFactory(factory.Factory):
-    type = factory.SubFactory(TransactionTypeFactory)
-    value = factory.SubFactory(TransactionValueFactory)
     activity = factory.SubFactory(ActivityFactory)
+    type = codelists.TransactionType.commitment
+    value_currency = codelists.Currency.us_dollar
+    value_amount = 0
+    value_date = datetime.date(1972, 1, 1)

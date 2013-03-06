@@ -1,15 +1,15 @@
 from sqlalchemy import func
 
-from iatilib.model import Activity, ActivityDate, RecipientCountry, ReportingOrg
+from iatilib.model import Activity, CountryPercentage
 from iatilib import db
 
 
 def activities(args):
     query = Activity.query
 
+
     filter_fields = {
         u"country": (Activity.recipientcountry, RecipientCountry.text),
-        u"country_code": (Activity.recipientcountry, RecipientCountry.code),
         u"reporting_org_ref": (Activity.reportingorg, ReportingOrg.ref),
     }
 

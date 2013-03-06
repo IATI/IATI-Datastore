@@ -3,6 +3,7 @@ from collections import OrderedDict
 import json as jsonlib
 import unicodecsv
 from StringIO import StringIO
+from operator import attrgetter
 
 from sqlalchemy.orm.collections import InstrumentedList
 
@@ -61,29 +62,46 @@ def total(column):
     def accessor(activity):
         if len(set(t.value.currency for t in getattr(activity, column))) > 1:
             return "!Mixed currency"
-        return sum(t.value.text for t in getattr(activity, column))
+        return sum(t.value.amount for t in getattr(activity, column))
     return accessor
 
 
 def currency(activity):
-    if len(set(t.value.currency for t in activity.transaction)) > 1:
+    if len(set(t.value.currency for t in activity.transactions)) > 1:
         return "!Mixed currency"
-    return next(iter(set(t.value.currency for t in activity.transaction)), None)
+    curr = next(iter(set(t.value_currency for t in activity.transactions)), None)
+    if curr:
+        return curr.value
+    return ""
+
+
+def csv_serialize(fields, data):
+    out = StringIO()
+    writer = unicodecsv.writer(out, encoding='utf-8')
+    writer.writerow(fields.keys())
+    for obj in data:
+        row = [accessor(obj) for accessor in fields.values()]
+        writer.writerow(row)
+    return out.getvalue()
 
 
 def csv(query):
     fields = OrderedDict((
-        (u"iati-identifier", first_text(u"iatiidentifier")),
-        (u"reporting-org", first_text(u"reportingorg")),
-        (u"title", first_text(u"title")),
-        (u"description", first_text(u"description")),
-        (u"recipient-country-code", delim("recipientcountry", "code")),
-        (u"recipient-country", delim("recipientcountry", "text")),
+        (u"iati-identifier", lambda a: a.iati_identifier),
+        (u"reporting-org", lambda a: a.reporting_org.name),
+        (u"title", attrgetter(u"title")),
+        (u"description", attrgetter(u"description")),
+        (u"recipient-country-code",
+            lambda a: u";".join(sp.country.value for sp in a.recipient_country_percentages)),
+        (u"recipient-country",
+            lambda a: u";".join(sp.country.description.title() for sp in a.recipient_country_percentages)),
         (u"recipient-country-percentage",
-            delim("recipientcountry", "percentage")),
-        (u"sector-code", delim("sector", "code")),
-        (u"sector", delim("sector", "text")),
-        (u"sector-percentage", delim("sector", "percentage")),
+            lambda a: u";".join(u"%d" % sp.percentage for sp in a.recipient_country_percentages)),
+        (u"sector-code",
+            lambda a: u";".join(sp.sector.value for sp in a.sector_percentages)),
+        (u"sector",
+            lambda a: u";".join(sp.sector.description for sp in a.sector_percentages)),
+        (u"sector-percentage", delim("sector_percentages", "percentage")),
         (u"currency", currency),
         (u"total-Disbursement", total("disbursements")),
         (u"total-Expenditure", total("expenditures")),
@@ -91,46 +109,46 @@ def csv(query):
         (u"total-Interest Repayment", total("interest_repayment")),
         (u"total-Loan Repayment", total("loan_repayments")),
         (u"total-Reimbursement", total("reembursements")),
-        (u"start-planned", date(u"start-planned")),
-        (u"end-planned", date(u"end-planned")),
-        (u"start-actual", date(u"start-actual")),
-        (u"end-actual", date(u"end-actual")),
-        ))
-
-    out = StringIO()
-    writer = unicodecsv.writer(out, encoding='utf-8')
-    writer.writerow(fields.keys())
-    for activity in query:
-        row = [accessor(activity) for accessor in fields.values()]
-        writer.writerow(row)
-    return out.getvalue()
+        (u"start-planned", attrgetter(u"start_planned")),
+        (u"end-planned", attrgetter(u"end_planned")),
+        (u"start-actual", attrgetter(u"start_actual")),
+        (u"end-actual", attrgetter(u"end_actual")),
+    ))
+    return csv_serialize(fields, query)
 
 
 def default_currency(transaction):
-    return transaction.activity.default_currency
+    if transaction.activity.default_currency:
+        return transaction.activity.default_currency.value
+    return ""
+
 
 def transaction_type(transaction):
     return "D"
 
+
+def transaction_value(transaction):
+    return transaction.value.amount
+
+
+def iati_identifier(transaction):
+    return transaction.activity.iati_identifier
+
+
 def transaction_csv(query):
     fields = OrderedDict((
+        (u'iati-identifier', iati_identifier),
         (u'transaction-type', transaction_type),
         (u"default-currency", default_currency),
+        (u"transaction-value", transaction_value)
     ))
-
-    out = StringIO()
-    writer = unicodecsv.writer(out, encoding='utf-8')
-    writer.writerow(fields.keys())
-    for activity in query:
-        row = [accessor(activity) for accessor in fields.values()]
-        writer.writerow(row)
-    return out.getvalue()
+    return csv_serialize(fields, query)
 
 
 def xml(items):
     out = u"<result><ok>True</ok><result-activity>"
     for activity in items:
-        out += activity.parent.raw_xml
+        out += activity.raw_xml
     out += u"</result-activity></result>"
     return out
 
