@@ -96,7 +96,7 @@ def csv(query):
         (u"recipient-country",
             lambda a: u";".join(sp.country.description.title() for sp in a.recipient_country_percentages)),
         (u"recipient-country-percentage",
-            lambda a: u";".join(u"%d" % sp.percentage for sp in a.recipient_country_percentages)),
+            lambda a: u";".join(u"%s" % sp.percentage for sp in a.recipient_country_percentages)),
         (u"sector-code",
             lambda a: u";".join(sp.sector.value for sp in a.sector_percentages)),
         (u"sector",

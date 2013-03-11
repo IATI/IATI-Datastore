@@ -114,17 +114,7 @@ class TestParseActivity(AppTestCase):
     def test_sector_percentage_count(self):
         act = next(parse.document(
             fixture("complex_example_dfid.xml", encoding=None)))
-        self.assertEquals(2, len(act.sector_percentages))
-
-    def test_sector_percentage(self):
-        act = next(parse.document(
-            fixture("complex_example_dfid.xml", encoding=None)))
-        self.assertEquals(
-            cl.Sector.sectors_not_specified,
-            act.sector_percentages[0].sector)
-        self.assertEquals(
-            cl.Vocabulary.oecd_development_assistance_committee,
-            act.sector_percentages[0].vocabulary)
+        self.assertEquals(5, len(act.sector_percentages))
 
     def test_raw_xml(self):
         act = parse.activity(fixture("default_currency.xml"))
@@ -143,3 +133,24 @@ class TestFunctional(AppTestCase):
             fixture("complex_example_dfid.xml", encoding=None))
         db.session.add_all(acts)
         db.session.commit()
+
+
+class TestSector(AppTestCase):
+    def test_code(self):
+        sec = parse.sector_percentages([ET.XML(
+            u'<sector vocabulary="DAC" code="16010">Child Protection Systems Strengthening</sector>'
+        )])[0]
+        self.assertEquals(cl.Sector.social_welfare_services, sec.sector)
+
+    def test_missing_code(self):
+        sec = parse.sector_percentages([ET.XML(
+            u'<sector vocabulary="DAC">Child Protection Systems Strengthening</sector>'
+        )])[0]
+        self.assertEquals(None, sec.sector)
+
+    def test_missing_everything(self):
+        sec = parse.sector_percentages([ET.XML(
+            u'<sector />'
+        )])
+        self.assertEquals([], sec)
+

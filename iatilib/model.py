@@ -180,11 +180,11 @@ class SectorPercentage(db.Model):
     id = sa.Column(sa.Integer, primary_key=True)
     activity_id = sa.Column(
         sa.ForeignKey("iati_activity.iati_identifier"))
-    sector = sa.Column(codelists.Sector.db_type(), nullable=False)
+    sector = sa.Column(codelists.Sector.db_type(), nullable=True)
     vocabulary = sa.Column(
         codelists.Vocabulary.db_type(),
         default=codelists.Vocabulary.oecd_development_assistance_committee,
         nullable=False)
-    percentage = sa.Column(sa.Integer, nullable=False)
+    percentage = sa.Column(sa.Integer, nullable=True)
     activity = sa.orm.relationship("Activity")
 

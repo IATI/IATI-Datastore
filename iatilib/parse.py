@@ -1,3 +1,4 @@
+import os
 import datetime
 
 from defusedxml import lxml as ET
@@ -8,9 +9,17 @@ from iatilib.model import (
     SectorPercentage)
 from iatilib import codelists as cl
 
+NODEFAULT = object()
 
-def xval(ele, xpath):
-    return ele.xpath(xpath)[0].decode("utf-8")
+
+def xval(ele, xpath, default=NODEFAULT):
+    try:
+        return ele.xpath(xpath)[0].decode("utf-8")
+    except IndexError:
+        if default is NODEFAULT:
+            raise
+        return default
+
 
 
 def iati_date(str):
@@ -56,13 +65,18 @@ def transactions(xml):
 
 
 def sector_percentages(xml):
-    return [SectorPercentage(
-            sector=cl.Sector.from_string(xval(ele, "@code")),
-            vocabulary=cl.Vocabulary.from_string(xval(ele, "@vocabulary")),
-            percentage=int(xval(ele, "@percentage")),
-            )
-            for ele in xml
-            if ele.xpath("@code") and xval(ele, "@code") in cl.Sector.values()]
+    ret = []
+    for ele in xml:
+        sp = SectorPercentage()
+        if ele.xpath("@code") and xval(ele, "@code") in cl.Sector.values():
+            sp.sector = cl.Sector.from_string(xval(ele, "@code"))
+        if ele.xpath("@vocabulary"):
+            sp.vocabulary = cl.Vocabulary.from_string(xval(ele, "@vocabulary"))
+        if ele.xpath("@percentage"):
+            sp.percentage = int(xval(ele, "@percentage"))
+        if any(getattr(sp, attr) for attr in "sector vocabulary percentage".split()):
+            ret.append(sp)
+    return ret
 
 
 def activity(xmlstr):
@@ -88,6 +102,9 @@ def activity(xmlstr):
 
 
 def document(xmlstr):
-    xml = ET.fromstring(xmlstr)
+    if os.path.exists(xmlstr):
+        xml = ET.parse(xmlstr)
+    else:
+        xml = ET.fromstring(xmlstr)
     for act in xml.xpath("./iati-activity"):
         yield activity(act)
