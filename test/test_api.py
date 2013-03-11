@@ -23,7 +23,6 @@ class TestAbout(ClientTestCase):
         self.assertEquals(200, resp.status_code)
 
 
-@skip("e2e")
 class TestEmptyDb_JSON(ClientTestCase):
     url = '/api/1/access/activities'
 
@@ -50,7 +49,6 @@ class TestEmptyDb_JSON(ClientTestCase):
         self.assertEquals(js["results"], [])
 
 
-@skip("e2e")
 class TestEmptyDb_XML(ClientTestCase):
     """
     Raw XML for empty db.
@@ -94,7 +92,6 @@ class TestEmptyDb_XML(ClientTestCase):
         self.assertEquals(xml.tag, "result")
 
 
-@skip("e2e")
 class TestEmptyDb_CSV(ClientTestCase):
     """
     CSV for empty db
@@ -231,7 +228,6 @@ class TestView(ClientTestCase):
         self.assertEquals(404, resp.status_code)
 
 
-@skip("e2e")
 class TestPagination(ClientTestCase):
     @mock.patch('iatilib.frontend.api1.dsfilter.activities')
     def test_defaults(self, mock):
