@@ -135,12 +135,54 @@ def iati_identifier(transaction):
     return transaction.activity.iati_identifier
 
 
+def recipient_country_code(transaction):
+    return u";".join(
+        rcp.country.value
+        for rcp in transaction.activity.recipient_country_percentages)
+
+
+def recipient_country(transaction):
+    return u";".join(
+        rcp.country.description.title()
+        for rcp in transaction.activity.recipient_country_percentages)
+
+
+def recipient_country_percentage(transaction):
+    return u";".join(
+        u"%d" % rcp.percentage
+        for rcp in transaction.activity.recipient_country_percentages)
+
+
+def sector_code(transaction):
+    return u";".join(
+        u"%s" % sec.sector.value
+        for sec in transaction.activity.sector_percentages)
+
+
+def sector_percentage(transaction):
+    return u";".join(
+        u"%d" % sec.percentage
+        for sec in transaction.activity.sector_percentages)
+
+
+def sector(transaction):
+    return u";".join(
+        u"%s" % sec.sector.description
+        for sec in transaction.activity.sector_percentages)
+
+
 def transaction_csv(query):
     fields = OrderedDict((
         (u'iati-identifier', iati_identifier),
         (u'transaction-type', transaction_type),
         (u"default-currency", default_currency),
-        (u"transaction-value", transaction_value)
+        (u"transaction-value", transaction_value),
+        (u"recipient-country-code", recipient_country_code),
+        (u"recipient-country", recipient_country),
+        (u"recipient-country-percentage", recipient_country_percentage),
+        (u"sector-code", sector_code),
+        (u"sector", sector),
+        (u"sector-percentage", sector_percentage),
     ))
     return csv_serialize(fields, query)
 
