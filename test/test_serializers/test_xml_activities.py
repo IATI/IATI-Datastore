@@ -1,25 +1,9 @@
-import datetime
-from StringIO import StringIO
 from unittest import TestCase
-from functools import partial
-import unicodecsv
+
 from xml.etree import ElementTree as ET
 
 from test import factories as fac
-from test.factories import create_activity
 from iatilib.frontend import serialize
-
-
-def load_csv(data):
-    sio = StringIO(data)
-    return list(unicodecsv.DictReader(sio, encoding="utf-8"))
-
-
-for factory in (create_activity,):
-    globals()[factory.__name__] = partial(factory, _commit=False)
-
-
-
 
 
 class TestXMLSerializer(TestCase):
