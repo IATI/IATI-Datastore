@@ -149,7 +149,7 @@ def recipient_country(transaction):
 
 def recipient_country_percentage(transaction):
     return u";".join(
-        u"%d" % rcp.percentage
+        u"%s" % rcp.percentage
         for rcp in transaction.activity.recipient_country_percentages)
 
 
@@ -161,7 +161,7 @@ def sector_code(transaction):
 
 def sector_percentage(transaction):
     return u";".join(
-        u"%d" % sec.percentage
+        u"%s" % sec.percentage
         for sec in transaction.activity.sector_percentages)
 
 
@@ -198,5 +198,5 @@ def xml(items):
 def json(items):
     return jsonlib.dumps({
         "ok": True,
-        "results": [pure_obj(x) for x in items]
+        "results": []
         })

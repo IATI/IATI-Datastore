@@ -49,3 +49,21 @@ def activities_list(format):
 
     serializer, mimetype = forms[format]
     return Response(serializer(pagination.items), mimetype=mimetype)
+
+
+@api.route('/access/transactions<format>', defaults={"format": ".csv"})
+def transactions_list(format):
+    try:
+        valid_args = validators.activity_api_args(MultiDict(request.args))
+    except validators.Invalid:
+        abort(404)
+
+    query = Transaction.query
+    pagination = query.paginate(
+        valid_args.get("page", 1),
+        valid_args.get("per_page", 50),
+    )
+
+    return Response(
+        serialize.transaction_csv(pagination.items),
+        mimetype="text/csv")

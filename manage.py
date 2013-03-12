@@ -15,7 +15,7 @@ from iatilib.frontend import create_app, db
 from iatilib import magic_numbers, parse, codelists, model
 
 
-manager = Manager(create_app())
+manager = Manager(create_app(DEBUG=True))
 
 
 @manager.shell
