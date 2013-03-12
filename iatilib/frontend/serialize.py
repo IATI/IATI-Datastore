@@ -124,7 +124,7 @@ def default_currency(transaction):
 
 
 def transaction_type(transaction):
-    return "D"
+    return transaction.type.value
 
 
 def transaction_value(transaction):

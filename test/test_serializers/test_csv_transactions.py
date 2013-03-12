@@ -20,6 +20,13 @@ class TestCSVTransactionExample(TestCase, CSVTstMixin):
         ])
         self.assertField({"transaction-type": "D"}, data[0])
 
+    def test_transaction_type2(self):
+        data = self.process([
+            fac.TransactionFactory.build(type=cl.TransactionType.commitment)
+        ])
+        self.assertField({"transaction-type": "C"}, data[0])
+
+
     def test_default_currency(self):
         data = self.process([
             fac.TransactionFactory.build(
