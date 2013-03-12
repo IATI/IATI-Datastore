@@ -133,8 +133,8 @@ def activity(xmlstr):
         xml = xmlstr
     data = {
         "iati_identifier": xval(xml, "./iati-identifier/text()"),
-        "title": xval(xml, "./title/text()"),
-        "description": xval(xml, "./description/text()"),
+        "title": xval(xml, "./title/text()", u""),
+        "description": xval(xml, "./description/text()", u""),
         "reporting_org": reporting_org(xml.xpath("./reporting-org")[0]),
         "websites": websites(xml.xpath("./activity-website")),
         "participating_orgs": participating_orgs(
