@@ -36,7 +36,12 @@ class MissingValue(SpecError):
 
 def xval(ele, xpath, default=NODEFAULT):
     try:
-        return ele.xpath(xpath)[0].decode("utf-8")
+        val = ele.xpath(xpath)[0]
+        if isinstance(val, str):
+            return val.decode("utf-8")
+        if isinstance(val, unicode):
+            return val
+        raise TypeError("val is not a basestring")
     except IndexError:
         if default is NODEFAULT:
             raise MissingValue("Missing %r from %s" % (xpath, ele.tag))
@@ -128,6 +133,8 @@ def activity(xmlstr):
         xml = xmlstr
     data = {
         "iati_identifier": xval(xml, "./iati-identifier/text()"),
+        "title": xval(xml, "./title/text()"),
+        "description": xval(xml, "./description/text()"),
         "reporting_org": reporting_org(xml.xpath("./reporting-org")[0]),
         "websites": websites(xml.xpath("./activity-website")),
         "participating_orgs": participating_orgs(

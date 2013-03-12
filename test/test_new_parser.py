@@ -28,6 +28,18 @@ class TestParseActivity(AppTestCase):
             u"47045-ARM-202-G05-H-00",
             act.iati_identifier)
 
+    def test_title(self):
+        act = parse.activity(fixture("default_currency.xml"))
+        self.assertEquals(
+            (u"Support to the National Program on the Response to HIV " +
+             u"Epicemic in the Republic of Armenia"),
+            act.title)
+
+    def test_description(self):
+        act = parse.activity(fixture("default_currency.xml"))
+        self.assert_(act.description.startswith(
+            u"While Armenia is still a country with a concentrated HIV"))
+
     def test_reporting_org_ref(self):
         act = parse.activity(fixture("default_currency.xml"))
         self.assertEquals(u"47045", act.reporting_org.ref)
@@ -125,7 +137,7 @@ class TestParseActivity(AppTestCase):
     def test_no_start_actual(self):
         activities = parse.document(fixture("missing_dates.xml"))
         act = {a.iati_identifier:a for a in activities}
-        self.assertEquals(None, act["GB-CHC-272465-680"].start_actual)
+        self.assertEquals(None, act[u"GB-CHC-272465-680"].start_actual)
 
 
 class TestFunctional(AppTestCase):

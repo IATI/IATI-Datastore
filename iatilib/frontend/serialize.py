@@ -118,13 +118,17 @@ def csv(query):
 
 
 def default_currency(transaction):
-    if transaction.activity.default_currency:
-        return transaction.activity.default_currency.value
+    if transaction.value_currency:
+        return transaction.value_currency.value
     return ""
 
 
 def transaction_type(transaction):
     return transaction.type.value
+
+
+def transaction_date(transaction):
+    return transaction.date.strftime("%m/%d/%Y") if transaction.date else ""
 
 
 def transaction_value(transaction):
@@ -149,7 +153,7 @@ def recipient_country(transaction):
 
 def recipient_country_percentage(transaction):
     return u";".join(
-        u"%s" % rcp.percentage
+        u"%d" % rcp.percentage if rcp.percentage else ""
         for rcp in transaction.activity.recipient_country_percentages)
 
 
@@ -161,7 +165,7 @@ def sector_code(transaction):
 
 def sector_percentage(transaction):
     return u";".join(
-        u"%s" % sec.percentage
+        u"%d" % sec.percentage if sec.percentage else ""
         for sec in transaction.activity.sector_percentages)
 
 
@@ -171,12 +175,23 @@ def sector(transaction):
         for sec in transaction.activity.sector_percentages)
 
 
+def title(transaction):
+    return transaction.activity.title
+
+
+def description(transaction):
+    return transaction.activity.description
+
+
 def transaction_csv(query):
     fields = OrderedDict((
-        (u'iati-identifier', iati_identifier),
         (u'transaction-type', transaction_type),
+        (u'transaction-date', transaction_date),
         (u"default-currency", default_currency),
         (u"transaction-value", transaction_value),
+        (u"iati-identifier", iati_identifier),
+        (u"title", title),
+        (u"description", description),
         (u"recipient-country-code", recipient_country_code),
         (u"recipient-country", recipient_country),
         (u"recipient-country-percentage", recipient_country_percentage),
