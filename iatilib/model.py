@@ -62,17 +62,19 @@ class TransactionType(object):
 class Participation(db.Model):
     __tablename__ = "participation"
     activity_identifier = sa.Column(
-        sa.ForeignKey("iati_activity.iati_identifier"),
+        sa.ForeignKey("activity.iati_identifier"),
         primary_key=True)
     organisation_ref = sa.Column(
         sa.ForeignKey("organisation.ref"),
         primary_key=True)
-    role = sa.Column(codelists.OrganisationRole.db_type())
+    role = sa.Column(
+        codelists.OrganisationRole.db_type(),
+        primary_key=True)
     organisation = sa.orm.relationship("Organisation")
 
 
-class Activity(db.Model):
-    __tablename__ = "iati_activity"
+class Activity(db.Model, UniqueMixin):
+    __tablename__ = "activity"
     iati_identifier = sa.Column(sa.Unicode, primary_key=True, nullable=False)
     reporting_org_ref = sa.Column(
         sa.ForeignKey("organisation.ref"),
@@ -108,6 +110,14 @@ class Activity(db.Model):
     transactions = sa.orm.relationship("Transaction")
     sector_percentages = sa.orm.relationship("SectorPercentage")
 
+    @classmethod
+    def unique_hash(cls, iati_identifier, **kw):
+        return iati_identifier
+
+    @classmethod
+    def unique_filter(cls, query, iati_identifier, **kw):
+        return query.filter(cls.iati_identifier == iati_identifier)
+
 
 class Organisation(db.Model, UniqueMixin):
     __tablename__ = "organisation"
@@ -135,7 +145,7 @@ class ActivityWebsite(db.Model):
         sa.Integer,
         primary_key=True)
     activity_id = sa.Column(
-        sa.ForeignKey("iati_activity.iati_identifier"),
+        sa.ForeignKey("activity.iati_identifier"),
         nullable=False,
         index=True)
     url = sa.Column(sa.Unicode)
@@ -146,7 +156,7 @@ class CountryPercentage(db.Model):
     __tablename__ = "country_percentage"
     id = sa.Column(sa.Integer, primary_key=True)
     activity_id = sa.Column(
-        sa.ForeignKey("iati_activity.iati_identifier"),
+        sa.ForeignKey("activity.iati_identifier"),
         nullable=False,
         index=True)
     country = sa.Column(
@@ -162,14 +172,14 @@ class TransactionValue(namedtuple("TransactionValue", "date amount currency")):
 
 
 class Transaction(db.Model):
-    __tablename__ = "transaction2"
+    __tablename__ = "transaction"
     id = sa.Column(sa.Integer, primary_key=True)
     activity_id = sa.Column(
-        sa.ForeignKey("iati_activity.iati_identifier"))
+        sa.ForeignKey("activity.iati_identifier"))
     type = sa.Column(codelists.TransactionType.db_type(), nullable=False)
     date = sa.Column(sa.Date, nullable=False)
     value_date = sa.Column(sa.Date, nullable=False)
-    value_amount = sa.Column(sa.Integer, nullable=False)
+    value_amount = sa.Column(sa.BigInteger, nullable=False)
     value_currency = sa.Column(codelists.Currency.db_type(), nullable=False)
     value = sa.orm.composite(TransactionValue, value_date, value_amount, value_currency)
     activity = sa.orm.relationship("Activity")
@@ -179,7 +189,7 @@ class SectorPercentage(db.Model):
     __tablename__ = "sector_percentage"
     id = sa.Column(sa.Integer, primary_key=True)
     activity_id = sa.Column(
-        sa.ForeignKey("iati_activity.iati_identifier"))
+        sa.ForeignKey("activity.iati_identifier"))
     sector = sa.Column(codelists.Sector.db_type(), nullable=True)
     vocabulary = sa.Column(
         codelists.Vocabulary.db_type(),

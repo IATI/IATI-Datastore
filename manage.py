@@ -2,6 +2,7 @@ import os
 import rq
 import urlparse
 import codecs
+import logging
 
 import requests
 import redis
@@ -11,10 +12,15 @@ from flask.ext.script import Manager
 
 
 from iatilib.frontend import create_app, db
-from iatilib import magic_numbers, parser, codelists
+from iatilib import magic_numbers, parse, codelists, model
 
 
 manager = Manager(create_app())
+
+
+@manager.shell
+def make_shell_context():
+    return dict(app=manager.app, db=db, models=model, codelists=codelists)
 
 
 def qtable(itr, headers=None):
@@ -133,6 +139,33 @@ def download_codelists():
             with codecs.open(filename, "w", encoding="utf-8") as cl:
                 cl.write(resp.text)
 
+
+@manager.option(
+    '-x', '--fail-on-xml-errors',
+    action="store_true", dest="fail_xml")
+@manager.option(
+    '-s', '--fail-on-spec-errors',
+    action="store_true", dest="fail_spec")
+@manager.option('-v', '--verbose', action="store_true")
+@manager.option('filenames', nargs='+')
+def parse_file(filenames, verbose=False, fail_xml=False, fail_spec=False):
+    for filename in filenames:
+        if verbose:
+            print "Parsing", filename
+        try:
+            db.session.add_all(parse.document(filename))
+            db.session.commit()
+        except parse.ParserError, exc:
+            logging.warning("Could not parse file %r", filename, exc_info=True)
+            db.session.rollback()
+            if isinstance(exc, parse.XMLError) and fail_xml:
+                raise
+            if isinstance(exc, parse.SpecError) and fail_spec:
+                raise
+
+@manager.command
+def create_database():
+    db.create_all()
 
 if __name__ == "__main__":
     manager.run()

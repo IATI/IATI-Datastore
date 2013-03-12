@@ -1,0 +1,943 @@
+<?xml version="1.0"?>
+<iati-activities generated-datetime="2012-08-09T14:42:23" version="1.0">
+  <iati-activity default-currency="GBP" xml:lang="en">
+    <reporting-org ref="GB-CHC-272465" type="21">Concern Universal</reporting-org>
+    <transaction>
+      <transaction-date iso-date="2010-07-01">2010-07-01</transaction-date>
+      <transaction-type code="D">Disbursement</transaction-type>
+      <value value-date="2010-07-01">5017464</value>
+    </transaction>
+    <description>The Goal of the Local Development Support Programme is to contribute to poverty and vulnerability reduction through local development. This will be achieved through enhancing the capacity of local governments to deliver services and through improving food and nutrition security, health and incomes in the target area. To successfully achieve these objectives, the Programme will capitalise on Concern Universal&#x92;s 20 years of experience in Malawi working in partnership with communities, central and local government structures, civil society organisations and the private sector.</description>
+    <iati-identifier>GB-CHC-272465-680</iati-identifier>
+    <title>Malawi - Local Development Support Programme</title>
+    <activity-date iso-date="2015-06-30" type="end-planned">2015-06-30</activity-date>
+    <sector code="31120" vocab="DAC">Agricultural Development</sector>
+    <recipient-country code="MW">Malawi</recipient-country>
+    <participating-org role="funding">Irish Aid</participating-org>
+    <activity-date iso-date="2010-07-01" type="start-planned">2010-07-01</activity-date>
+    <activity-status code="2">Implementation</activity-status>
+    <participating-org ref="GB-CHC-272465" role="implementing" type="21">Concern Universal</participating-org>
+  </iati-activity>
+  <iati-activity default-currency="GBP" xml:lang="en">
+    <reporting-org ref="GB-CHC-272465" type="21">Concern Universal</reporting-org>
+    <transaction>
+      <transaction-date iso-date="2007-08-24">2007-08-24</transaction-date>
+      <transaction-type code="D">Disbursement</transaction-type>
+      <value value-date="2007-08-24">355749</value>
+    </transaction>
+    <description>Promoting the creation of independent income for women and improving the knowledge of health rights will empower women and lead to increased participation in local government activities including voting and the direct representation of these women.</description>
+    <iati-identifier>GB-CHC-272465-569</iati-identifier>
+    <title>Ghana - Women of the Upper West - Ending Poverty, Upholding Rights</title>
+    <activity-date iso-date="2012-08-23" type="end-planned">2012-08-23</activity-date>
+    <sector code="11230" vocab="DAC">Basic Life Skills</sector>
+    <recipient-country code="GH">Ghana</recipient-country>
+    <participating-org role="funding">Big Lottery Fund</participating-org>
+    <activity-date iso-date="2007-08-24" type="start-planned">2007-08-24</activity-date>
+    <activity-status code="2">Implementation</activity-status>
+    <participating-org ref="GB-CHC-272465" role="implementing" type="21">Concern Universal</participating-org>
+  </iati-activity>
+  <iati-activity default-currency="GBP" xml:lang="en">
+    <reporting-org ref="GB-CHC-272465" type="21">Concern Universal</reporting-org>
+    <transaction>
+      <transaction-date iso-date="2011-10-01">2011-10-01</transaction-date>
+      <transaction-type code="D">Disbursement</transaction-type>
+      <value value-date="2011-10-01">438597</value>
+    </transaction>
+    <description>The overall goal of the proposed project is to enhance smallholder maize farmers&#x92; access to markets by stimulating competitive Farmer Based Organizations (FBOs) that are empowered to access post-harvest services and fair markets. This project will work at three levels; 1: To strengthen the organizational capacity of smallholder maize farmer based organizations. 2:  To enhance access of smallholder maize farmers to postharvest services. 3:  To improve access of smallholder maize farmers to markets</description>
+    <iati-identifier>GB-CHC-272465-1070</iati-identifier>
+    <title>Ghana -Development of Market Access and Post Harvest Services for Smallholder Farmers in BrongAhafo</title>
+    <activity-date iso-date="2014-09-30" type="end-planned">2014-09-30</activity-date>
+    <sector code="31120" vocab="DAC">Agricultural Development</sector>
+    <recipient-country code="GH">Ghana</recipient-country>
+    <participating-org role="funding">AGRA</participating-org>
+    <activity-date iso-date="2011-10-01" type="start-planned">2011-10-01</activity-date>
+    <activity-status code="2">Implementation</activity-status>
+    <participating-org ref="GB-CHC-272465" role="implementing" type="21">Concern Universal</participating-org>
+  </iati-activity>
+  <iati-activity default-currency="GBP" xml:lang="en">
+    <reporting-org ref="GB-CHC-272465" type="21">Concern Universal</reporting-org>
+    <transaction>
+      <transaction-date iso-date="2011-07-20">2011-07-20</transaction-date>
+      <transaction-type code="D">Disbursement</transaction-type>
+      <value value-date="2011-07-20">1966748</value>
+    </transaction>
+    <description>The objective of the project is to achieve improved poor people's health and sustainable socio-economic development (in Chafumbwa EPA, Dedza district and Upper TA Makwangwala, Ntcheu district). The specific objective is to improve access to and management of sustainable safe water supply and sanitation facilities and hygienic practices.</description>
+    <iati-identifier>GB-CHC-272465-987</iati-identifier>
+    <title>Malawi - Chafumbwa and Upper Makwangwala Water and Sanitation Project</title>
+    <activity-date iso-date="2016-07-20" type="end-planned">2016-07-20</activity-date>
+    <sector code="12261" vocab="DAC">Health Education</sector>
+    <recipient-country code="MW">Malawi</recipient-country>
+    <participating-org role="funding">EC</participating-org>
+    <activity-date iso-date="2011-07-20" type="start-planned">2011-07-20</activity-date>
+    <activity-status code="2">Implementation</activity-status>
+    <participating-org ref="GB-CHC-272465" role="implementing" type="21">Concern Universal</participating-org>
+  </iati-activity>
+  <iati-activity default-currency="GBP" xml:lang="en">
+    <reporting-org ref="GB-CHC-272465" type="21">Concern Universal</reporting-org>
+    <transaction>
+      <transaction-date iso-date="2012-04-01">2012-04-01</transaction-date>
+      <transaction-type code="D">Disbursement</transaction-type>
+      <value value-date="2012-04-01">2000</value>
+    </transaction>
+    <description>The project plans to target ~150 households (52% women &amp; 48% men) and about 4,000 livestock &#x96; cattle, sheep, and goats. These households (representing 5 community groups) will be supported with upgrading &amp; equipping of 5 shallow wells, 5 VIP latrines (1 VIP latrine at each shallow well site), horticultural seeds and seedlings for kitchen gardens, and various community trainings (in health &amp; nutrition; operation &amp; maintenance; water handling, storage &amp; treatment, HIV/AIDs, gender &amp; rights based approaches; record keeping etc</description>
+    <iati-identifier>GB-CHC-272465-1182</iati-identifier>
+    <title>Kenya - WASH</title>
+    <activity-date iso-date="2013-03-30" type="end-planned">2013-03-30</activity-date>
+    <sector code="12261" vocab="DAC">Health Education</sector>
+    <recipient-country code="KE">Kenya</recipient-country>
+    <participating-org role="funding">SMB Charitable Trust</participating-org>
+    <activity-date iso-date="2012-04-01" type="start-planned">2012-04-01</activity-date>
+    <activity-status code="2">Implementation</activity-status>
+    <participating-org ref="GB-CHC-272465" role="implementing" type="21">Concern Universal</participating-org>
+  </iati-activity>
+  <iati-activity default-currency="GBP" xml:lang="en">
+    <reporting-org ref="GB-CHC-272465" type="21">Concern Universal</reporting-org>
+    <transaction>
+      <transaction-date iso-date="2011-11-01">2011-11-01</transaction-date>
+      <transaction-type code="D">Disbursement</transaction-type>
+      <value value-date="2011-11-01">899721</value>
+    </transaction>
+    <description>The project is working to reduce the vulnerability of water and sanitation facilities to flooding and other weather events.</description>
+    <iati-identifier>GB-CHC-272465-1180</iati-identifier>
+    <title>Bangladesh - Ensuring Water &amp; Sanitation Facilities towards Disaster Risk Reduction</title>
+    <activity-date iso-date="2014-10-31" type="end-planned">2014-10-31</activity-date>
+    <sector code="74010" vocab="DAC">Disaster Prevention &amp; Preparedness</sector>
+    <recipient-country code="BD">Bangladesh</recipient-country>
+    <participating-org role="funding">Cordaid</participating-org>
+    <activity-date iso-date="2011-11-01" type="start-planned">2011-11-01</activity-date>
+    <activity-status code="2">Implementation</activity-status>
+    <participating-org ref="GB-CHC-272465" role="implementing" type="21">Concern Universal</participating-org>
+  </iati-activity>
+  <iati-activity default-currency="GBP" xml:lang="en">
+    <reporting-org ref="GB-CHC-272465" type="21">Concern Universal</reporting-org>
+    <transaction>
+      <transaction-date iso-date="2011-11-16">2011-11-16</transaction-date>
+      <transaction-type code="D">Disbursement</transaction-type>
+      <value value-date="2011-11-16">12784</value>
+    </transaction>
+    <description>Access to essential services, such as education, sanitation and health, together with the resources to ensure adequate services, are guaranteed in Brazilian law. However, the provision of these basic public services to poor communities in the State of Para&#xED;ba is grossly deficient impeding their social and human development.  Concern Universal, in partnership with three local civil society organisations, is working with six particularly marginalised communities in order to enhance their ability and opportunities to carry out initiatives to access their entitlements.  Whilst some of these initiatives, carried out by the community leaders, have had success to date, they have nevertheless been weakened by the low participation of the communities as a whole.  Evaluations show clearly that the main difficulty is a lack of good communication tools to ensure that the communities as a whole are aware of the ongoing initiatives to secure basic services and are informed of their entitlements and what the law guarantees in relation to these.  This project is designed to fill this gap, increasing the number of people that are aware of and supporting the initiatives, strengthening the possibilities of influencing decision-makers and increasing the chances of success.</description>
+    <iati-identifier>GB-CHC-272465-1092</iati-identifier>
+    <title>Brazil - Participatory Community Initiatives for Basic Services</title>
+    <activity-date iso-date="2012-11-15" type="end-planned">2012-11-15</activity-date>
+    <sector code="15162" vocab="DAC">Human Rights</sector>
+    <recipient-country code="BR">Brazil</recipient-country>
+    <participating-org role="funding">Electric Aid</participating-org>
+    <activity-date iso-date="2011-11-16" type="start-planned">2011-11-16</activity-date>
+    <activity-status code="2">Implementation</activity-status>
+    <participating-org ref="GB-CHC-272465" role="implementing" type="21">Concern Universal</participating-org>
+  </iati-activity>
+  <iati-activity default-currency="GBP" xml:lang="en">
+    <reporting-org ref="GB-CHC-272465" type="21">Concern Universal</reporting-org>
+    <transaction>
+      <transaction-date iso-date="2012-07-01">2012-07-01</transaction-date>
+      <transaction-type code="D">Disbursement</transaction-type>
+      <value value-date="2012-07-01">80943</value>
+    </transaction>
+    <description>The project will contribute to the restoration of disturbed livelihood options of the flood and landslides affected households in the targeted three sub-districts of Cox&#x92;s Bazar district in the south-east region of Bangladesh. Through this project the most affected families will be helped in the coping process of their mental and social stress - caused by the economic and live losses due to: loss of family members, loss of crop, homes destruction, damage of safe water/sanitation options and other household assets, all due to the floods and landslides of June 2012.</description>
+    <iati-identifier>GB-CHC-272465-1208</iati-identifier>
+    <title>Bangladesh - Emergency assistance support to the affected households by landslides and flood of June 2012 in Lama and Alikadam Upazillas under Bandarban district of Bangladesh</title>
+    <activity-date iso-date="2012-09-03" type="end-planned">2012-09-03</activity-date>
+    <sector code="74010" vocab="DAC">Disaster Prevention &amp; Preparedness</sector>
+    <recipient-country code="BD">Bangladesh</recipient-country>
+    <participating-org role="funding">Cordaid</participating-org>
+    <activity-date iso-date="2012-07-01" type="start-planned">2012-07-01</activity-date>
+    <activity-status code="2">Implementation</activity-status>
+    <participating-org ref="GB-CHC-272465" role="implementing" type="21">Concern Universal</participating-org>
+  </iati-activity>
+  <iati-activity default-currency="GBP" xml:lang="en">
+    <reporting-org ref="GB-CHC-272465" type="21">Concern Universal</reporting-org>
+    <transaction>
+      <transaction-date iso-date="2011-08-01">2011-08-01</transaction-date>
+      <transaction-type code="D">Disbursement</transaction-type>
+      <value value-date="2011-08-01">937678</value>
+    </transaction>
+    <description>The DISCOVER project will work with communities and local government structures in order to bring about a tangible and significant increase in the resilience of the most vulnerable communities  located in disaster prone districts in Malawi, based firmly on (and scaling up) the community level successes which consortium members have achieved in recent years. It represents a direct response to urgent and immediate adaptation needs of the most vulnerable communities in Malawi, identified as top priorities by the Government of Malawi in the National Adaptation Programme of Action (NAPA) and by the relevant District Councils. DISCOVER aims to ensure that the most vulnerable communities and individuals are empowered to develop sustainable, entrepreneurial and innovative solutions to climate change variability. These solutions will provide an enduring platform to enable the wholesale shift from &#x91;hanging in&#x92; to &#x91;stepping up&#x92; and &#x91;stepping out&#x92; livelihoods strategies in these resilient communities.</description>
+    <iati-identifier>GB-CHC-272465-1054</iati-identifier>
+    <title>Malawi - DISCOVER- Developing Innovative Solutions with Communities to Overcome Vulnerability through Enhanced Resilience</title>
+    <activity-date iso-date="2016-06-30" type="end-planned">2016-06-30</activity-date>
+    <sector code="74010" vocab="DAC">Disaster Prevention &amp; Preparedness</sector>
+    <recipient-country code="MW">Malawi</recipient-country>
+    <participating-org role="funding">DFID</participating-org>
+    <activity-date iso-date="2011-08-01" type="start-planned">2011-08-01</activity-date>
+    <activity-status code="2">Implementation</activity-status>
+    <participating-org ref="GB-CHC-272465" role="implementing" type="21">Concern Universal</participating-org>
+  </iati-activity>
+  <iati-activity default-currency="GBP" xml:lang="en">
+    <reporting-org ref="GB-CHC-272465" type="21">Concern Universal</reporting-org>
+    <transaction>
+      <transaction-date iso-date="2012-01-01">2012-01-01</transaction-date>
+      <transaction-type code="D">Disbursement</transaction-type>
+      <value value-date="2012-01-01">494267</value>
+    </transaction>
+    <description>The long term goal of NECS-SUN is to contribute to prevention of widespread stunting of children under-five years of age. This proposal therefore seeks to reduce the current rates of stunting in the district by about 50% (moderate stunting reduced from 51% to 26%) by 2016 (MDHS 2010 p.317). This will lead to a healthier population better able to contribute positively to the development of the country.</description>
+    <iati-identifier>GB-CHC-272465-1150</iati-identifier>
+    <title>Malawi - Scaling Up Nutrition in Dedza District</title>
+    <activity-date iso-date="2016-12-31" type="end-planned">2016-12-31</activity-date>
+    <sector code="31120" vocab="DAC">Agricultural Development</sector>
+    <recipient-country code="MW">Malawi</recipient-country>
+    <participating-org role="funding">IrishAid</participating-org>
+    <activity-date iso-date="2012-01-01" type="start-planned">2012-01-01</activity-date>
+    <activity-status code="2">Implementation</activity-status>
+    <participating-org ref="GB-CHC-272465" role="implementing" type="21">Concern Universal</participating-org>
+  </iati-activity>
+  <iati-activity default-currency="GBP" xml:lang="en">
+    <reporting-org ref="GB-CHC-272465" type="21">Concern Universal</reporting-org>
+    <transaction>
+      <transaction-date iso-date="2011-07-01">2011-07-01</transaction-date>
+      <transaction-type code="D">Disbursement</transaction-type>
+      <value value-date="2011-07-01">35380</value>
+    </transaction>
+    <description>The overall objective of the project is to enhance economic empowerment and food security of women and their communities in the CR of Oulampane, Sindian and Djibidion. The specific objectives are: 1) to support the development of women&#x92;s economic capacities enhancing women&#x92; skills; 2) to enhance transformation and marketing of women&#x92;s agricultural produce.</description>
+    <iati-identifier>GB-CHC-272465-1056</iati-identifier>
+    <title>Enhancing Gambia - Gender Equality and Food Security in the Communautes Rurales of Sindian, Oulampane and Djibidion</title>
+    <activity-date iso-date="2013-06-30" type="end-planned">2013-06-30</activity-date>
+    <sector code="31120" vocab="DAC">Agricultural Development</sector>
+    <recipient-country code="GM">Gambia</recipient-country>
+    <participating-org role="funding">Women's World Day of Prayer - German Committee</participating-org>
+    <activity-date iso-date="2011-07-01" type="start-planned">2011-07-01</activity-date>
+    <activity-status code="2">Implementation</activity-status>
+    <participating-org ref="GB-CHC-272465" role="implementing" type="21">Concern Universal</participating-org>
+  </iati-activity>
+  <iati-activity default-currency="GBP" xml:lang="en">
+    <reporting-org ref="GB-CHC-272465" type="21">Concern Universal</reporting-org>
+    <transaction>
+      <transaction-date iso-date="2011-07-12">2011-07-12</transaction-date>
+      <transaction-type code="D">Disbursement</transaction-type>
+      <value value-date="2011-07-12">392667</value>
+    </transaction>
+    <description>The overall project objective is to achieve improved poor people's health and sustainable socio-economic development through a decrease in open defecation and increased use of improved sanitation and hygiene in TA Kalembo, Balaka District and TA Nazombe, Phalombe District</description>
+    <iati-identifier>GB-CHC-272465-1050</iati-identifier>
+    <title>Malawi - Kalembo and Nazombe Sanitation and Hygiene Promotion Project</title>
+    <activity-date iso-date="2015-07-11" type="end-planned">2015-07-11</activity-date>
+    <sector code="12261" vocab="DAC">Health Education</sector>
+    <recipient-country code="MW">Malawi</recipient-country>
+    <participating-org role="funding">Global Sanitation Fund</participating-org>
+    <activity-date iso-date="2011-07-12" type="start-planned">2011-07-12</activity-date>
+    <activity-status code="2">Implementation</activity-status>
+    <participating-org ref="GB-CHC-272465" role="implementing" type="21">Concern Universal</participating-org>
+  </iati-activity>
+  <iati-activity default-currency="GBP" xml:lang="en">
+    <reporting-org ref="GB-CHC-272465" type="21">Concern Universal</reporting-org>
+    <transaction>
+      <transaction-date iso-date="2012-03-12">2012-03-12</transaction-date>
+      <transaction-type code="D">Disbursement</transaction-type>
+      <value value-date="2012-03-12">135902</value>
+    </transaction>
+    <description>This project will improve access to safe water supply and sanitation facilities, and the management of such assets at household level, in schools and in health centres. Improved knowledge of key hygiene practices and corresponding behaviour change, leading to reduction of water borne diseases will benefit sanitation and health as will increased capacity of local government service providers and community groups to effectively plan, lead and support development initiatives. The project will also work to increase community capacity to recognise and act on its rights and responsibilities in relation to development, gender, HIV/AIDS, and environmental management and develop effective monitoring and evaluation system established and implemented.</description>
+    <iati-identifier>GB-CHC-272465-1156</iati-identifier>
+    <title>Malawi - Enhancing Quality and Inclusive Public Services in Dedza and Ntcheu</title>
+    <activity-date iso-date="2013-03-29" type="end-planned">2013-03-29</activity-date>
+    <sector code="15162" vocab="DAC">Human Rights</sector>
+    <recipient-country code="MW">Malawi</recipient-country>
+    <participating-org role="funding">Tilitonse Fund</participating-org>
+    <activity-date iso-date="2012-03-12" type="start-planned">2012-03-12</activity-date>
+    <activity-status code="2">Implementation</activity-status>
+    <participating-org ref="GB-CHC-272465" role="implementing" type="21">Concern Universal</participating-org>
+  </iati-activity>
+  <iati-activity default-currency="GBP" xml:lang="en">
+    <reporting-org ref="GB-CHC-272465" type="21">Concern Universal</reporting-org>
+    <transaction>
+      <transaction-date iso-date="2012-02-14">2012-02-14</transaction-date>
+      <transaction-type code="D">Disbursement</transaction-type>
+      <value value-date="2012-02-14">3000</value>
+    </transaction>
+    <description>The project plans to target ~150 households (52% women &amp; 48% men) and about 4,000 livestock &#x96; cattle, sheep, and goats. These households (representing 5 community groups) will be supported with upgrading &amp; equipping of 5 shallow wells, 5 VIP latrines (1 VIP latrine at each shallow well site), horticultural seeds and seedlings for kitchen gardens, and various community trainings (in health &amp; nutrition; operation &amp; maintenance; water handling, storage &amp; treatment, HIV/AIDs, gender &amp; rights based approaches; record keeping etc</description>
+    <iati-identifier>GB-CHC-272465-1173</iati-identifier>
+    <title>Kenya - Kyuso WASH</title>
+    <activity-date iso-date="2013-02-14" type="end-planned">2013-02-14</activity-date>
+    <sector code="12261" vocab="DAC">Health Education</sector>
+    <recipient-country code="KE">Kenya</recipient-country>
+    <participating-org role="funding">Bryan Guinness Charitable Trust</participating-org>
+    <activity-date iso-date="2012-02-14" type="start-planned">2012-02-14</activity-date>
+    <activity-status code="2">Implementation</activity-status>
+    <participating-org ref="GB-CHC-272465" role="implementing" type="21">Concern Universal</participating-org>
+  </iati-activity>
+  <iati-activity default-currency="GBP" xml:lang="en">
+    <reporting-org ref="GB-CHC-272465" type="21">Concern Universal</reporting-org>
+    <transaction>
+      <transaction-date iso-date="2010-12-01">2010-12-01</transaction-date>
+      <transaction-type code="D">Disbursement</transaction-type>
+      <value value-date="2010-12-01">229046</value>
+    </transaction>
+    <description>This project will enable the adoption and proper use if improved cook stoves targeting 32,000 households in the Districts of Ntcheu and Dedza over 3 years. Through demonstrating the social, environmental and economic impacts of fuel efficiency (reduced exposure to indoor air pollution and reduced time and effort in collection of firewood) and the promotion of awareness on the benefits of a diversified diet through outreach, training and social marketing techniques this project will encourage energy security and emission reductions.</description>
+    <iati-identifier>GB-CHC-272465-1034</iati-identifier>
+    <title>Malawi - Increasing Resilience through Improved Cooking Practices Project</title>
+    <activity-date iso-date="2013-11-30" type="end-planned">2013-11-30</activity-date>
+    <sector code="11230" vocab="DAC">Basic Life Skills</sector>
+    <recipient-country code="MW">Malawi</recipient-country>
+    <participating-org role="funding">Clioma Limited</participating-org>
+    <activity-date iso-date="2010-12-01" type="start-planned">2010-12-01</activity-date>
+    <activity-status code="2">Implementation</activity-status>
+    <participating-org ref="GB-CHC-272465" role="implementing" type="21">Concern Universal</participating-org>
+  </iati-activity>
+  <iati-activity default-currency="GBP" xml:lang="en">
+    <reporting-org ref="GB-CHC-272465" type="21">Concern Universal</reporting-org>
+    <transaction>
+      <transaction-date iso-date="2011-05-12">2011-05-12</transaction-date>
+      <transaction-type code="D">Disbursement</transaction-type>
+      <value value-date="2011-05-12">2993040</value>
+    </transaction>
+    <description>Through targeting 20,000 smallholder households in Bangladesh and India to benefit from cross-border learning to improve their food security and nutrition, and contributing to further improve a tested, efficient and sustainable model of public-private cooperation to reduce poverty for the most vulnerable, this project will improve the food security and nutrition for the poorest and most vulnerable in South Asia to contribute to MDG 1.</description>
+    <iati-identifier>GB-CHC-272465-1035</iati-identifier>
+    <title>Bangladesh - Cross-border transfer of agricultural technologies, institutional and market development</title>
+    <activity-date iso-date="2015-01-01" type="end-planned">2015-01-01</activity-date>
+    <sector code="31120" vocab="DAC">Agricultural Development</sector>
+    <recipient-country code="BD">Bangladesh</recipient-country>
+    <participating-org role="funding">EC</participating-org>
+    <activity-date iso-date="2012-01-01" type="start-planned">2012-01-01</activity-date>
+    <activity-status code="2">Implementation</activity-status>
+    <participating-org ref="GB-CHC-272465" role="implementing" type="21">Concern Universal</participating-org>
+  </iati-activity>
+  <iati-activity default-currency="GBP" xml:lang="en">
+    <reporting-org ref="GB-CHC-272465" type="21">Concern Universal</reporting-org>
+    <transaction>
+      <transaction-date iso-date="2007-12-10">2007-12-10</transaction-date>
+      <transaction-type code="D">Disbursement</transaction-type>
+      <value value-date="2007-12-10">1596301</value>
+    </transaction>
+    <description>The action aims to bring about in Traditional Authority (TA) Msamala improved, sustainable access to and use of fuel-wood energy, for the 180 370 people (61% of district populations) in poor subsistence farmers households living in 321 communities, and access to solar lighting impacting on about 5000 students and 50 teachers. TA Msamala is selected because of an increasing number of unsustainable businesses based on extraction of energy and natural resources. The action will achieve its objectives using an intensive community empowerment approach, and will be multi-sectoral in approach, facilitating links among stakeholders in communities, the district and nationally.</description>
+    <iati-identifier>GB-CHC-272465-649</iati-identifier>
+    <title>Malawi - Msamala Sustainable Energy Project</title>
+    <activity-date iso-date="2012-12-19" type="end-planned">2012-12-19</activity-date>
+    <sector code="31120" vocab="DAC">Agricultural Development</sector>
+    <recipient-country code="MW">Malawi</recipient-country>
+    <participating-org role="funding">Fondation Ensemble</participating-org>
+    <activity-date iso-date="2007-12-10" type="start-planned">2007-12-10</activity-date>
+    <activity-status code="2">Implementation</activity-status>
+    <participating-org ref="GB-CHC-272465" role="implementing" type="21">Concern Universal</participating-org>
+    <participating-org role="funding">Cargill</participating-org>
+    <participating-org ref="GB-CHC-272465" role="implementing" type="21">Concern Universal</participating-org>
+    <participating-org role="funding">EC</participating-org>
+    <participating-org ref="GB-CHC-272465" role="implementing" type="21">Concern Universal</participating-org>
+  </iati-activity>
+  <iati-activity default-currency="GBP" xml:lang="en">
+    <reporting-org ref="GB-CHC-272465" type="21">Concern Universal</reporting-org>
+    <transaction>
+      <transaction-date iso-date="2012-04-01">2012-04-01</transaction-date>
+      <transaction-type code="D">Disbursement</transaction-type>
+      <value value-date="2012-04-01">6295</value>
+    </transaction>
+    <description>To conduct a rapid impact assessment of the crop failure and develop precise intervention mechanisms in a selection of the most vulnerable regions</description>
+    <iati-identifier>GB-CHC-272465-1194</iati-identifier>
+    <title>Gambia - Rapid Assessment of the 2012 Sahel Crop Failure in LRR, CRR North and NBR</title>
+    <activity-date iso-date="2012-04-30" type="end-planned">2012-04-30</activity-date>
+    <sector code="31120" vocab="DAC">Agricultural Development</sector>
+    <recipient-country code="GM">Gambia</recipient-country>
+    <participating-org role="funding">Oxfam America</participating-org>
+    <activity-date iso-date="2012-04-01" type="start-planned">2012-04-01</activity-date>
+    <activity-status code="3">Completion</activity-status>
+    <participating-org ref="GB-CHC-272465" role="implementing" type="21">Concern Universal</participating-org>
+  </iati-activity>
+  <iati-activity default-currency="GBP" xml:lang="en">
+    <reporting-org ref="GB-CHC-272465" type="21">Concern Universal</reporting-org>
+    <transaction>
+      <transaction-date iso-date="2012-01-01">2012-01-01</transaction-date>
+      <transaction-type code="D">Disbursement</transaction-type>
+      <value value-date="2012-01-01">5000</value>
+    </transaction>
+    <description>Project Objectives; To increase access to sustainable safe water supplies and improve environmental hygiene and sanitation in target communities, to build capacities of target communities in understanding the relationship between water &amp; hygiene sanitation and wider development challenges, to mainstream crosscutting issues (gender, HIV/AIDS, rights-based approaches, etc) within community structures and processes for participation and equitable access to and utilization of resources.</description>
+    <iati-identifier>GB-CHC-272465-1151</iati-identifier>
+    <title>Kenya - WASH</title>
+    <activity-date iso-date="2012-12-31" type="end-planned">2012-12-31</activity-date>
+    <sector code="12261" vocab="DAC">Health Education</sector>
+    <recipient-country code="KE">Kenya</recipient-country>
+    <participating-org role="funding">Souter Charitable Trust</participating-org>
+    <activity-date iso-date="2012-01-01" type="start-planned">2012-01-01</activity-date>
+    <activity-status code="2">Implementation</activity-status>
+    <participating-org ref="GB-CHC-272465" role="implementing" type="21">Concern Universal</participating-org>
+  </iati-activity>
+  <iati-activity default-currency="GBP" xml:lang="en">
+    <reporting-org ref="GB-CHC-272465" type="21">Concern Universal</reporting-org>
+    <transaction>
+      <transaction-date iso-date="2010-01-01">2010-01-01</transaction-date>
+      <transaction-type code="D">Disbursement</transaction-type>
+      <value value-date="2010-01-01">76174</value>
+    </transaction>
+    <description>This project provides micro-loans to women in order for them to start small businesses.  Businesses include soap making, weaving of local cloth, batik/tye and dye, table/street side shop, and shea butter processing, among others.</description>
+    <iati-identifier>GB-CHC-272465-932</iati-identifier>
+    <title>Ghana - Micro-loans for the Women of the Upper West</title>
+    <activity-date iso-date="2014-12-31" type="end-planned">2014-12-31</activity-date>
+    <sector code="31120" vocab="DAC">Agricultural Development</sector>
+    <recipient-country code="GH">Ghana</recipient-country>
+    <participating-org role="funding">JA Clark CT</participating-org>
+    <activity-date iso-date="2010-01-01" type="start-planned">2010-01-01</activity-date>
+    <activity-status code="2">Implementation</activity-status>
+    <participating-org ref="GB-CHC-272465" role="implementing" type="21">Concern Universal</participating-org>
+    <participating-org role="funding">Waterloo Foundation</participating-org>
+    <participating-org ref="GB-CHC-272465" role="implementing" type="21">Concern Universal</participating-org>
+    <participating-org role="funding">Individual Donors</participating-org>
+    <participating-org ref="GB-CHC-272465" role="implementing" type="21">Concern Universal</participating-org>
+    <participating-org role="funding">Standard Chartered Bank (Ghana)</participating-org>
+    <participating-org ref="GB-CHC-272465" role="implementing" type="21">Concern Universal</participating-org>
+    <participating-org role="funding">Small Foundation</participating-org>
+    <participating-org ref="GB-CHC-272465" role="implementing" type="21">Concern Universal</participating-org>
+    <participating-org role="funding">Waterloo Foundation</participating-org>
+    <participating-org ref="GB-CHC-272465" role="implementing" type="21">Concern Universal</participating-org>
+  </iati-activity>
+  <iati-activity default-currency="GBP" xml:lang="en">
+    <reporting-org ref="GB-CHC-272465" type="21">Concern Universal</reporting-org>
+    <transaction>
+      <transaction-date iso-date="2009-10-01">2009-10-01</transaction-date>
+      <transaction-type code="D">Disbursement</transaction-type>
+      <value value-date="2009-10-01">379841</value>
+    </transaction>
+    <description>The project purpose is to improve quality of life and respect for human rights in Paraiba, Brazil.  Vulnerable communities from Para&#xED;ba will become empowered to demand and secure their constitutional rights (especially those related to health care, sanitation and education). Improved basic services (health, education and/or sanitation) will benefit c. 20,000 people from 05 of the poorest communities from the State of Para&#xED;ba.  1,485 people (community members, in-country partner staff, government and NGO councillors) will benefit directly from training activities.</description>
+    <iati-identifier>GB-CHC-272465-703</iati-identifier>
+    <title>Brazil - Participatory Community Initiatives for Rights</title>
+    <activity-date iso-date="2012-09-30" type="end-planned">2012-09-30</activity-date>
+    <sector code="11230" vocab="DAC">Basic Life Skills</sector>
+    <recipient-country code="BR">Brazil</recipient-country>
+    <participating-org role="funding">DFID</participating-org>
+    <activity-date iso-date="2009-10-01" type="start-planned">2009-10-01</activity-date>
+    <activity-status code="2">Implementation</activity-status>
+    <participating-org ref="GB-CHC-272465" role="implementing" type="21">Concern Universal</participating-org>
+  </iati-activity>
+  <iati-activity default-currency="GBP" xml:lang="en">
+    <reporting-org ref="GB-CHC-272465" type="21">Concern Universal</reporting-org>
+    <transaction>
+      <transaction-date iso-date="2007-12-18">2007-12-18</transaction-date>
+      <transaction-type code="D">Disbursement</transaction-type>
+      <value value-date="2007-12-18">848886</value>
+    </transaction>
+    <description>Working to alleviate poverty in the Upper River Region of the Gambia through a measurable improvement in livelihoods for women and youths. Through promoting best agricultural practices and sustainable natural resource management techniques, increasing producer productivity and market access, enhancing household incomes and food security, promoting youth employment in skilled trades through technical training and enterprise development, enhancing the capacity of local partners to engage in effective social development activities and promoting gender awareness and improve gender equity.</description>
+    <iati-identifier>GB-CHC-272465-675</iati-identifier>
+    <title>Gambia - Upper River Region Livelihoods Improvement through Institutional Strengthening, Food Security and Environmental Management</title>
+    <activity-date iso-date="2012-12-31" type="end-planned">2012-12-31</activity-date>
+    <sector code="31120" vocab="DAC">Agricultural Development</sector>
+    <recipient-country code="GM">Gambia</recipient-country>
+    <participating-org role="funding">CSF/ Fondation de France</participating-org>
+    <activity-date iso-date="2008-01-01" type="start-planned">2008-01-01</activity-date>
+    <activity-status code="2">Implementation</activity-status>
+    <participating-org ref="GB-CHC-272465" role="implementing" type="21">Concern Universal</participating-org>
+    <participating-org role="funding">Zochonis Charitable Trust</participating-org>
+    <participating-org ref="GB-CHC-272465" role="implementing" type="21">Concern Universal</participating-org>
+    <participating-org role="funding">Electric Aid</participating-org>
+    <participating-org ref="GB-CHC-272465" role="implementing" type="21">Concern Universal</participating-org>
+    <participating-org role="funding">FBR/ UMCOR</participating-org>
+    <participating-org ref="GB-CHC-272465" role="implementing" type="21">Concern Universal</participating-org>
+    <participating-org role="funding">EC</participating-org>
+    <participating-org ref="GB-CHC-272465" role="implementing" type="21">Concern Universal</participating-org>
+    <participating-org role="funding">VegFam</participating-org>
+    <participating-org ref="GB-CHC-272465" role="implementing" type="21">Concern Universal</participating-org>
+    <participating-org role="funding">CB &amp; HH Taylor 1984 Trust</participating-org>
+    <participating-org ref="GB-CHC-272465" role="implementing" type="21">Concern Universal</participating-org>
+  </iati-activity>
+  <iati-activity default-currency="GBP" xml:lang="en">
+    <reporting-org ref="GB-CHC-272465" type="21">Concern Universal</reporting-org>
+    <transaction>
+      <transaction-date iso-date="2009-05-01">2009-05-01</transaction-date>
+      <transaction-type code="D">Disbursement</transaction-type>
+      <value value-date="2009-05-01">1034312</value>
+    </transaction>
+    <description>The overall objective of this project is the improvement in health of rural population through reduction of water-borne and environmental communicable diseases in 4 LGAs within Ebonyi and Cross River States of Nigeria.  The specific objective of this project is to increase access to safe water and improved sanitation, and also to increase improved hygiene practices in 50 communities in Yala and Ogoja LGAs of Cross River State and Izzi and Ikwo LGAs of Ebonyi State.</description>
+    <iati-identifier>GB-CHC-272465-757</iati-identifier>
+    <title>Nigeria - Sustainable Water, Sanitation and Hygiene Project</title>
+    <activity-date iso-date="2012-04-30" type="end-planned">2012-04-30</activity-date>
+    <sector code="12261" vocab="DAC">Health Education</sector>
+    <recipient-country code="NG">Nigeria</recipient-country>
+    <participating-org role="funding">Cross River State Government</participating-org>
+    <activity-date iso-date="2009-05-01" type="start-planned">2009-05-01</activity-date>
+    <activity-status code="2">Implementation</activity-status>
+    <participating-org ref="GB-CHC-272465" role="implementing" type="21">Concern Universal</participating-org>
+    <participating-org role="funding">PZ Cussons Foundation</participating-org>
+    <participating-org ref="GB-CHC-272465" role="implementing" type="21">Concern Universal</participating-org>
+    <participating-org role="funding">Exotix</participating-org>
+    <participating-org ref="GB-CHC-272465" role="implementing" type="21">Concern Universal</participating-org>
+    <participating-org role="funding">EC</participating-org>
+    <participating-org ref="GB-CHC-272465" role="implementing" type="21">Concern Universal</participating-org>
+  </iati-activity>
+  <iati-activity default-currency="GBP" xml:lang="en">
+    <reporting-org ref="GB-CHC-272465" type="21">Concern Universal</reporting-org>
+    <transaction>
+      <transaction-date iso-date="2008-12-01">2008-12-01</transaction-date>
+      <transaction-type code="D">Disbursement</transaction-type>
+      <value value-date="2008-12-01">888909</value>
+    </transaction>
+    <description>The Overall objective of this project is to reduce poverty and increase progress towards the Millennium Development Goals through improvement of participatory governance at Local Government level. The Specific Objective of this project it to improve Local Government responsiveness to citizens&#x92; needs through capacity building &amp; fostering partnerships among Local and State Governments, communities, CSOs, and the private sector in 3 Local Government Areas of Cross River State.</description>
+    <iati-identifier>GB-CHC-272465-756</iati-identifier>
+    <title>Nigeria - Local Governance: Participation, Collaboration and Transparency</title>
+    <activity-date iso-date="2013-12-30" type="end-planned">2013-12-30</activity-date>
+    <sector code="15162" vocab="DAC">Human Rights</sector>
+    <recipient-country code="NG">Nigeria</recipient-country>
+    <participating-org role="funding">EC</participating-org>
+    <activity-date iso-date="2008-12-30" type="start-planned">2008-12-30</activity-date>
+    <activity-status code="2">Implementation</activity-status>
+    <participating-org ref="GB-CHC-272465" role="implementing" type="21">Concern Universal</participating-org>
+    <participating-org role="funding">Cross River State Government</participating-org>
+    <participating-org ref="GB-CHC-272465" role="implementing" type="21">Concern Universal</participating-org>
+  </iati-activity>
+  <iati-activity default-currency="GBP" xml:lang="en">
+    <reporting-org ref="GB-CHC-272465" type="21">Concern Universal</reporting-org>
+    <transaction>
+      <transaction-date iso-date="2010-01-01">2010-01-01</transaction-date>
+      <transaction-type code="D">Disbursement</transaction-type>
+      <value value-date="2010-01-01">300000</value>
+    </transaction>
+    <description>Seeking to reduce the level of poverty this project employs the strategy of skills training and small enterprise development and access to affordable and appropriate irrigation technologies to enhance livelihoods in the urban-poor population within the Upper River Region. As well as improving the earning capacity of participants the project is also working to improve health through better access to potable water and enhanced dietary consumption.</description>
+    <iati-identifier>GB-CHC-272465-795</iati-identifier>
+    <title>Gambia - Upper River Region Livelihood Improvement and Poverty Reduction Project</title>
+    <activity-date iso-date="2012-12-31" type="end-planned">2012-12-31</activity-date>
+    <sector code="31120" vocab="DAC">Agricultural Development</sector>
+    <recipient-country code="GM">Gambia</recipient-country>
+    <participating-org role="funding">Isle of Man Overseas Aid Committee</participating-org>
+    <activity-date iso-date="2010-01-01" type="start-planned">2010-01-01</activity-date>
+    <activity-status code="2">Implementation</activity-status>
+    <participating-org ref="GB-CHC-272465" role="implementing" type="21">Concern Universal</participating-org>
+  </iati-activity>
+  <iati-activity default-currency="GBP" xml:lang="en">
+    <reporting-org ref="GB-CHC-272465" type="21">Concern Universal</reporting-org>
+    <transaction>
+      <transaction-date iso-date="2006-07-18">2006-07-18</transaction-date>
+      <transaction-type code="D">Disbursement</transaction-type>
+      <value value-date="2006-07-18">875990</value>
+    </transaction>
+    <description>This project will work to reduce poverty by empowering rural communities towards participatory and environmentally sustainable development and management of their mangrove forests. Specifically CU will work to ensure that natural mangrove forest resources are managed by communities and authorities with more concern for the sustainability of their productivity whilst rural livelihoods are enhanced through the diversification of income generating opportunities.</description>
+    <iati-identifier>GB-CHC-272465-530</iati-identifier>
+    <title>Nigeria -Integrated Mangrove Forest Management Initiative</title>
+    <activity-date iso-date="2013-12-04" type="end-planned">2013-12-04</activity-date>
+    <sector code="31120" vocab="DAC">Agricultural Development</sector>
+    <recipient-country code="NG">Nigeria</recipient-country>
+    <participating-org role="funding">EC</participating-org>
+    <activity-date iso-date="2008-12-03" type="start-planned">2008-12-03</activity-date>
+    <activity-status code="2">Implementation</activity-status>
+    <participating-org ref="GB-CHC-272465" role="implementing" type="21">Concern Universal</participating-org>
+    <participating-org role="funding">Electric Aid</participating-org>
+    <participating-org ref="GB-CHC-272465" role="implementing" type="21">Concern Universal</participating-org>
+    <participating-org role="funding">The Rowan Charitable Trust</participating-org>
+    <participating-org ref="GB-CHC-272465" role="implementing" type="21">Concern Universal</participating-org>
+    <participating-org role="funding">Cross River State Government</participating-org>
+    <participating-org ref="GB-CHC-272465" role="implementing" type="21">Concern Universal</participating-org>
+  </iati-activity>
+  <iati-activity default-currency="GBP" xml:lang="en">
+    <reporting-org ref="GB-CHC-272465" type="21">Concern Universal</reporting-org>
+    <transaction>
+      <transaction-date iso-date="2010-02-10">2010-02-10</transaction-date>
+      <transaction-type code="D">Disbursement</transaction-type>
+      <value value-date="2010-02-10">647100</value>
+    </transaction>
+    <description>This project will address health issues as they affect rural mothers and their children. The project will employ an integrated approach in order to improve the health situation in the proposed areas. Key problems to be addressed by the action include; poor community health services, poor community capacity to deal with maternal and child health especially on safe-motherhood, sexual reproductive health (family planning, post abortion/miscarriage care); child survival (growth monitoring, nutrition, etc), social inclusion and participation of women in policy development on health issues affecting them and their children. The Project will directly benefit 100,000 women and children (under 5 years of age) who are very resource poor and living in isolated areas. The indirect beneficiaries of the project will be ~300,000 people. A further secondary beneficiary grouping includes institutions at District and village level. These are Ministry of Public Health and Sanitation District personnel, District Health Management Boards, Community Owned Resource Persons (CORP), Village Health Committees (VHC) and Local NGO Partner organisations, staff and local religious groupings.</description>
+    <iati-identifier>GB-CHC-272465-899</iati-identifier>
+    <title>Kenya - Effective Response to Mother and Child Health</title>
+    <activity-date iso-date="2013-01-01" type="end-planned">2013-01-01</activity-date>
+    <sector code="12261" vocab="DAC">Health Education</sector>
+    <recipient-country code="KE">Kenya</recipient-country>
+    <participating-org role="funding">Austin &amp; Hope Pilkington Trust</participating-org>
+    <activity-date iso-date="2010-02-10" type="start-planned">2010-02-10</activity-date>
+    <activity-status code="2">Implementation</activity-status>
+    <participating-org ref="GB-CHC-272465" role="implementing" type="21">Concern Universal</participating-org>
+    <participating-org role="funding">Terebinth Trust</participating-org>
+    <participating-org ref="GB-CHC-272465" role="implementing" type="21">Concern Universal</participating-org>
+    <participating-org role="funding">Electric Aid</participating-org>
+    <participating-org ref="GB-CHC-272465" role="implementing" type="21">Concern Universal</participating-org>
+    <participating-org role="funding">EC</participating-org>
+    <participating-org ref="GB-CHC-272465" role="implementing" type="21">Concern Universal</participating-org>
+    <participating-org role="funding">AusAID</participating-org>
+    <participating-org ref="GB-CHC-272465" role="implementing" type="21">Concern Universal</participating-org>
+  </iati-activity>
+  <iati-activity default-currency="GBP" xml:lang="en">
+    <reporting-org ref="GB-CHC-272465" type="21">Concern Universal</reporting-org>
+    <transaction>
+      <transaction-date iso-date="2011-07-01">2011-07-01</transaction-date>
+      <transaction-type code="D">Disbursement</transaction-type>
+      <value value-date="2011-07-01">994349</value>
+    </transaction>
+    <description>This project will work in multiple ways to increase engagement of the vulnerable in decision making practices. Over the course of theproject we will; Work with local communities to amplify voice and engagement of the most vulnerable in order to influence decision makers; Strengthen equitable access to services for excluded or vulnerable groups e.g. women, people with disabilities, youth, children etc (define into sectoral areas; quality of services; define scope); Policy formulation and implementation informed by local issues and evidence; (include reference to advocacy; be clear who will be doing this i.e. is it strengthening civil society's ability to do this, or will the INGOs be doing this; define levels more specifically...i.e. national, regional, local, clarify scope i.e. local, national and regional partners, AusAID, other donors, within the INGOs etc); Increase civil society engagement in advocacy for services and good governance practices.</description>
+    <iati-identifier>GB-CHC-272465-1076</iati-identifier>
+    <title>Mozambique - Shared Futures</title>
+    <activity-date iso-date="2016-06-30" type="end-planned">2016-06-30</activity-date>
+    <sector code="15162" vocab="DAC">Human Rights</sector>
+    <recipient-country code="MZ">Mozambique</recipient-country>
+    <participating-org role="funding">AFAP/AusAID</participating-org>
+    <activity-date iso-date="2011-07-01" type="start-planned">2011-07-01</activity-date>
+    <activity-status code="2">Implementation</activity-status>
+    <participating-org ref="GB-CHC-272465" role="implementing" type="21">Concern Universal</participating-org>
+  </iati-activity>
+  <iati-activity default-currency="GBP" xml:lang="en">
+    <reporting-org ref="GB-CHC-272465" type="21">Concern Universal</reporting-org>
+    <transaction>
+      <transaction-date iso-date="2011-04-01">2011-04-01</transaction-date>
+      <transaction-type code="D">Disbursement</transaction-type>
+      <value value-date="2011-04-01">950000</value>
+    </transaction>
+    <description>This project will bring safe water supply to an additional 68,500 people (35,750 women and 32,7500 men); provide improved sanitation facilities for an additional 54,700 people (30,600 women and 24,100 men); and lead to the adoption of improved hygiene practices, such as the washing of hands with soap or ash, by 57,300 additional people (33,900 women and 23,400 men). Concern Universal will work with District Councils to introduce a number of new innovations in this work. These include: efforts to reduce the cost (but maintain the quality) of school sanitation construction; the repair and community maintenance of gravity-fed schemes; working with the private sector to promote soap usage; installing Waterguard facilities for unprotected water sources; and encouraging the creation of a more dynamic private market for borehole repairs.</description>
+    <iati-identifier>GB-CHC-272465-999</iati-identifier>
+    <title>Malawi - Kasumbu and Mpando Water, Sanitation and Hygiene Promotion and Capacity Building Project</title>
+    <activity-date iso-date="2012-07-31" type="end-planned">2012-07-31</activity-date>
+    <sector code="12261" vocab="DAC">Health Education</sector>
+    <recipient-country code="MW">Malawi</recipient-country>
+    <participating-org role="funding">DFID</participating-org>
+    <activity-date iso-date="2011-04-01" type="start-planned">2011-04-01</activity-date>
+    <activity-status code="2">Implementation</activity-status>
+    <participating-org ref="GB-CHC-272465" role="implementing" type="21">Concern Universal</participating-org>
+  </iati-activity>
+  <iati-activity default-currency="GBP" xml:lang="en">
+    <reporting-org ref="GB-CHC-272465" type="21">Concern Universal</reporting-org>
+    <transaction>
+      <transaction-date iso-date="2012-01-01">2012-01-01</transaction-date>
+      <transaction-type code="D">Disbursement</transaction-type>
+      <value value-date="2012-01-01">131542</value>
+    </transaction>
+    <description>The overall objective of this project is to reduce maternal and child mortality and morbidity through promotion of local health services. Specific objectives are: 1. To enhance awareness on maternal &amp; child health, safe water, sanitation and hygiene issues among local community of CHT. 2.To strengthen capacity of the CHW, HP, TBA, local health practitioners, CEC members, local mason group, LGI members and community groups of CHT. 3.To increase level of local health services and WASH facilities among the local community of CHT. 4.To promote public-private partnership (PPP) by strengthening collaboration and cooperation with the government health &amp; family planning departments, private sectors and local communities of CHT</description>
+    <iati-identifier>GB-CHC-272465-1102</iati-identifier>
+    <title>Bangladesh - Scale Up of the Community Managed Local Health Services in Chittagong Hill Tracts (CHT)</title>
+    <activity-date iso-date="2014-12-31" type="end-planned">2014-12-31</activity-date>
+    <sector code="15162" vocab="DAC">Health Education</sector>
+    <recipient-country code="BD">Bangladesh</recipient-country>
+    <participating-org role="funding">Cordaid</participating-org>
+    <activity-date iso-date="2012-01-01" type="start-planned">2012-01-01</activity-date>
+    <activity-status code="2">Implementation</activity-status>
+    <participating-org ref="GB-CHC-272465" role="implementing" type="21">Concern Universal</participating-org>
+  </iati-activity>
+  <iati-activity default-currency="GBP" xml:lang="en">
+    <reporting-org ref="GB-CHC-272465" type="21">Concern Universal</reporting-org>
+    <transaction>
+      <transaction-date iso-date="2012-02-01">2012-02-01</transaction-date>
+      <transaction-type code="D">Disbursement</transaction-type>
+      <value value-date="2012-02-01">448354</value>
+    </transaction>
+    <description>This project aims to help rural women increase their domestic income as well as influence local government policy influencing income generation. By increasing the production and marketing and organising women to participate in political and decision making processes that affect income generation the project aims to make local power holders more informed of the difficultly of vulnerable groups in accessing public policies for income generation.</description>
+    <iati-identifier>GB-CHC-272465-1011</iati-identifier>
+    <title>Brazil - Rural Women - Autonomy and Empowerment</title>
+    <activity-date iso-date="2015-01-31" type="end-planned">2015-01-31</activity-date>
+    <sector code="11230" vocab="DAC">Basic Life Skills</sector>
+    <recipient-country code="BR">Brazil</recipient-country>
+    <participating-org role="funding">EC</participating-org>
+    <activity-date iso-date="2012-02-01" type="start-planned">2012-02-01</activity-date>
+    <activity-status code="2">Implementation</activity-status>
+    <participating-org ref="GB-CHC-272465" role="implementing" type="21">Concern Universal</participating-org>
+  </iati-activity>
+  <iati-activity default-currency="GBP" xml:lang="en">
+    <reporting-org ref="GB-CHC-272465" type="21">Concern Universal</reporting-org>
+    <transaction>
+      <transaction-date iso-date="2011-10-18">2011-10-18</transaction-date>
+      <transaction-type code="D">Disbursement</transaction-type>
+      <value value-date="2011-10-18">838680</value>
+    </transaction>
+    <description>The action will work to fulfil the acute needs of the community in relation to safe water and sanitation who face frequent natural disaster (cyclone, tidal surges and salinity) ultimately reducing losses in terms of financial and WatSan facilities every year. By ensuring technological sustainability/durability of the water options and sanitation and the available provisions of safe water, disaster friendly sanitation and hygiene practices during normal time and disaster/ emergencies overall health and sanitation will be improved. Further more the project will work to promote community knowledge and understanding on safe water, use of sanitary latrines and hygiene practices during normal time and disaster for reducing water borne diseases and improve community managed and disaster friendly water supply and sanitation mechanisms for people in frequent natural disaster prone areas (including climatic risk).</description>
+    <iati-identifier>GB-CHC-272465-994</iati-identifier>
+    <title>Bangladesh - Ensuring Water &amp; Sanitation Facilities towards Disaster Risk Reduction</title>
+    <activity-date iso-date="2014-11-30" type="end-planned">2014-11-30</activity-date>
+    <sector code="74010" vocab="DAC">Disaster Prevention &amp; Preparedness</sector>
+    <recipient-country code="BD">Bangladesh</recipient-country>
+    <participating-org role="funding">EC</participating-org>
+    <activity-date iso-date="2011-12-01" type="start-planned">2011-12-01</activity-date>
+    <activity-status code="2">Implementation</activity-status>
+    <participating-org ref="GB-CHC-272465" role="implementing" type="21">Concern Universal</participating-org>
+    <participating-org role="funding">Cordaid</participating-org>
+    <participating-org ref="GB-CHC-272465" role="implementing" type="21">Concern Universal</participating-org>
+  </iati-activity>
+  <iati-activity default-currency="GBP" xml:lang="en">
+    <reporting-org ref="GB-CHC-272465" type="21">Concern Universal</reporting-org>
+    <transaction>
+      <transaction-date iso-date="2009-12-16">2009-12-16</transaction-date>
+      <transaction-type code="D">Disbursement</transaction-type>
+      <value value-date="2009-12-16">2424266</value>
+    </transaction>
+    <description>This action will contribute to supporting the effective implementation of the GoM&#x92;s NAS for sugar with a poverty reduction focus.The porject will improve the capacity of sugar out growers in agricultural methods.and build sugar outgrowers&#x92; management capabilities.</description>
+    <iati-identifier>GB-CHC-272465-894</iati-identifier>
+    <title>Malawi - Capacity building for sugar outgrowers in agricultural methods and the building of sugar outgrowers&#x92; management capabilities in Malawi</title>
+    <activity-date iso-date="2010-12-31" type="end-planned">2010-12-31</activity-date>
+    <sector code="31120" vocab="DAC">Agricultural Development</sector>
+    <recipient-country code="MW">Malawi</recipient-country>
+    <participating-org role="funding">EC</participating-org>
+    <activity-date iso-date="2010-07-01" type="start-planned">2010-07-01</activity-date>
+    <activity-status code="2">Implementation</activity-status>
+    <participating-org ref="GB-CHC-272465" role="implementing" type="21">Concern Universal</participating-org>
+    <participating-org role="funding">Schokland Fund</participating-org>
+    <participating-org ref="GB-CHC-272465" role="implementing" type="21">Concern Universal</participating-org>
+    <participating-org role="funding">Stichting Solidaridad</participating-org>
+    <participating-org ref="GB-CHC-272465" role="implementing" type="21">Concern Universal</participating-org>
+  </iati-activity>
+  <iati-activity default-currency="GBP" xml:lang="en">
+    <reporting-org ref="GB-CHC-272465" type="21">Concern Universal</reporting-org>
+    <transaction>
+      <transaction-date iso-date="2012-06-01">2012-06-01</transaction-date>
+      <transaction-type code="D">Disbursement</transaction-type>
+      <value value-date="2012-06-01">74962</value>
+    </transaction>
+    <description>Working in the context of post election violence in Guinea the project will reduce the risk of local conflict in Guinea through increased participation in local governance. Focusing on youths and women, empowering both to access their political rights through non-violent means, to build sustainable peace will be complemented with government level advocacy through which security forces will be made aware of human rights laws. Civil Society Organisations will be strengthened to play a role in conflict mitigation and human rights.</description>
+    <iati-identifier>GB-CHC-272465-1193</iati-identifier>
+    <title>Guinea - Supporting Women and Youths in Upholding their Rights and Peace Building in Upper Guinea</title>
+    <activity-date iso-date="2013-05-31" type="end-planned">2013-05-31</activity-date>
+    <sector code="15162" vocab="DAC">Human Rights</sector>
+    <recipient-country code="GN">Guinea</recipient-country>
+    <participating-org role="funding">AusAID</participating-org>
+    <activity-date iso-date="2012-06-01" type="start-planned">2012-06-01</activity-date>
+    <activity-status code="2">Implementation</activity-status>
+    <participating-org ref="GB-CHC-272465" role="implementing" type="21">Concern Universal</participating-org>
+  </iati-activity>
+  <iati-activity default-currency="GBP" xml:lang="en">
+    <reporting-org ref="GB-CHC-272465" type="21">Concern Universal</reporting-org>
+    <transaction>
+      <transaction-date iso-date="2009-06-01">2009-06-01</transaction-date>
+      <transaction-type code="D">Disbursement</transaction-type>
+      <value value-date="2009-06-01">473322</value>
+    </transaction>
+    <description>The project is intended to support the socio-economic development of Guinea through increased civil society engagement in poverty reduction initiatives. Working with both community members and existing Civil Society Groups this project will strengthen individual and organisational capacity and the ability of all to realise their basic rights, civic duties and the structures that can be used to improve livelihoods on a large scale. Large scale groups will be empowered to contribute to and monitor sustainable response to poverty within the framework of decentralised local development plans and the Guinean Poverty Strategy.</description>
+    <iati-identifier>GB-CHC-272465-554</iati-identifier>
+    <title>Guinea - Reinforcement &amp; Empowerment For Effecting Civil Society Hope in Guinea</title>
+    <activity-date iso-date="2013-03-31" type="end-planned">2013-03-31</activity-date>
+    <sector code="11230" vocab="DAC">Basic Life Skills</sector>
+    <recipient-country code="GN">Guinea</recipient-country>
+    <participating-org role="funding">DFID</participating-org>
+    <activity-date iso-date="2009-06-01" type="start-planned">2009-06-01</activity-date>
+    <activity-status code="2">Implementation</activity-status>
+    <participating-org ref="GB-CHC-272465" role="implementing" type="21">Concern Universal</participating-org>
+  </iati-activity>
+  <iati-activity default-currency="GBP" xml:lang="en">
+    <reporting-org ref="GB-CHC-272465" type="21">Concern Universal</reporting-org>
+    <transaction>
+      <transaction-date iso-date="2012-07-01">2012-07-01</transaction-date>
+      <transaction-type code="D">Disbursement</transaction-type>
+      <value value-date="2012-07-01">48461</value>
+    </transaction>
+    <description>Poor representation and participation of women in governance is exacerbated by inadequate access to land, weak voices at local government level, low literacy and poor leadership skills of women among other factors. Womens marketing cooperatives (kafos) in The Gambia have recently come to play an important role in improving income generation for their members - and in social empowerment &#x96; becoming a way in which women are mobilised as community groups and can redress balance in gender relations. Market-oriented kafos are a means through which women farmers can increase their access to and control of economic resources as increase their political voice. Increasing the advocacy capacity of womens marketing kafos is expected to be instrumental to their social and economic protection which is a necessary ingredient for building womens confidence to take on leadership roles in their communities.</description>
+    <iati-identifier>GB-CHC-272465-1164</iati-identifier>
+    <title>Gambia - Promotion of Marketing Kafos to Enhance Women's Entrepreneurship, Leadership and Participation in Governance in The Gambia</title>
+    <activity-date iso-date="2013-06-30" type="end-planned">2013-06-30</activity-date>
+    <sector code="15162" vocab="DAC">Human Rights</sector>
+    <recipient-country code="GM">Gambia</recipient-country>
+    <participating-org role="funding">AusAID</participating-org>
+    <activity-date iso-date="2012-07-01" type="start-planned">2012-07-01</activity-date>
+    <activity-status code="2">Implementation</activity-status>
+    <participating-org ref="GB-CHC-272465" role="implementing" type="21">Concern Universal</participating-org>
+  </iati-activity>
+  <iati-activity default-currency="GBP" xml:lang="en">
+    <reporting-org ref="GB-CHC-272465" type="21">Concern Universal</reporting-org>
+    <transaction>
+      <transaction-date iso-date="2012-06-06">2012-06-06</transaction-date>
+      <transaction-type code="D">Disbursement</transaction-type>
+      <value value-date="2012-06-06">15343</value>
+    </transaction>
+    <description>The project will improve the quality of life of four vulnerable communities in the State of Paraiba, Brazil. Through promotion of rights and how to claim them knowledge will be spread from the target groups and multiplied within families, schools and the community. Whilst working at the community level the project will also target election candidates to ensure they make public commitments to fulfil community needs if elected and to consolidate such commitments at post-election meetings. Overall this project will work directly with 500 7 &#x96; 18 year olds and 350 members of their families as well as 90 community leaders.</description>
+    <iati-identifier>GB-CHC-272465-1215</iati-identifier>
+    <title>Brazil - Communities Mobilised for Rights</title>
+    <activity-date iso-date="2013-06-25" type="end-planned">2013-06-25</activity-date>
+    <sector code="15162" vocab="DAC">Human Rights</sector>
+    <recipient-country code="BR">Brazil</recipient-country>
+    <participating-org role="funding">Irish Aid</participating-org>
+    <activity-date iso-date="2012-06-26" type="start-planned">2012-06-26</activity-date>
+    <activity-status code="2">Implementation</activity-status>
+    <participating-org ref="GB-CHC-272465" role="implementing" type="21">Concern Universal</participating-org>
+  </iati-activity>
+  <iati-activity default-currency="GBP" xml:lang="en">
+    <reporting-org ref="GB-CHC-272465" type="21">Concern Universal</reporting-org>
+    <transaction>
+      <transaction-date iso-date="2012-02-01">2012-02-01</transaction-date>
+      <transaction-type code="D">Disbursement</transaction-type>
+      <value value-date="2012-02-01">4361</value>
+    </transaction>
+    <description>To establish health rights of rural community through improving governance of community clinics, by increasing access to quality health services and reducing child and maternal mortality.</description>
+    <iati-identifier>GB-CHC-272465-1161</iati-identifier>
+    <title>Bangladesh - Strengthening the rural health services at grassroots level of Bangladesh</title>
+    <activity-date iso-date="2013-01-31" type="end-planned">2013-01-31</activity-date>
+    <sector code="12261" vocab="DAC">Health Education</sector>
+    <recipient-country code="BD">Bangladesh</recipient-country>
+    <participating-org role="funding">Cordaid</participating-org>
+    <activity-date iso-date="2012-02-01" type="start-planned">2012-02-01</activity-date>
+    <activity-status code="2">Implementation</activity-status>
+    <participating-org ref="GB-CHC-272465" role="implementing" type="21">Concern Universal</participating-org>
+  </iati-activity>
+  <iati-activity default-currency="GBP" xml:lang="en">
+    <reporting-org ref="GB-CHC-272465" type="21">Concern Universal</reporting-org>
+    <transaction>
+      <transaction-date iso-date="2011-07-01">2011-07-01</transaction-date>
+      <transaction-type code="D">Disbursement</transaction-type>
+      <value value-date="2011-07-01">952672</value>
+    </transaction>
+    <description>This project will improve livelihoods of 4000 vulnerable households in TA Mphuka in Thyolo District by 2016. This aim will be achieved through three levels of intenvention; 1.To strengthen food and nutrition security status of marginalised households on equitable and sustainable basis, 2. To reduce incidences of waterborne diseases in the target community ( 8000 households) because the WASH is targeting the entire community. 3. To strengthen capacity of communities to lobby for improved access to services and contribute to formulation of policies and active involvement in the design and implementation of local development plans.</description>
+    <iati-identifier>GB-CHC-272465-1088</iati-identifier>
+    <title>Malawi - Mphuka Livelihoods Project</title>
+    <activity-date iso-date="2016-07-01" type="end-planned">2016-07-01</activity-date>
+    <sector code="31120" vocab="DAC">Agricultural Development</sector>
+    <recipient-country code="MW">Malawi</recipient-country>
+    <participating-org role="funding">AusAID</participating-org>
+    <activity-date iso-date="2011-07-01" type="start-planned">2011-07-01</activity-date>
+    <activity-status code="2">Implementation</activity-status>
+    <participating-org ref="GB-CHC-272465" role="implementing" type="21">Concern Universal</participating-org>
+  </iati-activity>
+  <iati-activity default-currency="GBP" xml:lang="en">
+    <reporting-org ref="GB-CHC-272465" type="21">Concern Universal</reporting-org>
+    <transaction>
+      <transaction-date iso-date="2011-10-07">2011-10-07</transaction-date>
+      <transaction-type code="D">Disbursement</transaction-type>
+      <value value-date="2011-10-07">15293</value>
+    </transaction>
+    <description>This action will contribute to poverty reduction and improved health among vegetable farmers in the Techiman district of the Brong Ahafo Region through increased farm incomes as well as reduction in the use of inorganic fertilizers and inputs. Specfically the program will assist farmers to increase their vegetable production outputs by facilitating year-round vegetable production through access to drip irrigation facilities. Participating farmers will double their output by the end of two years. Simultaneously the action will assist farmers to improve the profitability of their farm enterprise through better enterprise management practices.  Through improved planning and coordination as well as cost reduction through reduction in the use of inorganic inputs, the project will assist beneficiaries to increase their earnings by at least 50%.</description>
+    <iati-identifier>GB-CHC-272465-960</iati-identifier>
+    <title>Ghana - BrongAhofo Rural Livelihoods Enhancement Project</title>
+    <activity-date iso-date="2012-10-07" type="end-planned">2012-10-07</activity-date>
+    <sector code="31120" vocab="DAC">Agricultural Development</sector>
+    <recipient-country code="GH">Ghana</recipient-country>
+    <participating-org role="funding">Irish Embassy</participating-org>
+    <activity-date iso-date="2011-10-07" type="start-planned">2011-10-07</activity-date>
+    <activity-status code="2">Implementation</activity-status>
+    <participating-org ref="GB-CHC-272465" role="implementing" type="21">Concern Universal</participating-org>
+  </iati-activity>
+  <iati-activity default-currency="GBP" xml:lang="en">
+    <reporting-org ref="GB-CHC-272465" type="21">Concern Universal</reporting-org>
+    <transaction>
+      <transaction-date iso-date="2012-01-01">2012-01-01</transaction-date>
+      <transaction-type code="D">Disbursement</transaction-type>
+      <value value-date="2012-01-01">112045</value>
+    </transaction>
+    <description>To promote Community Managed Disaster Risk Reduction and climate change adaptation in the socio-economic development process of local NGOs and institutions in the targeted districts</description>
+    <iati-identifier>GB-CHC-272465-1120</iati-identifier>
+    <title>Bangladesh  - Capacity Building CMDRR 2012</title>
+    <activity-date iso-date="2012-12-31" type="end-planned">2012-12-31</activity-date>
+    <sector code="74010" vocab="DAC">Disaster Prevention &amp; Preparedness</sector>
+    <recipient-country code="BD">Bangladesh</recipient-country>
+    <participating-org role="funding">Cordaid</participating-org>
+    <activity-date iso-date="2012-01-01" type="start-planned">2012-01-01</activity-date>
+    <activity-status code="2">Implementation</activity-status>
+    <participating-org ref="GB-CHC-272465" role="implementing" type="21">Concern Universal</participating-org>
+  </iati-activity>
+  <iati-activity default-currency="GBP" xml:lang="en">
+    <reporting-org ref="GB-CHC-272465" type="21">Concern Universal</reporting-org>
+    <transaction>
+      <transaction-date iso-date="2010-02-01">2010-02-01</transaction-date>
+      <transaction-type code="D">Disbursement</transaction-type>
+      <value value-date="2010-02-01">347198</value>
+    </transaction>
+    <description>This action will contribute to sustainable economic and human development of Niassa Province through strengthening of CSOs ensuring their increased participation in local development process. Specific objectives: (i) Contribute to institutional, organizational and programmatic development of democratic CSOs capable of defending rights and interests of their members; (ii) Support CSOs in its effort to hold local government accountable to the people regarding development, monitoring of use of district development funding, transparency and accountability in allocation of public resources; (iii) Promote dialogue between CSOs and government.</description>
+    <iati-identifier>GB-CHC-272465-867</iati-identifier>
+    <title>Mozambique - Fortalecimento das Organiza&#xE7;&#x151;es de Sociedade Civil na Prov&#xED;ncia de Niassa</title>
+    <activity-date iso-date="2013-01-31" type="end-planned">2013-01-31</activity-date>
+    <sector code="11230" vocab="DAC">Basic Life Skills</sector>
+    <recipient-country code="MZ">Mozambique</recipient-country>
+    <participating-org role="funding">EC</participating-org>
+    <activity-date iso-date="2010-02-01" type="start-planned">2010-02-01</activity-date>
+    <activity-status code="2">Implementation</activity-status>
+    <participating-org ref="GB-CHC-272465" role="implementing" type="21">Concern Universal</participating-org>
+  </iati-activity>
+  <iati-activity default-currency="GBP" xml:lang="en">
+    <reporting-org ref="GB-CHC-272465" type="21">Concern Universal</reporting-org>
+    <transaction>
+      <transaction-date iso-date="2008-10-01">2008-10-01</transaction-date>
+      <transaction-type code="D">Disbursement</transaction-type>
+      <value value-date="2008-10-01">672804</value>
+    </transaction>
+    <description>The goal of the proposed project is to reduce malaria associated mortality and morbidity by 50% compared to the pre-initiative level. The project specific objectives are to: (i) increase malaria awareness at community level; (ii) promote correct and consistent use and treatment of ITN&#x92;s; (iii) increase access to IPT; and, (iv) build the capacity of indigenous organisations in malaria management. These objectives will have a primary emphasis and focus on pregnant women, children under five, PLWHA, and other vulnerable groups (i.e. the elderly, child-headed households, OVCs), as well as at general Phalombe community as appropriate.</description>
+    <iati-identifier>GB-CHC-272465-779</iati-identifier>
+    <title>Malawi - Phalombe Malaria Communities Project</title>
+    <activity-date iso-date="2012-09-30" type="end-planned">2012-09-30</activity-date>
+    <sector code="12261" vocab="DAC">Health Education</sector>
+    <recipient-country code="MW">Malawi</recipient-country>
+    <participating-org role="funding">USAID</participating-org>
+    <activity-date iso-date="2008-10-01" type="start-planned">2008-10-01</activity-date>
+    <activity-status code="2">Implementation</activity-status>
+    <participating-org ref="GB-CHC-272465" role="implementing" type="21">Concern Universal</participating-org>
+  </iati-activity>
+  <iati-activity default-currency="GBP" xml:lang="en">
+    <reporting-org ref="GB-CHC-272465" type="21">Concern Universal</reporting-org>
+    <transaction>
+      <transaction-date iso-date="2011-10-01">2011-10-01</transaction-date>
+      <transaction-type code="D">Disbursement</transaction-type>
+      <value value-date="2011-10-01">75037</value>
+    </transaction>
+    <description>The overall Objective of the project is to improve the health condition of the urban poor and extreme poor, especially children through improved water supply and sanitation (WSS) facilities and improved hygiene practices in schools and their living environment. The project to achieve the overall objective determines some specific objectives are as follows: Improved water and sanitation facilities and improved hygiene practices in 35 selected schools in or serving the CDC neighborhoods in UPPR project towns of Dhaka and Comilla; Enhanced capacity of school authorities and teachers; A demonstrated public-private partnership to serve as a model for improving conditions in urban slums.</description>
+    <iati-identifier>GB-CHC-272465-1103</iati-identifier>
+    <title>Bangladesh - Schools&#x92;-Led WASH Initiative for the Urban Slums in Chadpur and Tangail</title>
+    <activity-date iso-date="2012-12-31" type="end-planned">2012-12-31</activity-date>
+    <sector code="12261" vocab="DAC">Health Education</sector>
+    <recipient-country code="BD">Bangladesh</recipient-country>
+    <participating-org role="funding">UNDP</participating-org>
+    <activity-date iso-date="2011-10-01" type="start-planned">2011-10-01</activity-date>
+    <activity-status code="2">Implementation</activity-status>
+    <participating-org ref="GB-CHC-272465" role="implementing" type="21">Concern Universal</participating-org>
+  </iati-activity>
+  <iati-activity default-currency="GBP" xml:lang="en">
+    <reporting-org ref="GB-CHC-272465" type="21">Concern Universal</reporting-org>
+    <transaction>
+      <transaction-date iso-date="2011-03-01">2011-03-01</transaction-date>
+      <transaction-type code="D">Disbursement</transaction-type>
+      <value value-date="2011-03-01">427650</value>
+    </transaction>
+    <description>Support strategies that enable local communities and institutions to better prepare for, mitigate and respond adequately to natural disasters by enhancing their capacities to cope and respond, thereby increasing their resilience and reducing vulnerability in Bangladesh. By project end DRR policy and legal framework will be effectively implemented, targeted communities and institutions have increased capacity to asses and mitigate disaster risks in Bangladesh. Preparedness and knowledge sharing will be increased ultimately reducing risk.</description>
+    <iati-identifier>GB-CHC-272465-1022</iati-identifier>
+    <title>Bangladesh - DIPECHO VI (A Disaster Resilient Future)</title>
+    <activity-date iso-date="2012-09-30" type="end-planned">2012-09-30</activity-date>
+    <sector code="74010" vocab="DAC">Disaster Prevention &amp; Preparedness</sector>
+    <recipient-country code="BD">Bangladesh</recipient-country>
+    <participating-org role="funding">Cordaid</participating-org>
+    <activity-date iso-date="2011-03-15" type="start-planned">2011-03-15</activity-date>
+    <activity-status code="2">Implementation</activity-status>
+    <participating-org ref="GB-CHC-272465" role="implementing" type="21">Concern Universal</participating-org>
+    <participating-org role="funding">Action Aid International</participating-org>
+    <participating-org ref="GB-CHC-272465" role="implementing" type="21">Concern Universal</participating-org>
+  </iati-activity>
+  <iati-activity default-currency="GBP" xml:lang="en">
+    <reporting-org ref="GB-CHC-272465" type="21">Concern Universal</reporting-org>
+    <transaction>
+      <transaction-date iso-date="2011-01-31">2011-01-31</transaction-date>
+      <transaction-type code="D">Disbursement</transaction-type>
+      <value value-date="2011-01-31">20000</value>
+    </transaction>
+    <description>This project will reduce poverty and improve the quality of life of rural communities in the semi-arid region of the state of Para&#xED;ba, Brazil.Working to increase the income of rural families settled in the Cariri semi-arid region of Para&#xED;ba and to improve the quantity and quality of food for rural families settled in the Cariri semi-arid area of Para&#xED;ba the project will improve both the quality and quantity of food for families in the settlement.</description>
+    <iati-identifier>GB-CHC-272465-656</iati-identifier>
+    <title>Brazil - Reducing Poverty Through Community Organic Vegetable Gardens</title>
+    <activity-date iso-date="2012-01-31" type="end-planned">2012-01-31</activity-date>
+    <sector code="31120" vocab="DAC">Agricultural Development</sector>
+    <recipient-country code="BR">Brazil</recipient-country>
+    <participating-org role="funding">VegFam</participating-org>
+    <activity-date iso-date="2011-01-31" type="start-planned">2011-01-31</activity-date>
+    <activity-status code="2">Implementation</activity-status>
+    <participating-org ref="GB-CHC-272465" role="implementing" type="21">Concern Universal</participating-org>
+  </iati-activity>
+  <iati-activity default-currency="GBP" xml:lang="en">
+    <reporting-org ref="GB-CHC-272465" type="21">Concern Universal</reporting-org>
+    <transaction>
+      <transaction-date iso-date="2011-04-15">2011-04-15</transaction-date>
+      <transaction-type code="D">Disbursement</transaction-type>
+      <value value-date="2011-04-15">91413</value>
+    </transaction>
+    <description>This project unites the production of fuel efficient stoves and biomass briquettes. Both these technologies have proven effective in separate projects but have never been implemented together prior to this project and neither had been introduced to the Gambia before. The two elements of this project have been purposefully designed to be complimentary to achieve maximum benefit for both the environment and the community. Over a period of 12 months 230 fuel efficient stoves will be introduced to the urban and peri-urban population with 200 sold to households at a competitive price and wider training and micro-enterprise centers will be established with sufficient income-generating capacity to become self-sustaining.</description>
+    <iati-identifier>GB-CHC-272465-840</iati-identifier>
+    <title>Gambia - Creating Commercial Community Enterprises through the Promotion of Fuel Efficient Stoves and Biomass Briquettes</title>
+    <activity-date iso-date="2012-10-15" type="end-planned">2012-10-15</activity-date>
+    <sector code="31120" vocab="DAC">Agricultural Development</sector>
+    <recipient-country code="GM">Gambia</recipient-country>
+    <participating-org role="funding">World Bank</participating-org>
+    <activity-date iso-date="2011-04-15" type="start-planned">2011-04-15</activity-date>
+    <activity-status code="2">Implementation</activity-status>
+    <participating-org ref="GB-CHC-272465" role="implementing" type="21">Concern Universal</participating-org>
+  </iati-activity>
+  <iati-activity default-currency="GBP" xml:lang="en">
+    <reporting-org ref="GB-CHC-272465" type="21">Concern Universal</reporting-org>
+    <transaction>
+      <transaction-date iso-date="2010-12-21">2010-12-21</transaction-date>
+      <transaction-type code="D">Disbursement</transaction-type>
+      <value value-date="2010-12-21">329819</value>
+    </transaction>
+    <description>This action will contribute to the eradication of women&#x92;s rights abuses through awareness-raising, building partnerships between CSOs, CBOs/communities and policy/law enforcement agencies, supporting victims of physical and mental abuse, and advocacy for improved implementation of legal instruments at state and local government and community levels. Specifically it is working to reduce women&#x92;s rights abuses (gender-based ill-treatment) and support victims through awareness raising and capacity building of CSOs, traditional rulers and policy enforcement agencies.</description>
+    <iati-identifier>GB-CHC-272465-921</iati-identifier>
+    <title>Nigeria - Preventing Women&#x92;s Ill-treatment/Rehabilitating widows in CRS and Ebonyi State</title>
+    <activity-date iso-date="2014-01-31" type="end-planned">2014-01-31</activity-date>
+    <sector code="15162" vocab="DAC">Human Rights</sector>
+    <recipient-country code="NG">Nigeria</recipient-country>
+    <participating-org role="funding">EC</participating-org>
+    <activity-date iso-date="2011-02-01" type="start-planned">2011-02-01</activity-date>
+    <activity-status code="2">Implementation</activity-status>
+    <participating-org ref="GB-CHC-272465" role="implementing" type="21">Concern Universal</participating-org>
+    <participating-org role="funding">Cross River State Government</participating-org>
+    <participating-org ref="GB-CHC-272465" role="implementing" type="21">Concern Universal</participating-org>
+  </iati-activity>
+  <iati-activity default-currency="GBP" xml:lang="en">
+    <reporting-org ref="GB-CHC-272465" type="21">Concern Universal</reporting-org>
+    <transaction>
+      <transaction-date iso-date="2011-08-24">2011-08-24</transaction-date>
+      <transaction-type code="D">Disbursement</transaction-type>
+      <value value-date="2011-08-24">872</value>
+    </transaction>
+    <description>The project is empowering communities to be able to take responsibility for their own water supply and sanitation facilities and hygiene practices. This is done through the medium of community-based Water, Sanitation and Hygiene Committees as well as working closely with the local government departments to strengthen their capacity.&#xA0; It is important to ensure that structures like this work well otherwise investment in water pumps and other equipment will not be sustainable.</description>
+    <iati-identifier>GB-CHC-272465-1198</iati-identifier>
+    <title>Nigeria - Water Project</title>
+    <activity-date iso-date="2012-08-23" type="end-planned">2012-08-23</activity-date>
+    <sector code="12261" vocab="DAC">Health Education</sector>
+    <recipient-country code="NG">Nigeria</recipient-country>
+    <participating-org role="funding">Be One Percent</participating-org>
+    <activity-date iso-date="2011-08-24" type="start-planned">2011-08-24</activity-date>
+    <activity-status code="2">Implementation</activity-status>
+    <participating-org ref="GB-CHC-272465" role="implementing" type="21">Concern Universal</participating-org>
+  </iati-activity>
+</iati-activities>

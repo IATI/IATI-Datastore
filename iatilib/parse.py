@@ -1,7 +1,9 @@
 import os
 import datetime
+import logging
 
 from defusedxml import lxml as ET
+from dateutil.parser import parse as parse_date
 
 from . import db
 from iatilib.model import (
@@ -9,7 +11,27 @@ from iatilib.model import (
     SectorPercentage)
 from iatilib import codelists as cl
 
+log = logging.getLogger("parser")
+
 NODEFAULT = object()
+
+
+class ParserError(Exception):
+    pass
+
+
+class XMLError(ParserError):
+    # Errors raised by XML parser
+    pass
+
+
+class SpecError(ParserError):
+    # Errors raised by spec violations
+    pass
+
+
+class MissingValue(SpecError):
+    pass
 
 
 def xval(ele, xpath, default=NODEFAULT):
@@ -17,13 +39,18 @@ def xval(ele, xpath, default=NODEFAULT):
         return ele.xpath(xpath)[0].decode("utf-8")
     except IndexError:
         if default is NODEFAULT:
-            raise
+            raise MissingValue("Missing %r from %s" % (xpath, ele.tag))
         return default
 
 
-
 def iati_date(str):
-    return datetime.datetime.strptime(str, "%Y-%m-%d").date()
+    if str is None:
+        return None
+    return parse_date(str).date()
+
+
+def iati_int(str):
+    return int(str.replace("-", "").replace(",", ""))
 
 
 def reporting_org(xml):
@@ -34,11 +61,15 @@ def reporting_org(xml):
 
 
 def participating_orgs(xml):
-    return [Participation(
-            role=cl.OrganisationRole.from_string(ele.xpath("@role")[0]),
-            organisation=Organisation.as_unique(db.session, ref=xval(ele, "@ref"))
-            )
-            for ele in xml if ele.xpath("@ref")]
+    ret = []
+    seen = set()
+    for ele in [e for e in xml if e.xpath("@ref")]:
+        role = cl.OrganisationRole.from_string(xval(ele, "@role").title())
+        organisation = Organisation.as_unique(db.session, ref=xval(ele, "@ref"))
+        if not (role, organisation.ref) in seen:
+            seen.add((role, organisation.ref))
+            ret.append(Participation(role=role, organisation=organisation))
+    return ret
 
 
 def websites(xml):
@@ -53,15 +84,26 @@ def recipient_country_percentages(xml):
 
 
 def transactions(xml):
-    return [Transaction(
+    def currency(code):
+        return cl.Currency.from_string(code) if code is not None else None
+
+    def process(ele):
+        return Transaction(
             type=cl.TransactionType.from_string(
                 xval(ele, "transaction-type/@code")),
             date=iati_date(xval(ele, "transaction-date/@iso-date")),
             value_date=iati_date(xval(ele, "value/@value-date")),
-            value_amount=int(xval(ele, "value/text()")),
-            value_currency=cl.Currency.from_string(
-                xval(ele, "../@default-currency"))
-            ) for ele in xml]
+            value_amount=iati_int(xval(ele, "value/text()")),
+            value_currency=currency(xval(ele, "../@default-currency", None))
+        )
+
+    ret = []
+    for ele in xml:
+        try:
+            ret.append(process(ele))
+        except MissingValue:
+            pass
+    return ret
 
 
 def sector_percentages(xml):
@@ -94,17 +136,28 @@ def activity(xmlstr):
             xml.xpath("./recipient-country")),
         "transactions": transactions(xml.xpath("./transaction")),
         "start_actual": iati_date(
-            xval(xml, "./activity-date[@type='start-actual']/@iso-date")),
+            xval(xml, "./activity-date[@type='start-actual']/@iso-date", None)),
         "sector_percentages": sector_percentages(xml.xpath("./sector")),
         "raw_xml": ET.tostring(xml, encoding=unicode)
     }
-    return Activity(**data)
+    return Activity.as_unique(db.session, **data)
 
 
 def document(xmlstr):
-    if os.path.exists(xmlstr):
-        xml = ET.parse(xmlstr)
-    else:
-        xml = ET.fromstring(xmlstr)
+    try:
+        if isinstance(xmlstr, basestring):
+            if os.path.exists(xmlstr):
+                xml = ET.parse(xmlstr)
+            else:
+                xml = ET.fromstring(xmlstr)
+        else:
+            xml = xmlstr
+    except Exception:
+        raise XMLError("Can't read xml")
+
     for act in xml.xpath("./iati-activity"):
-        yield activity(act)
+        try:
+            yield activity(act)
+        except Exception:
+            log.warn("Failed to parse activity", exc_info=True)
+
