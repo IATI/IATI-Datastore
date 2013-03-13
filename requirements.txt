@@ -19,6 +19,7 @@ defusedxml==0.3
 redis==2.7.2
 rq==0.3.7
 Unidecode==0.04.12
+requests==1.1.0
 
 # should not be pinned, see https://devcenter.heroku.com/articles/newrelic
 newrelic
