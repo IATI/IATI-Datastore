@@ -49,3 +49,4 @@ class TransactionFactory(factory.Factory):
     value_currency = codelists.Currency.us_dollar
     value_amount = 0
     value_date = datetime.date(1972, 1, 1)
+    date = datetime.date(1973, 2, 2)

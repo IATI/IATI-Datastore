@@ -184,6 +184,15 @@ class Transaction(db.Model):
     value = sa.orm.composite(TransactionValue, value_date, value_amount, value_currency)
     activity = sa.orm.relationship("Activity")
 
+    def __unicode__(self):
+        return u"%s: %s/%s" % (
+            self.activity.iati_identifier,
+            self.type.description,
+            self.value_amount)
+
+    def __repr__(self):
+        return u"Transaction(id=%d)" % self.id
+
 
 class SectorPercentage(db.Model):
     __tablename__ = "sector_percentage"

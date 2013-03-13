@@ -45,3 +45,35 @@ class TestFilter(AppTestCase):
         self.assertNotIn(act_not, activities.all())
 
 
+class TestTransactionFilter(AppTestCase):
+    def test_by_country_code(self):
+        trans_in = fac.TransactionFactory.create(
+            activity=fac.ActivityFactory.build(
+                recipient_country_percentages=[
+                    fac.CountryPercentageFactory.build(
+                        country=cl.Country.libyan_arab_jamahiriya),
+                ])
+        )
+        trans_not = fac.TransactionFactory.create(
+            activity=fac.ActivityFactory.build(
+                recipient_country_percentages=[
+                    fac.CountryPercentageFactory.build(
+                        country=cl.Country.zambia),
+                ])
+        )
+        transactions = dsfilter.transactions({
+            "country_code": u"LY"
+        })
+        self.assertIn(trans_in, transactions.all())
+        self.assertNotIn(trans_not, transactions.all())
+
+    def test_by_reporting_org_ref(self):
+        trans_in = fac.TransactionFactory.create(
+            activity=fac.ActivityFactory.build(reporting_org__ref=u"AAA"))
+        trans_not = fac.TransactionFactory.create(
+            activity=fac.ActivityFactory.build(reporting_org__ref=u"ZZZ"))
+        transactions = dsfilter.transactions({
+            "reporting_org_ref": u"AAA"
+        })
+        self.assertIn(trans_in, transactions.all())
+        self.assertNotIn(trans_not, transactions.all())
