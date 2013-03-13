@@ -77,3 +77,23 @@ class TestTransactionFilter(AppTestCase):
         })
         self.assertIn(trans_in, transactions.all())
         self.assertNotIn(trans_not, transactions.all())
+
+    def test_by_participating_org_ref(self):
+        trans_in = fac.TransactionFactory.create(
+            activity=fac.ActivityFactory.build(
+                participating_orgs=[
+                    fac.ParticipationFactory.build(
+                        organisation__ref=u"AAA")
+                ]))
+        trans_not = fac.TransactionFactory.create(
+            activity=fac.ActivityFactory.build(
+                participating_orgs=[
+                    fac.ParticipationFactory.build(
+                        organisation__ref=u"ZZZ")
+                ]))
+
+        transactions = dsfilter.transactions({
+            "participating_org_ref": u"AAA"
+        })
+        self.assertIn(trans_in, transactions.all())
+        self.assertNotIn(trans_not, transactions.all())

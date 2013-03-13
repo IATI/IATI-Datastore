@@ -167,7 +167,7 @@ def recipient_country_percentage(transaction):
 
 def sector_code(transaction):
     return u";".join(
-        u"%s" % sec.sector.value
+        u"%s" % sec.sector.value if sec.sector else ""
         for sec in transaction.activity.sector_percentages)
 
 
@@ -179,7 +179,7 @@ def sector_percentage(transaction):
 
 def sector(transaction):
     return u";".join(
-        u"%s" % sec.sector.description
+        u"%s" % sec.sector.description if sec.sector else ""
         for sec in transaction.activity.sector_percentages)
 
 

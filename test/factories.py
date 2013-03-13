@@ -5,7 +5,9 @@ import factory
 from iatilib import codelists
 from iatilib.frontend import db
 from iatilib.model import (
-    Activity, Transaction, Organisation, SectorPercentage, CountryPercentage)
+    Activity, Transaction, Organisation, SectorPercentage, CountryPercentage,
+    Participation
+)
 
 
 def sa_creation(model, **kw):
@@ -35,6 +37,11 @@ class SectorPercentageFactory(factory.Factory):
 class OrganisationFactory(factory.Factory):
     ref = factory.Sequence(lambda n: u'test-org-{0}'.format(n))
     name = u"test org"
+
+
+class ParticipationFactory(factory.Factory):
+    organisation = factory.SubFactory(OrganisationFactory)
+    role = codelists.OrganisationRole.funding
 
 
 class ActivityFactory(factory.Factory):

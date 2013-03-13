@@ -162,6 +162,17 @@ class TestCSVTransactionExample(TestCase, CSVTstMixin):
             {"sector": "Teacher training;Primary education"},
             data[0])
 
+    def test_sector_blank(self):
+        data = self.process([
+            fac.TransactionFactory.build(
+                activity=fac.ActivityFactory.build(
+                    sector_percentages=[
+                        fac.SectorPercentageFactory.build(sector=None),
+                    ])
+            )
+        ])
+        self.assertField({"sector": ""}, data[0])
+
     def test_sector_percentage(self):
         data = self.process([
             fac.TransactionFactory.build(
