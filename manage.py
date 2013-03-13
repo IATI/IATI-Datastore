@@ -156,7 +156,7 @@ def parse_file(filenames, verbose=False, fail_xml=False, fail_spec=False):
             db.session.add_all(parse.document(filename))
             db.session.commit()
         except parse.ParserError, exc:
-            logging.warning("Could not parse file %r", filename, exc_info=True)
+            logging.error("Could not parse file %r", filename)
             db.session.rollback()
             if isinstance(exc, parse.XMLError) and fail_xml:
                 raise

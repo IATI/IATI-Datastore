@@ -163,11 +163,15 @@ def activity(xml_resource):
 
 def document(xml_resource):
     xmlfile = _open_resource(xml_resource)
-    for event, elem in ET.iterparse(xmlfile):
-        if elem.tag == 'iati-activity':
-            try:
-                yield activity(elem)
-            except Exception:
-                log.warn("Failed to parse activity", exc_info=True)
-            elem.clear()
+    try:
+        for event, elem in ET.iterparse(xmlfile):
+            if elem.tag == 'iati-activity':
+                try:
+                    yield activity(elem)
+                except Exception, exe:
+                    log.warn("Failed to parse activity %r", exe)
+                elem.clear()
+    except ET.XMLSyntaxError, exe:
+        raise XMLError(exe.msg)
+
 

@@ -85,6 +85,16 @@ def csv_serialize(fields, data):
     return out.getvalue()
 
 
+def sector_code_a(activity):
+    return u";".join(sp.sector.value if sp.sector else u""
+                     for sp in activity.sector_percentages)
+
+
+def sector_desc_a(activity):
+    return u";".join(sp.sector.description if sp.sector else u""
+                     for sp in activity.sector_percentages)
+
+
 def csv(query):
     fields = OrderedDict((
         (u"iati-identifier", lambda a: a.iati_identifier),
@@ -97,10 +107,8 @@ def csv(query):
             lambda a: u";".join(sp.country.description.title() for sp in a.recipient_country_percentages)),
         (u"recipient-country-percentage",
             lambda a: u";".join(u"%s" % sp.percentage for sp in a.recipient_country_percentages)),
-        (u"sector-code",
-            lambda a: u";".join(sp.sector.value for sp in a.sector_percentages)),
-        (u"sector",
-            lambda a: u";".join(sp.sector.description for sp in a.sector_percentages)),
+        (u"sector-code", sector_code_a),
+        (u"sector", sector_desc_a),
         (u"sector-percentage", delim("sector_percentages", "percentage")),
         (u"currency", currency),
         (u"total-Disbursement", total("disbursements")),

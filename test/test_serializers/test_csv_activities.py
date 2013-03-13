@@ -139,6 +139,14 @@ class TestCSVExample(CSVTstMixin, TestCase):
             {"sector": u"Teacher training;Primary education"},
             data[0])
 
+    def test_sector_blank(self):
+        data = self.process([fac.ActivityFactory.build(
+            sector_percentages=[
+                fac.SectorPercentageFactory.build(sector=None)
+            ]
+        )])
+        self.assertField({"sector": u""}, data[0])
+
     def test_sector_percentage(self):
         data = self.process([fac.ActivityFactory.build(
             sector_percentages=[
