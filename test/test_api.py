@@ -213,7 +213,7 @@ class TestManyActivities(ClientTestCase):
         self.assertEquals(2, len(list(reader)))
 
 
-class TestView(ClientTestCase):
+class TestActivityView(ClientTestCase):
     @mock.patch('iatilib.frontend.api1.validators.activity_api_args')
     def test_validator_called(self, mock):
         self.client.get('/api/1/access/activities')
@@ -226,6 +226,22 @@ class TestView(ClientTestCase):
 
     def test_invalid_format(self):
         resp = self.client.get('/api/1/access/activities.zzz')
+        self.assertEquals(404, resp.status_code)
+
+
+class TestTransactionView(ClientTestCase):
+    @mock.patch('iatilib.frontend.api1.validators.activity_api_args')
+    def test_validator_called(self, mock):
+        self.client.get('/api/1/access/transactions.csv')
+        self.assertEquals(1, mock.call_count)
+
+    @mock.patch('iatilib.frontend.api1.dsfilter.transactions')
+    def test_filter_called(self, mock):
+        self.client.get('/api/1/access/transactions.csv?country_code=MW')
+        self.assertEquals(1, mock.call_count)
+
+    def test_invalid_format(self):
+        resp = self.client.get('/api/1/access/transactions.xml')
         self.assertEquals(404, resp.status_code)
 
 

@@ -1,8 +1,8 @@
 import unittest
 from StringIO import StringIO
 
-import lxml
-from xml.etree import ElementTree
+from lxml import etree as lxml_etree
+from xml.etree import ElementTree as xml_etree
 
 
 from iatilib.frontend import create_app
@@ -16,8 +16,8 @@ def create_db():
 class AppTestCase(unittest.TestCase):
     def __init__(self, methodName='runTest'):
         super(AppTestCase, self).__init__(methodName)
-        self.addTypeEqualityFunc(lxml.etree.Element, self.assertXMLEqual)
-        self.addTypeEqualityFunc(ElementTree.Element, self.assertXMLEqual)
+        self.addTypeEqualityFunc(lxml_etree.Element, self.assertXMLEqual)
+        self.addTypeEqualityFunc(xml_etree.Element, self.assertXMLEqual)
 
     def setUp(self):
         self.app = create_app(
