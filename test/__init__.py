@@ -1,4 +1,9 @@
 import unittest
+from StringIO import StringIO
+
+import lxml
+from xml.etree import ElementTree
+
 
 from iatilib.frontend import create_app
 from iatilib import db
@@ -9,6 +14,11 @@ def create_db():
 
 
 class AppTestCase(unittest.TestCase):
+    def __init__(self, methodName='runTest'):
+        super(AppTestCase, self).__init__(methodName)
+        self.addTypeEqualityFunc(lxml.etree.Element, self.assertXMLEqual)
+        self.addTypeEqualityFunc(ElementTree.Element, self.assertXMLEqual)
+
     def setUp(self):
         self.app = create_app(
             SQLALCHEMY_DATABASE_URI='sqlite:///:memory:',
@@ -20,7 +30,68 @@ class AppTestCase(unittest.TestCase):
         db.drop_all()
         db.session._unique_cache = {}
 
+    def assertXMLEqual(self, x1, x2, msg=None):
+        sio = StringIO()
+        if not xml_compare(x1, x2, sio.write):
+            if msg is None:
+                msg = sio.getvalue()
+            raise self.failureException(msg)
+
+
 class ClientTestCase(AppTestCase):
     def setUp(self):
         super(ClientTestCase, self).setUp()
         self.client = self.app.test_client()
+
+
+# From formencode
+# https://bitbucket.org/ianb/formencode/raw/f59f8bb59a8c9b4176a45e4a03533e26367363f3/formencode/doctest_xml_compare.py
+def xml_compare(x1, x2, reporter=None):
+    if x1.tag != x2.tag:
+        if reporter:
+            reporter('Tags do not match: %s and %s' % (x1.tag, x2.tag))
+        return False
+    for name, value in x1.attrib.items():
+        if x2.attrib.get(name) != value:
+            if reporter:
+                reporter('Attributes do not match: %s=%r, %s=%r'
+                         % (name, value, name, x2.attrib.get(name)))
+            return False
+    for name in x2.attrib.keys():
+        if name not in x1.attrib:
+            if reporter:
+                reporter('x2 has an attribute x1 is missing: %s'
+                         % name)
+            return False
+    if not text_compare(x1.text, x2.text):
+        if reporter:
+            reporter('text: %r != %r' % (x1.text, x2.text))
+        return False
+    if not text_compare(x1.tail, x2.tail):
+        if reporter:
+            reporter('tail: %r != %r' % (x1.tail, x2.tail))
+        return False
+    cl1 = x1.getchildren()
+    cl2 = x2.getchildren()
+    if len(cl1) != len(cl2):
+        if reporter:
+            reporter('children length differs, %i != %i'
+                     % (len(cl1), len(cl2)))
+        return False
+    i = 0
+    for c1, c2 in zip(cl1, cl2):
+        i += 1
+        if not xml_compare(c1, c2, reporter=reporter):
+            if reporter:
+                reporter('children %i do not match: %s'
+                         % (i, c1.tag))
+            return False
+    return True
+
+
+def text_compare(t1, t2):
+    if not t1 and not t2:
+        return True
+    if t1 == '*' or t2 == '*':
+        return True
+    return (t1 or '').strip() == (t2 or '').strip()

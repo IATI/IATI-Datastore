@@ -130,12 +130,12 @@ class TestParseActivity(AppTestCase):
         self.assertEquals(5, len(act.sector_percentages))
 
     def test_raw_xml(self):
-        act = parse.activity(fixture("default_currency.xml"))
-        norm_xml = ET.tostring(ET.fromstring(fixture("default_currency.xml")))
+        act = parse.activity(fixture_filename("default_currency.xml"))
+        norm_xml = ET.tostring(ET.parse(fixture_filename("default_currency.xml")))
         self.assertEquals(norm_xml, act.raw_xml)
 
     def test_no_start_actual(self):
-        activities = parse.document(fixture("missing_dates.xml"))
+        activities = parse.document(fixture_filename("missing_dates.xml"))
         act = {a.iati_identifier:a for a in activities}
         self.assertEquals(None, act[u"GB-CHC-272465-680"].start_actual)
 
@@ -159,20 +159,19 @@ class TestFunctional(AppTestCase):
         db.session.commit()
 
     def test_save_repeated_participation(self):
-        activities = parse.document(fixture("repeated_participation.xml"))
+        activities = parse.document(fixture_filename("repeated_participation.xml"))
         db.session.add_all(activities)
         db.session.commit()
 
     def test_different_roles(self):
-        activities = parse.document(fixture("same_orgs_different_roles.xml"))
+        activities = parse.document(fixture_filename("same_orgs_different_roles.xml"))
         db.session.add_all(activities)
         db.session.commit()
 
     def test_big_values(self):
-        activities = parse.document(fixture("big_value.xml"))
+        activities = parse.document(fixture_filename("big_value.xml"))
         db.session.add_all(activities)
         db.session.commit()
-
 
 
 class TestSector(AppTestCase):

@@ -1,8 +1,9 @@
 import os
 import datetime
 import logging
+from StringIO import StringIO
 
-from defusedxml import lxml as ET
+from lxml import etree as ET
 from dateutil.parser import parse as parse_date
 
 from . import db
@@ -126,11 +127,21 @@ def sector_percentages(xml):
     return ret
 
 
-def activity(xmlstr):
-    if isinstance(xmlstr, basestring):
-        xml = ET.fromstring(xmlstr)
+def _open_resource(xml_resource):
+    if isinstance(xml_resource, basestring):
+        if os.path.exists(xml_resource):
+            xmlfile = open(xml_resource)
+        else:
+            xmlfile = StringIO(xml_resource)
     else:
-        xml = xmlstr
+        # so it's a xml literal, probably from a test. It shouldn't be
+        # big enough that a round trip through the serializer is a problem
+        xmlfile = StringIO(ET.tostring(xml_resource))
+    return xmlfile
+
+
+def activity(xml_resource):
+    xml = ET.parse(_open_resource(xml_resource))
     data = {
         "iati_identifier": xval(xml, "./iati-identifier/text()"),
         "title": xval(xml, "./title/text()", u""),
@@ -150,21 +161,13 @@ def activity(xmlstr):
     return Activity.as_unique(db.session, **data)
 
 
-def document(xmlstr):
-    try:
-        if isinstance(xmlstr, basestring):
-            if os.path.exists(xmlstr):
-                xml = ET.parse(xmlstr)
-            else:
-                xml = ET.fromstring(xmlstr)
-        else:
-            xml = xmlstr
-    except Exception:
-        raise XMLError("Can't read xml")
-
-    for act in xml.xpath("./iati-activity"):
-        try:
-            yield activity(act)
-        except Exception:
-            log.warn("Failed to parse activity", exc_info=True)
+def document(xml_resource):
+    xmlfile = _open_resource(xml_resource)
+    for event, elem in ET.iterparse(xmlfile):
+        if elem.tag == 'iati-activity':
+            try:
+                yield activity(elem)
+            except Exception:
+                log.warn("Failed to parse activity", exc_info=True)
+            elem.clear()
 

@@ -155,9 +155,9 @@ class TestSingleActivity(ClientTestCase):
         in_xml = ET.parse(fixture_filename("single_activity.xml"))
         resp = self.client.get('/api/1/access/activities.xml')
         xml = ET.fromstring(resp.data)
-        self.assertEquals(
-            ET.tostring(in_xml.find('.//iati-activity')),
-            ET.tostring(xml.find('.//iati-activity')))
+        x1 = in_xml.find('.//iati-activity')
+        x2 = xml.find('.//iati-activity')
+        self.assertEquals(x1, x2)
 
     @skip("json rep")
     def test_json_activity_count(self):
