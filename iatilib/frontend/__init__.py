@@ -14,7 +14,7 @@ def create_app(**config):
         app.config["SQLALCHEMY_DATABASE_URI"] = os.environ["DATABASE_URL"]
 
     if "REDISTOGO_URL" in os.environ:
-        app.config.setdefault("RQ_LOW_URL", os.environ["REDISTOGO_URL"])
+        app.config["RQ_LOW_URL"] = os.environ["REDISTOGO_URL"]
 
     db.app = app  # don't understand why I need to this
     db.init_app(app)
