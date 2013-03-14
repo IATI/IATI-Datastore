@@ -9,7 +9,7 @@ import redis
 import sqlalchemy as sa
 import prettytable
 from flask.ext.script import Manager
-
+from flask.ext.rq import get_worker
 
 from iatilib.frontend import create_app, db
 from iatilib import magic_numbers, parse, codelists, model
@@ -125,6 +125,11 @@ def rqworker(burst=False):
     with rq.Connection(redis_connect()):
         worker = rq.Worker(rq.Queue())
         worker.work(burst=burst)
+
+
+@manager.command
+def batch_worker():
+    get_worker().work(burst=True)
 
 
 @manager.command

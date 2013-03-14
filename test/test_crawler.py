@@ -18,19 +18,6 @@ class TestCrawler(AppTestCase):
         self.assertIn("tst-b", [ds.name for ds in datasets])
 
     @mock.patch('iatilib.crawler.ckanclient.CkanClient.package_register_get')
-    def test_fetch_time(self, mock):
-        mock.return_value = [u"tst-a"]
-        datasets = crawler.fetch_dataset_list()
-        self.assertAlmostEqual(
-            datetime.datetime.utcnow(),
-            datasets[0].first_seen,
-            delta=datetime.timedelta(seconds=5))
-        self.assertAlmostEqual(
-            datetime.datetime.utcnow(),
-            datasets[0].last_seen,
-            delta=datetime.timedelta(seconds=5))
-
-    @mock.patch('iatilib.crawler.ckanclient.CkanClient.package_register_get')
     def test_update_adds_datasets(self, mock):
         mock.return_value = [u"tst-a"]
         datasets = crawler.fetch_dataset_list()
@@ -47,10 +34,12 @@ class TestCrawler(AppTestCase):
 
     @mock.patch('iatilib.crawler.requests')
     def test_fetch_resource_succ(self, mock):
-        mock.get.return_value.text = u"test"
+        mock.get.return_value.content = "test"
         mock.get.return_value.status_code = 200
         resource = crawler.fetch_resource(Resource(url="http://foo"))
-        self.assertEquals(u"test", resource.document)
+        self.assertEquals("test", resource.document)
+        self.assertEquals(None, resource.last_parsed)
+        self.assertEquals(None, resource.last_parse_error)
 
     @mock.patch('iatilib.crawler.requests')
     def test_fetch_resource_perm_fail(self, mock):
@@ -61,6 +50,23 @@ class TestCrawler(AppTestCase):
         ))
         self.assertEquals(404, resource.last_status_code)
         self.assertEquals(u"stillhere", resource.document)
+
+    def test_parse_resource_succ(self):
+        resource = Resource(document="<iati-activities />")
+        resource = crawler.parse_resource(resource)
+        self.assertEquals([], resource.activities)
+        self.assertEquals(None, resource.last_parse_error)
+        self.assertAlmostEquals(
+            resource.last_parsed,
+            datetime.datetime.utcnow(),
+            delta=datetime.timedelta(seconds=5))
+
+    def test_parse_resource_fail(self):
+        resource = Resource(document="")
+        resource = crawler.parse_resource(resource)
+        self.assertEquals([], resource.activities)
+        self.assertEquals(None, resource.last_parsed)
+        self.assertNotEquals(None, resource.last_parse_error)
 
 
 class TestDate(TestCase):

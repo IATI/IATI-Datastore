@@ -78,6 +78,10 @@ class Participation(db.Model):
 class Activity(db.Model, UniqueMixin):
     __tablename__ = "activity"
     iati_identifier = sa.Column(sa.Unicode, primary_key=True, nullable=False)
+    resource_url = sa.Column(
+        sa.ForeignKey("resource.url"),
+        index=True,
+        nullable=True)
     reporting_org_ref = sa.Column(
         sa.ForeignKey("organisation.ref"),
         nullable=False,
@@ -236,5 +240,8 @@ class Resource(db.Model):
     last_fetch = sa.Column(sa.DateTime)
     last_status_code = sa.Column(sa.Integer)
     last_succ = sa.Column(sa.DateTime)
-    document = sa.Column(sa.UnicodeText)
+    last_parsed = sa.Column(sa.DateTime)
+    last_parse_error = sa.Column(sa.Unicode)
+    document = sa.Column(sa.LargeBinary)
     etag = sa.Column(sa.Unicode)
+    activities = sa.orm.relationship("Activity")
