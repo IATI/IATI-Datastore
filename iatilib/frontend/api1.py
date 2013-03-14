@@ -70,3 +70,24 @@ def transactions_list(format):
     return Response(
         serialize.transaction_csv(pagination.items),
         mimetype="text/csv")
+
+
+@api.route('/access/budgets<format>', defaults={"format": ".csv"})
+def budgets_list(format):
+    if not request.path.endswith(".csv"):
+        abort(404)
+
+    try:
+        valid_args = validators.activity_api_args(MultiDict(request.args))
+    except validators.Invalid:
+        abort(404)
+
+    query = dsfilter.budgets(valid_args)
+    pagination = query.paginate(
+        valid_args.get("page", 1),
+        valid_args.get("per_page", 50),
+    )
+
+    return Response(
+        serialize.transaction_csv(pagination.items),
+        mimetype="text/csv")

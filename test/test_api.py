@@ -128,6 +128,22 @@ class TestEmptyDb_TransactionCSV(ClientTestCase):
         self.assertEquals("text/csv; charset=utf-8", resp.content_type)
 
 
+class TestEmptyDb_BudgetCSV(ClientTestCase):
+    """
+    CSV for empty db
+    """
+    url = '/api/1/access/budgets.csv'
+
+    def test_http_ok(self):
+        resp = self.client.get(self.url)
+        self.assertEquals(200, resp.status_code)
+
+    def test_content_type(self):
+        resp = self.client.get(self.url)
+        self.assertEquals("text/csv; charset=utf-8", resp.content_type)
+
+
+
 def fixture_filename(fix_name):
     return os.path.join(
             os.path.dirname(__file__), "fixtures", fix_name)
@@ -242,6 +258,22 @@ class TestTransactionView(ClientTestCase):
 
     def test_invalid_format(self):
         resp = self.client.get('/api/1/access/transactions.xml')
+        self.assertEquals(404, resp.status_code)
+
+
+class TestBudgetView(ClientTestCase):
+    @mock.patch('iatilib.frontend.api1.validators.activity_api_args')
+    def test_validator_called(self, mock):
+        self.client.get('/api/1/access/budgets.csv')
+        self.assertEquals(1, mock.call_count)
+
+    @mock.patch('iatilib.frontend.api1.dsfilter.budgets')
+    def test_filter_called(self, mock):
+        self.client.get('/api/1/access/budgets.csv?country_code=MW')
+        self.assertEquals(1, mock.call_count)
+
+    def test_invalid_format(self):
+        resp = self.client.get('/api/1/access/budgets.xml')
         self.assertEquals(404, resp.status_code)
 
 
