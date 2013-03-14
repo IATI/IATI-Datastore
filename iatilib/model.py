@@ -1,7 +1,9 @@
+import datetime
 from collections import namedtuple
 
 import sqlalchemy as sa
 from sqlalchemy.ext.associationproxy import association_proxy
+from sqlalchemy.dialects.postgresql import ARRAY
 
 
 from . import db
@@ -207,3 +209,32 @@ class SectorPercentage(db.Model):
     percentage = sa.Column(sa.Integer, nullable=True)
     activity = sa.orm.relationship("Activity")
 
+
+class Dataset(db.Model):
+    __tablename__ = "dataset"
+    name = sa.Column(sa.Unicode, primary_key=True)
+    first_seen = sa.Column(
+        sa.DateTime,
+        nullable=False,
+        default=sa.func.now())
+    last_seen = sa.Column(
+        sa.DateTime,
+        nullable=False,
+        default=sa.func.now())
+    last_modified = sa.Column(sa.DateTime, nullable=True)
+    resources = sa.orm.relationship("Resource")
+    resource_urls = association_proxy(
+        "resources",
+        "url",
+        creator=lambda url: Resource(url=url))
+
+
+class Resource(db.Model):
+    __tablename__ = "resource"
+    url = sa.Column(sa.Unicode, primary_key=True)
+    dataset_id = sa.Column(sa.ForeignKey("dataset.name"))
+    last_fetch = sa.Column(sa.DateTime)
+    last_status_code = sa.Column(sa.Integer)
+    last_succ = sa.Column(sa.DateTime)
+    document = sa.Column(sa.UnicodeText)
+    etag = sa.Column(sa.Unicode)

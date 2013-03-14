@@ -13,9 +13,11 @@ from flask.ext.script import Manager
 
 from iatilib.frontend import create_app, db
 from iatilib import magic_numbers, parse, codelists, model
+from iatilib.crawler import manager as crawler_manager
 
 
 manager = Manager(create_app(DEBUG=True))
+manager.add_command("crawl", crawler_manager)
 
 
 @manager.shell
