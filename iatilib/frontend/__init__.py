@@ -1,8 +1,10 @@
 import os
+
 from flask import Flask
 from flask.ext.rq import RQ
+from flask.ext.heroku import Heroku
 
-from iatilib import db
+from iatilib import db, redis
 
 
 def create_app(**config):
@@ -10,14 +12,18 @@ def create_app(**config):
 
     app.config.update(config)
 
-    if "SQLALCHEMY_DATABASE_URI" not in app.config:
-        app.config["SQLALCHEMY_DATABASE_URI"] = os.environ["DATABASE_URL"]
+    Heroku(app)
 
     if "REDISTOGO_URL" in os.environ:
-        app.config["RQ_LOW_URL"] = os.environ["REDISTOGO_URL"]
+        app.config.update({
+            'RQ_DEFAULT_HOST': app.config["REDIS_HOST"],
+            'RQ_DEFAULT_PORT': app.config["REDIS_PORT"],
+            'RQ_DEFAULT_PASSWORD': app.config['REDIS_PASSWORD']
+        })
 
     db.app = app  # don't understand why I need to this
     db.init_app(app)
+    redis.init_app(app)
 
     RQ(app)
 

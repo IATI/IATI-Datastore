@@ -1,6 +1,9 @@
 from flask.ext.sqlalchemy import SQLAlchemy
+from flask.ext.redis import Redis
 
 db = SQLAlchemy()
+redis = Redis()
+
 _logger = None
 
 

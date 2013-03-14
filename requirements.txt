@@ -21,6 +21,7 @@ rq==0.3.7
 Unidecode==0.04.12
 requests==1.1.0
 Flask-RQ==0.2
+flask-heroku==0.1.4
 
 # should not be pinned, see https://devcenter.heroku.com/articles/newrelic
 newrelic

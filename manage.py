@@ -5,14 +5,13 @@ import codecs
 import logging
 
 import requests
-import redis
 import sqlalchemy as sa
 import prettytable
 from flask.ext.script import Manager
 from flask.ext.rq import get_worker
 
-from iatilib.frontend import create_app, db
-from iatilib import magic_numbers, parse, codelists, model
+from iatilib.frontend import create_app
+from iatilib import magic_numbers, parse, codelists, model, db, redis
 from iatilib.crawler import manager as crawler_manager
 
 
@@ -22,7 +21,12 @@ manager.add_command("crawl", crawler_manager)
 
 @manager.shell
 def make_shell_context():
-    return dict(app=manager.app, db=db, models=model, codelists=codelists)
+    return dict(
+        app=manager.app,
+        db=db,
+        rdb=redis,
+        models=model,
+        codelists=codelists)
 
 
 def qtable(itr, headers=None):
