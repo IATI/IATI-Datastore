@@ -225,6 +225,7 @@ class Budget(db.Model):
     period_start = sa.Column(sa.Date, nullable=True)
     value_currency = sa.Column(codelists.Currency.db_type())
     value_amount = sa.Column(sa.Integer)
+    activity = sa.orm.relationship("Activity")
 
 
 class Dataset(db.Model):

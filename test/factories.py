@@ -6,7 +6,7 @@ from iatilib import codelists
 from iatilib.frontend import db
 from iatilib.model import (
     Activity, Transaction, Organisation, SectorPercentage, CountryPercentage,
-    Participation
+    Participation, Budget
 )
 
 
@@ -57,3 +57,7 @@ class TransactionFactory(factory.Factory):
     value_amount = 0
     value_date = datetime.date(1972, 1, 1)
     date = datetime.date(1973, 2, 2)
+
+class BudgetFactory(factory.Factory):
+    activity = factory.SubFactory(ActivityFactory)
+    type = codelists.BudgetType.original
