@@ -97,3 +97,57 @@ class TestTransactionFilter(AppTestCase):
         })
         self.assertIn(trans_in, transactions.all())
         self.assertNotIn(trans_not, transactions.all())
+
+
+class TestBudgetFilter(AppTestCase):
+    def test_by_country_code(self):
+        budget_in = fac.BudgetFactory.create(
+            activity=fac.ActivityFactory.build(
+                recipient_country_percentages=[
+                    fac.CountryPercentageFactory.build(
+                        country=cl.Country.libyan_arab_jamahiriya),
+                ])
+        )
+        budget_not = fac.BudgetFactory.create(
+            activity=fac.ActivityFactory.build(
+                recipient_country_percentages=[
+                    fac.CountryPercentageFactory.build(
+                        country=cl.Country.zambia),
+                ])
+        )
+        budgets = dsfilter.budgets({
+            "country_code": u"LY"
+        })
+        self.assertIn(budget_in, budgets.all())
+        self.assertNotIn(budget_not, budgets.all())
+
+    def test_by_reporting_org_ref(self):
+        budget_in = fac.BudgetFactory.create(
+            activity=fac.ActivityFactory.build(reporting_org__ref=u"AAA"))
+        budget_not = fac.BudgetFactory.create(
+            activity=fac.ActivityFactory.build(reporting_org__ref=u"ZZZ"))
+        budgets = dsfilter.budgets({
+            "reporting_org_ref": u"AAA"
+        })
+        self.assertIn(budget_in, budgets.all())
+        self.assertNotIn(budget_not, budgets.all())
+
+    def test_by_participating_org_ref(self):
+        budget_in = fac.BudgetFactory.create(
+            activity=fac.ActivityFactory.build(
+                participating_orgs=[
+                    fac.ParticipationFactory.build(
+                        organisation__ref=u"AAA")
+                ]))
+        budget_not = fac.BudgetFactory.create(
+            activity=fac.ActivityFactory.build(
+                participating_orgs=[
+                    fac.ParticipationFactory.build(
+                        organisation__ref=u"ZZZ")
+                ]))
+
+        budgets = dsfilter.budgets({
+            "participating_org_ref": u"AAA"
+        })
+        self.assertIn(budget_in, budgets.all())
+        self.assertNotIn(budget_not, budgets.all())
