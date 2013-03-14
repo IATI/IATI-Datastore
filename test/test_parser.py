@@ -139,6 +139,10 @@ class TestParseActivity(AppTestCase):
         act = {a.iati_identifier:a for a in activities}
         self.assertEquals(None, act[u"GB-CHC-272465-680"].start_actual)
 
+    def test_budget(self):
+        activity = parse.activity(fixture("default_currency.xml"))
+        self.assertEquals(6, len(activity.budgets))
+
 
 class TestFunctional(AppTestCase):
     def test_save_parsed_activity(self):
@@ -257,6 +261,46 @@ class TestTransaction(AppTestCase):
                 </transaction>''')
         ])[0]
         self.assertEquals(2663000000, transaction.value_amount)
+
+
+class TestBudget(TestCase):
+    def parse_budget(self):
+        return parse.budgets([ET.XML("""
+            <budget type="1">
+                <period-end iso-date="2010-03-31" />
+                <value currency="USD">1840852</value>
+            </budget>
+        """)])[0]
+
+    def test_budget_type(self):
+        budget = self.parse_budget()
+        self.assertEquals(budget.type, cl.BudgetType.original)
+
+    def test_budget_type_looser(self):
+        budget = parse.budgets([ET.XML("""
+            <budget type="Original">
+                <period-end iso-date="2010-03-31" />
+                <value currency="USD">1840852</value>
+            </budget>
+        """)])[0]
+        self.assertEquals(budget.type, cl.BudgetType.original)
+
+    def test_budget_period_end(self):
+        budget = self.parse_budget()
+        self.assertEquals(budget.period_end, datetime.date(2010, 3, 31))
+
+    def test_budget_period_start(self):
+        budget = self.parse_budget()
+        self.assertEquals(budget.period_start, None)
+
+    def test_value_currency(self):
+        budget = self.parse_budget()
+        self.assertEquals(budget.value_currency, cl.Currency.us_dollar)
+
+    def test_value_amount(self):
+        budget = self.parse_budget()
+        self.assertEquals(budget.value_amount, 1840852)
+
 
 
 class TestDates(TestCase):

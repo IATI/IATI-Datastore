@@ -9,7 +9,7 @@ from dateutil.parser import parse as parse_date
 from . import db
 from iatilib.model import (
     Activity, Organisation, Participation, CountryPercentage, Transaction,
-    SectorPercentage)
+    SectorPercentage, Budget)
 from iatilib import codelists as cl
 
 log = logging.getLogger("parser")
@@ -127,6 +127,32 @@ def sector_percentages(xml):
     return ret
 
 
+def budgets(xml):
+    def budget_type(ele):
+        typestr = xval(ele, "@type")
+        try:
+            return cl.BudgetType.from_string(typestr)
+        except ValueError:
+            return getattr(cl.BudgetType, typestr.lower())
+
+    def process(ele):
+        return Budget(
+            type=budget_type(ele),
+            value_currency=cl.Currency.from_string(xval(ele, "value/@currency")),
+            value_amount=iati_int(xval(ele, "value/text()")),
+            period_start=iati_date(xval(ele, "period-start/@iso-date", None)),
+            period_end=iati_date(xval(ele, "period-end/@iso-date", None)),
+        )
+
+    ret = []
+    for ele in xml:
+        try:
+            ret.append(process(ele))
+        except MissingValue:
+            pass
+    return ret
+
+
 def _open_resource(xml_resource):
     if isinstance(xml_resource, basestring):
         if os.path.exists(xml_resource):
@@ -156,6 +182,7 @@ def activity(xml_resource):
         "start_actual": iati_date(
             xval(xml, "./activity-date[@type='start-actual']/@iso-date", None)),
         "sector_percentages": sector_percentages(xml.xpath("./sector")),
+        "budgets": budgets(xml.xpath("./budget")),
         "raw_xml": ET.tostring(xml, encoding=unicode)
     }
     return Activity.as_unique(db.session, **data)

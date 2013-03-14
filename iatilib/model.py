@@ -115,6 +115,7 @@ class Activity(db.Model, UniqueMixin):
     recipient_country_percentages = sa.orm.relationship("CountryPercentage")
     transactions = sa.orm.relationship("Transaction")
     sector_percentages = sa.orm.relationship("SectorPercentage")
+    budgets = sa.orm.relationship("Budget")
 
     @classmethod
     def unique_hash(cls, iati_identifier, **kw):
@@ -212,6 +213,18 @@ class SectorPercentage(db.Model):
         nullable=False)
     percentage = sa.Column(sa.Integer, nullable=True)
     activity = sa.orm.relationship("Activity")
+
+
+class Budget(db.Model):
+    __tablename__ = "budget"
+    id = sa.Column(sa.Integer, primary_key=True)
+    activity_id = sa.Column(
+        sa.ForeignKey("activity.iati_identifier"))
+    type = sa.Column(codelists.BudgetType.db_type())
+    period_end = sa.Column(sa.Date, nullable=True)
+    period_start = sa.Column(sa.Date, nullable=True)
+    value_currency = sa.Column(codelists.Currency.db_type())
+    value_amount = sa.Column(sa.Integer)
 
 
 class Dataset(db.Model):
