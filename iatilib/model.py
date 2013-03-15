@@ -111,6 +111,10 @@ class Activity(db.Model, UniqueMixin):
         "activity_websites",
         "url",
         creator=lambda url: ActivityWebsite(url=url))
+    created = sa.Column(
+        sa.DateTime,
+        nullable=False,
+        default=datetime.datetime.utcnow)
     participating_orgs = sa.orm.relationship("Participation")
     recipient_country_percentages = sa.orm.relationship("CountryPercentage")
     transactions = sa.orm.relationship("Transaction")
