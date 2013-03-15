@@ -170,7 +170,14 @@ def status():
     )
 
     print status_line(
-        "resources not fetched",
+        "resources have had no attempt to fetch",
+        Resource.query.outerjoin(Dataset).filter(
+            Resource.last_fetch == None),
+        Resource.query,
+    )
+
+    print status_line(
+        "resources not successfully fetched",
         Resource.query.outerjoin(Dataset).filter(
             Resource.last_succ == None),
         Resource.query,
@@ -218,8 +225,15 @@ def status():
 @manager.command
 def enqueue():
     rq = get_queue()
+    yesterday = datetime.datetime.utcnow() - datetime.timedelta(days=1)
 
-    unfetched_resources = Resource.query.filter(Resource.last_succ == None)
+    unfetched_resources = Resource.query.filter(
+        sa.or_(
+            Resource.last_fetch == None,
+            sa.and_(
+                Resource.last_succ == None,
+                Resource.last_fetch <= yesterday
+            )))
     print "Enqueuing {0:d} unfetched resources".format(
         unfetched_resources.count()
     )
