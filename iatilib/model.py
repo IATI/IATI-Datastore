@@ -120,6 +120,7 @@ class Activity(db.Model, UniqueMixin):
     transactions = sa.orm.relationship("Transaction")
     sector_percentages = sa.orm.relationship("SectorPercentage")
     budgets = sa.orm.relationship("Budget")
+    resource = sa.orm.relationship("Resource")
 
     @classmethod
     def unique_hash(cls, iati_identifier, **kw):
@@ -260,6 +261,6 @@ class Resource(db.Model):
     last_succ = sa.Column(sa.DateTime)        # last time status code was 200
     last_parsed = sa.Column(sa.DateTime)      # when parsing last completed
     last_parse_error = sa.Column(sa.Unicode)  # last error from xml parser
-    document = sa.Column(sa.LargeBinary)      # the downloaded document
+    document = sa.orm.deferred(sa.Column(sa.LargeBinary))
     etag = sa.Column(sa.Unicode)
     activities = sa.orm.relationship("Activity")

@@ -36,7 +36,7 @@ def make_shell_context():
         app=manager.app,
         db=db,
         rdb=redis,
-        models=model,
+        model=model,
         codelists=codelists)
 
 

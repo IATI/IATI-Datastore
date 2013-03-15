@@ -5,7 +5,7 @@ import mock
 
 from . import AppTestCase
 
-from iatilib import crawler
+from iatilib import crawler, db
 from iatilib.model import Dataset, Resource
 
 
@@ -31,6 +31,29 @@ class TestCrawler(AppTestCase):
         dataset = crawler.fetch_dataset_metadata(Dataset())
         self.assertEquals(1, len(dataset.resources))
         self.assertEquals("http://foo", dataset.resources[0].url)
+
+    @mock.patch('iatilib.crawler.ckanclient.CkanClient.package_entity_get')
+    def test_fetch_dataset_with_many_resources(self, mock):
+        mock.return_value = {"resources": [
+            {"url": "http://foo"},
+            {"url": "http://bar"},
+            {"url": "http://baz"},
+        ]}
+        dataset = crawler.fetch_dataset_metadata(Dataset())
+        self.assertEquals(3, len(dataset.resources))
+
+    @mock.patch('iatilib.crawler.ckanclient.CkanClient.package_entity_get')
+    def test_fetch_dataset_count_commited_resources(self, mock):
+        mock.return_value = {
+            "resources": [
+                {"url": u"http://foo"},
+                {"url": u"http://bar"},
+                {"url": u"http://baz"},
+            ]
+        }
+        crawler.fetch_dataset_metadata(Dataset(name=u"tstds"))
+        db.session.commit()
+        self.assertEquals(3, Resource.query.count())
 
     @mock.patch('iatilib.crawler.requests')
     def test_fetch_resource_succ(self, mock):

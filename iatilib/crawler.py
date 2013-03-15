@@ -1,13 +1,14 @@
 import datetime
 import logging
 
+import sqlalchemy as sa
 import requests
 import ckanclient
 from dateutil.parser import parse as date_parser
 from flask.ext.rq import get_queue
 
 from iatilib import db, parse
-from iatilib.model import Dataset, Resource
+from iatilib.model import Dataset, Resource, Activity
 
 log = logging.getLogger("crawler")
 
@@ -83,13 +84,19 @@ def parse_resource(resource):
     return resource
 
 
+def update_activities(resource_url):
+    resource = Resource.query.get(resource_url)
+    parse_resource(resource)
+    db.session.commit()
+
+
 def update_resource(resource_url):
+    rq = get_queue()
     resource = fetch_resource(Resource.query.get(resource_url))
     db.session.commit()
 
     if resource.last_status_code == 200:
-        parse_resource(resource)
-        db.session.commit()
+        rq.enqueue(update_activities, args=(resource.url,), result_ttl=0)
 
 
 def update_dataset(dataset_name):
@@ -134,6 +141,108 @@ def documents(verbose=False):
             if verbose:
                 print resource.last_status_code
             db.session.commit()
+
+
+def status_line(msg, filt, tot):
+    return "{filt_c:4d}/{tot_c:4d} ({pct:6.2%}) {msg}".format(
+        filt_c=filt.count(),
+        tot_c=tot.count(),
+        pct=1.0 * filt.count() / tot.count(),
+        msg=msg
+    )
+
+
+@manager.command
+def status():
+    print "%d jobs on queue" % get_queue().count
+
+    print status_line(
+        "datasets have no metadata",
+        Dataset.query.filter_by(last_modified=None),
+        Dataset.query,
+    )
+
+    print status_line(
+        "datasets not seen in the last day",
+        Dataset.query.filter(Dataset.last_seen <
+            (datetime.datetime.utcnow() - datetime.timedelta(days=1))),
+        Dataset.query,
+    )
+
+    print status_line(
+        "resources not fetched",
+        Resource.query.outerjoin(Dataset).filter(
+            Resource.last_succ == None),
+        Resource.query,
+    )
+
+    print status_line(
+        "resources not fetched since modification",
+        Resource.query.outerjoin(Dataset).filter(
+            sa.or_(
+                Resource.last_succ == None,
+                Resource.last_succ < Dataset.last_modified)),
+        Resource.query,
+    )
+
+    print status_line(
+        "resources not parsed since mod",
+        Resource.query.outerjoin(Dataset).filter(
+            sa.or_(
+                Resource.last_succ == None,
+                Resource.last_parsed < Dataset.last_modified)),
+        Resource.query,
+    )
+
+    print status_line(
+        "resources have no activites",
+        db.session.query(Resource.url).outerjoin(Activity)
+        .group_by(Resource.url)
+        .having(sa.func.count(Activity.iati_identifier) == 0),
+        Resource.query,
+    )
+
+
+    print
+    # out of date activitiy was created < resource last_parsed
+    print "{nofetched_c}/{res_c} ({pct:.2%}) activities out of date".format(
+        nofetched_c=Activity.query.join(Resource).filter(
+            Activity.created < Resource.last_parsed).count(),
+        res_c=Activity.query.count(),
+        pct=1.0 * Activity.query.join(Resource).filter(
+            Activity.created < Resource.last_parsed).count() /
+            Activity.query.count()
+    )
+
+
+@manager.command
+def enqueue():
+    rq = get_queue()
+
+    unfetched_resources = Resource.query.filter(Resource.last_succ == None)
+    print "Enqueuing {0:d} unfetched resources".format(
+        unfetched_resources.count()
+    )
+    for resource in unfetched_resources:
+        rq.enqueue(
+            update_resource,
+            args=(resource.url,),
+            result_ttl=0)
+
+    ood_resources = Resource.query.filter(
+        Resource.activities.any(
+            Activity.created < Resource.last_parsed)
+    )
+
+    print "Enqueuing {0:d} resources with out of date activities".format(
+        ood_resources.count()
+    )
+    for resource in ood_resources:
+        rq.enqueue(
+            update_activities,
+            args=(resource.url,),
+            result_ttl=0)
+
 
 
 @manager.option('--limit', action="store", type=int,
