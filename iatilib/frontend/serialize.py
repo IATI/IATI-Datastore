@@ -125,6 +125,41 @@ def csv(query):
     return csv_serialize(fields, query)
 
 
+def csv_activity_by_country(query):
+    # example of query:
+    # db.session.query(Activity, CountryPercentage).join(CountryPercentage)
+    # filter(Activity.iati_identifier == u'4111241002')
+    def adapt(func):
+        "Adapt an accessor for an activity to accept (Activity, Country)"
+        # can't use functools.wraps on attrgetter
+        def wrapper(args):
+            a, c = args
+            return func(a)
+        return wrapper
+
+    fields = OrderedDict((
+        (u"iati-identifier", adapt(attrgetter(u"iati_identifier"))),
+        (u"recipient-country-code", lambda (a, c): c.country.value),
+        (u"recipient-country", lambda (a, c): c.country.description.title()),
+        (u"recipient-country-percentage", lambda (a, c): c.percentage),
+        (u"title", adapt(attrgetter(u"title"))),
+        (u"description", adapt(attrgetter(u"description"))),
+        (u"sector-code", adapt(sector_code_a)),
+        (u"sector", adapt(sector_desc_a)),
+        (u"sector-percentage", adapt(delim("sector_percentages", "percentage"))),
+        (u"currency", adapt(currency)),
+        (u"total-Commitment", adapt(total("commitments"))),
+        (u"total-Disbursement", adapt(total("disbursements"))),
+        (u"total-Expenditure", adapt(total("expenditures"))),
+        (u"total-Incoming Funds", adapt(total("incoming_funds"))),
+        (u"total-Interest Repayment", adapt(total("interest_repayment"))),
+        (u"total-Loan Repayment", adapt(total("loan_repayments"))),
+        (u"total-Reimbursement", adapt(total("reembursements"))),
+    ))
+
+    return csv_serialize(fields, query)
+
+
 def default_currency(transaction):
     if transaction.value_currency:
         return transaction.value_currency.value

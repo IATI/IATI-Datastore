@@ -203,7 +203,7 @@ class Transaction(db.Model):
             self.value_amount)
 
     def __repr__(self):
-        return u"Transaction(id=%d)" % self.id
+        return u"Transaction(id=%r)" % self.id
 
 
 class SectorPercentage(db.Model):

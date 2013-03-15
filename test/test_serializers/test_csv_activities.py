@@ -210,6 +210,133 @@ class TestCSVExample(CSVTstMixin, TestCase):
         self.assertField({"total-Expenditure": "2"}, data[0])
 
 
+class TestActivityByCountry(CSVTstMixin, TestCase):
+    def serialize(self, data):
+        return serialize.csv_activity_by_country(data)
+
+    def example(self):
+        activity = fac.ActivityFactory.build(
+            iati_identifier=u"GB-1-123",
+            title=u"Project 123",
+            description=u"Desc 123",
+            recipient_country_percentages=[
+                fac.CountryPercentageFactory.build(
+                    country=cl.Country.kenya,
+                    percentage=80
+                ),
+                fac.CountryPercentageFactory.build(
+                    country=cl.Country.uganda,
+                    percentage=20
+                ),
+            ],
+            sector_percentages=[
+                fac.SectorPercentageFactory.build(
+                    sector=cl.Sector.teacher_training,
+                    percentage=60),
+                fac.SectorPercentageFactory.build(
+                    sector=cl.Sector.primary_education,
+                    percentage=40),
+            ],
+            transactions=[
+                fac.TransactionFactory.build(
+                    value_currency=cl.Currency.pound_sterling,
+                    type=cl.TransactionType.commitment,
+                    value_amount=130000
+                )
+            ]
+        )
+        return [
+            (activity, activity.recipient_country_percentages[0]),
+            (activity, activity.recipient_country_percentages[1])
+        ]
+
+    def test_no_rows(self):
+        data = self.process(self.example())
+        self.assertEquals(2, len(data))
+
+    def test_column_list(self):
+        data = self.process(self.example())
+        cols = [
+            "recipient-country-code",
+            "recipient-country",
+            "recipient-country-percentage",
+            "iati-identifier",
+            "title",
+            "description",
+            "sector-code",
+            "sector",
+            "sector-percentage",
+            "currency",
+            "total-Commitment",
+            "total-Disbursement",
+            "total-Expenditure",
+            "total-Incoming Funds",
+            "total-Interest Repayment",
+            "total-Loan Repayment",
+            "total-Reimbursement"
+        ]
+        for col in cols:
+            self.assertIn(col, data[0].keys(), msg="Missing col %s" % col)
+
+    def test_country_code_0(self):
+        data = self.process(self.example())
+        self.assertField({"recipient-country-code": u"KE"}, data[0])
+
+    def test_country_code_1(self):
+        data = self.process(self.example())
+        self.assertField({"recipient-country-code": u"UG"}, data[1])
+
+    def test_country(self):
+        data = self.process(self.example())
+        self.assertField({"recipient-country": u"Kenya"}, data[0])
+
+    def test_recipient_country_percentage_0(self):
+        data = self.process(self.example())
+        self.assertField({"recipient-country-percentage": u"80"}, data[0])
+
+    def test_recipient_country_percentage_1(self):
+        data = self.process(self.example())
+        self.assertField({"recipient-country-percentage": u"20"}, data[1])
+
+    def test_identifier(self):
+        data = self.process(self.example())
+        self.assertField({"iati-identifier": u"GB-1-123"}, data[0])
+
+    def test_title(self):
+        data = self.process(self.example())
+        self.assertField({"title": u"Project 123"}, data[0])
+
+    def test_description(self):
+        data = self.process(self.example())
+        self.assertField({"description": u"Desc 123"}, data[0])
+
+    def test_sector_code_0(self):
+        data = self.process(self.example())
+        self.assertField({"sector-code": u"11130;11220"}, data[0])
+
+    def test_sector_code_1(self):
+        data = self.process(self.example())
+        self.assertField({"sector-code": u"11130;11220"}, data[1])
+
+    def test_sector(self):
+        data = self.process(self.example())
+        self.assertField(
+            {"sector": u"Teacher training;Primary education"},
+            data[1])
+
+    def test_sector_percentage(self):
+        data = self.process(self.example())
+        self.assertField({"sector-percentage": u"60;40"}, data[1])
+
+    def test_currency(self):
+        data = self.process(self.example())
+        self.assertField({"currency": u"GBP"}, data[1])
+
+    def test_total_commitment(self):
+        data = self.process(self.example())
+        self.assertField({"total-Commitment": u"130000"}, data[0])
+
+
 class TotalFieldMixin(object):
     # There are six total fields that behave identicaly
     def test_total(self):
