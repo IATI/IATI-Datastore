@@ -251,11 +251,11 @@ class Resource(db.Model):
     __tablename__ = "resource"
     url = sa.Column(sa.Unicode, primary_key=True)
     dataset_id = sa.Column(sa.ForeignKey("dataset.name"))
-    last_fetch = sa.Column(sa.DateTime)
-    last_status_code = sa.Column(sa.Integer)
-    last_succ = sa.Column(sa.DateTime)
-    last_parsed = sa.Column(sa.DateTime)
-    last_parse_error = sa.Column(sa.Unicode)
-    document = sa.Column(sa.LargeBinary)
+    last_fetch = sa.Column(sa.DateTime)       # most recent request of this url
+    last_status_code = sa.Column(sa.Integer)  # status code from last fetch
+    last_succ = sa.Column(sa.DateTime)        # last time status code was 200
+    last_parsed = sa.Column(sa.DateTime)      # when parsing last completed
+    last_parse_error = sa.Column(sa.Unicode)  # last error from xml parser
+    document = sa.Column(sa.LargeBinary)      # the downloaded document
     etag = sa.Column(sa.Unicode)
     activities = sa.orm.relationship("Activity")

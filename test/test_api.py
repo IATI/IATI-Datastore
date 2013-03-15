@@ -240,6 +240,11 @@ class TestActivityView(ClientTestCase):
         self.client.get('/api/1/access/activities?country_code=MW')
         self.assertEquals(1, mock.call_count)
 
+    @mock.patch('iatilib.frontend.api1.serialize.csv')
+    def test_serializer_called(self, mock):
+        self.client.get('/api/1/access/activities.csv')
+        self.assertEquals(1, mock.call_count)
+
     def test_invalid_format(self):
         resp = self.client.get('/api/1/access/activities.zzz')
         self.assertEquals(404, resp.status_code)
@@ -256,6 +261,11 @@ class TestTransactionView(ClientTestCase):
         self.client.get('/api/1/access/transactions.csv?country_code=MW')
         self.assertEquals(1, mock.call_count)
 
+    @mock.patch('iatilib.frontend.api1.serialize.transaction_csv')
+    def test_serializer_called(self, mock):
+        self.client.get('/api/1/access/transactions.csv')
+        self.assertEquals(1, mock.call_count)
+
     def test_invalid_format(self):
         resp = self.client.get('/api/1/access/transactions.xml')
         self.assertEquals(404, resp.status_code)
@@ -270,6 +280,11 @@ class TestBudgetView(ClientTestCase):
     @mock.patch('iatilib.frontend.api1.dsfilter.budgets')
     def test_filter_called(self, mock):
         self.client.get('/api/1/access/budgets.csv?country_code=MW')
+        self.assertEquals(1, mock.call_count)
+
+    @mock.patch('iatilib.frontend.api1.serialize.budget_csv')
+    def test_serializer_called(self, mock):
+        self.client.get('/api/1/access/budgets.csv')
         self.assertEquals(1, mock.call_count)
 
     def test_invalid_format(self):

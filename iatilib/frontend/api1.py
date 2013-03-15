@@ -89,5 +89,5 @@ def budgets_list(format):
     )
 
     return Response(
-        serialize.transaction_csv(pagination.items),
+        serialize.budget_csv(pagination.items),
         mimetype="text/csv")
