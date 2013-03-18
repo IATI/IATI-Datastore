@@ -229,53 +229,22 @@ class TestManyActivities(ClientTestCase):
         self.assertEquals(2, len(list(reader)))
 
 
-class TestActivityView(ClientTestCase):
-    @mock.patch('iatilib.frontend.api1.validators.activity_api_args')
-    def test_validator_called(self, mock):
-        self.client.get('/api/1/access/activities')
-        self.assertEquals(1, mock.call_count)
-
+class TestPagination(ClientTestCase):
     @mock.patch('iatilib.frontend.api1.dsfilter.activities')
-    def test_filter_called(self, mock):
-        self.client.get('/api/1/access/activities?country_code=MW')
-        self.assertEquals(1, mock.call_count)
+    def test_defaults(self, mock):
+        self.client.get('/api/1/access/activities')
+        self.assertEquals(1, mock.return_value.paginate.call_count)
 
-    @mock.patch('iatilib.frontend.api1.serialize.csv')
-    def test_serializer_called(self, mock):
-        self.client.get('/api/1/access/activities.csv')
-        self.assertEquals(1, mock.call_count)
+    def test_missing_page(self):
+        resp = self.client.get('/api/1/access/activities?page=2')
+        self.assertEquals(404, resp.status_code)
 
-    def test_invalid_format(self):
-        resp = self.client.get('/api/1/access/activities.zzz')
+    def test_invalid_page(self):
+        resp = self.client.get('/api/1/access/activities?page=-1')
         self.assertEquals(404, resp.status_code)
 
 
-class TestActivityByCountryView(ClientTestCase):
-    @mock.patch('iatilib.frontend.api1.validators.activity_api_args')
-    def test_validator_called(self, mock):
-        self.client.get('/api/1/access/activities/by_country.csv')
-        self.assertEquals(1, mock.call_count)
-
-    @mock.patch('iatilib.frontend.api1.dsfilter.activities_by_country')
-    def test_filter_called(self, mock):
-        self.client.get('/api/1/access/activities/by_country.csv?country_code=MW')
-        self.assertEquals(1, mock.call_count)
-
-    @mock.patch('iatilib.frontend.api1.serialize.csv_activity_by_country')
-    def test_serializer_called(self, mock):
-        self.client.get('/api/1/access/activities/by_country.csv')
-        self.assertEquals(1, mock.call_count)
-
-    def test_invalid_format(self):
-        resp = self.client.get('/api/1/access/activities/by_country.zzz')
-        self.assertEquals(404, resp.status_code)
-
-
-class TestActivityBySectorView(ClientTestCase):
-    base_url = '/api/1/access/activities/by_sector.csv'
-    filter = 'iatilib.frontend.api1.dsfilter.activities_by_sector'
-    serializer = 'iatilib.frontend.api1.serialize.csv_activity_by_sector'
-
+class ApiViewMixin(object):
     @mock.patch('iatilib.frontend.api1.validators.activity_api_args')
     def test_validator_called(self, mock):
         self.client.get(self.base_url)
@@ -296,58 +265,31 @@ class TestActivityBySectorView(ClientTestCase):
         self.assertEquals(404, resp.status_code)
 
 
-class TestTransactionView(ClientTestCase):
-    @mock.patch('iatilib.frontend.api1.validators.activity_api_args')
-    def test_validator_called(self, mock):
-        self.client.get('/api/1/access/transactions.csv')
-        self.assertEquals(1, mock.call_count)
+class TestActivityView(ClientTestCase, ApiViewMixin):
+    base_url = '/api/1/access/activities.csv'
+    filter = 'iatilib.frontend.api1.dsfilter.activities'
+    serializer = 'iatilib.frontend.api1.serialize.csv'
 
-    @mock.patch('iatilib.frontend.api1.dsfilter.transactions')
-    def test_filter_called(self, mock):
-        self.client.get('/api/1/access/transactions.csv?country_code=MW')
-        self.assertEquals(1, mock.call_count)
 
-    @mock.patch('iatilib.frontend.api1.serialize.transaction_csv')
-    def test_serializer_called(self, mock):
-        self.client.get('/api/1/access/transactions.csv')
-        self.assertEquals(1, mock.call_count)
+class TestActivityBySectorView(ClientTestCase, ApiViewMixin):
+    base_url = '/api/1/access/activities/by_sector.csv'
+    filter = 'iatilib.frontend.api1.dsfilter.activities_by_sector'
+    serializer = 'iatilib.frontend.api1.serialize.csv_activity_by_sector'
 
-    def test_invalid_format(self):
-        resp = self.client.get('/api/1/access/transactions.xml')
-        self.assertEquals(404, resp.status_code)
+
+class TestActivityByCountryView(ClientTestCase, ApiViewMixin):
+    base_url = '/api/1/access/activities/by_country.csv'
+    filter = 'iatilib.frontend.api1.dsfilter.activities_by_country'
+    serializer = 'iatilib.frontend.api1.serialize.csv_activity_by_country'
+
+
+class TestTransactionView(ClientTestCase, ApiViewMixin):
+    base_url = '/api/1/access/transactions.csv'
+    filter = 'iatilib.frontend.api1.dsfilter.transactions'
+    serializer = 'iatilib.frontend.api1.serialize.transaction_csv'
 
 
 class TestBudgetView(ClientTestCase):
-    @mock.patch('iatilib.frontend.api1.validators.activity_api_args')
-    def test_validator_called(self, mock):
-        self.client.get('/api/1/access/budgets.csv')
-        self.assertEquals(1, mock.call_count)
-
-    @mock.patch('iatilib.frontend.api1.dsfilter.budgets')
-    def test_filter_called(self, mock):
-        self.client.get('/api/1/access/budgets.csv?country_code=MW')
-        self.assertEquals(1, mock.call_count)
-
-    @mock.patch('iatilib.frontend.api1.serialize.budget_csv')
-    def test_serializer_called(self, mock):
-        self.client.get('/api/1/access/budgets.csv')
-        self.assertEquals(1, mock.call_count)
-
-    def test_invalid_format(self):
-        resp = self.client.get('/api/1/access/budgets.xml')
-        self.assertEquals(404, resp.status_code)
-
-
-class TestPagination(ClientTestCase):
-    @mock.patch('iatilib.frontend.api1.dsfilter.activities')
-    def test_defaults(self, mock):
-        self.client.get('/api/1/access/activities')
-        self.assertEquals(1, mock.return_value.paginate.call_count)
-
-    def test_missing_page(self):
-        resp = self.client.get('/api/1/access/activities?page=2')
-        self.assertEquals(404, resp.status_code)
-
-    def test_invalid_page(self):
-        resp = self.client.get('/api/1/access/activities?page=-1')
-        self.assertEquals(404, resp.status_code)
+    base_url = '/api/1/access/budgets.csv'
+    filter = 'iatilib.frontend.api1.dsfilter.budgets'
+    serializer = 'iatilib.frontend.api1.serialize.budget_csv'
