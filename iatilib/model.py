@@ -187,7 +187,8 @@ class Transaction(db.Model):
     __tablename__ = "transaction"
     id = sa.Column(sa.Integer, primary_key=True)
     activity_id = sa.Column(
-        sa.ForeignKey("activity.iati_identifier"))
+        sa.ForeignKey("activity.iati_identifier"),
+        index=True)
     type = sa.Column(codelists.TransactionType.db_type(), nullable=False)
     date = sa.Column(sa.Date, nullable=False)
     value_date = sa.Column(sa.Date, nullable=False)
@@ -224,7 +225,8 @@ class Budget(db.Model):
     __tablename__ = "budget"
     id = sa.Column(sa.Integer, primary_key=True)
     activity_id = sa.Column(
-        sa.ForeignKey("activity.iati_identifier"))
+        sa.ForeignKey("activity.iati_identifier"),
+        index=True)
     type = sa.Column(codelists.BudgetType.db_type())
     period_end = sa.Column(sa.Date, nullable=True)
     period_start = sa.Column(sa.Date, nullable=True)
@@ -255,7 +257,7 @@ class Dataset(db.Model):
 class Resource(db.Model):
     __tablename__ = "resource"
     url = sa.Column(sa.Unicode, primary_key=True)
-    dataset_id = sa.Column(sa.ForeignKey("dataset.name"))
+    dataset_id = sa.Column(sa.ForeignKey("dataset.name"), index=True)
     last_fetch = sa.Column(sa.DateTime)       # most recent request of this url
     last_status_code = sa.Column(sa.Integer)  # status code from last fetch
     last_succ = sa.Column(sa.DateTime)        # last time status code was 200
