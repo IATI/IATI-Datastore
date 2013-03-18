@@ -271,6 +271,31 @@ class TestActivityByCountryView(ClientTestCase):
         self.assertEquals(404, resp.status_code)
 
 
+class TestActivityBySectorView(ClientTestCase):
+    base_url = '/api/1/access/activities/by_sector.csv'
+    filter = 'iatilib.frontend.api1.dsfilter.activities_by_sector'
+    serializer = 'iatilib.frontend.api1.serialize.csv_activity_by_sector'
+
+    @mock.patch('iatilib.frontend.api1.validators.activity_api_args')
+    def test_validator_called(self, mock):
+        self.client.get(self.base_url)
+        self.assertEquals(1, mock.call_count)
+
+    def test_filter_called(self):
+        with mock.patch(self.filter) as mm:
+            self.client.get(self.base_url + '?country_code=MW')
+            self.assertEquals(1, mm.call_count)
+
+    def test_serializer_called(self):
+        with mock.patch(self.serializer) as mm:
+            self.client.get(self.base_url)
+            self.assertEquals(1, mm.call_count)
+
+    def test_invalid_format(self):
+        resp = self.client.get(self.base_url + ".zzz")
+        self.assertEquals(404, resp.status_code)
+
+
 class TestTransactionView(ClientTestCase):
     @mock.patch('iatilib.frontend.api1.validators.activity_api_args')
     def test_validator_called(self, mock):

@@ -201,8 +201,12 @@ def adapt_activity(func):
     return wrapper
 
 
-def adapt_activity_country(func):
-    "Adapt an accessor for an activity to accept (Activity, Country)"
+def adapt_activity_other(func):
+    """
+    Adapt an accessor for an activity to accept (Activity, other)
+
+    other is Country or Sector, but that param is ignored anyway.
+    """
     # can't use functools.wraps on attrgetter
     def wrapper(args):
         a, c = args
@@ -228,7 +232,28 @@ csv_activity_by_country = CSVSerializer((
     u"total-Interest Repayment",
     u"total-Loan Repayment",
     u"total-Reimbursement",
-), adapter=adapt_activity_country)
+), adapter=adapt_activity_other)
+
+
+csv_activity_by_sector = CSVSerializer((
+    (u"sector-code", lambda (a, sp): sp.sector.value),
+    (u"sector", lambda (a, sp): sp.sector.description.title()),
+    (u"sector-percentage", lambda (a, sp): sp.percentage),
+    u"iati-identifier",
+    u"title",
+    u"description",
+    u"recipient-country-code",
+    u"recipient-country",
+    u"recipient-country-percentage",
+    u"currency",
+    u"total-Commitment",
+    u"total-Disbursement",
+    u"total-Expenditure",
+    u"total-Incoming Funds",
+    u"total-Interest Repayment",
+    u"total-Loan Repayment",
+    u"total-Reimbursement",
+), adapter=adapt_activity_other)
 
 
 transaction_csv = CSVSerializer((

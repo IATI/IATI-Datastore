@@ -1,6 +1,7 @@
 from iatilib import codelists, db
 from iatilib.model import (
-    Activity, Budget, Transaction, CountryPercentage, Participation)
+    Activity, Budget, Transaction, CountryPercentage, SectorPercentage,
+    Participation)
 
 
 def _filter(query, args):
@@ -36,6 +37,11 @@ def activities_by_country(args):
         args
     )
 
+def activities_by_sector(args):
+    return _filter(
+        db.session.query(Activity, SectorPercentage).join(SectorPercentage),
+        args
+    )
 
 def transactions(args):
     return _filter(Transaction.query.join(Activity), args)

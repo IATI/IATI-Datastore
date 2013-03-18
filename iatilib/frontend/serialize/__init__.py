@@ -5,7 +5,9 @@ from sqlalchemy.orm.collections import InstrumentedList
 
 from iatilib import model
 
-from .csv import csv, csv_activity_by_country, transaction_csv, budget_csv
+from .csv import (
+    csv, csv_activity_by_country, csv_activity_by_sector,
+    transaction_csv, budget_csv)
 
 
 def pure_obj(obj):

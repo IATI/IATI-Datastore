@@ -210,10 +210,7 @@ class TestCSVExample(CSVTstMixin, TestCase):
         self.assertField({"total-Expenditure": "2"}, data[0])
 
 
-class TestActivityByCountry(CSVTstMixin, TestCase):
-    def serialize(self, data):
-        return serialize.csv_activity_by_country(data)
-
+class ActivityExample(object):
     def example(self):
         activity = fac.ActivityFactory.build(
             iati_identifier=u"GB-1-123",
@@ -245,10 +242,20 @@ class TestActivityByCountry(CSVTstMixin, TestCase):
                 )
             ]
         )
+        return activity
+
+
+class TestActivityByCountry(CSVTstMixin, ActivityExample, TestCase):
+    def serialize(self, data):
+        return serialize.csv_activity_by_country(data)
+
+    def example(self):
+        activity = super(TestActivityByCountry, self).example()
         return [
             (activity, activity.recipient_country_percentages[0]),
             (activity, activity.recipient_country_percentages[1])
         ]
+
 
     def test_no_rows(self):
         data = self.process(self.example())
@@ -335,6 +342,53 @@ class TestActivityByCountry(CSVTstMixin, TestCase):
     def test_total_commitment(self):
         data = self.process(self.example())
         self.assertField({"total-Commitment": u"130000"}, data[0])
+
+
+class TestActivityBySector(CSVTstMixin, ActivityExample, TestCase):
+    def serialize(self, data):
+        return serialize.csv_activity_by_sector(data)
+
+    def example(self):
+        activity = super(TestActivityBySector, self).example()
+        return [
+            (activity, activity.sector_percentages[0]),
+            (activity, activity.sector_percentages[1])
+        ]
+
+    def test_no_rows(self):
+        data = self.process(self.example())
+        self.assertEquals(2, len(data))
+
+    def test_sector_code_0(self):
+        data = self.process(self.example())
+        self.assertField({"sector-code": u"11130"}, data[0])
+
+    def test_sector_code_1(self):
+        data = self.process(self.example())
+        self.assertField({"sector-code": u"11220"}, data[1])
+
+    def test_sector_0(self):
+        data = self.process(self.example())
+        self.assertField({"sector": u"Teacher Training"}, data[0])
+
+    def test_sector_1(self):
+        data = self.process(self.example())
+        self.assertField({"sector": u"Primary Education"}, data[1])
+
+    def test_sector_percentage_0(self):
+        data = self.process(self.example())
+        self.assertField({"sector-percentage": u"60"}, data[0])
+
+    def test_sector_percentage_1(self):
+        data = self.process(self.example())
+        self.assertField({"sector-percentage": u"40"}, data[1])
+
+    def test_identifier(self):
+        data = self.process(self.example())
+        self.assertField({"iati-identifier": u"GB-1-123"}, data[0])
+
+
+
 
 
 class TotalFieldMixin(object):

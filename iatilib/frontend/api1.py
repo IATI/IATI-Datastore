@@ -77,6 +77,32 @@ def activities_by_country(format):
         mimetype="text/csv")
 
 
+@api.route('/access/activities/by_sector<format>')
+def activities_by_sector(format):
+    if not request.path.endswith("csv"):
+        abort(404)
+
+    try:
+        valid_args = validators.activity_api_args(MultiDict(request.args))
+    except validators.Invalid:
+        abort(404)
+
+    page = valid_args.get("page", 1)
+    per_page = valid_args.get("per_page", 50)
+    query = dsfilter.activities_by_sector(valid_args)
+    pagination = Pagination(
+        query,
+        page,
+        per_page,
+        query.count(),
+        query.limit(per_page).offset((page - 1) * per_page).all()
+    )
+
+    return Response(
+        serialize.csv_activity_by_sector(pagination.items),
+        mimetype="text/csv")
+
+
 @api.route('/access/transactions<format>', defaults={"format": ".csv"})
 def transactions_list(format):
     if not request.path.endswith(".csv"):
