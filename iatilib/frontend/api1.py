@@ -22,34 +22,7 @@ def about():
         status='healthy',
         indexed_activities=count_activity,
         indexed_transactions=count_transaction
-        )
-
-
-@api.route('/access/activities', defaults={"format": ".json"})
-@api.route('/access/activities<format>')
-def activities_list(format):
-    forms = {
-        ".xml": (serialize.xml, "application/xml"),
-        ".json": (serialize.json, "application/json"),  # rfc4627
-        ".csv": (serialize.csv, "text/csv")  # rfc4180
-    }
-
-    if format not in forms:
-        abort(404)
-
-    try:
-        valid_args = validators.activity_api_args(MultiDict(request.args))
-    except validators.Invalid:
-        abort(404)
-
-    query = dsfilter.activities(valid_args)
-    pagination = query.paginate(
-        valid_args.get("page", 1),
-        valid_args.get("per_page", 50),
     )
-
-    serializer, mimetype = forms[format]
-    return Response(serializer(pagination.items), mimetype=mimetype)
 
 
 class DataStoreView(MethodView):
@@ -57,35 +30,58 @@ class DataStoreView(MethodView):
     serializer = None
 
     def paginate(self, query, page, per_page):
-        return Pagination(
+        if page < 1:
+            abort(404)
+        items = query.limit(per_page).offset((page - 1) * per_page).all()
+        if not items and page != 1:
+            abort(404)
+        return Pagination(query, page, per_page, query.count(), items)
+
+    def validate_args(self):
+        try:
+            return validators.activity_api_args(MultiDict(request.args))
+        except validators.Invalid:
+            abort(404)
+
+    def get_results_page(self):
+        valid_args = self.validate_args()
+        query = self.filter(valid_args)
+        return self.paginate(
             query,
-            page,
-            per_page,
-            query.count(),
-            query.limit(per_page).offset((page - 1) * per_page).all()
+            valid_args.get("page", 1),
+            valid_args.get("per_page", 50),
         )
 
+
+class ActivityView(DataStoreView):
+    filter = staticmethod(dsfilter.activities)
+
+    def get(self, format):
+        forms = {
+            ".xml": (serialize.xml, "application/xml"),
+            ".json": (serialize.json, "application/json"),  # rfc4627
+            ".csv": (serialize.csv, "text/csv")  # rfc4180
+        }
+
+        if format not in forms:
+            abort(404)
+
+        pagination = self.get_results_page()
+        serializer, mimetype = forms[format]
+        return Response(
+            serializer(pagination.items),
+            mimetype=mimetype)
+
+
+class DataStoreCSVView(DataStoreView):
     def get(self, format=".csv"):
         if not request.path.endswith("csv"):
             abort(404)
 
-        try:
-            valid_args = validators.activity_api_args(MultiDict(request.args))
-        except validators.Invalid:
-            abort(404)
-
-        page = valid_args.get("page", 1)
-        per_page = valid_args.get("per_page", 50)
-        query = self.filter(valid_args)
-        pagination = self.paginate(query, page, per_page)
-
+        pagination = self.get_results_page()
         return Response(
             self.serializer(pagination.items),
             mimetype="text/csv")
-
-
-class DataStoreCSVView(DataStoreView):
-    pass
 
 
 class ActivityByCountryView(DataStoreCSVView):
@@ -107,6 +103,17 @@ class BudgetsView(DataStoreCSVView):
     filter = staticmethod(dsfilter.budgets)
     serializer = staticmethod(serialize.budget_csv)
 
+
+api.add_url_rule(
+    '/access/activities',
+    defaults={"format": ".json"},
+    view_func=ActivityView.as_view('activities')
+)
+
+api.add_url_rule(
+    '/access/activities<format>',
+    view_func=ActivityView.as_view('activities')
+)
 
 api.add_url_rule(
     '/access/activities/by_country<format>',
