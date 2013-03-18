@@ -100,47 +100,33 @@ def budget_value(budget):
     return budget.value_amount
 
 
-def adapt_activity(func):
-    "Adapt an accessor to work against object's activtiy attrib"
-    def wrapper(obj):
-        return func(obj.activity)
-    return wrapper
-
-
-def csv_serialize(fields, data):
-    out = StringIO()
-    writer = unicodecsv.writer(out, encoding='utf-8')
-    writer.writerow(fields.keys())
-    for obj in data:
-        row = [accessor(obj) for accessor in fields.values()]
-        writer.writerow(row)
-    return out.getvalue()
-
-
-class FieldDefDict(dict):
-    def __getitem__(self, k):
-        return (k, super(FieldDefDict, self).__getitem__(k))
-
-common_field = FieldDefDict({
-    u"iati-identifier": iati_identifier,
-    u"title": title,
-    u"description": description,
-    u"sector-code": sector_code,
-    u"sector": sector,
-    u"sector-percentage": sector_percentage,
-    u"recipient-country-code": recipient_country_code,
-    u"recipient-country": recipient_country,
-    u"recipient-country-percentage": recipient_country_percentage,
-})
-
-
 class FieldDict(OrderedDict):
+    common_field = {
+        u"iati-identifier": iati_identifier,
+        u"title": title,
+        u"description": description,
+        u"sector-code": sector_code,
+        u"sector": sector,
+        u"sector-percentage": sector_percentage,
+        u"recipient-country-code": recipient_country_code,
+        u"recipient-country": recipient_country,
+        u"recipient-country-percentage": recipient_country_percentage,
+        u"currency": currency,
+        u'total-Commitment': total("commitments"),
+        u"total-Disbursement": total("disbursements"),
+        u"total-Expenditure": total("expenditures"),
+        u"total-Incoming Funds": total("incoming_funds"),
+        u"total-Interest Repayment": total("interest_repayment"),
+        u"total-Loan Repayment": total("loan_repayments"),
+        u"total-Reimbursement": total("reembursements"),
+    }
+
     def __init__(self, itr, *args, **kw):
         adapt = kw.pop("adapter", lambda i: i)
 
         def field_for(i):
             if isinstance(i, basestring):
-                cf = common_field[i]
+                cf = (i, self.common_field[i])
                 return cf[0], adapt(cf[1])
             elif isinstance(i, tuple):
                 return i
@@ -153,102 +139,126 @@ class FieldDict(OrderedDict):
         )
 
 
-def csv(query):
-    fields = FieldDict((
-        "iati-identifier",
-        (u"reporting-org", reporting_org_name),
-        "title",
-        "description",
-        (u"recipient-country-code", recipient_country_code),
-        (u"recipient-country", recipient_country),
-        (u"recipient-country-percentage", recipient_country_percentage),
-        "sector-code",
-        "sector",
-        "sector-percentage",
-        (u"currency", currency),
-        (u"total-Disbursement", total("disbursements")),
-        (u"total-Expenditure", total("expenditures")),
-        (u"total-Incoming Funds", total("incoming_funds")),
-        (u"total-Interest Repayment", total("interest_repayment")),
-        (u"total-Loan Repayment", total("loan_repayments")),
-        (u"total-Reimbursement", total("reembursements")),
-        (u"start-planned", attrgetter(u"start_planned")),
-        (u"end-planned", attrgetter(u"end_planned")),
-        (u"start-actual", attrgetter(u"start_actual")),
-        (u"end-actual", attrgetter(u"end_actual")),
-    ))
-    return csv_serialize(fields, query)
+def identity(x):
+    return x
 
 
-def csv_activity_by_country(query):
-    # example of query:
-    # db.session.query(Activity, CountryPercentage).join(CountryPercentage)
-    # filter(Activity.iati_identifier == u'4111241002')
-    def adapt(func):
-        "Adapt an accessor for an activity to accept (Activity, Country)"
-        # can't use functools.wraps on attrgetter
-        def wrapper(args):
-            a, c = args
-            return func(a)
-        return wrapper
+class CSVSerializer(object):
+    """
+    A serializer that outputs the fields in the `fields` param.
 
-    fields = FieldDict((
-        "iati-identifier",
-        (u"recipient-country-code", lambda (a, c): c.country.value),
-        (u"recipient-country", lambda (a, c): c.country.description.title()),
-        (u"recipient-country-percentage", lambda (a, c): c.percentage),
-        "title",
-        "description",
-        "sector-code",
-        "sector",
-        "sector-percentage",
-        (u"currency", adapt(currency)),
-        (u"total-Commitment", adapt(total("commitments"))),
-        (u"total-Disbursement", adapt(total("disbursements"))),
-        (u"total-Expenditure", adapt(total("expenditures"))),
-        (u"total-Incoming Funds", adapt(total("incoming_funds"))),
-        (u"total-Interest Repayment", adapt(total("interest_repayment"))),
-        (u"total-Loan Repayment", adapt(total("loan_repayments"))),
-        (u"total-Reimbursement", adapt(total("reembursements"))),
-    ), adapter=adapt)
+    `fields` is a tuple which contains either strings which are
+    names  of common fields or 2-tuples of (fieldname, accessor) where
+    accessor is a function that will take an item from the query and
+    return the field value
 
-    return csv_serialize(fields, query)
+    `adaptor` is a function that will be composed with the accessors of
+    the common fields to adapt them such that the objects for your query
+    are compatible.
+    """
+    def __init__(self, fields, adapter=identity):
+        self.fields = FieldDict(fields, adapter=adapter)
+
+    def __call__(self, data):
+        out = StringIO()
+        writer = unicodecsv.writer(out, encoding='utf-8')
+        writer.writerow(self.fields.keys())
+        for obj in data:
+            row = [accessor(obj) for accessor in self.fields.values()]
+            writer.writerow(row)
+        return out.getvalue()
 
 
-def transaction_csv(query):
-    adapt = adapt_activity
-    fields = FieldDict((
-        (u'transaction-type', transaction_type),
-        (u'transaction-date', transaction_date),
-        (u"default-currency", default_currency),
-        (u"transaction-value", transaction_value),
-        u"iati-identifier",
-        u"title",
-        u"description",
-        (u"recipient-country-code", adapt(recipient_country_code)),
-        (u"recipient-country", adapt(recipient_country)),
-        (u"recipient-country-percentage", adapt(recipient_country_percentage)),
-        u"sector-code",
-        u"sector",
-        u"sector-percentage",
-    ), adapter=adapt_activity)
-    return csv_serialize(fields, query)
+csv = CSVSerializer((
+    "iati-identifier",
+    (u"reporting-org", reporting_org_name),
+    u"title",
+    u"description",
+    (u"recipient-country-code", recipient_country_code),
+    (u"recipient-country", recipient_country),
+    (u"recipient-country-percentage", recipient_country_percentage),
+    u"sector-code",
+    u"sector",
+    u"sector-percentage",
+    u"currency",
+    u"total-Disbursement",
+    u"total-Expenditure",
+    u"total-Incoming Funds",
+    u"total-Interest Repayment",
+    u"total-Loan Repayment",
+    u"total-Reimbursement",
+    (u"start-planned", attrgetter(u"start_planned")),
+    (u"end-planned", attrgetter(u"end_planned")),
+    (u"start-actual", attrgetter(u"start_actual")),
+    (u"end-actual", attrgetter(u"end_actual")),
+))
 
 
-def budget_csv(query):
-    adapt = adapt_activity
-    fields = OrderedDict((
-        (u'budget-period-start-date', period_start_date),
-        (u'budget-period-end-date', period_end_date),
-        (u"budget-value", budget_value),
-        (u"iati-identifier", adapt(iati_identifier)),
-        (u"title", adapt(title)),
-        (u"description", adapt(description)),
-        (u"recipient-country-code", adapt(recipient_country_code)),
-        (u"recipient-country", adapt(recipient_country)),
-        (u"recipient-country-percentage", adapt(recipient_country_percentage)),
-        (u"sector-code", adapt(sector_code)),
-        (u"sector", adapt(sector)),
-        (u"sector-percentage", adapt(sector_percentage)),
-    ))
-    return csv_serialize(fields, query)
+def adapt_activity(func):
+    "Adapt an accessor to work against object's activtiy attrib"
+    def wrapper(obj):
+        return func(obj.activity)
+    return wrapper
+
+
+def adapt_activity_country(func):
+    "Adapt an accessor for an activity to accept (Activity, Country)"
+    # can't use functools.wraps on attrgetter
+    def wrapper(args):
+        a, c = args
+        return func(a)
+    return wrapper
+
+
+csv_activity_by_country = CSVSerializer((
+    "iati-identifier",
+    (u"recipient-country-code", lambda (a, c): c.country.value),
+    (u"recipient-country", lambda (a, c): c.country.description.title()),
+    (u"recipient-country-percentage", lambda (a, c): c.percentage),
+    u"title",
+    u"description",
+    u"sector-code",
+    u"sector",
+    u"sector-percentage",
+    u"currency",
+    u"total-Commitment",
+    u"total-Disbursement",
+    u"total-Expenditure",
+    u"total-Incoming Funds",
+    u"total-Interest Repayment",
+    u"total-Loan Repayment",
+    u"total-Reimbursement",
+), adapter=adapt_activity_country)
+
+
+transaction_csv = CSVSerializer((
+    (u'transaction-type', transaction_type),
+    (u'transaction-date', transaction_date),
+    (u"default-currency", default_currency),
+    (u"transaction-value", transaction_value),
+    u"iati-identifier",
+    u"title",
+    u"description",
+    u"recipient-country-code",
+    u"recipient-country",
+    u"recipient-country-percentage",
+    u"sector-code",
+    u"sector",
+    u"sector-percentage",
+), adapter=adapt_activity)
+
+
+budget_csv = CSVSerializer((
+    (u'budget-period-start-date', period_start_date),
+    (u'budget-period-end-date', period_end_date),
+    (u"budget-value", budget_value),
+    u"iati-identifier",
+    u"title",
+    u"description",
+    u"recipient-country-code",
+    u"recipient-country",
+    u"recipient-country-percentage",
+    u"sector-code",
+    u"sector",
+    u"sector-percentage",
+), adapter=adapt_activity)
