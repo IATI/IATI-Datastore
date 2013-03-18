@@ -273,20 +273,20 @@ class TestActivityView(ClientTestCase, ApiViewMixin):
 
 class TestActivityBySectorView(ClientTestCase, ApiViewMixin):
     base_url = '/api/1/access/activities/by_sector.csv'
-    filter = 'iatilib.frontend.api1.dsfilter.activities_by_sector'
-    serializer = 'iatilib.frontend.api1.serialize.csv_activity_by_sector'
+    filter = 'iatilib.frontend.api1.ActivityBySectorView.filter'
+    serializer = 'iatilib.frontend.api1.ActivityBySectorView.serializer'
 
 
 class TestActivityByCountryView(ClientTestCase, ApiViewMixin):
     base_url = '/api/1/access/activities/by_country.csv'
-    filter = 'iatilib.frontend.api1.dsfilter.activities_by_country'
-    serializer = 'iatilib.frontend.api1.serialize.csv_activity_by_country'
+    filter = 'iatilib.frontend.api1.ActivityByCountryView.filter'
+    serializer = 'iatilib.frontend.api1.ActivityByCountryView.serializer'
 
 
 class TestTransactionView(ClientTestCase, ApiViewMixin):
     base_url = '/api/1/access/transactions.csv'
-    filter = 'iatilib.frontend.api1.dsfilter.transactions'
-    serializer = 'iatilib.frontend.api1.serialize.transaction_csv'
+    filter = 'iatilib.frontend.api1.TransactionsView.filter'
+    serializer = 'iatilib.frontend.api1.TransactionsView.serializer'
 
 
 class TestBudgetView(ClientTestCase):

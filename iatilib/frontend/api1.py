@@ -1,4 +1,5 @@
 from flask import request, Response, Blueprint, jsonify, abort
+from flask.views import MethodView
 from werkzeug.datastructures import MultiDict
 from flask.ext.sqlalchemy import Pagination
 
@@ -51,95 +52,74 @@ def activities_list(format):
     return Response(serializer(pagination.items), mimetype=mimetype)
 
 
-@api.route('/access/activities/by_country<format>')
-def activities_by_country(format):
-    if not request.path.endswith("csv"):
-        abort(404)
+class DataStoreView(MethodView):
+    filter = None
+    serializer = None
 
-    try:
-        valid_args = validators.activity_api_args(MultiDict(request.args))
-    except validators.Invalid:
-        abort(404)
+    def paginate(self, query, page, per_page):
+        return Pagination(
+            query,
+            page,
+            per_page,
+            query.count(),
+            query.limit(per_page).offset((page - 1) * per_page).all()
+        )
 
-    page = valid_args.get("page", 1)
-    per_page = valid_args.get("per_page", 50)
-    query = dsfilter.activities_by_country(valid_args)
-    pagination = Pagination(
-        query,
-        page,
-        per_page,
-        query.count(),
-        query.limit(per_page).offset((page - 1) * per_page).all()
-    )
+    def get(self, format=".csv"):
+        if not request.path.endswith("csv"):
+            abort(404)
 
-    return Response(
-        serialize.csv_activity_by_country(pagination.items),
-        mimetype="text/csv")
+        try:
+            valid_args = validators.activity_api_args(MultiDict(request.args))
+        except validators.Invalid:
+            abort(404)
 
+        page = valid_args.get("page", 1)
+        per_page = valid_args.get("per_page", 50)
+        query = self.filter(valid_args)
+        pagination = self.paginate(query, page, per_page)
 
-@api.route('/access/activities/by_sector<format>')
-def activities_by_sector(format):
-    if not request.path.endswith("csv"):
-        abort(404)
-
-    try:
-        valid_args = validators.activity_api_args(MultiDict(request.args))
-    except validators.Invalid:
-        abort(404)
-
-    page = valid_args.get("page", 1)
-    per_page = valid_args.get("per_page", 50)
-    query = dsfilter.activities_by_sector(valid_args)
-    pagination = Pagination(
-        query,
-        page,
-        per_page,
-        query.count(),
-        query.limit(per_page).offset((page - 1) * per_page).all()
-    )
-
-    return Response(
-        serialize.csv_activity_by_sector(pagination.items),
-        mimetype="text/csv")
+        return Response(
+            self.serializer(pagination.items),
+            mimetype="text/csv")
 
 
-@api.route('/access/transactions<format>', defaults={"format": ".csv"})
-def transactions_list(format):
-    if not request.path.endswith(".csv"):
-        abort(404)
-
-    try:
-        valid_args = validators.activity_api_args(MultiDict(request.args))
-    except validators.Invalid:
-        abort(404)
-
-    query = dsfilter.transactions(valid_args)
-    pagination = query.paginate(
-        valid_args.get("page", 1),
-        valid_args.get("per_page", 50),
-    )
-
-    return Response(
-        serialize.transaction_csv(pagination.items),
-        mimetype="text/csv")
+class DataStoreCSVView(DataStoreView):
+    pass
 
 
-@api.route('/access/budgets<format>', defaults={"format": ".csv"})
-def budgets_list(format):
-    if not request.path.endswith(".csv"):
-        abort(404)
+class ActivityByCountryView(DataStoreCSVView):
+    filter = staticmethod(dsfilter.activities_by_country)
+    serializer = staticmethod(serialize.csv_activity_by_country)
 
-    try:
-        valid_args = validators.activity_api_args(MultiDict(request.args))
-    except validators.Invalid:
-        abort(404)
 
-    query = dsfilter.budgets(valid_args)
-    pagination = query.paginate(
-        valid_args.get("page", 1),
-        valid_args.get("per_page", 50),
-    )
+class ActivityBySectorView(DataStoreCSVView):
+    filter = staticmethod(dsfilter.activities_by_sector)
+    serializer = staticmethod(serialize.csv_activity_by_sector)
 
-    return Response(
-        serialize.budget_csv(pagination.items),
-        mimetype="text/csv")
+
+class TransactionsView(DataStoreCSVView):
+    filter = staticmethod(dsfilter.transactions)
+    serializer = staticmethod(serialize.transaction_csv)
+
+
+class BudgetsView(DataStoreCSVView):
+    filter = staticmethod(dsfilter.budgets)
+    serializer = staticmethod(serialize.budget_csv)
+
+
+api.add_url_rule(
+    '/access/activities/by_country<format>',
+    view_func=ActivityByCountryView.as_view('activities_by_country'))
+
+api.add_url_rule(
+    '/access/activities/by_sector<format>',
+    view_func=ActivityBySectorView.as_view('activities_by_sector'))
+
+api.add_url_rule(
+    '/access/transactions<format>',
+    view_func=TransactionsView.as_view('transactions_list'))
+
+api.add_url_rule(
+    '/access/budgets<format>',
+    view_func=BudgetsView.as_view('budgets_list'))
