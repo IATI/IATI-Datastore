@@ -117,18 +117,54 @@ def csv_serialize(fields, data):
     return out.getvalue()
 
 
+class FieldDefDict(dict):
+    def __getitem__(self, k):
+        return (k, super(FieldDefDict, self).__getitem__(k))
+
+common_field = FieldDefDict({
+    u"iati-identifier": iati_identifier,
+    u"title": title,
+    u"description": description,
+    u"sector-code": sector_code,
+    u"sector": sector,
+    u"sector-percentage": sector_percentage,
+    u"recipient-country-code": recipient_country_code,
+    u"recipient-country": recipient_country,
+    u"recipient-country-percentage": recipient_country_percentage,
+})
+
+
+class FieldDict(OrderedDict):
+    def __init__(self, itr, *args, **kw):
+        adapt = kw.pop("adapter", lambda i: i)
+
+        def field_for(i):
+            if isinstance(i, basestring):
+                cf = common_field[i]
+                return cf[0], adapt(cf[1])
+            elif isinstance(i, tuple):
+                return i
+            else:
+                raise ValueError("%s is not allowed in FieldDict" % type(i))
+        super(FieldDict, self).__init__(
+            (field_for(i) for i in itr),
+            *args,
+            **kw
+        )
+
+
 def csv(query):
-    fields = OrderedDict((
-        (u"iati-identifier", iati_identifier),
+    fields = FieldDict((
+        "iati-identifier",
         (u"reporting-org", reporting_org_name),
-        (u"title", title),
-        (u"description", description),
+        "title",
+        "description",
         (u"recipient-country-code", recipient_country_code),
         (u"recipient-country", recipient_country),
         (u"recipient-country-percentage", recipient_country_percentage),
-        (u"sector-code", sector_code),
-        (u"sector", sector),
-        (u"sector-percentage", sector_percentage),
+        "sector-code",
+        "sector",
+        "sector-percentage",
         (u"currency", currency),
         (u"total-Disbursement", total("disbursements")),
         (u"total-Expenditure", total("expenditures")),
@@ -156,16 +192,16 @@ def csv_activity_by_country(query):
             return func(a)
         return wrapper
 
-    fields = OrderedDict((
-        (u"iati-identifier", adapt(iati_identifier)),
+    fields = FieldDict((
+        "iati-identifier",
         (u"recipient-country-code", lambda (a, c): c.country.value),
         (u"recipient-country", lambda (a, c): c.country.description.title()),
         (u"recipient-country-percentage", lambda (a, c): c.percentage),
-        (u"title", adapt(title)),
-        (u"description", adapt(description)),
-        (u"sector-code", adapt(sector_code)),
-        (u"sector", adapt(sector)),
-        (u"sector-percentage", adapt(sector_percentage)),
+        "title",
+        "description",
+        "sector-code",
+        "sector",
+        "sector-percentage",
         (u"currency", adapt(currency)),
         (u"total-Commitment", adapt(total("commitments"))),
         (u"total-Disbursement", adapt(total("disbursements"))),
@@ -174,28 +210,28 @@ def csv_activity_by_country(query):
         (u"total-Interest Repayment", adapt(total("interest_repayment"))),
         (u"total-Loan Repayment", adapt(total("loan_repayments"))),
         (u"total-Reimbursement", adapt(total("reembursements"))),
-    ))
+    ), adapter=adapt)
 
     return csv_serialize(fields, query)
 
 
 def transaction_csv(query):
     adapt = adapt_activity
-    fields = OrderedDict((
+    fields = FieldDict((
         (u'transaction-type', transaction_type),
         (u'transaction-date', transaction_date),
         (u"default-currency", default_currency),
         (u"transaction-value", transaction_value),
-        (u"iati-identifier", adapt(iati_identifier)),
-        (u"title", adapt(title)),
-        (u"description", adapt(description)),
+        u"iati-identifier",
+        u"title",
+        u"description",
         (u"recipient-country-code", adapt(recipient_country_code)),
         (u"recipient-country", adapt(recipient_country)),
         (u"recipient-country-percentage", adapt(recipient_country_percentage)),
-        (u"sector-code", adapt(sector_code)),
-        (u"sector", adapt(sector)),
-        (u"sector-percentage", adapt(sector_percentage)),
-    ))
+        u"sector-code",
+        u"sector",
+        u"sector-percentage",
+    ), adapter=adapt_activity)
     return csv_serialize(fields, query)
 
 
