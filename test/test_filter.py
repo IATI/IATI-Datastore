@@ -6,19 +6,10 @@ from .factories import create_activity
 
 from iatilib import codelists as cl
 from iatilib.frontend import dsfilter
+from iatilib.model import Activity
 
 
-class TestFilter(AppTestCase):
-    @skip("search by country name nonimpl")
-    def test_by_country_name(self):
-        act_in = create_activity(recipient_country__text=u"Libya")
-        act_not = create_activity(recipient_country__text=u"Test")
-        activities = dsfilter.activities({
-            "country": u"Libya"
-        })
-        self.assertIn(act_in, activities.all())
-        self.assertNotIn(act_not, activities.all())
-
+class TestActivityFilter(AppTestCase):
     def test_by_country_code(self):
         act_in = fac.ActivityFactory.create(
             recipient_country_percentages=[

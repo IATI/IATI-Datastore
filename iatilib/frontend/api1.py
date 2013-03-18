@@ -1,6 +1,6 @@
 from flask import request, Response, Blueprint, jsonify, abort
 from werkzeug.datastructures import MultiDict
-
+from flask.ext.sqlalchemy import Pagination
 
 from iatilib import db
 from iatilib.model import Activity, Transaction
@@ -49,6 +49,32 @@ def activities_list(format):
 
     serializer, mimetype = forms[format]
     return Response(serializer(pagination.items), mimetype=mimetype)
+
+
+@api.route('/access/activities/by_country<format>')
+def activities_by_country(format):
+    if not request.path.endswith("csv"):
+        abort(404)
+
+    try:
+        valid_args = validators.activity_api_args(MultiDict(request.args))
+    except validators.Invalid:
+        abort(404)
+
+    page = valid_args.get("page", 1)
+    per_page = valid_args.get("per_page", 50)
+    query = dsfilter.activities_by_country(valid_args)
+    pagination = Pagination(
+        query,
+        page,
+        per_page,
+        query.count(),
+        query.limit(per_page).offset((page - 1) * per_page).all()
+    )
+
+    return Response(
+        serialize.csv_activity_by_country(pagination.items),
+        mimetype="text/csv")
 
 
 @api.route('/access/transactions<format>', defaults={"format": ".csv"})
