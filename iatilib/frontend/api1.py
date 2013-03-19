@@ -1,3 +1,4 @@
+import sqlalchemy as sa
 from flask import request, Response, Blueprint, jsonify, abort
 from flask.views import MethodView
 from werkzeug.datastructures import MultiDict
@@ -43,9 +44,11 @@ class DataStoreView(MethodView):
         except validators.Invalid:
             abort(404)
 
-    def get_results_page(self):
+    def get_results_page(self, query_options=None):
         valid_args = self.validate_args()
         query = self.filter(valid_args)
+        if query_options:
+            query = query.options(*query_options)
         return self.paginate(
             query,
             valid_args.get("page", 1),
@@ -66,7 +69,12 @@ class ActivityView(DataStoreView):
         if format not in forms:
             abort(404)
 
-        pagination = self.get_results_page()
+        if format == ".json":
+            query_options = (sa.orm.joinedload('*'), )
+        else:
+            query_options = None
+
+        pagination = self.get_results_page(query_options=query_options)
         serializer, mimetype = forms[format]
         return Response(
             serializer(pagination.items),
