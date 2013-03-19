@@ -94,7 +94,23 @@ class TestCrawler(AppTestCase):
 
 class TestDate(TestCase):
     def test_date(self):
+        # I'm not installing pytz for a single unit test
+        ZERO = datetime.timedelta(0)
+
+        class UTC(datetime.tzinfo):
+            def utcoffset(self, dt):
+                return ZERO
+
+            def tzname(self, dt):
+                return "UTC"
+
+            def dst(self, dt):
+                return ZERO
+
+        utc = UTC()
+
         self.assertEquals(
-            "Wed, 22 Oct 2008 10:52:40 GMT",
-            crawler.http_date(datetime.datetime(2008, 10, 22, 11, 52, 40))
+            "Wed, 22 Oct 2008 11:52:40 GMT",
+            crawler.http_date(
+                datetime.datetime(2008, 10, 22, 11, 52, 40, tzinfo=utc))
         )
