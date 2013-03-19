@@ -284,6 +284,12 @@ class TestTransactionView(ClientTestCase, ApiViewMixin):
     serializer = 'iatilib.frontend.api1.TransactionsView.serializer'
 
 
+class TestTransactionByCountryView(ClientTestCase, ApiViewMixin):
+    base_url = '/api/1/access/transactions/by_country.csv'
+    filter = 'iatilib.frontend.api1.TransactionsByCountryView.filter'
+    serializer = 'iatilib.frontend.api1.TransactionsByCountryView.serializer'
+
+
 class TestBudgetView(ClientTestCase):
     base_url = '/api/1/access/budgets.csv'
     filter = 'iatilib.frontend.api1.dsfilter.budgets'

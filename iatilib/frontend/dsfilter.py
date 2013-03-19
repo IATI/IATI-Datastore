@@ -37,14 +37,25 @@ def activities_by_country(args):
         args
     )
 
+
 def activities_by_sector(args):
     return _filter(
         db.session.query(Activity, SectorPercentage).join(SectorPercentage),
         args
     )
 
+
 def transactions(args):
     return _filter(Transaction.query.join(Activity), args)
+
+
+def transactions_by_country(args):
+    return _filter(
+        db.session.query(Transaction, CountryPercentage)
+        .join(Activity)
+        .join(CountryPercentage),
+        args
+    )
 
 
 def budgets(args):

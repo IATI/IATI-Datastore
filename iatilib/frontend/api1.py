@@ -99,6 +99,11 @@ class TransactionsView(DataStoreCSVView):
     serializer = staticmethod(serialize.transaction_csv)
 
 
+class TransactionsByCountryView(DataStoreCSVView):
+    filter = staticmethod(dsfilter.transactions_by_country)
+    serializer = staticmethod(serialize.csv_transaction_by_country)
+
+
 class BudgetsView(DataStoreCSVView):
     filter = staticmethod(dsfilter.budgets)
     serializer = staticmethod(serialize.budget_csv)
@@ -126,6 +131,10 @@ api.add_url_rule(
 api.add_url_rule(
     '/access/transactions<format>',
     view_func=TransactionsView.as_view('transactions_list'))
+
+api.add_url_rule(
+    '/access/transactions/by_country<format>',
+    view_func=TransactionsByCountryView.as_view('transactions_by_country'))
 
 api.add_url_rule(
     '/access/budgets<format>',
