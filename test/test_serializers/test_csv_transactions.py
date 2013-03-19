@@ -13,6 +13,47 @@ class CSVTstMixin(_CSVTstMixin):
         return serialize.transaction_csv(data)
 
 
+def example():
+    activity = fac.ActivityFactory.build(
+        iati_identifier="GB-1-123",
+        title="Project 123",
+        description="Desc project 123",
+        recipient_country_percentages=[
+            fac.CountryPercentageFactory.build(
+                country=cl.Country.kenya,
+                percentage=80,
+            ),
+            fac.CountryPercentageFactory.build(
+                country=cl.Country.uganda,
+                percentage=20,
+            )
+        ],
+    )
+
+    transactions = [
+        fac.TransactionFactory.build(
+            type=cl.TransactionType.disbursement,
+            date=datetime.datetime(2012, 6, 30),
+            value_amount=10000,
+        ),
+        fac.TransactionFactory.build(
+            type=cl.TransactionType.disbursement,
+            date=datetime.datetime(2012, 9, 30),
+            value_amount=90000,
+        ),
+        fac.TransactionFactory.build(
+            type=cl.TransactionType.disbursement,
+            date=datetime.datetime(2012, 1, 31),
+            value_amount=30000,
+        ),
+    ]
+    for trans in transactions:
+        trans.activity = activity
+    activity.transactions = transactions
+    return activity
+
+
+
 class TestCSVTransactionExample(TestCase, CSVTstMixin):
     # See example here: https://docs.google.com/a/okfn.org/spreadsheet/ccc?key=0AqR8dXc6Ji4JdHJIWDJtaXhBV0IwOG56N0p1TE04V2c&usp=sharing#gid=5
     def test_transaction_type(self):
@@ -202,3 +243,35 @@ class TestCSVTransactionExample(TestCase, CSVTstMixin):
         ])
         self.assertField({"sector-percentage": ""}, data[0])
 
+
+class TestTransactionByCountry(TestCase, CSVTstMixin):
+    def serialize(self, data):
+        return serialize.csv_transaction_by_country(data)
+
+    def example(self):
+        ret = []
+        act = example()
+        for transaction in act.transactions:
+            for country in act.recipient_country_percentages:
+                ret.append((transaction, country))
+        return ret
+
+    def test_rec_country_code_0(self):
+        data = self.process(self.example())
+        self.assertField({"recipient-country-code": "KE"}, data[0])
+
+    def test_rec_country_code_1(self):
+        data = self.process(self.example())
+        self.assertField({"recipient-country-code": "UG"}, data[1])
+
+    def test_trans_date_0(self):
+        data = self.process(self.example())
+        self.assertField({"transaction-date": "06/30/2012"}, data[1])
+
+    def test_trans_date_2(self):
+        data = self.process(self.example())
+        self.assertField({"transaction-date": "09/30/2012"}, data[2])
+
+    def test_identifier(self):
+        data = self.process(self.example())
+        self.assertField({"iati-identifier": "GB-1-123"}, data[2])

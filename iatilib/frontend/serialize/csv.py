@@ -273,6 +273,35 @@ transaction_csv = CSVSerializer((
 ), adapter=adapt_activity)
 
 
+def trans(func):
+    def wrapper(args):
+        t, c = args
+        return func(t)
+    return wrapper
+
+
+def trans_activity(func):
+    def wrapper(args):
+        t, c = args
+        return func(t.activity)
+    return wrapper
+
+
+csv_transaction_by_country = CSVSerializer((
+    (u"recipient-country-code", lambda (a, c): c.country.value),
+    (u"recipient-country", lambda (a, c): c.country.description.title()),
+    (u"recipient-country-percentage", lambda (a, c): c.percentage),
+    (u'transaction-type', trans(transaction_type)),
+    (u'transaction-date', trans(transaction_date)),
+    (u"default-currency", trans(default_currency)),
+    u"iati-identifier",
+    u"title",
+    u"description",
+    u"sector-code",
+    u"sector",
+    u"sector-percentage",
+), adapter=trans_activity)
+
 budget_csv = CSVSerializer((
     (u'budget-period-start-date', period_start_date),
     (u'budget-period-end-date', period_end_date),

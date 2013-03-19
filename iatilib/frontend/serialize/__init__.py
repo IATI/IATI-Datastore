@@ -7,7 +7,8 @@ from iatilib import model
 
 from .csv import (
     csv, csv_activity_by_country, csv_activity_by_sector,
-    transaction_csv, budget_csv)
+    transaction_csv, csv_transaction_by_country,
+    budget_csv)
 
 
 def pure_obj(obj):
