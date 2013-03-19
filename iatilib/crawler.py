@@ -6,6 +6,7 @@ import requests
 import ckanclient
 from dateutil.parser import parse as date_parser
 from flask.ext.rq import get_queue
+from werkzeug.http import http_date
 
 from iatilib import db, parse
 from iatilib.model import Dataset, Resource, Activity
@@ -38,12 +39,6 @@ def fetch_dataset_metadata(dataset):
     dataset.resource_urls.extend(new_urls)
     db.session.add(dataset)
     return dataset
-
-
-def http_date(dt):
-    from wsgiref.handlers import format_date_time
-    from time import mktime
-    return format_date_time(mktime(dt.timetuple()))
 
 
 def fetch_resource(resource):
