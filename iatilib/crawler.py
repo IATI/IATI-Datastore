@@ -26,8 +26,11 @@ def fetch_dataset_list():
     incoming_ds_names = set(registry.package_register_get())
     new_datasets = [Dataset(name=n) for n
                     in incoming_ds_names - existing_ds_names]
-    db.session.add_all(new_datasets)
-    return existing_datasets + new_datasets
+    all_datasets = existing_datasets + new_datasets
+    for dataset in all_datasets:
+        dataset.last_seen = datetime.datetime.utcnow()
+    db.session.add_all(all_datasets)
+    return all_datasets
 
 
 def fetch_dataset_metadata(dataset):
