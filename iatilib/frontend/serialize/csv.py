@@ -314,6 +314,9 @@ csv_transaction_by_sector = CSVSerializer((
     u"iati-identifier",
     u"title",
     u"description",
+    u"recipient-country-code",
+    u"recipient-country",
+    u"recipient-country-percentage",
 ), adapter=trans_activity)
 
 

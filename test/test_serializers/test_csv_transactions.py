@@ -319,4 +319,7 @@ class TestTransactionBySector(TestCase, CSVTstMixin):
         data = self.process(self.example())
         self.assertField({"iati-identifier": "GB-1-123"}, data[2])
 
+    def test_recepient_country_code(self):
+        data = self.process(self.example())
+        self.assertField({"recipient-country-code": "KE;UG"}, data[0])
 
