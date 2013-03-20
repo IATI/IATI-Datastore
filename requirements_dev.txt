@@ -2,3 +2,6 @@
 mock==1.0.1
 factory-boy==1.2.0
 Fabric==1.6.0
+
+# for acceptance tests
+html==1.16

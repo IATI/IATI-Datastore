@@ -1,0 +1,4 @@
+transaction-type,transaction-date,default-currency,transaction-value,iati-identifier,title,description,recipient-country-code,recipient-country,recipient-country-percentage,sector-code,sector,sector-percentage
+D,6/30/2012,GBP,10000,GB-1-123,Project 123,Description of Project 123,KE;UG,Kenya;Uganda,80;20,11130;11220,Teacher training;Primary education,60;40
+D,9/30/2012,GBP,90000,GB-1-123,Project 123,Description of Project 123,KE;UG,Kenya;Uganda,80;20,11130;11220,Teacher training;Primary education,60;40
+D,1/31/2013,GBP,30000,GB-1-123,Project 123,Description of Project 123,KE;UG,Kenya;Uganda,80;20,11130;11220,Teacher training;Primary education,60;40
