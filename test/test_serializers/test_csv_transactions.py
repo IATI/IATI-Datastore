@@ -28,6 +28,17 @@ def example():
                 percentage=20,
             )
         ],
+        sector_percentages=[
+            fac.SectorPercentageFactory.build(
+                sector=cl.Sector.teacher_training,
+                percentage=60
+            ),
+            fac.SectorPercentageFactory.build(
+                sector=cl.Sector.primary_education,
+                percentage=40
+            ),
+
+        ]
     )
 
     transactions = [
@@ -51,7 +62,6 @@ def example():
         trans.activity = activity
     activity.transactions = transactions
     return activity
-
 
 
 class TestCSVTransactionExample(TestCase, CSVTstMixin):
@@ -275,3 +285,38 @@ class TestTransactionByCountry(TestCase, CSVTstMixin):
     def test_identifier(self):
         data = self.process(self.example())
         self.assertField({"iati-identifier": "GB-1-123"}, data[2])
+
+
+class TestTransactionBySector(TestCase, CSVTstMixin):
+    def serialize(self, data):
+        return serialize.csv_transaction_by_sector(data)
+
+    def example(self):
+        ret = []
+        act = example()
+        for transaction in act.transactions:
+            for sector in act.sector_percentages:
+                ret.append((transaction, sector))
+        return ret
+
+    def test_sector_code_0(self):
+        data = self.process(self.example())
+        self.assertField({"sector-code": "11130"}, data[0])
+
+    def test_sector_code_1(self):
+        data = self.process(self.example())
+        self.assertField({"sector-code": "11220"}, data[1])
+
+    def test_trans_date_0(self):
+        data = self.process(self.example())
+        self.assertField({"transaction-date": "06/30/2012"}, data[1])
+
+    def test_trans_date_2(self):
+        data = self.process(self.example())
+        self.assertField({"transaction-date": "09/30/2012"}, data[2])
+
+    def test_identifier(self):
+        data = self.process(self.example())
+        self.assertField({"iati-identifier": "GB-1-123"}, data[2])
+
+

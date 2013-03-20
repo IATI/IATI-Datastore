@@ -302,6 +302,21 @@ csv_transaction_by_country = CSVSerializer((
     u"sector-percentage",
 ), adapter=trans_activity)
 
+
+csv_transaction_by_sector = CSVSerializer((
+    (u"sector-code", lambda (t, sp): sp.sector.value),
+    (u"sector", lambda (t, sp): sp.sector.description.title()),
+    (u"sector-percentage", lambda (t, sp): sp.percentage),
+    (u'transaction-type', trans(transaction_type)),
+    (u'transaction-date', trans(transaction_date)),
+    (u"default-currency", trans(default_currency)),
+    (u'transaction-value', trans(transaction_value)),
+    u"iati-identifier",
+    u"title",
+    u"description",
+), adapter=trans_activity)
+
+
 budget_csv = CSVSerializer((
     (u'budget-period-start-date', period_start_date),
     (u'budget-period-end-date', period_end_date),
