@@ -82,7 +82,7 @@ class TestCSVTransactionExample(TestCase, CSVTstMixin):
         data = self.process([
             fac.TransactionFactory.build(date=datetime.date(2012, 6, 30))
         ])
-        self.assertField({"transaction-date": "06/30/2012"}, data[0])
+        self.assertField({"transaction-date": "2012-06-30"}, data[0])
 
     def test_default_currency(self):
         data = self.process([
@@ -276,11 +276,11 @@ class TestTransactionByCountry(TestCase, CSVTstMixin):
 
     def test_trans_date_0(self):
         data = self.process(self.example())
-        self.assertField({"transaction-date": "06/30/2012"}, data[1])
+        self.assertField({"transaction-date": "2012-06-30"}, data[1])
 
     def test_trans_date_2(self):
         data = self.process(self.example())
-        self.assertField({"transaction-date": "09/30/2012"}, data[2])
+        self.assertField({"transaction-date": "2012-09-30"}, data[2])
 
     def test_identifier(self):
         data = self.process(self.example())
@@ -309,11 +309,11 @@ class TestTransactionBySector(TestCase, CSVTstMixin):
 
     def test_trans_date_0(self):
         data = self.process(self.example())
-        self.assertField({"transaction-date": "06/30/2012"}, data[1])
+        self.assertField({"transaction-date": "2012-06-30"}, data[1])
 
     def test_trans_date_2(self):
         data = self.process(self.example())
-        self.assertField({"transaction-date": "09/30/2012"}, data[2])
+        self.assertField({"transaction-date": "2012-09-30"}, data[2])
 
     def test_identifier(self):
         data = self.process(self.example())

@@ -50,7 +50,7 @@ def transaction_type(transaction):
 
 
 def transaction_date(transaction):
-    return transaction.date.strftime("%m/%d/%Y") if transaction.date else ""
+    return transaction.date.strftime("%Y-%m-%d") if transaction.date else ""
 
 
 def transaction_value(transaction):
@@ -86,13 +86,13 @@ def reporting_org_name(activity):
 
 def period_start_date(budget):
     if budget.period_start:
-        return budget.period_start.strftime("%m/%d/%Y")
+        return budget.period_start.strftime("%Y-%m-%d")
     return u""
 
 
 def period_end_date(budget):
     if budget.period_end:
-        return budget.period_end.strftime("%m/%d/%Y")
+        return budget.period_end.strftime("%Y-%m-%d")
     return u""
 
 

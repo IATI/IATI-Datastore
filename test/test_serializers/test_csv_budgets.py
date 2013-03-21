@@ -19,13 +19,13 @@ class TestCSVBudgetExample(TestCase, CSVTstMixin):
         data = self.process([
             fac.BudgetFactory.build(period_start=datetime.date(2012, 1, 1))
         ])
-        self.assertField({"budget-period-start-date": "01/01/2012"}, data[0])
+        self.assertField({"budget-period-start-date": "2012-01-01"}, data[0])
 
     def test_end(self):
         data = self.process([
             fac.BudgetFactory.build(period_end=datetime.date(2012, 1, 1))
         ])
-        self.assertField({"budget-period-end-date": "01/01/2012"}, data[0])
+        self.assertField({"budget-period-end-date": "2012-01-01"}, data[0])
 
     def test_value(self):
         data = self.process([
