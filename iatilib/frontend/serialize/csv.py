@@ -304,8 +304,8 @@ csv_transaction_by_country = CSVSerializer((
 
 
 csv_transaction_by_sector = CSVSerializer((
-    (u"sector-code", lambda (t, sp): sp.sector.value),
-    (u"sector", lambda (t, sp): sp.sector.description.title()),
+    (u"sector-code", lambda (t, sp): sp.sector.value if sp.sector else ""),
+    (u"sector", lambda (t, sp): sp.sector.description.title() if sp.sector else ""),
     (u"sector-percentage", lambda (t, sp): sp.percentage),
     (u'transaction-type', trans(transaction_type)),
     (u'transaction-date', trans(transaction_date)),
