@@ -241,10 +241,10 @@ def enqueue():
             args=(resource.url,),
             result_ttl=0)
 
-    ood_resources = Resource.query.filter(
-        Resource.activities.any(
-            Activity.created < Resource.last_parsed)
-    )
+    ood_resources = Resource.query.filter(sa.or_(
+        Resource.last_parsed == None,
+        Resource.activities.any(Activity.created < Resource.last_parsed)
+    ))
 
     print "Enqueuing {0:d} resources with out of date activities".format(
         ood_resources.count()
