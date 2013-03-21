@@ -3,6 +3,7 @@ import codecs
 import datetime
 from unittest import TestCase
 
+import mock
 from lxml import etree as ET
 
 from . import db
@@ -262,6 +263,18 @@ class TestTransaction(AppTestCase):
         ])[0]
         self.assertEquals(2663000000, transaction.value_amount)
 
+    @mock.patch('iatilib.parse.iati_int')
+    def test_iati_int_called(self, mock):
+        transaction = parse.transactions([
+            ET.XML(u'''<transaction>
+                <transaction-date iso-date="31/12/2011" />
+                <description>test</description>
+                <value value-date="31/12/2011">-1000</value>
+                <transaction-type code="D">Disbursement</transaction-type>
+                </transaction>''')
+        ])[0]
+        self.assertEquals(1, mock.call_count)
+
 
 class TestBudget(TestCase):
     def parse_budget(self):
@@ -316,8 +329,11 @@ class TestDates(TestCase):
 
 
 class TestValue(TestCase):
-    def test_1(self):
-        self.assertEquals(20026, parse.iati_int(u"-20,026"))
+    def test_thousand_sep(self):
+        self.assertEquals(20026, parse.iati_int(u"20,026"))
+
+    def test_sign(self):
+        self.assertEquals(-20026, parse.iati_int(u"-20026"))
 
 
 class TestXVal(TestCase):

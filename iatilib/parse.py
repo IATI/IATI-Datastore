@@ -56,7 +56,7 @@ def iati_date(str):
 
 
 def iati_int(str):
-    return int(str.replace("-", "").replace(",", ""))
+    return int(str.replace(",", ""))
 
 
 def reporting_org(xml):
