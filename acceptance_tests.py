@@ -28,12 +28,16 @@ acceptance_tests/dfid_drc/outputs/transactions_by_sector.csv
 """
 
 import os
-import unicodecsv as csv
-import html
+import sys
 import glob
 import argparse
+import tempfile
+import webbrowser
+import time
 from collections import Counter
 
+import unicodecsv as csv
+import html
 
 from iatilib import db, parse
 from iatilib.frontend import create_app
@@ -129,7 +133,6 @@ hr {
         self.row = None
 
     def _row_fail(self, exp):
-        import ipdb; ipdb.set_trace()
         with self.table.tr() as row:
             row.td("missing")
             for i in exp:
@@ -197,9 +200,9 @@ class Test(object):
                         reporter.cell_error(r, e, exc)
                 reporter.row_end()
             for line in resp_csv:
-                reporter.row_missing(r)
+                reporter.row_missing(line)
             for line in exp_csv:
-                reporter.row_extra(r)
+                reporter.row_extra(line)
 
 
 base_url = "/api/1/access/"
@@ -254,9 +257,12 @@ def test(args):
         finally:
             test.teardown()
 
-        with open("acc_tests.html", "w") as outf:
-            outf.write(str(reporter.html))
         if not reporter.results.passed:
+            with tempfile.NamedTemporaryFile() as outf:
+                outf.write(str(reporter.html))
+                outf.flush()
+                webbrowser.open("file://" + outf.name)
+                time.sleep(1)  # or the file will be deleted before it can be shown
             print "FAIL", testdir, reporter.results
         agg_results.update(reporter.results)
     if agg_results.passed:
@@ -285,11 +291,13 @@ def arg_parser():
         epilog=test_structure,
         formatter_class=argparse.RawDescriptionHelpFormatter)
     subparsers = parser.add_subparsers()
+
     test_p = subparsers.add_parser(
         "test",
         help="Run tests",
     )
     test_p.set_defaults(func=test)
+
     build_p = subparsers.add_parser(
         "build",
         help="Build a test from a dir",
@@ -305,8 +313,14 @@ def arg_parser():
 def main():
     parser = arg_parser()
     args = parser.parse_args()
-    return args.func(args)
-
+    try:
+        return args.func(args)
+    except KeyboardInterrupt:
+        return 0
+    except Exception, err:
+        print >>sys.stderr, "Exiting on error"
+        print >>sys.stderr, err
+        return 255
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
