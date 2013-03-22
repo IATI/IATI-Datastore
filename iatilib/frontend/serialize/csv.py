@@ -350,3 +350,16 @@ csv_budget_by_country = CSVSerializer((
     u"sector",
     u"sector-percentage",
 ), adapter=trans_activity)
+
+
+csv_budget_by_sector = CSVSerializer((
+    (u"sector-code", lambda (t, sp): sp.sector.value if sp.sector else ""),
+    (u"sector", lambda (t, sp): sp.sector.description.title() if sp.sector else ""),
+    (u"sector-percentage", lambda (t, sp): sp.percentage),
+    (u'budget-period-start-date', trans(period_start_date)),
+    (u'budget-period-end-date', trans(period_end_date)),
+    (u"budget-value", trans(budget_value)),
+    u"iati-identifier",
+    u"title",
+    u"description",
+), adapter=trans_activity)

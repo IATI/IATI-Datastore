@@ -1,7 +1,7 @@
 from .csv import (
     csv, csv_activity_by_country, csv_activity_by_sector,
     transaction_csv, csv_transaction_by_country, csv_transaction_by_sector,
-    budget_csv, csv_budget_by_country)
+    budget_csv, csv_budget_by_country, csv_budget_by_sector)
 
 from .json import json
 

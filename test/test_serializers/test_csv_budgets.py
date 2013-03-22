@@ -220,3 +220,38 @@ class TestBudgetByCountry(TestCase, CSVTstMixin):
     def test_identifier(self):
         data = self.process(self.example())
         self.assertField({"iati-identifier": "GB-1-123"}, data[2])
+
+
+class TestBudgetBySector(TestCase, CSVTstMixin):
+    def serialize(self, data):
+        return serialize.csv_budget_by_sector(data)
+
+    def example(self):
+        ret = []
+        act = example()
+        for budget in act.budgets:
+            for sector in act.sector_percentages:
+                ret.append((budget, sector))
+        return ret
+
+    def test_sector_code_0(self):
+        data = self.process(self.example())
+        self.assertField({"sector-code": "11130"}, data[0])
+
+    def test_sector_code_1(self):
+        data = self.process(self.example())
+        self.assertField({"sector-code": "11220"}, data[1])
+
+    def test_budget_start_date(self):
+        data = self.process(self.example())
+        self.assertField(
+            {"budget-period-start-date": "2012-01-01"},
+            data[0])
+
+    def test_identifier(self):
+        data = self.process(self.example())
+        self.assertField({"iati-identifier": "GB-1-123"}, data[2])
+
+    # def test_recepient_country_code(self):
+    #     data = self.process(self.example())
+    #     self.assertField({"recipient-country-code": "KE;UG"}, data[0])
