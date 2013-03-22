@@ -13,6 +13,52 @@ class CSVTstMixin(_CSVTstMixin):
         return serialize.budget_csv(data)
 
 
+def example():
+    activity = fac.ActivityFactory.build(
+        iati_identifier="GB-1-123",
+        title="Project 123",
+        description="Desc project 123",
+        recipient_country_percentages=[
+            fac.CountryPercentageFactory.build(
+                country=cl.Country.kenya,
+                percentage=80,
+            ),
+            fac.CountryPercentageFactory.build(
+                country=cl.Country.uganda,
+                percentage=20,
+            )
+        ],
+        sector_percentages=[
+            fac.SectorPercentageFactory.build(
+                sector=cl.Sector.teacher_training,
+                percentage=60
+            ),
+            fac.SectorPercentageFactory.build(
+                sector=cl.Sector.primary_education,
+                percentage=40
+            ),
+
+        ]
+    )
+
+    budgets = [
+        fac.BudgetFactory.build(
+            period_start=datetime.datetime(2012, 1, 1),
+            period_end=datetime.datetime(2012, 12, 31),
+            value_amount=100000,
+        ),
+        fac.BudgetFactory.build(
+            period_start=datetime.datetime(2012, 1, 1),
+            period_end=datetime.datetime(2012, 12, 31),
+            value_amount=200000,
+        )
+
+    ]
+    for budget in budgets:
+        budget.activity = activity
+    activity.budgets = budgets
+    return activity
+
 class TestCSVBudgetExample(TestCase, CSVTstMixin):
     # See example here: https://docs.google.com/a/okfn.org/spreadsheet/ccc?key=0AqR8dXc6Ji4JdHJIWDJtaXhBV0IwOG56N0p1TE04V2c&usp=sharing#gid=5
     def test_start(self):
@@ -143,3 +189,34 @@ class TestCSVBudgetExample(TestCase, CSVTstMixin):
             )
         ])
         self.assertField({"sector-percentage": "20"}, data[0])
+
+
+class TestBudgetByCountry(TestCase, CSVTstMixin):
+    def serialize(self, data):
+        return serialize.csv_budget_by_country(data)
+
+    def example(self):
+        ret = []
+        act = example()
+        for budget in act.budgets:
+            for country in act.recipient_country_percentages:
+                ret.append((budget, country))
+        return ret
+
+    def test_rec_country_code_0(self):
+        data = self.process(self.example())
+        self.assertField({"recipient-country-code": "KE"}, data[0])
+
+    def test_rec_country_code_1(self):
+        data = self.process(self.example())
+        self.assertField({"recipient-country-code": "UG"}, data[1])
+
+    def test_budget_start_date(self):
+        data = self.process(self.example())
+        self.assertField(
+            {"budget-period-start-date": "2012-01-01"},
+            data[0])
+
+    def test_identifier(self):
+        data = self.process(self.example())
+        self.assertField({"iati-identifier": "GB-1-123"}, data[2])
