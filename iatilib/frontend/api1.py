@@ -122,6 +122,11 @@ class BudgetsView(DataStoreCSVView):
     serializer = staticmethod(serialize.budget_csv)
 
 
+class BudgetsByCountryView(DataStoreCSVView):
+    filter = staticmethod(dsfilter.budgets_by_country)
+    serializer = staticmethod(serialize.csv_budget_by_country)
+
+
 api.add_url_rule(
     '/access/activities',
     defaults={"format": ".json"},
@@ -153,7 +158,10 @@ api.add_url_rule(
     '/access/transactions/by_sector<format>',
     view_func=TransactionsBySectorView.as_view('transactions_by_sector'))
 
-
 api.add_url_rule(
     '/access/budgets<format>',
     view_func=BudgetsView.as_view('budgets_list'))
+
+api.add_url_rule(
+    '/access/budgets/by_country<format>',
+    view_func=BudgetsByCountryView.as_view('budgets_by_country'))

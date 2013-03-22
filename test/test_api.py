@@ -300,3 +300,9 @@ class TestBudgetView(ClientTestCase):
     base_url = '/api/1/access/budgets.csv'
     filter = 'iatilib.frontend.api1.dsfilter.budgets'
     serializer = 'iatilib.frontend.api1.serialize.budget_csv'
+
+
+class TestBudgetByCountryView(ClientTestCase, ApiViewMixin):
+    base_url = '/api/1/access/budgets/by_country.csv'
+    filter = 'iatilib.frontend.api1.BudgetsByCountryView.filter'
+    serializer = 'iatilib.frontend.api1.BudgetsByCountryView.serializer'
