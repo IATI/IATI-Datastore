@@ -181,6 +181,7 @@ csv = CSVSerializer((
     u"sector",
     u"sector-percentage",
     u"currency",
+    u'total-Commitment',
     u"total-Disbursement",
     u"total-Expenditure",
     u"total-Incoming Funds",
