@@ -207,7 +207,6 @@ def status():
         Resource.query,
     )
 
-
     print
     # out of date activitiy was created < resource last_parsed
     print "{nofetched_c}/{res_c} ({pct:.2%}) activities out of date".format(
@@ -221,8 +220,12 @@ def status():
 
 
 @manager.command
-def enqueue():
+def enqueue(careful=False):
     rq = get_queue()
+    if careful and rq.count > 0:
+        print "%d jobs on queue, not adding more" % rq.count
+        return
+
     yesterday = datetime.datetime.utcnow() - datetime.timedelta(days=1)
 
     unfetched_resources = Resource.query.filter(
@@ -256,11 +259,13 @@ def enqueue():
             result_ttl=0)
 
 
-
 @manager.option('--limit', action="store", type=int,
                 help="max no of datasets to update")
 @manager.option('-v', '--verbose', action="store_true")
 def update(verbose=False, limit=None):
+    """
+    Fetch all datasets from IATI registry; update any that have changed
+    """
     rq = get_queue()
 
     fetch_dataset_list()
