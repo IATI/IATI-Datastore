@@ -32,3 +32,10 @@ class TestApiSchema(TestCase):
             validators.activity_api_args({"date": "2007-05-25"}),
             {"date": datetime.date(2007, 5, 25)}
             )
+
+    def test_stream(self):
+        self.assertEquals(
+            validators.activity_api_args({"stream": "t"}),
+            {"stream": True}
+        )
+

@@ -15,4 +15,5 @@ activity_api_args = v.Schema({
     "per_page": v.All(v.Coerce(int), v.Range(max=250000)),
     "page": v.All(v.Coerce(int), v.Range(min=1)),
     "date": apidate,
+    "stream": v.All(v.Coerce(bool)),
 }, extra=True)
