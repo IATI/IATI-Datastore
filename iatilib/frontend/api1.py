@@ -30,6 +30,10 @@ class DataStoreView(MethodView):
     filter = None
     serializer = None
 
+    @property
+    def streaming(self):
+        return self.validate_args().get("stream", False)
+
     def paginate(self, query, page, per_page):
         if page < 1:
             abort(404)
@@ -39,10 +43,12 @@ class DataStoreView(MethodView):
         return Pagination(query, page, per_page, query.count(), items)
 
     def validate_args(self):
-        try:
-            return validators.activity_api_args(MultiDict(request.args))
-        except validators.Invalid:
-            abort(404)
+        if not hasattr(self, "_valid_args"):
+            try:
+                self._valid_args = validators.activity_api_args(MultiDict(request.args))
+            except validators.Invalid:
+                abort(404)
+        return self._valid_args
 
     def get_results_page(self, query_options=None):
         valid_args = self.validate_args()
@@ -86,10 +92,15 @@ class DataStoreCSVView(DataStoreView):
         if not request.path.endswith("csv"):
             abort(404)
 
-        pagination = self.get_results_page()
-        return Response(
-            self.serializer(pagination.items),
-            mimetype="text/csv")
+        if self.streaming:
+            valid_args = self.validate_args()
+            query = self.filter(valid_args).yield_per(100)
+            return Response(self.serializer(query), mimetype="text/csv")
+        else:
+            pagination = self.get_results_page()
+            return Response(
+                u"".join(self.serializer(pagination.items)),
+                mimetype="text/csv")
 
 
 class ActivityByCountryView(DataStoreCSVView):
