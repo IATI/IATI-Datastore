@@ -211,7 +211,8 @@ class SectorPercentage(db.Model):
     __tablename__ = "sector_percentage"
     id = sa.Column(sa.Integer, primary_key=True)
     activity_id = sa.Column(
-        sa.ForeignKey("activity.iati_identifier"))
+        sa.ForeignKey("activity.iati_identifier"),
+        index=True)
     sector = sa.Column(codelists.Sector.db_type(), nullable=True)
     vocabulary = sa.Column(
         codelists.Vocabulary.db_type(),
