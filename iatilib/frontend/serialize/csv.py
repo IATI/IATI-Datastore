@@ -160,13 +160,18 @@ class CSVSerializer(object):
         self.fields = FieldDict(fields, adapter=adapter)
 
     def __call__(self, data):
-        out = StringIO()
-        writer = unicodecsv.writer(out, encoding='utf-8')
-        writer.writerow(self.fields.keys())
+        """
+        Return a generator of lines of csv
+        """
+        def line(row):
+            out = StringIO()
+            writer = unicodecsv.writer(out, encoding='utf-8')
+            writer.writerow(row)
+            return out.getvalue()
+        yield line(self.fields.keys())
         for obj in data:
             row = [accessor(obj) for accessor in self.fields.values()]
-            writer.writerow(row)
-        return out.getvalue()
+            yield line(row)
 
 
 csv = CSVSerializer((

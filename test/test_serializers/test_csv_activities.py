@@ -1,4 +1,5 @@
 import datetime
+import inspect
 from unittest import TestCase
 
 from . import CSVTstMixin as _CSVTstMixin
@@ -7,6 +8,10 @@ from test import factories as fac
 from iatilib.frontend import serialize
 from iatilib import codelists as cl
 
+
+class TestCSVStream(TestCase):
+    def test_stream(self):
+        self.assertTrue(inspect.isgenerator(serialize.csv([])))
 
 class CSVTstMixin(_CSVTstMixin):
     def serialize(self, data):

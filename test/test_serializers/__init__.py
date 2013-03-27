@@ -10,7 +10,8 @@ def load_csv(data):
 
 class CSVTstMixin(object):
     def process(self, data):
-        return load_csv(self.serialize(data))
+        csv_str = "".join(self.serialize(data))
+        return load_csv(csv_str)
 
     def serialize(self, data):
         raise Exception("Not Implemented")

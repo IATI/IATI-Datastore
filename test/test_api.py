@@ -224,9 +224,10 @@ class TestManyActivities(ClientTestCase):
 
     def test_csv_activity_count(self):
         load_fix("many_activities.xml")
-        resp = self.client.get('/api/1/access/activities.csv')
-        reader = csv.DictReader(StringIO(resp.data))
-        self.assertEquals(2, len(list(reader)))
+        with self.client as client:
+            resp = client.get('/api/1/access/activities.csv')
+            reader = csv.DictReader(StringIO(resp.data))
+            self.assertEquals(2, len(list(reader)))
 
 
 class TestPagination(ClientTestCase):
