@@ -13,6 +13,9 @@ down_revision = '4dd2cc459a8'
 from alembic import op
 import sqlalchemy as sa
 
+import sys
+sys.path.append('.')
+
 from iatilib import codelists
 
 
