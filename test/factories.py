@@ -6,7 +6,7 @@ from iatilib import codelists
 from iatilib.frontend import db
 from iatilib.model import (
     Activity, Transaction, Organisation, SectorPercentage, CountryPercentage,
-    Participation, Budget
+    Participation, Budget, Resource
 )
 
 
@@ -22,6 +22,10 @@ factory.Factory.set_creation_function(sa_creation)
 
 def create_activity():
     raise Exception("create_activity")
+
+
+class ResourceFactory(factory.Factory):
+    url = u"http://test.com"
 
 
 class CountryPercentageFactory(factory.Factory):

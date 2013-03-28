@@ -158,8 +158,10 @@ class TestFunctional(AppTestCase):
         db.session.commit()
 
     def test_parse_activity_twice(self):
-        db.session.add(parse.activity(fixture("default_currency.xml")))
+        act = parse.activity(fixture("default_currency.xml"))
+        db.session.add(act)
         db.session.commit()
+        db.session.delete(act)
         db.session.add(parse.activity(fixture("default_currency.xml")))
         db.session.commit()
 

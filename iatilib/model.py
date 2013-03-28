@@ -75,7 +75,7 @@ class Participation(db.Model):
     organisation = sa.orm.relationship("Organisation")
 
 
-class Activity(db.Model, UniqueMixin):
+class Activity(db.Model):
     __tablename__ = "activity"
     iati_identifier = sa.Column(sa.Unicode, primary_key=True, nullable=False)
     resource_url = sa.Column(
@@ -106,7 +106,9 @@ class Activity(db.Model, UniqueMixin):
     reembursements = TransactionType(codelists.TransactionType.reimbursement)
 
     reporting_org = sa.orm.relationship("Organisation", uselist=False)
-    activity_websites = sa.orm.relationship("ActivityWebsite")
+    activity_websites = sa.orm.relationship(
+        "ActivityWebsite",
+        cascade="all,delete")
     websites = association_proxy(
         "activity_websites",
         "url",
@@ -115,20 +117,16 @@ class Activity(db.Model, UniqueMixin):
         sa.DateTime,
         nullable=False,
         default=datetime.datetime.utcnow)
-    participating_orgs = sa.orm.relationship("Participation")
-    recipient_country_percentages = sa.orm.relationship("CountryPercentage")
+    participating_orgs = sa.orm.relationship(
+        "Participation",
+        cascade="all,delete")
+    recipient_country_percentages = sa.orm.relationship(
+        "CountryPercentage",
+        cascade="all,delete")
     transactions = sa.orm.relationship("Transaction")
     sector_percentages = sa.orm.relationship("SectorPercentage")
     budgets = sa.orm.relationship("Budget")
     resource = sa.orm.relationship("Resource")
-
-    @classmethod
-    def unique_hash(cls, iati_identifier, **kw):
-        return iati_identifier
-
-    @classmethod
-    def unique_filter(cls, query, iati_identifier, **kw):
-        return query.filter(cls.iati_identifier == iati_identifier)
 
 
 class Organisation(db.Model, UniqueMixin):
@@ -266,4 +264,7 @@ class Resource(db.Model):
     last_parse_error = sa.Column(sa.Unicode)  # last error from xml parser
     document = sa.orm.deferred(sa.Column(sa.LargeBinary))
     etag = sa.Column(sa.Unicode)
-    activities = sa.orm.relationship("Activity")
+    activities = sa.orm.relationship(
+        "Activity",
+        cascade="all,delete-orphan,delete"
+    )

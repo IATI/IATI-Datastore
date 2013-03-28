@@ -185,7 +185,7 @@ def activity(xml_resource):
         "budgets": budgets(xml.xpath("./budget")),
         "raw_xml": ET.tostring(xml, encoding=unicode)
     }
-    return Activity.as_unique(db.session, **data)
+    return Activity(**data)
 
 
 def document(xml_resource):
