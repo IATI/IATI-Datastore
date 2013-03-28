@@ -4,9 +4,10 @@ from unittest import TestCase
 import mock
 
 from . import AppTestCase
+from . import factories as fac
 
-from iatilib import crawler, db
-from iatilib.model import Dataset, Resource
+from iatilib import crawler, db, parse
+from iatilib.model import Dataset, Resource, Activity
 
 
 class TestCrawler(AppTestCase):
@@ -84,12 +85,26 @@ class TestCrawler(AppTestCase):
             datetime.datetime.utcnow(),
             delta=datetime.timedelta(seconds=5))
 
+    def test_parse_resource_succ_replaces_activities(self):
+        # what's in the db before the resource is updated
+        act = fac.ActivityFactory.build()
+        fac.ResourceFactory.create(
+            url=u"http://test",
+            activities=[act]
+        )
+        # the updated resource (will remove the activities)
+        resource = Resource(
+            url=u"http://test",
+            document="<iati-activities />"
+        )
+        resource = crawler.parse_resource(resource)
+        self.assertEquals(None, Activity.query.get(act.iati_identifier))
+
     def test_parse_resource_fail(self):
         resource = Resource(document="")
-        resource = crawler.parse_resource(resource)
-        self.assertEquals([], resource.activities)
-        self.assertEquals(None, resource.last_parsed)
-        self.assertNotEquals(None, resource.last_parse_error)
+        with self.assertRaises(parse.ParserError):
+            resource = crawler.parse_resource(resource)
+            self.assertEquals(None, resource.last_parsed)
 
 
 class TestDate(TestCase):

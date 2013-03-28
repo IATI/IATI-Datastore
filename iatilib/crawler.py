@@ -70,22 +70,25 @@ def fetch_resource(resource):
 
 def parse_resource(resource):
     db.session.add(resource)
-    try:
-        resource.activities = list(parse.document(resource.document))
-        log.info(
-            "Parsed %d activities from %s",
-            len(resource.activities),
-            resource.url)
-        resource.last_parsed = datetime.datetime.utcnow()
-    except parse.ParserError, exc:
-        resource.last_parse_error = str(exc)
+    Activity.query.filter_by(resource_url=resource.url).delete()
+    resource.activities = list(parse.document(resource.document))
+    log.info(
+        "Parsed %d activities from %s",
+        len(resource.activities),
+        resource.url)
+    resource.last_parsed = datetime.datetime.utcnow()
     return resource
 
 
 def update_activities(resource_url):
     resource = Resource.query.get(resource_url)
-    parse_resource(resource)
-    db.session.commit()
+    try:
+        parse_resource(resource)
+        db.session.commit()
+    except parse.ParserError, exc:
+        db.session.rollback()
+        resource.last_parse_error = str(exc)
+        db.session.commit()
 
 
 def update_resource(resource_url):
