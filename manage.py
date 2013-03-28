@@ -4,7 +4,7 @@ import logging
 
 import requests
 from flask.ext.script import Manager
-from flask.ext.rq import get_worker
+from flask.ext.rq import get_worker, get_queue
 
 from iatilib.frontend import create_app
 from iatilib import parse, codelists, model, db, redis
@@ -24,6 +24,12 @@ def background():
     "Monitor queue for jobs and run when they are there"
     get_worker().work(burst=False)
 
+
+@q_manager.command
+def empty():
+    "Clear all jobs from queue"
+    rq = get_queue()
+    rq.empty()
 
 manager = Manager(create_app(DEBUG=True))
 manager.add_command("crawl", crawler_manager)
