@@ -10,7 +10,7 @@ def load_csv(data):
 
 class CSVTstMixin(object):
     def process(self, data):
-        csv_str = "".join(self.serialize(data))
+        csv_str = u"".join(self.serialize(data)).encode('utf-8')
         return load_csv(csv_str)
 
     def serialize(self, data):
