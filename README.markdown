@@ -1,8 +1,8 @@
 IATI Datastore
 ==============
 
-The International Aid Transparency Initiative (IATI) aims to make aims
-to make information about aid spending easier to access. To this end,
+The International Aid Transparency Initiative (IATI) aims to make
+information about aid spending easier to access. To this end,
 they publish the [IATI standardd](http://iatistandard.org) and keep a
 [registry of data that form](http://www.iatiregistry.org).
 
@@ -12,26 +12,24 @@ extracts they are interested in. A public instance is available here:
 http://iati-datastore.herokuapp.com
 
 
-Operation
-=========
+Installing for development
+==========================
 
-* `job_1_crawl_ckan.py` Gets the urls of documents stored in IATI format
-* `job_2_download_xml.py` Downloads the documents into the db
-* `job_3_parse.py` Parses the documents into the db
-
-These jobs all run regularly.
-
-
-Installation
-============
+You will need [Redis](http://redis.io) and [Postgres](http://postgresql.org)
+to run the full setup.
 
 * Clone the source
-* Install requirements `pip install -e requirements_dev.txt`.
-* Run the tests `python -m unittest discover` or `nosetests` if you prefer
-  (they will use an in-memory sqlite db)
-* Create a test database (we use postgres), and set an environment variable
+* Install `pip install -e iati_datastore`
+* Install `pip install -r requirements_dev.txt`
+* Run the tests `nosetests iati_datastore`
+  (the tests use an in-memory sqlite db)
+* Create a database (in postgres), and set an environment variable
   `DATABASE_URL` to something like `postgres:///iati-ds`.
-* Run `python manage.py runserver` to create the db and run a test server
-* Run `python create_codelists.py` to add some lookup tables.
+* Run `iati create_database` to create the db tables
+* Run `iati crawl update` to start the process of grabbing the source data
+* Run `iati runserver` to start a development server
+* Run a worker with `iati queue background`
+  - this will download and index the datafiles,
+    check progess with `iati crawl status`.
 * Go to http://127.0.0.1:5000
 
