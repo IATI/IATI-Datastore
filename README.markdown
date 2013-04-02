@@ -1,3 +1,4 @@
+[![Build Status](https://api.travis-ci.org/okfn/iati-datastore.png)](https://travis-ci.org/[https://api.travis-ci.org/okfn/iati-datastore.png)]
 IATI Datastore
 ==============
 
