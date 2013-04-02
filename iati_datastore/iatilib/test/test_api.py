@@ -175,20 +175,11 @@ class TestSingleActivity(ClientTestCase):
         x2 = xml.find('.//iati-activity')
         self.assertEquals(x1, x2)
 
-    @skip("json rep")
-    def test_json_activity_count(self):
+    def test_csv_activity_count(self):
         load_fix("single_activity.xml")
-        resp = self.client.get('/api/1/access/activities')
-        js = json.loads(resp.data)
-        self.assertEquals(1, len(js["results"]))
-
-    @skip("json rep")
-    def test_json_activity_data(self):
-        load_fix("single_activity.xml")
-        exp = json.load(open(fixture_filename("single_activity.out.json")))
-        resp = self.client.get('/api/1/access/activities')
-        js = json.loads(resp.data)
-        self.assertEquals(exp["results"], js["results"])
+        with self.client as client:
+            resp = client.get('/api/1/access/activities.csv')
+            self.assertEquals(2, resp.data.count("\n"))
 
 
 class TestManyActivities(ClientTestCase):
@@ -206,21 +197,6 @@ class TestManyActivities(ClientTestCase):
         self.assertEquals(
             ET.tostring(in_xml.find('.//iati-activity')),
             ET.tostring(xml.find('.//iati-activity')))
-
-    @skip("json rep")
-    def test_json_activity_count(self):
-        load_fix("many_activities.xml")
-        resp = self.client.get('/api/1/access/activities')
-        js = json.loads(resp.data)
-        self.assertEquals(2, len(js["results"]))
-
-    @skip("json rep")
-    def test_json_activity_data(self):
-        load_fix("many_activities.xml")
-        exp = json.load(open(fixture_filename("many_activities.out.json")))
-        resp = self.client.get('/api/1/access/activities')
-        js = json.loads(resp.data)
-        self.assertEquals(exp["results"], js["results"])
 
     def test_csv_activity_count(self):
         load_fix("many_activities.xml")

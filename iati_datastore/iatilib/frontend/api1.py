@@ -50,16 +50,24 @@ class DataStoreView(MethodView):
                 abort(404)
         return self._valid_args
 
-    def get_results_page(self, query_options=None):
+    def get_response(self, serializer=None, mimetype="text/csv"):
+        if serializer is None:
+            serializer = self.serializer
+
         valid_args = self.validate_args()
         query = self.filter(valid_args)
-        if query_options:
-            query = query.options(*query_options)
-        return self.paginate(
-            query,
-            valid_args.get("page", 1),
-            valid_args.get("per_page", 50),
-        )
+
+        if self.streaming:
+            query = query.yield_per(100)
+            body = serializer(query)
+        else:
+            pagination = self.paginate(
+                query,
+                valid_args.get("page", 1),
+                valid_args.get("per_page", 50),
+            )
+            body = u"".join(serializer(pagination.items))
+        return Response(body, mimetype=mimetype)
 
 
 class ActivityView(DataStoreView):
@@ -71,36 +79,16 @@ class ActivityView(DataStoreView):
             ".json": (serialize.json, "application/json"),  # rfc4627
             ".csv": (serialize.csv, "text/csv")  # rfc4180
         }
-
         if format not in forms:
             abort(404)
-
-        if format == ".json":
-            query_options = (sa.orm.joinedload('*'), )
-        else:
-            query_options = None
-
-        pagination = self.get_results_page(query_options=query_options)
-        serializer, mimetype = forms[format]
-        return Response(
-            serializer(pagination.items),
-            mimetype=mimetype)
+        return self.get_response(*forms[format])
 
 
 class DataStoreCSVView(DataStoreView):
     def get(self, format=".csv"):
         if not request.path.endswith("csv"):
             abort(404)
-
-        if self.streaming:
-            valid_args = self.validate_args()
-            query = self.filter(valid_args).yield_per(100)
-            return Response(self.serializer(query), mimetype="text/csv")
-        else:
-            pagination = self.get_results_page()
-            return Response(
-                u"".join(self.serializer(pagination.items)),
-                mimetype="text/csv")
+        return self.get_response()
 
 
 class ActivityByCountryView(DataStoreCSVView):

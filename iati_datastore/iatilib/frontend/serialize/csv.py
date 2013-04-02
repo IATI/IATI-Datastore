@@ -167,7 +167,7 @@ class CSVSerializer(object):
             out = StringIO()
             writer = unicodecsv.writer(out, encoding='utf-8')
             writer.writerow(row)
-            return out.getvalue()
+            return out.getvalue().decode('utf-8')
         yield line(self.fields.keys())
         for obj in data:
             row = [accessor(obj) for accessor in self.fields.values()]
