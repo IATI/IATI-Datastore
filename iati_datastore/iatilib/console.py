@@ -89,5 +89,10 @@ def parse_file(filenames, verbose=False, fail_xml=False, fail_spec=False):
 def create_database():
     db.create_all()
 
-if __name__ == "__main__":
+
+def main():
     manager.run()
+
+if __name__ == "__main__":
+    main()
+

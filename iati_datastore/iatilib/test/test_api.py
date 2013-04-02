@@ -7,7 +7,7 @@ from StringIO import StringIO
 from unittest import skip
 import mock
 
-from test import AppTestCase
+from . import AppTestCase
 from iatilib import parse, db
 
 

@@ -2,7 +2,7 @@ from unittest import TestCase
 
 from xml.etree import ElementTree as ET
 
-from test import factories as fac
+from iatilib.test import factories as fac
 from iatilib.frontend import serialize
 
 

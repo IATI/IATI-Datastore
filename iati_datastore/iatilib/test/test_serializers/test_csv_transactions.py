@@ -2,7 +2,7 @@ import datetime
 from unittest import TestCase
 
 from . import CSVTstMixin as _CSVTstMixin
-from test import factories as fac
+from iatilib.test import factories as fac
 
 from iatilib.frontend import serialize
 from iatilib import codelists as cl
