@@ -1,3 +1,4 @@
+import os
 import unittest
 from StringIO import StringIO
 
@@ -13,6 +14,9 @@ def create_db():
     db.create_all()
 
 
+_app = None
+
+
 class AppTestCase(unittest.TestCase):
     def __init__(self, methodName='runTest'):
         super(AppTestCase, self).__init__(methodName)
@@ -20,9 +24,17 @@ class AppTestCase(unittest.TestCase):
         self.addTypeEqualityFunc(xml_etree.Element, self.assertXMLEqual)
 
     def setUp(self):
-        self.app = create_app(
-            SQLALCHEMY_DATABASE_URI='sqlite:///:memory:',
-        )
+        global _app
+        if _app is None:
+            _app = create_app(
+                SQLALCHEMY_DATABASE_URI=os.environ.get(
+                    "TEST_DATABASE_URL",
+                    'sqlite:///:memory:',
+                )
+            )
+        self.app = _app
+        if os.environ.get("SA_ECHO", "False") == "True":
+            db.engine.echo = True
         create_db()
 
     def tearDown(self):

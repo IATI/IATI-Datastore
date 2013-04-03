@@ -1,7 +1,7 @@
 import os
 import codecs
 import datetime
-from unittest import TestCase
+from unittest import TestCase, skip
 
 import mock
 from lxml import etree as ET
@@ -155,14 +155,6 @@ class TestFunctional(AppTestCase):
         acts = parse.document(
             fixture("complex_example_dfid.xml", encoding=None))
         db.session.add_all(acts)
-        db.session.commit()
-
-    def test_parse_activity_twice(self):
-        act = parse.activity(fixture("default_currency.xml"))
-        db.session.add(act)
-        db.session.commit()
-        db.session.delete(act)
-        db.session.add(parse.activity(fixture("default_currency.xml")))
         db.session.commit()
 
     def test_save_repeated_participation(self):

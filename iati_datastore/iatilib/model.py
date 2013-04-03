@@ -1,13 +1,25 @@
 import datetime
+import functools as ft
 from collections import namedtuple
 
 import sqlalchemy as sa
 from sqlalchemy.ext.associationproxy import association_proxy
-from sqlalchemy.dialects.postgresql import ARRAY
 
 
 from . import db
 from . import codelists
+
+
+act_relationship = ft.partial(
+    sa.orm.relationship,
+    cascade="all,delete",
+    passive_deletes=True,
+)
+
+act_ForeignKey = ft.partial(
+    sa.ForeignKey,
+    ondelete="CASCADE"
+)
 
 
 # The "Unique Object" pattern
@@ -64,7 +76,7 @@ class TransactionType(object):
 class Participation(db.Model):
     __tablename__ = "participation"
     activity_identifier = sa.Column(
-        sa.ForeignKey("activity.iati_identifier"),
+        act_ForeignKey("activity.iati_identifier"),
         primary_key=True)
     organisation_ref = sa.Column(
         sa.ForeignKey("organisation.ref"),
@@ -106,7 +118,7 @@ class Activity(db.Model):
     reembursements = TransactionType(codelists.TransactionType.reimbursement)
 
     reporting_org = sa.orm.relationship("Organisation", uselist=False)
-    activity_websites = sa.orm.relationship(
+    activity_websites = act_relationship(
         "ActivityWebsite",
         cascade="all,delete")
     websites = association_proxy(
@@ -117,15 +129,11 @@ class Activity(db.Model):
         sa.DateTime,
         nullable=False,
         default=datetime.datetime.utcnow)
-    participating_orgs = sa.orm.relationship(
-        "Participation",
-        cascade="all,delete")
-    recipient_country_percentages = sa.orm.relationship(
-        "CountryPercentage",
-        cascade="all,delete")
-    transactions = sa.orm.relationship("Transaction")
-    sector_percentages = sa.orm.relationship("SectorPercentage")
-    budgets = sa.orm.relationship("Budget")
+    participating_orgs = act_relationship("Participation")
+    recipient_country_percentages = act_relationship("CountryPercentage")
+    transactions = act_relationship("Transaction")
+    sector_percentages = act_relationship("SectorPercentage")
+    budgets = act_relationship("Budget")
     resource = sa.orm.relationship("Resource")
 
 
@@ -155,7 +163,7 @@ class ActivityWebsite(db.Model):
         sa.Integer,
         primary_key=True)
     activity_id = sa.Column(
-        sa.ForeignKey("activity.iati_identifier"),
+        act_ForeignKey("activity.iati_identifier"),
         nullable=False,
         index=True)
     url = sa.Column(sa.Unicode)
@@ -166,9 +174,10 @@ class CountryPercentage(db.Model):
     __tablename__ = "country_percentage"
     id = sa.Column(sa.Integer, primary_key=True)
     activity_id = sa.Column(
-        sa.ForeignKey("activity.iati_identifier"),
+        act_ForeignKey("activity.iati_identifier"),
         nullable=False,
-        index=True)
+        index=True,
+    )
     country = sa.Column(
         codelists.Country.db_type(),
         nullable=False,
@@ -185,8 +194,10 @@ class Transaction(db.Model):
     __tablename__ = "transaction"
     id = sa.Column(sa.Integer, primary_key=True)
     activity_id = sa.Column(
-        sa.ForeignKey("activity.iati_identifier"),
-        index=True)
+        act_ForeignKey("activity.iati_identifier"),
+        nullable=False,
+        index=True
+    )
     type = sa.Column(codelists.TransactionType.db_type(), nullable=False)
     date = sa.Column(sa.Date, nullable=False)
     value_date = sa.Column(sa.Date, nullable=False)
@@ -209,7 +220,8 @@ class SectorPercentage(db.Model):
     __tablename__ = "sector_percentage"
     id = sa.Column(sa.Integer, primary_key=True)
     activity_id = sa.Column(
-        sa.ForeignKey("activity.iati_identifier"),
+        act_ForeignKey("activity.iati_identifier"),
+        nullable=False,
         index=True)
     sector = sa.Column(codelists.Sector.db_type(), nullable=True)
     vocabulary = sa.Column(
@@ -224,7 +236,8 @@ class Budget(db.Model):
     __tablename__ = "budget"
     id = sa.Column(sa.Integer, primary_key=True)
     activity_id = sa.Column(
-        sa.ForeignKey("activity.iati_identifier"),
+        act_ForeignKey("activity.iati_identifier"),
+        nullable=False,
         index=True)
     type = sa.Column(codelists.BudgetType.db_type())
     period_end = sa.Column(sa.Date, nullable=True)
@@ -264,7 +277,52 @@ class Resource(db.Model):
     last_parse_error = sa.Column(sa.Unicode)  # last error from xml parser
     document = sa.orm.deferred(sa.Column(sa.LargeBinary))
     etag = sa.Column(sa.Unicode)
-    activities = sa.orm.relationship(
-        "Activity",
-        cascade="all,delete-orphan,delete"
-    )
+    activities = act_relationship("Activity")
+
+
+class Log(db.Model):
+    # A table to use like a logfile. Personally I don't like doing this but
+    # it's the easiest way of dumping some log data to an accessable place
+    # on Heroku.
+    #
+    # This comes from the Pyramid docs, there's also a log handler there.
+    # http://docs.pylonsproject.org/projects/pyramid_cookbook/en/latest/logging/sqlalchemy_logger.html
+
+    __tablename__ = 'log'
+    id = sa.Column(sa.Integer, primary_key=True)
+    logger = sa.Column(sa.String)  # the name of the logger. (e.g. myapp.views)
+    level = sa.Column(sa.String)  # info, debug, or error?
+    trace = sa.Column(sa.String)  # the full traceback printout
+    msg = sa.Column(sa.String)  # any custom log you may have included
+    created_at = sa.Column(
+        sa.DateTime,
+        default=sa.func.now())  # the current timestamp
+
+    def __init__(self, logger=None, level=None, trace=None, msg=None):
+        self.logger = logger
+        self.level = level
+        self.trace = trace
+        self.msg = msg
+
+    def __unicode__(self):
+        return self.__repr__()
+
+    def __repr__(self):
+        return "<Log: %s - %s>" % (
+            self.created_at.strftime('%m/%d/%Y-%H:%M:%S'),
+            self.msg[:50]
+        )
+
+
+# We use sqlite for testing and postgres for prod. Sadly sqlite will only
+# pay attention to forign keys if you tell it to.
+from sqlalchemy.engine import Engine
+from sqlalchemy import event
+
+
+@event.listens_for(Engine, "connect")
+def set_sqlite_pragma(dbapi_connection, connection_record):
+    if db.engine.url.drivername == "sqlite":
+        cursor = dbapi_connection.cursor()
+        cursor.execute("PRAGMA foreign_keys=ON")
+        cursor.close()

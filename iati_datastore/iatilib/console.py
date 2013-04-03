@@ -1,39 +1,20 @@
 import os
 import codecs
 import logging
+import datetime as dt
 
 import requests
 from flask.ext.script import Manager
-from flask.ext.rq import get_worker, get_queue
 
 from iatilib.frontend import create_app
 from iatilib import parse, codelists, model, db, redis
 from iatilib.crawler import manager as crawler_manager
+from iatilib.queue import manager as queue_manager
 
-q_manager = Manager(usage="Background task queue")
-
-
-@q_manager.command
-def burst():
-    "Run jobs then exit when queue is empty"
-    get_worker().work(burst=True)
-
-
-@q_manager.command
-def background():
-    "Monitor queue for jobs and run when they are there"
-    get_worker().work(burst=False)
-
-
-@q_manager.command
-def empty():
-    "Clear all jobs from queue"
-    rq = get_queue()
-    rq.empty()
 
 manager = Manager(create_app(DEBUG=True))
 manager.add_command("crawl", crawler_manager)
-manager.add_command("queue", q_manager)
+manager.add_command("queue", queue_manager)
 
 
 @manager.shell
@@ -59,6 +40,15 @@ def download_codelists():
             assert len(resp.text) > 0, "Response is empty"
             with codecs.open(filename, "w", encoding="utf-8") as cl:
                 cl.write(resp.text)
+
+
+@manager.command
+def cleanup():
+    from iatilib.model import Log
+    Log.query.filter(
+        Log.created_at < dt.datetime.utcnow() - dt.timedelta(days=5)
+    ).delete()
+
 
 
 @manager.option(

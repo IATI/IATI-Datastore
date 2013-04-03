@@ -31,3 +31,33 @@ class TestResource(AppTestCase):
         self.assertEquals(res.activities[0].title, u"t2")
         self.assertEquals(
             Resource.query.get(res.url).activities[0].title, u"t2")
+
+    def test_replace_activity_w_many_dependant_rows(self):
+        db.engine.echo = True
+        res = fac.ResourceFactory.create(
+            activities=[fac.ActivityFactory.build(
+                participating_orgs=[
+                    fac.ParticipationFactory.build()
+                ],
+                recipient_country_percentages=[
+                    fac.CountryPercentageFactory.build()
+                ],
+                transactions=[
+                    fac.TransactionFactory.build()
+                ],
+                sector_percentages=[
+                    fac.SectorPercentageFactory.build()
+                ],
+                budgets=[
+                    fac.BudgetFactory.build()
+                ],
+                websites=[
+                    u"http://test.com"
+                ]
+            )]
+        )
+        Activity.query.filter_by(resource_url=res.url).delete()
+        self.assertEquals(
+            0,
+            Activity.query.filter_by(resource_url=res.url).count()
+        )
