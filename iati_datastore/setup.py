@@ -43,6 +43,8 @@ setup(
     package_data={
         # If any package contains a .csv file include it
         '': ['*.csv'],
+        # static web resources
+        'iatilib.frontend': ['static/*']
     },
     zip_safe=False,
     install_requires=requirements.strip().splitlines(),
