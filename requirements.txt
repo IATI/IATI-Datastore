@@ -1,4 +1,4 @@
-./iati_datastore
+-e ./iati_datastore
 
 # should not be pinned, see https://devcenter.heroku.com/articles/newrelic
 newrelic
