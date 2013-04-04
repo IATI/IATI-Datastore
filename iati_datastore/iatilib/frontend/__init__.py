@@ -3,6 +3,7 @@ import os
 from flask import Flask
 from flask.ext.rq import RQ
 from flask.ext.heroku import Heroku
+from flaskext.markdown import Markdown
 
 from iatilib import db, redis
 
@@ -26,10 +27,14 @@ def create_app(**config):
     redis.init_app(app)
 
     RQ(app)
+    Markdown(app, extensions=['tables'])
 
     @app.route('/')
     def homepage():
-        return app.send_static_file('index.html')
+        from flask import render_template
+        with app.open_resource('docs/index.md') as f:
+            contents = f.read()
+        return render_template('doc.html', doc=contents)
 
     from .api1 import api
 
