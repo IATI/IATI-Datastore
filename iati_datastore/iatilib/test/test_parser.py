@@ -6,10 +6,7 @@ from unittest import TestCase, skip
 import mock
 from lxml import etree as ET
 
-from . import db
-
-from . import AppTestCase, fixture_filename
-
+from iatilib.test import db, AppTestCase, fixture_filename
 from iatilib import parse, codelists as cl
 
 
@@ -110,6 +107,11 @@ class TestParseActivity(AppTestCase):
         self.assertEquals(
             (datetime.date(2009, 10, 01), 3991675, cl.Currency.us_dollar),
             act.transactions[0].value)
+
+    def test_transaction_ref(self):
+        act = parse.activity(fixture("transaction_ref.xml"))
+        self.assertEquals(u'36258', act.transactions[0].ref)
+        self.assertEquals(None, act.transactions[1].ref)
 
     def test_date_start_planned(self):
         act = parse.activity(fixture("default_currency.xml"))

@@ -260,6 +260,12 @@ class TestTransactionView(ClientTestCase, ApiViewMixin):
     filter = 'iatilib.frontend.api1.TransactionsView.filter'
     serializer = 'iatilib.frontend.api1.TransactionsView.serializer'
 
+    def test_ref_output(self):
+        load_fix("transaction_ref.xml")
+        output = self.client.get(self.base_url).data.splitlines()
+        self.assertEquals(u'36258', output[1].split(',')[0])
+        self.assertEquals(u'', output[2].split(',')[0])
+
 
 class TestTransactionByCountryView(ClientTestCase, ApiViewMixin):
     base_url = '/api/1/access/transactions/by_country.csv'

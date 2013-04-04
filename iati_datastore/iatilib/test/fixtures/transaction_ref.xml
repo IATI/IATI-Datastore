@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<iati-activity hierarchy="1" xml:lang="en" default-currency="GBP" last-updated-datetime="2013-01-23T00:00:00">
+	<reporting-org ref="GB-CHC-285776" type="21">CAFOD</reporting-org>
+	<iati-identifier>GB-CHC-285776-AFG033</iati-identifier>
+	<other-identifier>AFG033</other-identifier>
+	<title>Support for BAAG's Fundraising and Network Co-ordination Activities</title>
+	<description>To provide central support to the British and Irish Agencies in Afghanistan Group (BAAG) in order to strengthen its internal fundraising capacity, and to continue its Afghanistan-related networking and advocacy work during a historic year in UK and Afghan politics.</description>
+	<activity-status code="3">Completion</activity-status>
+	<default-tied-status code="5">Untied</default-tied-status>
+	<activity-date type="start-actual" iso-date="2010-03-01"/>
+	<activity-date type="end-planned" iso-date="2011-03-30"/>
+	<contact-info>
+		<organisation>CAFOD</organisation>
+		<email>cafod@cafod.org.uk</email>
+	</contact-info>
+	<participating-org role="Funding" ref="GB-CHC-285776">CAFOD</participating-org>
+	<participating-org role="Implementing">The British and Irish Agencies Afghanistan Group</participating-org>
+	<recipient-country code="AF">Afghanistan</recipient-country>
+	<sector vocabulary="RO">Civil Society Effectiveness</sector>
+	<sector vocabulary="DAC" code="99810" percentage="100">Sectors not specified</sector>
+	<default-flow-type code="30">Private grants</default-flow-type>
+	<default-aid-type code="C01">Project-type interventions</default-aid-type>
+	<default-finance-type code="110">Aid grant excluding debt reorganisation</default-finance-type>
+	<transaction ref="36258">
+		<transaction-type code="IF">Incoming Funds</transaction-type>
+		<provider-org>CGF</provider-org>
+		<value value-date="2010-03-31">50000</value>
+		<transaction-date iso-date="2010-03-31">2010-03-31</transaction-date>
+	</transaction>
+	<transaction>
+		<transaction-type code="D">Disbursement</transaction-type>
+		<receiver-org>The British and Irish Agencies Afghanistan Group</receiver-org>
+		<value value-date="2010-11-01">50000</value>
+		<transaction-date iso-date="2010-03-31">2010-03-31</transaction-date>
+	</transaction>
+</iati-activity>

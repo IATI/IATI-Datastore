@@ -263,6 +263,7 @@ csv_activity_by_sector = CSVSerializer((
 
 
 transaction_csv = CSVSerializer((
+    (u'transaction_ref', lambda t: t.ref),
     (u'transaction-type', transaction_type),
     (u'transaction-date', transaction_date),
     (u"default-currency", default_currency),

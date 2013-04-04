@@ -102,6 +102,7 @@ def transactions(xml):
 
     def process(ele):
         return Transaction(
+            ref = xval(ele, "@ref", default=None),
             type=cl.TransactionType.from_string(
                 xval(ele, "transaction-type/@code")),
             date=iati_date(xval(ele, "transaction-date/@iso-date")),

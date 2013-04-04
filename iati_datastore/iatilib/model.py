@@ -208,6 +208,12 @@ class TransactionValue(namedtuple("TransactionValue", "date amount currency")):
 class Transaction(db.Model):
     __tablename__ = "transaction"
     id = sa.Column(sa.Integer, primary_key=True)
+    ref = sa.Column(sa.Unicode, nullable=True)
+    #providing_org_ref = sa.Column(
+    #    sa.ForeignKey("organisation.ref"),
+    #    nullable=False,
+    #    index=True)
+    #providing_org = sa.orm.relationship("Organisation")
     activity_id = sa.Column(
         act_ForeignKey("activity.iati_identifier"),
         nullable=False,
@@ -218,7 +224,8 @@ class Transaction(db.Model):
     value_date = sa.Column(sa.Date, nullable=False)
     value_amount = sa.Column(sa.BigInteger, nullable=False)
     value_currency = sa.Column(codelists.Currency.db_type(), nullable=False)
-    value = sa.orm.composite(TransactionValue, value_date, value_amount, value_currency)
+    value = sa.orm.composite(TransactionValue, value_date, value_amount,
+                             value_currency)
     activity = sa.orm.relationship("Activity")
 
     def __unicode__(self):
