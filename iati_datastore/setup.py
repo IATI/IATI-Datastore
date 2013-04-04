@@ -26,6 +26,7 @@ requests==1.1.0
 Flask-RQ==0.2
 flask-heroku==0.1.4
 Flask-And-Redis==0.4
+Flask-Markdown==0.3
 """
 
 tests_require = """
