@@ -107,3 +107,7 @@ def text_compare(t1, t2):
     if t1 == '*' or t2 == '*':
         return True
     return (t1 or '').strip() == (t2 or '').strip()
+
+
+def fixture_filename(fix_name):
+    return os.path.join(os.path.dirname(__file__), "fixtures", fix_name)

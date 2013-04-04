@@ -3,7 +3,7 @@ from unittest import TestCase
 
 import mock
 
-from . import AppTestCase
+from . import AppTestCase, fixture_filename
 from . import factories as fac
 
 from iatilib import crawler, db, parse
@@ -105,6 +105,39 @@ class TestCrawler(AppTestCase):
         with self.assertRaises(parse.ParserError):
             resource = crawler.parse_resource(resource)
             self.assertEquals(None, resource.last_parsed)
+
+
+class TestResourceUpdate(AppTestCase):
+    def test_activity_in_two_resources(self):
+        # If an activity is reported in two resources, the one in the db
+        # wins.
+
+        # Example: Activity GB-1-111635 appears in two resources.
+        # 'http://projects.dfid.gov.uk/iati/Region/798'
+        # 'http://projects.dfid.gov.uk/iati/Country/CD'
+
+        # this resouce was the first to import activity "47045-ARM-202-G05-H-00"
+        fac.ResourceFactory.create(
+            url=u"http://res1",
+            activities=[
+                fac.ActivityFactory.build(
+                    iati_identifier=u"47045-ARM-202-G05-H-00",
+                    title=u"orig",
+                )
+            ]
+        )
+        # this resource has just been retreived, it also contains an
+        # activity "47045-ARM-202-G05-H-00"
+        fac.ResourceFactory.create(
+            url=u"http://res2",
+            document=open(fixture_filename("single_activity.xml")).read()
+        )
+
+        crawler.update_activities(u"http://res2")
+        self.assertEquals(
+            u"orig",
+            Activity.query.get(u"47045-ARM-202-G05-H-00").title
+        )
 
 
 class TestDate(TestCase):

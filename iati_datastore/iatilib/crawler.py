@@ -84,6 +84,21 @@ def update_activities(resource_url):
     resource = Resource.query.get(resource_url)
     try:
         parse_resource(resource)
+        # if this resource duplicates any activities from other resources
+        # then remove them.
+        dup_activity = Activity.query.filter(
+            Activity.iati_identifier.in_(
+                a.iati_identifier for a in resource.activities
+            )
+        )
+        for db_activity in dup_activity:
+            res_activity = next(
+                a for a in resource.activities
+                if a.iati_identifier == db_activity.iati_identifier
+            )
+            resource.activities.remove(res_activity)
+            db.session.expunge(res_activity)
+        log.info("Removed %d duplicate activities", dup_activity.count())
         db.session.commit()
     except parse.ParserError, exc:
         db.session.rollback()
