@@ -57,10 +57,17 @@ Filtering
         <td>recipient-region</td>
         <td><a href="http://iatistandard.org/activities-standard/recipient-region/">Recipient Region</a></td>
     </tr>
-
     <tr>
         <td>reporting-org</td>
         <td><a href="http://iatistandard.org/activities-standard/reporting-org/">Reporting Org</td>
+    </tr>
+    <tr>
+        <td>reporting-org_type</td>
+        <td><a href="http://iatistandard.org/activities-standard/reporting-org/">Reporting Org Type</td>
+    </tr>
+    <tr>
+        <td>sector</td>
+        <td><a href="http://iatistandard.org/activities-standard/sector/">Sector</td>
     </tr>
     <tr>
         <td>participating-org</td>
