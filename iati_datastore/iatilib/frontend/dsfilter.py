@@ -5,25 +5,25 @@ from iatilib.model import (
 
 
 def _filter(query, args):
-    if "country_code" in args:
-        country = codelists.Country.from_string(args["country_code"])
+    if "recipient-country" in args:
+        country = codelists.Country.from_string(args["recipient-country"])
         query = query.filter(
             Activity.recipient_country_percentages.any(
                 CountryPercentage.country == country
             )
         )
 
-    if "recipient-region_code" in args:
-        region = codelists.Region.from_string(args["recipient-region_code"])
+    if "recipient-region" in args:
+        region = codelists.Region.from_string(args["recipient-region"])
         query = query.filter(
             Activity.recipient_region_percentages.any(
                 RegionPercentage.region == region
             )
         )
 
-    if "reporting_org_ref" in args:
+    if "reporting-org" in args:
         query = query.filter(
-            Activity.reporting_org_ref == args["reporting_org_ref"])
+            Activity.reporting_org_ref == args["reporting-org"])
 
     if "reporting-org_type" in args:
         code = codelists.OrganisationType.from_string(args["reporting-org_type"])
@@ -33,10 +33,10 @@ def _filter(query, args):
             )
         )
 
-    if "participating_org_ref" in args:
+    if "participating-org" in args:
         query = query.filter(
             Activity.participating_orgs.any(
-                Participation.organisation_ref == args["participating_org_ref"]
+                Participation.organisation_ref == args["participating-org"]
             )
         )
 

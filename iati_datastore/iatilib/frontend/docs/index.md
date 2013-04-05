@@ -50,15 +50,20 @@ Filtering
         <th>Description</th>
     </tr>
     <tr>
-        <td>country_code</td>
+        <td>recipient-country</td>
         <td><a href="http://iatistandard.org/activities-standard/recipient-country/">Recipient Country</a></td>
     </tr>
     <tr>
-        <td>reporting_org_ref</td>
+        <td>recipient-region</td>
+        <td><a href="http://iatistandard.org/activities-standard/recipient-region/">Recipient Region</a></td>
+    </tr>
+
+    <tr>
+        <td>reporting-org</td>
         <td><a href="http://iatistandard.org/activities-standard/reporting-org/">Reporting Org</td>
     </tr>
     <tr>
-        <td>participating_org_ref</td>
+        <td>participating-org</td>
         <td><a href="http://iatistandard.org/activities-standard/participating-org/">Participating Org</a></td>
     </tr>
 </table>
@@ -66,7 +71,7 @@ Filtering
 
 Combining filters gives the results that furfill all the terms. So
 
-[`/api/1/access/activities.xml?reporting_org_ref=GB-1&country_code=CD`](http://iati-datastore.herokuapp.com/api/1/access/activities.xml?reporting_org_ref=GB-1&country_code=CD)
+[`/api/1/access/activities.xml?reporting-org=GB-1&recipient-country=CD`](http://iati-datastore.herokuapp.com/api/1/access/activities.xml?reporting-org=GB-1&recipient-country=CD)
 
 will respond with all the DFID data for the Democratic Republic of Congo.
 
