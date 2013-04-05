@@ -5,7 +5,7 @@ import sqlalchemy as sa
 import requests
 import ckanclient
 from dateutil.parser import parse as date_parser
-from flask.ext.rq import get_queue
+from .queue import get_queue
 from werkzeug.http import http_date
 
 from iatilib import db, parse
