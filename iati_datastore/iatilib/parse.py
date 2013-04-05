@@ -60,7 +60,10 @@ def iati_int(str):
 
 
 def reporting_org(xml):
-    data = {"ref": xval(xml, "@ref")}
+    data = {
+        "ref": xval(xml, "@ref"),
+        "name": xval(xml, 'text()'),
+    }
     try:
         data.update({
             "type": cl.OrganisationType.from_string(xval(xml, "@type"))
