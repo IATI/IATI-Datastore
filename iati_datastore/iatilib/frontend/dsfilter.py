@@ -1,7 +1,7 @@
 from iatilib import codelists, db
 from iatilib.model import (
     Activity, Budget, Transaction, CountryPercentage, SectorPercentage,
-    Participation)
+    Participation, Organisation)
 
 
 def _filter(query, args):
@@ -16,6 +16,14 @@ def _filter(query, args):
     if "reporting_org_ref" in args:
         query = query.filter(
             Activity.reporting_org_ref == args["reporting_org_ref"])
+
+    if "reporting-org_type" in args:
+        code = codelists.OrganisationType.from_string(args["reporting-org_type"])
+        query = query.filter(
+            Activity.reporting_org.has(
+                Organisation.type == code
+            )
+        )
 
     if "participating_org_ref" in args:
         query = query.filter(

@@ -8,14 +8,9 @@ from lxml import etree as ET
 
 from . import db
 
-from . import AppTestCase
+from . import AppTestCase, fixture_filename
 
 from iatilib import parse, codelists as cl
-
-
-def fixture_filename(fix_name):
-    return os.path.join(
-        os.path.dirname(__file__), "fixtures", fix_name)
 
 
 def fixture(fix_name, encoding='utf-8'):
@@ -44,6 +39,13 @@ class TestParseActivity(AppTestCase):
     def test_reporting_org_ref(self):
         act = parse.activity(fixture("default_currency.xml"))
         self.assertEquals(u"47045", act.reporting_org.ref)
+
+    def test_reporting_org_type(self):
+        act = parse.activity(fixture("default_currency.xml"))
+        self.assertEquals(
+            cl.OrganisationType.multilateral,
+            act.reporting_org.type
+        )
 
     def test_activity_websites(self):
         act = parse.activity(fixture("default_currency.xml"))

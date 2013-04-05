@@ -35,6 +35,17 @@ class TestActivityFilter(AppTestCase):
         self.assertIn(act_in, activities.all())
         self.assertNotIn(act_not, activities.all())
 
+    def test_by_reporting_org_type(self):
+        act_in = fac.ActivityFactory.create(
+            reporting_org__type=cl.OrganisationType.government)
+        act_not = fac.ActivityFactory.create(
+            reporting_org__type=cl.OrganisationType.foundation)
+        activities = dsfilter.activities({
+            "reporting-org_type": u"10"
+        })
+        self.assertIn(act_in, activities.all())
+        self.assertNotIn(act_not, activities.all())
+
 
 class TestTransactionFilter(AppTestCase):
     def test_by_country_code(self):

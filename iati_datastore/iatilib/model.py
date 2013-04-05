@@ -141,13 +141,14 @@ class Organisation(db.Model, UniqueMixin):
     __tablename__ = "organisation"
     ref = sa.Column(sa.Unicode, primary_key=True, nullable=False)
     name = sa.Column(sa.Unicode, default=u"", nullable=False)
+    type = sa.Column(codelists.OrganisationType.db_type())
 
     @classmethod
-    def unique_hash(cls, ref):
+    def unique_hash(cls, ref, **kw):
         return ref
 
     @classmethod
-    def unique_filter(cls, query, ref):
+    def unique_filter(cls, query, ref, **kw):
         return query.filter(cls.ref == ref)
 
     def __repr__(self):
