@@ -29,8 +29,9 @@ def make_shell_context():
 
 @manager.command
 def download_codelists():
+    "Download CSV codelists from IATI"
     for name, url in codelists.urls.items():
-        filename = "iatilib/codelists/%s.csv" % name
+        filename = "iati_datastore/iatilib/codelists/%s.csv" % name
         if os.path.exists(filename) and os.path.getsize(filename) > 0:
             print filename, "exists, skipping"
         else:

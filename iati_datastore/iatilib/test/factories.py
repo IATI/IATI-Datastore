@@ -6,7 +6,7 @@ from iatilib import codelists
 from iatilib.frontend import db
 from iatilib.model import (
     Activity, Transaction, Organisation, SectorPercentage, CountryPercentage,
-    Participation, Budget, Resource
+    Participation, Budget, Resource, RegionPercentage
 )
 
 
@@ -30,6 +30,11 @@ class ResourceFactory(factory.Factory):
 
 class CountryPercentageFactory(factory.Factory):
     country = codelists.Country.united_states
+    percentage = 0
+
+
+class RegionPercentageFactory(factory.Factory):
+    region = codelists.Region.europe_regional
     percentage = 0
 
 

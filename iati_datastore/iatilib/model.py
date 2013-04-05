@@ -4,7 +4,7 @@ from collections import namedtuple
 
 import sqlalchemy as sa
 from sqlalchemy.ext.associationproxy import association_proxy
-
+from sqlalchemy.ext.declarative import declared_attr
 
 from . import db
 from . import codelists
@@ -131,6 +131,7 @@ class Activity(db.Model):
         default=datetime.datetime.utcnow)
     participating_orgs = act_relationship("Participation")
     recipient_country_percentages = act_relationship("CountryPercentage")
+    recipient_region_percentages = act_relationship("RegionPercentage")
     transactions = act_relationship("Transaction")
     sector_percentages = act_relationship("SectorPercentage")
     budgets = act_relationship("Budget")
@@ -171,19 +172,32 @@ class ActivityWebsite(db.Model):
     activity = sa.orm.relationship("Activity")
 
 
-class CountryPercentage(db.Model):
-    __tablename__ = "country_percentage"
+class PercentageMixin(object):
+    @declared_attr
+    def activity_id(cls):
+        return sa.Column(
+            act_ForeignKey("activity.iati_identifier"),
+            nullable=False,
+            index=True,
+        )
     id = sa.Column(sa.Integer, primary_key=True)
-    activity_id = sa.Column(
-        act_ForeignKey("activity.iati_identifier"),
-        nullable=False,
-        index=True,
-    )
+    percentage = sa.Column(sa.Integer, nullable=True)
+
+
+class CountryPercentage(db.Model, PercentageMixin):
+    __tablename__ = "country_percentage"
     country = sa.Column(
         codelists.Country.db_type(),
         nullable=False,
         index=True)
-    percentage = sa.Column(sa.Integer, nullable=True)
+
+
+class RegionPercentage(db.Model, PercentageMixin):
+    __tablename__ = "region_percentage"
+    region = sa.Column(
+        codelists.Region.db_type(),
+        nullable=False,
+        index=True)
 
 
 class TransactionValue(namedtuple("TransactionValue", "date amount currency")):

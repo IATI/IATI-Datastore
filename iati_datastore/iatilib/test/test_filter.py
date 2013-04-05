@@ -46,6 +46,24 @@ class TestActivityFilter(AppTestCase):
         self.assertIn(act_in, activities.all())
         self.assertNotIn(act_not, activities.all())
 
+    def test_by_recipient_region_code(self):
+        act_in = fac.ActivityFactory.create(
+            recipient_region_percentages=[
+                fac.RegionPercentageFactory.build(
+                    region=cl.Region.africa_regional),
+            ])
+        act_not = fac.ActivityFactory.create(
+            recipient_region_percentages=[
+                fac.RegionPercentageFactory.build(
+                    region=cl.Region.oceania_regional
+                ),
+            ])
+        activities = dsfilter.activities({
+            "recipient-region_code": u"298"
+        })
+        self.assertIn(act_in, activities.all())
+        self.assertNotIn(act_not, activities.all())
+
 
 class TestTransactionFilter(AppTestCase):
     def test_by_country_code(self):

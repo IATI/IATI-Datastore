@@ -1,7 +1,7 @@
 from iatilib import codelists, db
 from iatilib.model import (
     Activity, Budget, Transaction, CountryPercentage, SectorPercentage,
-    Participation, Organisation)
+    RegionPercentage, Participation, Organisation)
 
 
 def _filter(query, args):
@@ -10,6 +10,14 @@ def _filter(query, args):
         query = query.filter(
             Activity.recipient_country_percentages.any(
                 CountryPercentage.country == country
+            )
+        )
+
+    if "recipient-region_code" in args:
+        region = codelists.Region.from_string(args["recipient-region_code"])
+        query = query.filter(
+            Activity.recipient_region_percentages.any(
+                RegionPercentage.region == region
             )
         )
 

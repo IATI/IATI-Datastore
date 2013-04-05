@@ -23,6 +23,8 @@ def iati_url(name, version="1.0"):
     return ("http://datadev.aidinfolabs.org/data/codelist/" +
             "%s/version/%s/lang/en.csv" % (name, version))
 
+# Run "iati download_codelists" after adding an entry here to download the
+# codelist file
 urls = {
     "OrganisationType": iati_url("OrganisationType", version="1.0"),
     "OrganisationRole": iati_url("OrganisationRole", version="1.0"),
@@ -32,6 +34,7 @@ urls = {
     "Sector": iati_url("Sector", version="1.0"),
     "Vocabulary": iati_url("Vocabulary"),
     "BudgetType": iati_url("BudgetType"),
+    "Region": iati_url("Region"),
 }
 
 data_dir = os.path.dirname(__file__)
