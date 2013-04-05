@@ -33,6 +33,14 @@ def _filter(query, args):
             )
         )
 
+    if "sector" in args:
+        code = codelists.Sector.from_string(args["sector"])
+        query = query.filter(
+            Activity.sector_percentages.any(
+                SectorPercentage.sector == code
+            )
+        )
+
     if "participating-org" in args:
         query = query.filter(
             Activity.participating_orgs.any(

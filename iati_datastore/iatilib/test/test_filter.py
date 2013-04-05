@@ -64,6 +64,24 @@ class TestActivityFilter(AppTestCase):
         self.assertIn(act_in, activities.all())
         self.assertNotIn(act_not, activities.all())
 
+    def test_by_sector(self):
+        act_in = fac.ActivityFactory.create(
+            sector_percentages=[
+                fac.SectorPercentageFactory.build(
+                    sector=cl.Sector.primary_education),
+            ])
+        act_not = fac.ActivityFactory.create(
+            sector_percentages=[
+                fac.SectorPercentageFactory.build(
+                    sector=cl.Sector.secondary_education
+                ),
+            ])
+        activities = dsfilter.activities({
+            "sector": u"11220"
+        })
+        self.assertIn(act_in, activities.all())
+        self.assertNotIn(act_not, activities.all())
+
 
 class TestTransactionFilter(AppTestCase):
     def test_by_country_code(self):
