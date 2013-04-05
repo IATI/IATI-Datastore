@@ -203,6 +203,19 @@ class TestOrganisation(AppTestCase):
         )])[0]
         self.assertEquals(orgrole.role, cl.OrganisationRole.implementing)
 
+    def test_org_type(self):
+        orgtype = parse.reporting_org(ET.XML(
+            u"""<reporting-org ref="GB-CHC-202918" type="21" />"""
+        ))
+        self.assertEquals(cl.OrganisationType.international_ngo, orgtype.type)
+
+    def test_org_type_missing(self):
+        orgtype = parse.reporting_org(ET.XML(
+            u"""<reporting-org ref="GB-CHC-202918" />"""
+        ))
+        self.assertEquals(None, orgtype.type)
+
+
 
 class TestParticipation(AppTestCase):
     def test_repeated_participation(self):

@@ -60,10 +60,13 @@ def iati_int(str):
 
 
 def reporting_org(xml):
-    data = {
-        "ref": xval(xml, "@ref"),
-        "type": cl.OrganisationType.from_string(xval(xml, "@type"))
-    }
+    data = {"ref": xval(xml, "@ref")}
+    try:
+        data.update({
+            "type": cl.OrganisationType.from_string(xval(xml, "@type"))
+        })
+    except MissingValue:
+        pass
     return Organisation.as_unique(db.session, **data)
 
 
