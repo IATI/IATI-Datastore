@@ -70,3 +70,4 @@ class TransactionFactory(factory.Factory):
 class BudgetFactory(factory.Factory):
     activity = factory.SubFactory(ActivityFactory)
     type = codelists.BudgetType.original
+    value_amount = 0

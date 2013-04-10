@@ -1,3 +1,4 @@
 _testdata
 *.pyc
 *.swp
+*.orig
