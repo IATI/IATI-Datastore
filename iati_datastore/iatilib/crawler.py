@@ -277,24 +277,32 @@ def enqueue(careful=False):
             result_ttl=0)
 
 
+@manager.option('--dataset', action="store", type=unicode,
+                help="update a single dataset")
 @manager.option('--limit', action="store", type=int,
                 help="max no of datasets to update")
 @manager.option('-v', '--verbose', action="store_true")
-def update(verbose=False, limit=None):
+def update(verbose=False, limit=None, dataset=None):
     """
     Fetch all datasets from IATI registry; update any that have changed
     """
     rq = get_queue()
 
-    fetch_dataset_list()
-    db.session.commit()
+    if dataset:
+        print "Enqueing {0} for update".format(dataset)
+        rq.enqueue(update_dataset, args=(dataset,), result_ttl=0)
+    else:
+        fetch_dataset_list()
+        db.session.commit()
 
-    datasets = Dataset.query
-    if limit:
-        datasets = datasets.limit(limit)
+        datasets = Dataset.query
+        if limit:
+            datasets = datasets.limit(limit)
 
-    print "Enqueing %d datasets for update" % datasets.count()
-    for dataset in datasets:
-        if verbose:
-            print "Enquing %s" % dataset.name
-        rq.enqueue(update_dataset, args=(dataset.name,), result_ttl=0)
+        print "Enqueing %d datasets for update" % datasets.count()
+
+        for dataset in datasets:
+            if verbose:
+                print "Enquing %s" % dataset.name
+            rq.enqueue(update_dataset, args=(dataset.name,), result_ttl=0)
+
