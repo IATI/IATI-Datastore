@@ -216,7 +216,7 @@ class Transaction(db.Model):
     type = sa.Column(codelists.TransactionType.db_type(), nullable=False)
     date = sa.Column(sa.Date, nullable=False)
     value_date = sa.Column(sa.Date, nullable=False)
-    value_amount = sa.Column(sa.BigInteger, nullable=False)
+    value_amount = sa.Column(sa.Numeric(precision=10, scale=4, asdecimal=True), nullable=False)
     value_currency = sa.Column(codelists.Currency.db_type(), nullable=False)
     value = sa.orm.composite(TransactionValue, value_date, value_amount, value_currency)
     activity = sa.orm.relationship("Activity")
@@ -258,7 +258,7 @@ class Budget(db.Model):
     period_end = sa.Column(sa.Date, nullable=True)
     period_start = sa.Column(sa.Date, nullable=True)
     value_currency = sa.Column(codelists.Currency.db_type())
-    value_amount = sa.Column(sa.Integer)
+    value_amount = sa.Column(sa.Numeric(precision=10, scale=4, asdecimal=True), nullable=False)
     activity = sa.orm.relationship("Activity")
 
 

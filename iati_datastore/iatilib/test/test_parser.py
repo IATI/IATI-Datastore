@@ -1,6 +1,7 @@
 import os
 import codecs
 import datetime
+from decimal import Decimal
 from unittest import TestCase, skip
 
 import mock
@@ -272,7 +273,7 @@ class TestTransaction(AppTestCase):
         ])[0]
         self.assertEquals(2663000000, transaction.value_amount)
 
-    @mock.patch('iatilib.parse.iati_int')
+    @mock.patch('iatilib.parse.iati_decimal')
     def test_iati_int_called(self, mock):
         transaction = parse.transactions([
             ET.XML(u'''<transaction>
@@ -344,6 +345,14 @@ class TestValue(TestCase):
     def test_sign(self):
         self.assertEquals(-20026, parse.iati_int(u"-20026"))
 
+    def test_decimal_thousand_sep(self):
+        self.assertEquals(Decimal('20026'), parse.iati_decimal(u"20,026"))
+
+    def test_decimal_sign(self):
+        self.assertEquals(Decimal('-20026'), parse.iati_decimal(u"-20026"))
+
+    def test_decimal(self):
+        self.assertEquals(Decimal('42479.4'), parse.iati_decimal(u"42479.4"))
 
 class TestXVal(TestCase):
     def test_missing_val(self):

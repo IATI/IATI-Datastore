@@ -1,6 +1,7 @@
 import os
 import datetime
 import logging
+from decimal import Decimal
 from StringIO import StringIO
 
 from lxml import etree as ET
@@ -59,6 +60,10 @@ def iati_int(str):
     return int(str.replace(",", ""))
 
 
+def iati_decimal(str):
+    return Decimal(str.replace(",", ""))
+
+
 def reporting_org(xml):
     data = {
         "ref": xval(xml, "@ref"),
@@ -106,7 +111,7 @@ def transactions(xml):
                 xval(ele, "transaction-type/@code")),
             date=iati_date(xval(ele, "transaction-date/@iso-date")),
             value_date=iati_date(xval(ele, "value/@value-date")),
-            value_amount=iati_int(xval(ele, "value/text()")),
+            value_amount=iati_decimal(xval(ele, "value/text()")),
             value_currency=currency(xval(ele, "../@default-currency", None))
         )
 
@@ -146,7 +151,7 @@ def budgets(xml):
         return Budget(
             type=budget_type(ele),
             value_currency=cl.Currency.from_string(xval(ele, "value/@currency")),
-            value_amount=iati_int(xval(ele, "value/text()")),
+            value_amount=iati_decimal(xval(ele, "value/text()")),
             period_start=iati_date(xval(ele, "period-start/@iso-date", None)),
             period_end=iati_date(xval(ele, "period-end/@iso-date", None)),
         )
