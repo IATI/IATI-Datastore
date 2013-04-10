@@ -209,11 +209,8 @@ class Transaction(db.Model):
     __tablename__ = "transaction"
     id = sa.Column(sa.Integer, primary_key=True)
     ref = sa.Column(sa.Unicode, nullable=True)
-    #providing_org_ref = sa.Column(
-    #    sa.ForeignKey("organisation.ref"),
-    #    nullable=False,
-    #    index=True)
-    #providing_org = sa.orm.relationship("Organisation")
+    providing_org_ref = sa.Column(sa.Unicode, sa.ForeignKey("organisation.ref"))
+    providing_org = sa.orm.relationship("Organisation", primaryjoin=providing_org_ref == Organisation.ref)
     activity_id = sa.Column(
         act_ForeignKey("activity.iati_identifier"),
         nullable=False,

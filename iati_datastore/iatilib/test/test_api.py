@@ -266,6 +266,22 @@ class TestTransactionView(ClientTestCase, ApiViewMixin):
         self.assertEquals(u'36258', output[1].split(',')[0])
         self.assertEquals(u'', output[2].split(',')[0])
 
+    def test_provider_org_ref_output(self):
+        """provider_org should be in transaction.csv output"""
+        load_fix("transaction_provider.xml")
+        output = list(csv.reader(StringIO(self.client.get(self.base_url).data)))
+        csv_headers = output[0]
+        i = csv_headers.index('transaction_provider-org_ref')
+        self.assertEquals(u'GB-1-201242-101', output[1][i])
+
+    def test_provider_org_output(self):
+        """provider_org should be in transaction.csv output"""
+        load_fix("transaction_provider.xml")
+        output = list(csv.reader(StringIO(self.client.get(self.base_url).data)))
+        csv_headers = output[0]
+        i = csv_headers.index('transaction_provider-org')
+        self.assertEquals(u'Africa Educational Trust', output[-1][i])
+
 
 class TestTransactionByCountryView(ClientTestCase, ApiViewMixin):
     base_url = '/api/1/access/transactions/by_country.csv'

@@ -114,6 +114,10 @@ class TestParseActivity(AppTestCase):
         self.assertEquals(u'36258', act.transactions[0].ref)
         self.assertEquals(None, act.transactions[1].ref)
 
+    def test_transaction_provider_org_ref(self):
+        act = parse.activity(fixture("transaction_provider.xml"))
+        self.assertEquals(u'GB-1-201242-101', act.transactions[0].providing_org.ref)
+
     def test_date_start_planned(self):
         act = parse.activity(fixture("default_currency.xml"))
         self.assertEquals(None, act.start_planned)

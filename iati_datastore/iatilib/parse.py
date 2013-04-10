@@ -106,7 +106,7 @@ def transactions(xml):
         return cl.Currency.from_string(code) if code is not None else None
 
     def process(ele):
-        return Transaction(
+        t = Transaction(
             ref = xval(ele, "@ref", default=None),
             type=cl.TransactionType.from_string(
                 xval(ele, "transaction-type/@code")),
@@ -115,6 +115,12 @@ def transactions(xml):
             value_amount=iati_decimal(xval(ele, "value/text()")),
             value_currency=currency(xval(ele, "../@default-currency", None))
         )
+
+        org_reg = xval(ele, "provider-org/@ref", None)
+        if org_reg:
+            t.providing_org = Organisation.as_unique(db.session, ref=org_reg)
+
+        return t
 
     ret = []
     for ele in xml:
