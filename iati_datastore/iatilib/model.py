@@ -221,10 +221,20 @@ class Transaction(db.Model):
     provider_org_ref = sa.Column(sa.Unicode, sa.ForeignKey("organisation.ref"))
     provider_org = sa.orm.relationship(
         "Organisation",
-        primaryjoin=provider_org_ref == Organisation.ref
+        primaryjoin=provider_org_ref == Organisation.ref,
+        foreign_keys=[provider_org_ref],
     )
     provider_org_text = sa.Column(sa.Unicode, nullable=True)
     provider_org_activity_id = sa.Column(sa.Unicode, nullable=True)
+
+    receiver_org_ref = sa.Column(sa.Unicode, sa.ForeignKey("organisation.ref"))
+    receiver_org = sa.orm.relationship(
+        "Organisation",
+        primaryjoin=receiver_org_ref == Organisation.ref,
+        foreign_keys=[receiver_org_ref],
+    )
+    receiver_org_text = sa.Column(sa.Unicode, nullable=True)
+    receiver_org_activity_id = sa.Column(sa.Unicode, nullable=True)
     type = sa.Column(codelists.TransactionType.db_type(), nullable=False)
     date = sa.Column(sa.Date, nullable=False)
     value_date = sa.Column(sa.Date, nullable=False)

@@ -262,9 +262,11 @@ class TestTransactionView(ClientTestCase, ApiViewMixin):
 
     def test_ref_output(self):
         load_fix("transaction_ref.xml")
-        output = self.client.get(self.base_url).data.splitlines()
-        self.assertEquals(u'36258', output[1].split(',')[0])
-        self.assertEquals(u'', output[2].split(',')[0])
+        output = list(csv.reader(StringIO(self.client.get(self.base_url).data)))
+        csv_headers = output[0]
+        i = csv_headers.index('transaction_ref')
+        self.assertEquals(u'36258', output[1][i])
+        self.assertEquals(u'', output[2][i])
 
     def test_provider_org_ref_output(self):
         """provider_org should be in transaction.csv output"""
@@ -288,6 +290,29 @@ class TestTransactionView(ClientTestCase, ApiViewMixin):
         csv_headers = output[0]
         i = csv_headers.index('transaction_provider-org_provider-activity-id')
         self.assertEquals(u'GB-1-202907', output[1][i])
+
+    def test_receiver_org_ref_output(self):
+        """receiver_org should be in transaction.csv output"""
+        load_fix("transaction_provider.xml")
+        output = list(csv.reader(StringIO(self.client.get(self.base_url).data)))
+        csv_headers = output[0]
+        i = csv_headers.index('transaction_receiver-org_ref')
+        self.assertEquals(u'GB-CHC-313139', output[1][i])
+
+    def test_receiver_org_output(self):
+        """receiver_org should be in transaction.csv output"""
+        load_fix("provider-activity-id.xml")
+        output = list(csv.reader(StringIO(self.client.get(self.base_url).data)))
+        csv_headers = output[0]
+        i = csv_headers.index('transaction_receiver-org')
+        self.assertEquals(u'Bond', output[1][i])
+
+    def test_receiver_org_activity_id_output(self):
+        load_fix("provider-activity-id.xml")
+        output = list(csv.reader(StringIO(self.client.get(self.base_url).data)))
+        csv_headers = output[0]
+        i = csv_headers.index('transaction_receiver-org_receiver-activity-id')
+        self.assertEquals(u'GB-CHC-1068839-dfid_ag_11-13', output[1][i])
 
 
 class TestTransactionByCountryView(ClientTestCase, ApiViewMixin):

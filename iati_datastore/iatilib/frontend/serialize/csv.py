@@ -263,7 +263,6 @@ csv_activity_by_sector = CSVSerializer((
 
 
 transaction_csv = CSVSerializer((
-    (u'transaction_ref', lambda t: t.ref),
     (u'transaction-type', transaction_type),
     (u'transaction-date', transaction_date),
     (u"default-currency", default_currency),
@@ -277,10 +276,15 @@ transaction_csv = CSVSerializer((
     u"sector-code",
     u"sector",
     u"sector-percentage",
-    (u'transaction_provider-org_ref', lambda t: t.provider_org_ref),
+    (u'transaction_ref', lambda t: t.ref),
     (u'transaction_provider-org', lambda t: t.provider_org_text),
+    (u'transaction_provider-org_ref', lambda t: t.provider_org_ref),
     (u'transaction_provider-org_provider-activity-id',
             lambda t: t.provider_org_activity_id),
+    (u'transaction_receiver-org', lambda t: t.receiver_org_text),
+    (u'transaction_receiver-org_ref', lambda t: t.receiver_org_ref),
+    (u'transaction_receiver-org_receiver-activity-id',
+            lambda t: t.receiver_org_activity_id),
 ), adapter=adapt_activity)
 
 

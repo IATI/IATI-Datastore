@@ -119,6 +119,11 @@ class TestParseActivity(AppTestCase):
         self.assertEquals(u'GB-1-201242-101', 
                             act.transactions[0].provider_org.ref)
 
+    def test_transaction_reciever_org_ref(self):
+        act = parse.activity(fixture("transaction_provider.xml"))
+        self.assertEquals(u'GB-CHC-313139', 
+                            act.transactions[0].receiver_org.ref)
+
     def test_date_start_planned(self):
         act = parse.activity(fixture("default_currency.xml"))
         self.assertEquals(None, act.start_planned)
@@ -316,6 +321,27 @@ class TestTransaction(AppTestCase):
         transaction = parse.transactions([ET.XML(sample)])[0]
         self.assertEquals(u'DFID', transaction.provider_org_text)
 
+    def test_receiver_activity_id(self):
+        sample = """<transaction>
+          <transaction-type code="IF"/>
+          <receiver-org ref="GB-CHC-1068839" receiver-activity-id="GB-CHC-1068839-dfid_ag_11-13">Bond</receiver-org>
+          <value value-date="2011-06-01" currency="GBP">271111</value>
+          <transaction-date iso-date="2012-03-31"/>
+          </transaction>
+        """
+        transaction = parse.transactions([ET.XML(sample)])[0]
+        self.assertEquals(u'GB-CHC-1068839-dfid_ag_11-13', transaction.receiver_org_activity_id)
+
+    def test_receiver_org_text(self):
+        sample = """<transaction>
+          <transaction-type code="IF"/>
+          <receiver-org ref="GB-CHC-1068839" receiver-activity-id="GB-CHC-1068839-dfid_ag_11-13">Bond</receiver-org>
+          <value value-date="2012-07-02" currency="GBP">51693</value>
+          <transaction-date iso-date="2012-07-02"/>
+        </transaction>
+        """
+        transaction = parse.transactions([ET.XML(sample)])[0]
+        self.assertEquals(u'Bond', transaction.receiver_org_text)
 
 class TestBudget(TestCase):
     def parse_budget(self):
