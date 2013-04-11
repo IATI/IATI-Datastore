@@ -57,6 +57,7 @@ def transaction_value(transaction):
     return transaction.value.amount
 
 
+
 title = attrgetter("title")
 description = attrgetter("description")
 iati_identifier = attrgetter("iati_identifier")
@@ -277,6 +278,8 @@ transaction_csv = CSVSerializer((
     u"sector",
     u"sector-percentage",
     (u'transaction_ref', lambda t: t.ref),
+    (u'transaction_value_currency', lambda t: t.value_currency.value),
+    (u'transaction_value_value-date', lambda t: t.value_date),
     (u'transaction_provider-org', lambda t: t.provider_org_text),
     (u'transaction_provider-org_ref', lambda t: t.provider_org_ref),
     (u'transaction_provider-org_provider-activity-id',

@@ -268,6 +268,20 @@ class TestTransactionView(ClientTestCase, ApiViewMixin):
         self.assertEquals(u'36258', output[1][i])
         self.assertEquals(u'', output[2][i])
 
+    def test_transaction_value_currency(self):
+        load_fix("transaction_provider.xml")
+        output = list(csv.reader(StringIO(self.client.get(self.base_url).data)))
+        csv_headers = output[0]
+        i = csv_headers.index('transaction_value_currency')
+        self.assertEquals(u'GBP', output[1][i])
+
+    def test_transaction_value_value_date(self):
+        load_fix("transaction_provider.xml")
+        output = list(csv.reader(StringIO(self.client.get(self.base_url).data)))
+        csv_headers = output[0]
+        i = csv_headers.index('transaction_value_value-date')
+        self.assertEquals(u'2011-08-19', output[1][i])
+
     def test_provider_org_ref_output(self):
         """provider_org should be in transaction.csv output"""
         load_fix("transaction_provider.xml")
