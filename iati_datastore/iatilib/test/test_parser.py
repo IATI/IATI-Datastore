@@ -116,7 +116,8 @@ class TestParseActivity(AppTestCase):
 
     def test_transaction_provider_org_ref(self):
         act = parse.activity(fixture("transaction_provider.xml"))
-        self.assertEquals(u'GB-1-201242-101', act.transactions[0].providing_org.ref)
+        self.assertEquals(u'GB-1-201242-101', 
+                            act.transactions[0].provider_org.ref)
 
     def test_date_start_planned(self):
         act = parse.activity(fixture("default_currency.xml"))
@@ -290,6 +291,22 @@ class TestTransaction(AppTestCase):
                 </transaction>''')
         ])[0]
         self.assertEquals(1, mock.call_count)
+
+    def test_transaction_provider_activity_id(self):
+        sample = """<transaction>
+          <transaction-type code="IF"/>
+          <provider-org ref="GB-1" provider-activity-id="GB-1-202907">
+            DFID
+          </provider-org>
+          <value value-date="2012-07-02" currency="GBP">51693</value>
+          <description xml:lang="en">Y2 Q1</description>
+          <transaction-date iso-date="2012-07-02"/>
+          <flow-type xml:lang="en" code="30"/>
+          <aid-type xml:lang="en" code="C01"/>
+        </transaction>
+        """
+        transaction = parse.transactions([ET.XML(sample)])[0]
+        self.assertEquals(u'GB-1-202907', transaction.provider_org_activity_id)
 
 
 class TestBudget(TestCase):

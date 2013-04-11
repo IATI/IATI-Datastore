@@ -209,21 +209,25 @@ class Transaction(db.Model):
     __tablename__ = "transaction"
     id = sa.Column(sa.Integer, primary_key=True)
     ref = sa.Column(sa.Unicode, nullable=True)
-    providing_org_ref = sa.Column(sa.Unicode, sa.ForeignKey("organisation.ref"))
-    providing_org = sa.orm.relationship("Organisation", primaryjoin=providing_org_ref == Organisation.ref)
     activity_id = sa.Column(
         act_ForeignKey("activity.iati_identifier"),
         nullable=False,
         index=True
     )
+    activity = sa.orm.relationship("Activity")
+    provider_org_ref = sa.Column(sa.Unicode, sa.ForeignKey("organisation.ref"))
+    provider_org = sa.orm.relationship(
+        "Organisation",
+        primaryjoin=provider_org_ref == Organisation.ref
+    )
+    provider_org_activity_id = sa.Column(sa.Unicode, nullable=True)
     type = sa.Column(codelists.TransactionType.db_type(), nullable=False)
     date = sa.Column(sa.Date, nullable=False)
     value_date = sa.Column(sa.Date, nullable=False)
-    value_amount = sa.Column(sa.Numeric(precision=10, scale=4, asdecimal=True), nullable=False)
+    value_amount = sa.Column(sa.Numeric(), nullable=False)
     value_currency = sa.Column(codelists.Currency.db_type(), nullable=False)
     value = sa.orm.composite(TransactionValue, value_date, value_amount,
                              value_currency)
-    activity = sa.orm.relationship("Activity")
 
     def __unicode__(self):
         return u"%s: %s/%s" % (
@@ -262,7 +266,7 @@ class Budget(db.Model):
     period_end = sa.Column(sa.Date, nullable=True)
     period_start = sa.Column(sa.Date, nullable=True)
     value_currency = sa.Column(codelists.Currency.db_type())
-    value_amount = sa.Column(sa.Numeric(precision=10, scale=4, asdecimal=True), nullable=False)
+    value_amount = sa.Column(sa.Numeric(), nullable=False)
     activity = sa.orm.relationship("Activity")
 
 

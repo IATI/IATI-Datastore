@@ -107,10 +107,12 @@ def transactions(xml):
 
     def process(ele):
         t = Transaction(
+            date=iati_date(xval(ele, "transaction-date/@iso-date")),
+            provider_org_activity_id=xval(
+                                ele, "provider-org/@provider-activity-id", None),
             ref = xval(ele, "@ref", default=None),
             type=cl.TransactionType.from_string(
-                xval(ele, "transaction-type/@code")),
-            date=iati_date(xval(ele, "transaction-date/@iso-date")),
+                                xval(ele, "transaction-type/@code")),
             value_date=iati_date(xval(ele, "value/@value-date")),
             value_amount=iati_decimal(xval(ele, "value/text()")),
             value_currency=currency(xval(ele, "../@default-currency", None))
@@ -118,7 +120,7 @@ def transactions(xml):
 
         org_reg = xval(ele, "provider-org/@ref", None)
         if org_reg:
-            t.providing_org = Organisation.as_unique(db.session, ref=org_reg)
+            t.provider_org = Organisation.as_unique(db.session, ref=org_reg)
 
         return t
 
