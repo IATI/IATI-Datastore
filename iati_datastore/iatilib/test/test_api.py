@@ -280,7 +280,7 @@ class TestTransactionView(ClientTestCase, ApiViewMixin):
         output = list(csv.reader(StringIO(self.client.get(self.base_url).data)))
         csv_headers = output[0]
         i = csv_headers.index('transaction_provider-org')
-        self.assertEquals(u'Africa Educational Trust', output[-1][i])
+        self.assertEquals(u'DFID', output[1][i])
 
     def test_provider_org_activity_id_output(self):
         load_fix("provider-activity-id.xml")

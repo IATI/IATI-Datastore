@@ -56,13 +56,6 @@ def transaction_date(transaction):
 def transaction_value(transaction):
     return transaction.value.amount
 
-def transaction_provider_org(transaction):
-    if transaction.provider_org:
-        return transaction.provider_org.name
-    else:
-        return None
-
-
 
 title = attrgetter("title")
 description = attrgetter("description")
@@ -285,7 +278,7 @@ transaction_csv = CSVSerializer((
     u"sector",
     u"sector-percentage",
     (u'transaction_provider-org_ref', lambda t: t.provider_org_ref),
-    (u'transaction_provider-org', transaction_provider_org),
+    (u'transaction_provider-org', lambda t: t.provider_org_text),
     (u'transaction_provider-org_provider-activity-id',
             lambda t: t.provider_org_activity_id),
 ), adapter=adapt_activity)

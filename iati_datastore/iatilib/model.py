@@ -215,11 +215,15 @@ class Transaction(db.Model):
         index=True
     )
     activity = sa.orm.relationship("Activity")
+    # The spec examples allows <provider-org ref="GB-1">DFID</provider-org>
+    # the Organisation.name with ref is actually "Department for International
+    # Development". So the text DFID is being stored in provider_org_text
     provider_org_ref = sa.Column(sa.Unicode, sa.ForeignKey("organisation.ref"))
     provider_org = sa.orm.relationship(
         "Organisation",
         primaryjoin=provider_org_ref == Organisation.ref
     )
+    provider_org_text = sa.Column(sa.Unicode, nullable=True)
     provider_org_activity_id = sa.Column(sa.Unicode, nullable=True)
     type = sa.Column(codelists.TransactionType.db_type(), nullable=False)
     date = sa.Column(sa.Date, nullable=False)

@@ -292,21 +292,29 @@ class TestTransaction(AppTestCase):
         ])[0]
         self.assertEquals(1, mock.call_count)
 
-    def test_transaction_provider_activity_id(self):
+    def test_provider_activity_id(self):
         sample = """<transaction>
           <transaction-type code="IF"/>
           <provider-org ref="GB-1" provider-activity-id="GB-1-202907">
             DFID
           </provider-org>
           <value value-date="2012-07-02" currency="GBP">51693</value>
-          <description xml:lang="en">Y2 Q1</description>
           <transaction-date iso-date="2012-07-02"/>
-          <flow-type xml:lang="en" code="30"/>
-          <aid-type xml:lang="en" code="C01"/>
         </transaction>
         """
         transaction = parse.transactions([ET.XML(sample)])[0]
         self.assertEquals(u'GB-1-202907', transaction.provider_org_activity_id)
+
+    def test_provider_org_text(self):
+        sample = """<transaction>
+          <transaction-type code="IF"/>
+          <provider-org>DFID</provider-org>
+          <value value-date="2012-07-02" currency="GBP">51693</value>
+          <transaction-date iso-date="2012-07-02"/>
+        </transaction>
+        """
+        transaction = parse.transactions([ET.XML(sample)])[0]
+        self.assertEquals(u'DFID', transaction.provider_org_text)
 
 
 class TestBudget(TestCase):
