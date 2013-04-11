@@ -215,6 +215,7 @@ class Transaction(db.Model):
         index=True
     )
     activity = sa.orm.relationship("Activity")
+    description = sa.Column(sa.Unicode, nullable=True)
     # The spec examples allows <provider-org ref="GB-1">DFID</provider-org>
     # the Organisation.name with ref is actually "Department for International
     # Development". So the text DFID is being stored in provider_org_text

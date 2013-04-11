@@ -108,6 +108,7 @@ def transactions(xml):
     def process(ele):
         t = Transaction(
             date=iati_date(xval(ele, "transaction-date/@iso-date")),
+            description=xval(ele, "description/text()", None),
             provider_org_text=xval(ele, "provider-org/text()", None),
             provider_org_activity_id=xval(
                                 ele, "provider-org/@provider-activity-id", None),

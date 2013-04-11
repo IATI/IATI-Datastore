@@ -327,6 +327,16 @@ class TestTransactionView(ClientTestCase, ApiViewMixin):
         csv_headers = output[0]
         i = csv_headers.index('transaction_receiver-org_receiver-activity-id')
         self.assertEquals(u'GB-CHC-1068839-dfid_ag_11-13', output[1][i])
+        
+    def test_description(self):
+        load_fix("transaction_provider.xml")
+        output = list(csv.reader(StringIO(self.client.get(self.base_url).data)))
+        csv_headers = output[0]
+        i = csv_headers.index('transaction_description')
+        self.assertEquals(
+                u'Funds received from DFID for activities in Aug- Sept 2011',
+                output[1][i]
+        )
 
 
 class TestTransactionByCountryView(ClientTestCase, ApiViewMixin):

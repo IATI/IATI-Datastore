@@ -19,6 +19,7 @@ def upgrade():
     op.alter_column('budget', u'value_amount', existing_type=sa.INTEGER(), 
                     type_=sa.NUMERIC(), nullable=False)
 
+    op.add_column('transaction', sa.Column('description', sa.Unicode(), nullable=True))
     op.add_column('transaction', sa.Column('receiver_org_activity_id',
                    sa.Unicode(), nullable=True))
     op.add_column('transaction', sa.Column('receiver_org_ref', sa.Unicode(),
@@ -54,4 +55,5 @@ def downgrade():
                existing_type=sa.NUMERIC(),
                type_=sa.INTEGER(),
                nullable=False)
+    op.drop_column('transaction', 'description')
     ### end Alembic commands ###

@@ -288,6 +288,7 @@ transaction_csv = CSVSerializer((
     (u'transaction_receiver-org_ref', lambda t: t.receiver_org_ref),
     (u'transaction_receiver-org_receiver-activity-id',
             lambda t: t.receiver_org_activity_id),
+    (u'transaction_description', lambda t: t.description),
 ), adapter=adapt_activity)
 
 

@@ -343,6 +343,19 @@ class TestTransaction(AppTestCase):
         transaction = parse.transactions([ET.XML(sample)])[0]
         self.assertEquals(u'Bond', transaction.receiver_org_text)
 
+    def test_description(self):
+        sample = """<transaction>
+          <transaction-type code="IF"/>
+          <value value-date="2011-08-19" currency="GBP">29143</value>
+          <description>Funds received from DFID for activities in Aug- Sept 2011</description>
+          <transaction-date iso-date="2011-08-19"/>
+        </transaction> """
+        transaction = parse.transactions([ET.XML(sample)])[0]
+        self.assertEquals(
+                u'Funds received from DFID for activities in Aug- Sept 2011',
+                transaction.description
+        )
+
 class TestBudget(TestCase):
     def parse_budget(self):
         return parse.budgets([ET.XML("""
