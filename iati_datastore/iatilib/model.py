@@ -216,6 +216,11 @@ class Transaction(db.Model):
     )
     activity = sa.orm.relationship("Activity")
     description = sa.Column(sa.Unicode, nullable=True)
+    flow_type = sa.Column(codelists.FlowType.db_type(), nullable=True)
+    finance_type = sa.Column(codelists.FinanceType.db_type())
+    aid_type = sa.Column(codelists.AidType.db_type())
+    tied_status = sa.Column(codelists.TiedStatus.db_type())
+    disbursement_channel = sa.Column(codelists.DisbursementChannel.db_type())
     # The spec examples allows <provider-org ref="GB-1">DFID</provider-org>
     # the Organisation.name with ref is actually "Department for International
     # Development". So the text DFID is being stored in provider_org_text

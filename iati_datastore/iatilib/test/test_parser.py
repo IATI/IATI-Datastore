@@ -263,6 +263,21 @@ class TestActivity(AppTestCase):
 
 
 class TestTransaction(AppTestCase):
+    def __init__(self, methodName='runTest'):
+        super(TestTransaction, self).__init__(methodName)
+        self.codelists = """
+            <transaction>
+              <transaction-type code="C"/>
+              <value value-date="2012-12-31">4119000</value>
+              <transaction-date iso-date="2012-12-31"/>
+              <flow-type code="30"/>
+              <finance-type code="110"/>
+              <aid-type code="B01"/>
+              <disbursement-channel code="2"/>
+              <tied-status code="5"/>
+            </transaction>
+        """
+
     def test_missing_code(self):
         transactions = parse.transactions([
             ET.XML(u'''<transaction>
@@ -356,7 +371,28 @@ class TestTransaction(AppTestCase):
                 transaction.description
         )
 
+    def test_flow_type(self):
+        transaction = parse.transactions([ET.XML(self.codelists)])[0]
+        self.assertEquals(u'30', transaction.flow_type.value) 
+
+    def test_finance_type(self):
+        transaction = parse.transactions([ET.XML(self.codelists)])[0]
+        self.assertEquals(u'110', transaction.finance_type.value) 
+
+    def test_aid_type(self):
+        transaction = parse.transactions([ET.XML(self.codelists)])[0]
+        self.assertEquals(u'B01', transaction.aid_type.value) 
+
+    def test_tied_status(self):
+        transaction = parse.transactions([ET.XML(self.codelists)])[0]
+        self.assertEquals(u'5', transaction.tied_status.value) 
+
+    def test_disbursement_channel(self):
+        transaction = parse.transactions([ET.XML(self.codelists)])[0]
+        self.assertEquals(u'2', transaction.disbursement_channel.value) 
+
 class TestBudget(TestCase):
+
     def parse_budget(self):
         return parse.budgets([ET.XML("""
             <budget type="1">

@@ -338,6 +338,40 @@ class TestTransactionView(ClientTestCase, ApiViewMixin):
                 output[1][i]
         )
 
+    def test_flow_type(self):
+        load_fix("transaction_fields_code_lists.xml")
+        output = list(csv.reader(StringIO(self.client.get(self.base_url).data)))
+        csv_headers = output[0]
+        i = csv_headers.index('transaction_flow-type_code')
+        self.assertEquals(u'30', output[1][i])
+        
+    def test_finance_type(self):
+        load_fix("transaction_fields_code_lists.xml")
+        output = list(csv.reader(StringIO(self.client.get(self.base_url).data)))
+        csv_headers = output[0]
+        i = csv_headers.index('transaction_finance-type_code')
+        self.assertEquals(u'110', output[1][i])
+        
+    def test_aid_type(self):
+        load_fix("transaction_fields_code_lists.xml")
+        output = list(csv.reader(StringIO(self.client.get(self.base_url).data)))
+        csv_headers = output[0]
+        i = csv_headers.index('transaction_aid-type_code')
+        self.assertEquals(u'B01', output[1][i])
+
+    def test_tied_status(self):
+        load_fix("transaction_fields_code_lists.xml")
+        output = list(csv.reader(StringIO(self.client.get(self.base_url).data)))
+        csv_headers = output[0]
+        i = csv_headers.index('transaction_tied-status_code')
+        self.assertEquals(u'5', output[1][i])
+        
+    def test_disbursement_channel_status(self):
+        load_fix("transaction_fields_code_lists.xml")
+        output = list(csv.reader(StringIO(self.client.get(self.base_url).data)))
+        csv_headers = output[0]
+        i = csv_headers.index('transaction_disbursement-channel_code')
+        self.assertEquals(u'2', output[1][i])
 
 class TestTransactionByCountryView(ClientTestCase, ApiViewMixin):
     base_url = '/api/1/access/transactions/by_country.csv'

@@ -2,3 +2,7 @@ _testdata
 *.pyc
 *.swp
 *.orig
+.coverage
+.noseids
+1
+*.egg-info

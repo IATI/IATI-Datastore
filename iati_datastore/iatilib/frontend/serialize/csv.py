@@ -56,7 +56,22 @@ def transaction_date(transaction):
 def transaction_value(transaction):
     return transaction.value.amount
 
+def transaction_flow_type(transaction):
+    return transaction.flow_type.value if transaction.flow_type else ""
 
+def transaction_aid_type(transaction):
+    return transaction.aid_type.value if transaction.aid_type else ""
+
+def transaction_finance_type(transaction):
+    return transaction.finance_type.value if transaction.finance_type else ""
+
+def transaction_tied_status(transaction):
+    return transaction.tied_status.value if transaction.tied_status else ""
+
+def transaction_disbursement_channel(transaction):
+    if transaction.disbursement_channel:
+        return transaction.disbursement_channel.value 
+    return ""
 
 title = attrgetter("title")
 description = attrgetter("description")
@@ -289,6 +304,12 @@ transaction_csv = CSVSerializer((
     (u'transaction_receiver-org_receiver-activity-id',
             lambda t: t.receiver_org_activity_id),
     (u'transaction_description', lambda t: t.description),
+    (u'transaction_flow-type_code', transaction_flow_type),
+    (u'transaction_finance-type_code', transaction_finance_type),
+    (u'transaction_aid-type_code', transaction_aid_type),
+    (u'transaction_tied-status_code', transaction_tied_status),
+    (u'transaction_disbursement-channel_code',
+            transaction_disbursement_channel),
 ), adapter=adapt_activity)
 
 
