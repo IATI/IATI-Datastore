@@ -8,6 +8,7 @@
     <activity-date type="start-actual" iso-date="2011-08-01" xml:lang="en"/>
     <participating-org xml:lang="en" type="22" role="Implementing">AET South Sudan Community ROLE Centres</participating-org>
     <recipient-region xml:lang="en" percentage="100" code="289"/>
+    <recipient-country code="GB">United Kingdom</recipient-country>
     <sector xml:lang="en" code="11220" percentage="100"/>
     <budget type="1">
       <period-end iso-date="2014-07-31"/>

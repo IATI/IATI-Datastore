@@ -16,7 +16,6 @@
 	<participating-org role="Funding" ref="GB-CHC-285776">CAFOD</participating-org>
 	<participating-org role="Implementing">The British and Irish Agencies Afghanistan Group</participating-org>
 	<recipient-country code="AF">Afghanistan</recipient-country>
-	<sector vocabulary="RO">Civil Society Effectiveness</sector>
 	<sector vocabulary="DAC" code="99810" percentage="100">Sectors not specified</sector>
 	<default-flow-type code="30">Private grants</default-flow-type>
 	<default-aid-type code="C01">Project-type interventions</default-aid-type>

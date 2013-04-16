@@ -7,6 +7,9 @@
     <description>Strategic funding contribution from DFID to ActionAid in support of the organisation's objectives and those in the logframe submitted for the grant</description>
     <activity-status code="2"/>
     <participating-org ref="GB-1" type="10" role="Funding">DFID</participating-org>
+<sector vocabulary="RO">Civil Society Effectiveness</sector>
+<sector vocabulary="DAC" code="99810" percentage="100">Sectors not specified</sector>
+    <recipient-country code="GB">United Kingdom</recipient-country>
     <default-flow-type code="30"/>
     <default-aid-type code="C01"/>
     <budget>

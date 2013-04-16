@@ -255,11 +255,7 @@ class TestActivityByCountryView(ClientTestCase, ApiViewMixin):
     serializer = 'iatilib.frontend.api1.ActivityByCountryView.serializer'
 
 
-class TestTransactionView(ClientTestCase, ApiViewMixin):
-    base_url = '/api/1/access/transactions.csv'
-    filter = 'iatilib.frontend.api1.TransactionsView.filter'
-    serializer = 'iatilib.frontend.api1.TransactionsView.serializer'
-
+class CommonTransactionTests(object):
     def test_ref_output(self):
         load_fix("transaction_ref.xml")
         output = list(csv.reader(StringIO(self.client.get(self.base_url).data)))
@@ -283,7 +279,6 @@ class TestTransactionView(ClientTestCase, ApiViewMixin):
         self.assertEquals(u'2011-08-19', output[1][i])
 
     def test_provider_org_ref_output(self):
-        """provider_org should be in transaction.csv output"""
         load_fix("transaction_provider.xml")
         output = list(csv.reader(StringIO(self.client.get(self.base_url).data)))
         csv_headers = output[0]
@@ -291,7 +286,6 @@ class TestTransactionView(ClientTestCase, ApiViewMixin):
         self.assertEquals(u'GB-1-201242-101', output[1][i])
 
     def test_provider_org_output(self):
-        """provider_org should be in transaction.csv output"""
         load_fix("transaction_provider.xml")
         output = list(csv.reader(StringIO(self.client.get(self.base_url).data)))
         csv_headers = output[0]
@@ -306,7 +300,6 @@ class TestTransactionView(ClientTestCase, ApiViewMixin):
         self.assertEquals(u'GB-1-202907', output[1][i])
 
     def test_receiver_org_ref_output(self):
-        """receiver_org should be in transaction.csv output"""
         load_fix("transaction_provider.xml")
         output = list(csv.reader(StringIO(self.client.get(self.base_url).data)))
         csv_headers = output[0]
@@ -373,13 +366,19 @@ class TestTransactionView(ClientTestCase, ApiViewMixin):
         i = csv_headers.index('transaction_disbursement-channel_code')
         self.assertEquals(u'2', output[1][i])
 
-class TestTransactionByCountryView(ClientTestCase, ApiViewMixin):
+class TestTransactionView(ClientTestCase, ApiViewMixin, CommonTransactionTests):
+    base_url = '/api/1/access/transactions.csv'
+    filter = 'iatilib.frontend.api1.TransactionsView.filter'
+    serializer = 'iatilib.frontend.api1.TransactionsView.serializer'
+
+
+class TestTransactionByCountryView(ClientTestCase, ApiViewMixin, CommonTransactionTests):
     base_url = '/api/1/access/transactions/by_country.csv'
     filter = 'iatilib.frontend.api1.TransactionsByCountryView.filter'
     serializer = 'iatilib.frontend.api1.TransactionsByCountryView.serializer'
 
 
-class TestTransactionBySectorView(ClientTestCase, ApiViewMixin):
+class TestTransactionBySectorView(ClientTestCase, ApiViewMixin, CommonTransactionTests):
     base_url = '/api/1/access/transactions/by_sector.csv'
     filter = 'iatilib.frontend.api1.TransactionsBySectorView.filter'
     serializer = 'iatilib.frontend.api1.TransactionsBySectorView.serializer'
