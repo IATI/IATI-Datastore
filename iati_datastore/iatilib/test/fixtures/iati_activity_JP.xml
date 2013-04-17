@@ -1,0 +1,81 @@
+<?xml version="1.0"?>
+  <iati-activity default-currency="USD" last-updated-datetime="2013-03-04T06:03:49.353" xml:lang="en" hierarchy="1">
+    <reporting-org ref="41AAA" type="40">United Nations Office for Project Services</reporting-org>
+    <iati-identifier>41AAA-00081406</iati-identifier>
+    <title>Human Resources Services for UNHCR Representation in Japan</title>
+    <description type="1">UNOPS is providing human resources support to the United Nations High Commissioner for Refugees (UNHCR) for public information personnel in Japan.</description>
+    <activity-status code="2">Implementation</activity-status>
+    <activity-date type="start-actual" iso-date="2012-01-31" />
+    <activity-date type="end-planned" iso-date="2013-12-31" />
+    <contact-info>
+      <organisation>United Nations Office for Project Services</organisation>
+      <person-name>Cillian Domhnall OCATHAIL</person-name>
+      <telephone>4535467600</telephone>
+      <email>info@unops.org</email>
+      <mailing-address>UNOPS HQ, PO Box 2695, 2100 Copenhagen, Denmark</mailing-address>
+    </contact-info>
+    <participating-org role="Accountable" ref="41AAA" type="40">United Nations Office for Project Services</participating-org>
+    <participating-org role="Implementing" ref="41AAA" type="40">United Nations Office for Project Services</participating-org>
+    <recipient-country code="JP">Japan</recipient-country>
+    <recipient-region code="789" percentage="100">Far East Asia, regional</recipient-region>
+    <sector code="72050" percentage="100" vocabulary="DAC">Relief co-ordination; protection and support services </sector>
+    <collaboration-type code="2">Multilateral</collaboration-type>
+    <default-flow-type code="20">OOF</default-flow-type>
+    <default-finance-type code="110">Aid grant excluding debt reorganisation</default-finance-type>
+    <default-aid-type code="C01">Project-type interventions</default-aid-type>
+    <default-tied-status code="5">Untied</default-tied-status>
+    <location>
+      <name>Japan</name>
+      <description>Japan</description>
+      <coordinates latitude="36.204824000000002000" longitude="138.252924000000010000" precision="6" />
+      <location-type code="PCL" />
+      <administrative country="JP">Nagano Prefecture</administrative>
+    </location>
+    <budget type="Original">
+      <period-start>2012</period-start>
+      <period-end>2012</period-end>
+      <value value-date="2012-01-01" currency="USD">46363</value>
+    </budget>
+    <budget type="Original">
+      <period-start>2013</period-start>
+      <period-end>2013</period-end>
+      <value value-date="2013-01-01" currency="USD">142765</value>
+    </budget>
+    <transaction ref="00081406_2012_2013">
+      <transaction-type code="C">Commitment</transaction-type>
+      <value value-date="2012-01-01" currency="USD">182435</value>
+      <transaction-date iso-date="2012-01-01">2012</transaction-date>
+      <provider-org>UNHCR</provider-org>
+      <receiver-org ref="41AAA">United Nations Office for Project Services</receiver-org>
+      <disbursement-channel code="2">Money is disbursed directly to the implementing institution and managed through a separate bank account</disbursement-channel>
+      <description>Total partner commitment</description>
+    </transaction>
+    <transaction ref="00081406_201203_71305">
+      <transaction-type code="E">Expenditure</transaction-type>
+      <value value-date="2012-03-01" currency="USD">4012</value>
+      <transaction-date iso-date="2012-03-01">2012-March</transaction-date>
+      <provider-org ref="41AAA">United Nations Office for Project Services</provider-org>
+      <receiver-org />
+      <disbursement-channel code="2">Money is disbursed directly to the implementing institution and managed through a separate bank account</disbursement-channel>
+      <description>Local Consult.-Sht Term-Tech</description>
+    </transaction>
+    <transaction ref="00081406_201203_74525">
+      <transaction-type code="E">Expenditure</transaction-type>
+      <value value-date="2012-03-01" currency="USD">56</value>
+      <transaction-date iso-date="2012-03-01">2012-March</transaction-date>
+      <provider-org ref="41AAA">United Nations Office for Project Services</provider-org>
+      <receiver-org />
+      <disbursement-channel code="2">Money is disbursed directly to the implementing institution and managed through a separate bank account</disbursement-channel>
+      <description>Sundry</description>
+    </transaction>
+    <transaction ref="00081406_201203_75105">
+      <transaction-type code="E">Expenditure</transaction-type>
+      <value value-date="2012-03-01" currency="USD">366</value>
+      <transaction-date iso-date="2012-03-01">2012-March</transaction-date>
+      <provider-org ref="41AAA">United Nations Office for Project Services</provider-org>
+      <receiver-org />
+      <disbursement-channel code="2">Money is disbursed directly to the implementing institution and managed through a separate bank account</disbursement-channel>
+      <description>Facilities &amp; Admin - Implement</description>
+    </transaction>
+    <activity-website>https://data.unops.org/index.htm#SegmentCode=ORG&amp;FocusCode=DATA_PROJECTS&amp;EntityCode=PROJECT_ID&amp;EntityValue=00081406</activity-website>
+  </iati-activity>

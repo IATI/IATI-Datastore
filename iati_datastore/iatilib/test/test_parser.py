@@ -70,6 +70,13 @@ class TestParseActivity(AppTestCase):
             cl.Country.armenia,
             act.recipient_country_percentages[0].country)
 
+    def test_recipient_region_percentages(self):
+        act = parse.activity(fixture("iati_activity_JP.xml"))
+        self.assertEquals(1, len(act.recipient_region_percentages))
+        self.assertEquals(
+            cl.Country.japan,
+            act.recipient_country_percentages[0].country)
+
     def test_transaction_count(self):
         act = parse.activity(fixture("default_currency.xml"))
         self.assertEquals(1, len(act.transactions))

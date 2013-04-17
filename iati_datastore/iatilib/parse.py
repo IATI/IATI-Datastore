@@ -9,7 +9,7 @@ from dateutil.parser import parse as parse_date
 from . import db
 from iatilib.model import (
     Activity, Organisation, Participation, CountryPercentage, Transaction,
-    SectorPercentage, Budget)
+    SectorPercentage, Budget, RegionPercentage)
 from iatilib import codelists as cl
 
 log = logging.getLogger("parser")
@@ -92,6 +92,12 @@ def websites(xml):
 def recipient_country_percentages(xml):
     return [CountryPercentage(
             country=cl.Country.from_string(xval(ele, "@code")),
+            )
+            for ele in xml]
+
+def recipient_region_percentages(xml):
+    return [RegionPercentage(
+            region=cl.Region.from_string(xval(ele, "@code")),
             )
             for ele in xml]
 
@@ -185,6 +191,8 @@ def activity(xml_resource):
             xml.xpath("./participating-org")),
         "recipient_country_percentages": recipient_country_percentages(
             xml.xpath("./recipient-country")),
+        "recipient_region_percentages": recipient_region_percentages(
+            xml.xpath("./recipient-region")),
         "transactions": transactions(xml.xpath("./transaction")),
         "start_actual": iati_date(
             xval(xml, "./activity-date[@type='start-actual']/@iso-date", None)),
