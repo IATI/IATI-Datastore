@@ -79,6 +79,21 @@ def recipient_country_percentage(activity):
         u"%d" % rcp.percentage if rcp.percentage else ""
         for rcp in activity.recipient_country_percentages)
 
+def recipient_region_code(activity):
+    return u";".join(
+        rrp.region.value
+        for rrp in activity.recipient_region_percentages)
+
+
+def recipient_region(activity):
+    return u";".join(
+        rrp.region.description
+        for rrp in activity.recipient_region_percentages)
+
+def recipient_region_percentage(activity):
+    return u";".join(
+        u"%d" % rrp.percentage if rrp.percentage else ""
+        for rrp in activity.recipient_region_percentages)
 
 def reporting_org_name(activity):
     return activity.reporting_org.name
@@ -111,6 +126,9 @@ class FieldDict(OrderedDict):
         u"recipient-country-code": recipient_country_code,
         u"recipient-country": recipient_country,
         u"recipient-country-percentage": recipient_country_percentage,
+        u"recipient-region-code": recipient_region_code,
+        u"recipient-region": recipient_region,
+        u"recipient-region-percentage": recipient_region_percentage,
         u"currency": currency,
         u'total-Commitment': total("commitments"),
         u"total-Disbursement": total("disbursements"),
@@ -182,6 +200,9 @@ csv = CSVSerializer((
     (u"recipient-country-code", recipient_country_code),
     (u"recipient-country", recipient_country),
     (u"recipient-country-percentage", recipient_country_percentage),
+    u"recipient-region-code",
+    u"recipient-region",
+    u"recipient-region-percentage",
     u"sector-code",
     u"sector",
     u"sector-percentage",
@@ -225,6 +246,9 @@ csv_activity_by_country = CSVSerializer((
     (u"recipient-country-code", lambda (a, c): c.country.value),
     (u"recipient-country", lambda (a, c): c.country.description.title()),
     (u"recipient-country-percentage", lambda (a, c): c.percentage),
+    u"recipient-region-code",
+    u"recipient-region",
+    u"recipient-region-percentage",
     u"title",
     u"description",
     u"sector-code",
@@ -251,6 +275,9 @@ csv_activity_by_sector = CSVSerializer((
     u"recipient-country-code",
     u"recipient-country",
     u"recipient-country-percentage",
+    u"recipient-region-code",
+    u"recipient-region",
+    u"recipient-region-percentage",
     u"currency",
     u"total-Commitment",
     u"total-Disbursement",

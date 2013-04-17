@@ -121,7 +121,42 @@ class TestCSVExample(CSVTstMixin, TestCase):
             ]
         )])
         self.assertField({"recipient-country-percentage": "80;20"}, data[0])
+    #
+    def test_recipient_region_code(self):
+        data = self.process([fac.ActivityFactory.build(
+            recipient_region_percentages=[
+                fac.RegionPercentageFactory.build(
+                        region=cl.Region.europe_regional),
+                fac.RegionPercentageFactory.build(
+                        region=cl.Region.africa_regional),
+            ]
+        )])
+        self.assertField({
+            "recipient-region-code": "89;298"}, data[0])
 
+    def test_recipient_region(self):
+        data = self.process([fac.ActivityFactory.build(
+            recipient_region_percentages=[
+                fac.RegionPercentageFactory.build(
+                        region=cl.Region.europe_regional),
+                fac.RegionPercentageFactory.build(
+                        region=cl.Region.africa_regional),
+            ]
+        )])
+        self.assertField(
+                {"recipient-region": "Europe, regional;Africa, regional"},
+                data[0]
+        )
+
+    def test_recipient_region_percentage(self):
+        data = self.process([fac.ActivityFactory.build(
+            recipient_region_percentages=[
+                fac.RegionPercentageFactory.build(percentage=80),
+                fac.RegionPercentageFactory.build(percentage=20),
+            ]
+        )])
+        self.assertField({"recipient-region-percentage": "80;20"}, data[0])
+    #
     def test_sector_code(self):
         data = self.process([fac.ActivityFactory.build(
             sector_percentages=[
@@ -233,6 +268,16 @@ class ActivityExample(object):
                     percentage=20
                 ),
             ],
+            recipient_region_percentages=[
+                fac.RegionPercentageFactory.build(
+                        region=cl.Region.europe_regional,
+                        percentage=70
+                ),
+                fac.RegionPercentageFactory.build(
+                        region=cl.Region.africa_regional,
+                        percentage=30
+                ),
+        ],
             sector_percentages=[
                 fac.SectorPercentageFactory.build(
                     sector=cl.Sector.teacher_training,
@@ -274,6 +319,9 @@ class TestActivityByCountry(CSVTstMixin, ActivityExample, TestCase):
             "recipient-country-code",
             "recipient-country",
             "recipient-country-percentage",
+            "recipient-region-code",
+            "recipient-region",
+            "recipient-region-percentage",
             "iati-identifier",
             "title",
             "description",
@@ -311,6 +359,29 @@ class TestActivityByCountry(CSVTstMixin, ActivityExample, TestCase):
     def test_recipient_country_percentage_1(self):
         data = self.process(self.example())
         self.assertField({"recipient-country-percentage": u"20"}, data[1])
+
+    def test_recipient_region_code_0(self):
+        data = self.process(self.example())
+        self.assertField({"recipient-region-code": u"89;298"}, data[0])
+
+    def test_recipient_region_code_1(self):
+        data = self.process(self.example())
+        self.assertField({"recipient-region-code": u"89;298"}, data[1])
+
+    def test_recipient_region(self):
+        data = self.process(self.example())
+        self.assertField(
+                {"recipient-region": u"Europe, regional;Africa, regional"},
+                data[0]
+        )
+
+    def test_recipient_region_percentage_0(self):
+        data = self.process(self.example())
+        self.assertField({"recipient-region-percentage": u"70;30"}, data[0])
+
+    def test_recipient_region_percentage_1(self):
+        data = self.process(self.example())
+        self.assertField({"recipient-region-percentage": u"70;30"}, data[1])
 
     def test_identifier(self):
         data = self.process(self.example())
@@ -394,7 +465,20 @@ class TestActivityBySector(CSVTstMixin, ActivityExample, TestCase):
         data = self.process(self.example())
         self.assertField({"iati-identifier": u"GB-1-123"}, data[0])
 
+    def test_recipient_region_code_0(self):
+        data = self.process(self.example())
+        self.assertField({"recipient-region-code": u"89;298"}, data[0])
 
+    def test_recipient_region_code_1(self):
+        data = self.process(self.example())
+        self.assertField({"recipient-region-code": u"89;298"}, data[1])
+
+    def test_recipient_region(self):
+        data = self.process(self.example())
+        self.assertField(
+                {"recipient-region": u"Europe, regional;Africa, regional"},
+                data[0]
+        )
 
 
 
