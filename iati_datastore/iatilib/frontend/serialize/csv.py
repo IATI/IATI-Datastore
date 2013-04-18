@@ -1,7 +1,9 @@
 from collections import OrderedDict
+from functools import partial
 import unicodecsv
 from StringIO import StringIO
 from operator import attrgetter
+from iatilib import codelists
 
 
 def total(column):
@@ -83,6 +85,15 @@ def recipient_country_percentage(activity):
 def reporting_org_name(activity):
     return activity.reporting_org.name
 
+def participating_org(role, activity):
+    activity_by_role = dict(
+            [(a.role, a) for a in activity.participating_orgs])
+
+    participant = activity_by_role.get(role, "")
+    if participant:
+        return participant.organisation.name
+    else:
+        return ''
 
 def period_start_date(budget):
     if budget.period_start:
@@ -197,6 +208,14 @@ csv = CSVSerializer((
     (u"end-planned", attrgetter(u"end_planned")),
     (u"start-actual", attrgetter(u"start_actual")),
     (u"end-actual", attrgetter(u"end_actual")),
+    (u"accountable-org", partial(participating_org,
+                            codelists.OrganisationRole.accountable)),
+    (u"funding-org", partial(participating_org,
+                            codelists.OrganisationRole.funding)),
+    (u"extending-org", partial(participating_org,
+                            codelists.OrganisationRole.extending)),
+    (u"implementing-org", partial(participating_org,
+                            codelists.OrganisationRole.implementing)),
 ))
 
 
