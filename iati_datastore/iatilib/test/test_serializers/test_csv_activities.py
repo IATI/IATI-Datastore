@@ -88,11 +88,29 @@ class TestCSVExample(CSVTstMixin, TestCase):
         ])
         self.assertField({"description": "Description of Project 123"}, data[0])
 
+    def test_start_planned(self):
+        data = self.process([fac.ActivityFactory.build(
+            start_planned=datetime.date(2011, 1, 1))
+        ])
+        self.assertField({"start-planned": "2011-01-01"}, data[0])
+
+    def test_end_planned(self):
+        data = self.process([fac.ActivityFactory.build(
+            end_planned=datetime.date(2012, 1, 2))
+        ])
+        self.assertField({"end-planned": "2012-01-02"}, data[0])
+        
+    def test_start_actual(self):
+        data = self.process([fac.ActivityFactory.build(
+            start_actual=datetime.date(2012, 1, 3))
+        ])
+        self.assertField({"start-actual": "2012-01-03"}, data[0])
+
     def test_end_actual(self):
         data = self.process([fac.ActivityFactory.build(
-            end_actual=datetime.date(2012, 1, 1))
+            end_actual=datetime.date(2012, 1, 4))
         ])
-        self.assertField({"end-actual": "2012-01-01"}, data[0])
+        self.assertField({"end-actual": "2012-01-04"}, data[0])
 
     def test_recepient_country_code(self):
         data = self.process([fac.ActivityFactory.build(
