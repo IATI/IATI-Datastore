@@ -1,6 +1,7 @@
 import os
 import datetime
 import logging
+from decimal import Decimal
 from StringIO import StringIO
 
 from lxml import etree as ET
@@ -59,6 +60,10 @@ def iati_int(str):
     return int(str.replace(",", ""))
 
 
+def iati_decimal(str):
+    return Decimal(str.replace(",", ""))
+
+
 def reporting_org(xml):
     data = {
         "ref": xval(xml, "@ref"),
@@ -107,14 +112,52 @@ def transactions(xml):
         return cl.Currency.from_string(code) if code is not None else None
 
     def process(ele):
-        return Transaction(
-            type=cl.TransactionType.from_string(
-                xval(ele, "transaction-type/@code")),
+        t = Transaction(
             date=iati_date(xval(ele, "transaction-date/@iso-date")),
+            description=xval(ele, "description/text()", None),
+            provider_org_text=xval(ele, "provider-org/text()", None),
+            provider_org_activity_id=xval(
+                                ele, "provider-org/@provider-activity-id", None),
+            receiver_org_text=xval(ele, "receiver-org/text()", None),
+            receiver_org_activity_id=xval(
+                                ele, "receiver-org/@receiver-activity-id", None),
+            ref = xval(ele, "@ref", default=None),
+            type=cl.TransactionType.from_string(
+                                xval(ele, "transaction-type/@code")),
             value_date=iati_date(xval(ele, "value/@value-date")),
-            value_amount=iati_int(xval(ele, "value/text()")),
-            value_currency=currency(xval(ele, "../@default-currency", None))
+            value_amount=iati_decimal(xval(ele, "value/text()")),
+            value_currency=currency(xval(ele, "../@default-currency", None)),
         )
+
+        flow_type = xval(ele, "flow-type/@code", None)
+        if flow_type:
+            t.flow_type = cl.FlowType.from_string(flow_type)
+
+        finance_type= xval(ele, "finance-type/@code", None)
+        if finance_type:
+            t.finance_type = cl.FinanceType.from_string(finance_type)
+
+        aid_type = xval(ele, "aid-type/@code", None)
+        if aid_type:
+            t.aid_type = cl.AidType.from_string(aid_type)
+
+        tied_status = xval(ele, "tied-status/@code", None)
+        if tied_status:
+            t.tied_status = cl.TiedStatus.from_string(tied_status)
+
+        disbursement_channel = xval(ele, "disbursement-channel/@code", None)
+        if disbursement_channel:
+            t.disbursement_channel = cl.DisbursementChannel.from_string(
+                                                        disbursement_channel)
+
+        provider_val = xval(ele, "provider-org/@ref", None)
+        if provider_val:
+            t.provider_org = Organisation.as_unique(db.session, ref=provider_val)
+        receiver_val = xval(ele, "receiver-org/@ref", None)
+        if receiver_val:
+            t.receiver_org = Organisation.as_unique(db.session, ref=receiver_val)
+
+        return t
 
     ret = []
     for ele in xml:
@@ -152,7 +195,7 @@ def budgets(xml):
         return Budget(
             type=budget_type(ele),
             value_currency=cl.Currency.from_string(xval(ele, "value/@currency")),
-            value_amount=iati_int(xval(ele, "value/text()")),
+            value_amount=iati_decimal(xval(ele, "value/text()")),
             period_start=iati_date(xval(ele, "period-start/@iso-date", None)),
             period_end=iati_date(xval(ele, "period-end/@iso-date", None)),
         )

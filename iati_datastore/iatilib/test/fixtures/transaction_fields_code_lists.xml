@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<iati-activities generated-datetime="2013-04-04T14:00:49+00:00" iati-version="1.01">
+  <iati-activity xml:lang="en" default-currency="GBP" hierarchy="1" last-updated-datetime="2013-04-04T13:56:54+00:00">
+    <reporting-org xml:lang="en" ref="NL-KVK-27264198" type="21">ActionAid International</reporting-org>
+    <iati-identifier>NL-KVK-27264198-XUK0Z11000</iati-identifier>
+    <title>Programme Partnership Arrangement 2011-2014</title>
+    <description>Strategic funding contribution from DFID to ActionAid in support of the organisation's objectives and those in the logframe submitted for the grant</description>
+    <activity-status code="2"/>
+    <participating-org ref="GB-1" type="10" role="Funding">DFID</participating-org>
+<sector vocabulary="RO">Civil Society Effectiveness</sector>
+<sector vocabulary="DAC" code="99810" percentage="100">Sectors not specified</sector>
+    <recipient-country code="GB">United Kingdom</recipient-country>
+    <default-flow-type code="30"/>
+    <default-aid-type code="C01"/>
+    <budget>
+      <period-end iso-date="2014-03-31"/>
+      <period-start iso-date="2011-05-20"/>
+      <value value-date="2011-05-20" currency="GBP">12357015</value>
+    </budget>
+    <transaction>
+      <transaction-type code="C"/>
+      <value value-date="2012-12-31">4119000</value>
+      <transaction-date iso-date="2012-12-31"/>
+      <flow-type code="30"/>
+      <finance-type code="110"/>
+      <aid-type code="B01"/>
+      <disbursement-channel code="2"/>
+      <tied-status code="5"/>
+    </transaction>
+    <transaction>
+      <transaction-type code="IF"/>
+      <value value-date="2012-12-31">4119000</value>
+      <transaction-date iso-date="2012-12-31"/>
+      <flow-type code="30"/>
+      <finance-type code="110"/>
+      <aid-type code="B01"/>
+      <disbursement-channel code="2"/>
+      <tied-status code="5"/>
+    </transaction>
+    <transaction>
+      <transaction-type code="E"/>
+      <value value-date="2012-12-31">4219173</value>
+      <transaction-date iso-date="2012-12-31"/>
+      <flow-type code="30"/>
+      <finance-type code="110"/>
+      <aid-type code="B01"/>
+      <disbursement-channel code="2"/>
+      <tied-status code="5"/>
+    </transaction>
+  </iati-activity>
+</iati-activities>

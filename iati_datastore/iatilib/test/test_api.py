@@ -255,19 +255,130 @@ class TestActivityByCountryView(ClientTestCase, ApiViewMixin):
     serializer = 'iatilib.frontend.api1.ActivityByCountryView.serializer'
 
 
-class TestTransactionView(ClientTestCase, ApiViewMixin):
+class CommonTransactionTests(object):
+    def test_ref_output(self):
+        load_fix("transaction_ref.xml")
+        output = list(csv.reader(StringIO(self.client.get(self.base_url).data)))
+        csv_headers = output[0]
+        i = csv_headers.index('transaction_ref')
+        self.assertEquals(u'36258', output[1][i])
+        self.assertEquals(u'', output[2][i])
+
+    def test_transaction_value_currency(self):
+        load_fix("transaction_provider.xml")
+        output = list(csv.reader(StringIO(self.client.get(self.base_url).data)))
+        csv_headers = output[0]
+        i = csv_headers.index('transaction_value_currency')
+        self.assertEquals(u'GBP', output[1][i])
+
+    def test_transaction_value_value_date(self):
+        load_fix("transaction_provider.xml")
+        output = list(csv.reader(StringIO(self.client.get(self.base_url).data)))
+        csv_headers = output[0]
+        i = csv_headers.index('transaction_value_value-date')
+        self.assertEquals(u'2011-08-19', output[1][i])
+
+    def test_provider_org_ref_output(self):
+        load_fix("transaction_provider.xml")
+        output = list(csv.reader(StringIO(self.client.get(self.base_url).data)))
+        csv_headers = output[0]
+        i = csv_headers.index('transaction_provider-org_ref')
+        self.assertEquals(u'GB-1-201242-101', output[1][i])
+
+    def test_provider_org_output(self):
+        load_fix("transaction_provider.xml")
+        output = list(csv.reader(StringIO(self.client.get(self.base_url).data)))
+        csv_headers = output[0]
+        i = csv_headers.index('transaction_provider-org')
+        self.assertEquals(u'DFID', output[1][i])
+
+    def test_provider_org_activity_id_output(self):
+        load_fix("provider-activity-id.xml")
+        output = list(csv.reader(StringIO(self.client.get(self.base_url).data)))
+        csv_headers = output[0]
+        i = csv_headers.index('transaction_provider-org_provider-activity-id')
+        self.assertEquals(u'GB-1-202907', output[1][i])
+
+    def test_receiver_org_ref_output(self):
+        load_fix("transaction_provider.xml")
+        output = list(csv.reader(StringIO(self.client.get(self.base_url).data)))
+        csv_headers = output[0]
+        i = csv_headers.index('transaction_receiver-org_ref')
+        self.assertEquals(u'GB-CHC-313139', output[1][i])
+
+    def test_receiver_org_output(self):
+        """receiver_org should be in transaction.csv output"""
+        load_fix("provider-activity-id.xml")
+        output = list(csv.reader(StringIO(self.client.get(self.base_url).data)))
+        csv_headers = output[0]
+        i = csv_headers.index('transaction_receiver-org')
+        self.assertEquals(u'Bond', output[1][i])
+
+    def test_receiver_org_activity_id_output(self):
+        load_fix("provider-activity-id.xml")
+        output = list(csv.reader(StringIO(self.client.get(self.base_url).data)))
+        csv_headers = output[0]
+        i = csv_headers.index('transaction_receiver-org_receiver-activity-id')
+        self.assertEquals(u'GB-CHC-1068839-dfid_ag_11-13', output[1][i])
+        
+    def test_description(self):
+        load_fix("transaction_provider.xml")
+        output = list(csv.reader(StringIO(self.client.get(self.base_url).data)))
+        csv_headers = output[0]
+        i = csv_headers.index('transaction_description')
+        self.assertEquals(
+                u'Funds received from DFID for activities in Aug- Sept 2011',
+                output[1][i]
+        )
+
+    def test_flow_type(self):
+        load_fix("transaction_fields_code_lists.xml")
+        output = list(csv.reader(StringIO(self.client.get(self.base_url).data)))
+        csv_headers = output[0]
+        i = csv_headers.index('transaction_flow-type_code')
+        self.assertEquals(u'30', output[1][i])
+        
+    def test_finance_type(self):
+        load_fix("transaction_fields_code_lists.xml")
+        output = list(csv.reader(StringIO(self.client.get(self.base_url).data)))
+        csv_headers = output[0]
+        i = csv_headers.index('transaction_finance-type_code')
+        self.assertEquals(u'110', output[1][i])
+        
+    def test_aid_type(self):
+        load_fix("transaction_fields_code_lists.xml")
+        output = list(csv.reader(StringIO(self.client.get(self.base_url).data)))
+        csv_headers = output[0]
+        i = csv_headers.index('transaction_aid-type_code')
+        self.assertEquals(u'B01', output[1][i])
+
+    def test_tied_status(self):
+        load_fix("transaction_fields_code_lists.xml")
+        output = list(csv.reader(StringIO(self.client.get(self.base_url).data)))
+        csv_headers = output[0]
+        i = csv_headers.index('transaction_tied-status_code')
+        self.assertEquals(u'5', output[1][i])
+        
+    def test_disbursement_channel_status(self):
+        load_fix("transaction_fields_code_lists.xml")
+        output = list(csv.reader(StringIO(self.client.get(self.base_url).data)))
+        csv_headers = output[0]
+        i = csv_headers.index('transaction_disbursement-channel_code')
+        self.assertEquals(u'2', output[1][i])
+
+class TestTransactionView(ClientTestCase, ApiViewMixin, CommonTransactionTests):
     base_url = '/api/1/access/transactions.csv'
     filter = 'iatilib.frontend.api1.TransactionsView.filter'
     serializer = 'iatilib.frontend.api1.TransactionsView.serializer'
 
 
-class TestTransactionByCountryView(ClientTestCase, ApiViewMixin):
+class TestTransactionByCountryView(ClientTestCase, ApiViewMixin, CommonTransactionTests):
     base_url = '/api/1/access/transactions/by_country.csv'
     filter = 'iatilib.frontend.api1.TransactionsByCountryView.filter'
     serializer = 'iatilib.frontend.api1.TransactionsByCountryView.serializer'
 
 
-class TestTransactionBySectorView(ClientTestCase, ApiViewMixin):
+class TestTransactionBySectorView(ClientTestCase, ApiViewMixin, CommonTransactionTests):
     base_url = '/api/1/access/transactions/by_sector.csv'
     filter = 'iatilib.frontend.api1.TransactionsBySectorView.filter'
     serializer = 'iatilib.frontend.api1.TransactionsBySectorView.serializer'

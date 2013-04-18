@@ -35,6 +35,11 @@ urls = {
     "Vocabulary": iati_url("Vocabulary"),
     "BudgetType": iati_url("BudgetType"),
     "Region": iati_url("Region"),
+    "FlowType": iati_url("FlowType", version="1.0"),
+    "FinanceType": iati_url("FinanceType", version="1.0"),
+    "AidType": iati_url("AidType", version="1.0"),
+    "TiedStatus": iati_url("TiedStatus", version="1.0"),
+    "DisbursementChannel": iati_url("DisbursementChannel", version="1.0"),
 }
 
 data_dir = os.path.dirname(__file__)

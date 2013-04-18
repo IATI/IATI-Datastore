@@ -58,6 +58,22 @@ def transaction_date(transaction):
 def transaction_value(transaction):
     return transaction.value.amount
 
+def transaction_flow_type(transaction):
+    return transaction.flow_type.value if transaction.flow_type else ""
+
+def transaction_aid_type(transaction):
+    return transaction.aid_type.value if transaction.aid_type else ""
+
+def transaction_finance_type(transaction):
+    return transaction.finance_type.value if transaction.finance_type else ""
+
+def transaction_tied_status(transaction):
+    return transaction.tied_status.value if transaction.tied_status else ""
+
+def transaction_disbursement_channel(transaction):
+    if transaction.disbursement_channel:
+        return transaction.disbursement_channel.value 
+    return ""
 
 title = attrgetter("title")
 description = attrgetter("description")
@@ -307,6 +323,26 @@ csv_activity_by_sector = CSVSerializer((
     u"total-Reimbursement",
 ), adapter=adapt_activity_other)
 
+common_transaction_csv = (
+    (u'transaction_ref', lambda t: t.ref),
+    (u'transaction_value_currency', lambda t: t.value_currency.value),
+    (u'transaction_value_value-date', lambda t: t.value_date),
+    (u'transaction_provider-org', lambda t: t.provider_org_text),
+    (u'transaction_provider-org_ref', lambda t: t.provider_org_ref),
+    (u'transaction_provider-org_provider-activity-id',
+            lambda t: t.provider_org_activity_id),
+    (u'transaction_receiver-org', lambda t: t.receiver_org_text),
+    (u'transaction_receiver-org_ref', lambda t: t.receiver_org_ref),
+    (u'transaction_receiver-org_receiver-activity-id',
+            lambda t: t.receiver_org_activity_id),
+    (u'transaction_description', lambda t: t.description),
+    (u'transaction_flow-type_code', transaction_flow_type),
+    (u'transaction_finance-type_code', transaction_finance_type),
+    (u'transaction_aid-type_code', transaction_aid_type),
+    (u'transaction_tied-status_code', transaction_tied_status),
+    (u'transaction_disbursement-channel_code',
+            transaction_disbursement_channel),
+)
 
 transaction_csv = CSVSerializer((
     (u'transaction-type', transaction_type),
@@ -322,7 +358,8 @@ transaction_csv = CSVSerializer((
     u"sector-code",
     u"sector",
     u"sector-percentage",
-), adapter=adapt_activity)
+    ) + common_transaction_csv,
+    adapter=adapt_activity)
 
 
 def trans(func):
@@ -339,7 +376,7 @@ def trans_activity(func):
     return wrapper
 
 
-csv_transaction_by_country = CSVSerializer((
+csv_transaction_by_country = CSVSerializer([
     (u"recipient-country-code", lambda (a, c): c.country.value),
     (u"recipient-country", lambda (a, c): c.country.description.title()),
     (u"recipient-country-percentage", lambda (a, c): c.percentage),
@@ -351,11 +388,12 @@ csv_transaction_by_country = CSVSerializer((
     u"description",
     u"sector-code",
     u"sector",
-    u"sector-percentage",
-), adapter=trans_activity)
+    u"sector-percentage", 
+    ] + [ (i[0], trans(i[1])) for i in common_transaction_csv ],
+    adapter=trans_activity)
 
 
-csv_transaction_by_sector = CSVSerializer((
+csv_transaction_by_sector = CSVSerializer([
     (u"sector-code", lambda (t, sp): sp.sector.value if sp.sector else ""),
     (u"sector", lambda (t, sp): sp.sector.description.title() if sp.sector else ""),
     (u"sector-percentage", lambda (t, sp): sp.percentage),
@@ -369,7 +407,8 @@ csv_transaction_by_sector = CSVSerializer((
     u"recipient-country-code",
     u"recipient-country",
     u"recipient-country-percentage",
-), adapter=trans_activity)
+    ] + [ (i[0], trans(i[1])) for i in common_transaction_csv ],
+    adapter=trans_activity)
 
 
 budget_csv = CSVSerializer((

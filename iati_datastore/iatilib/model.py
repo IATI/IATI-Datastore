@@ -208,18 +208,46 @@ class TransactionValue(namedtuple("TransactionValue", "date amount currency")):
 class Transaction(db.Model):
     __tablename__ = "transaction"
     id = sa.Column(sa.Integer, primary_key=True)
+    ref = sa.Column(sa.Unicode, nullable=True)
     activity_id = sa.Column(
         act_ForeignKey("activity.iati_identifier"),
         nullable=False,
         index=True
     )
+    activity = sa.orm.relationship("Activity")
+    description = sa.Column(sa.Unicode, nullable=True)
+    flow_type = sa.Column(codelists.FlowType.db_type(), nullable=True)
+    finance_type = sa.Column(codelists.FinanceType.db_type())
+    aid_type = sa.Column(codelists.AidType.db_type())
+    tied_status = sa.Column(codelists.TiedStatus.db_type())
+    disbursement_channel = sa.Column(codelists.DisbursementChannel.db_type())
+    # The spec examples allows <provider-org ref="GB-1">DFID</provider-org>
+    # the Organisation.name with ref is actually "Department for International
+    # Development". So the text DFID is being stored in provider_org_text
+    provider_org_ref = sa.Column(sa.Unicode, sa.ForeignKey("organisation.ref"))
+    provider_org = sa.orm.relationship(
+        "Organisation",
+        primaryjoin=provider_org_ref == Organisation.ref,
+        foreign_keys=[provider_org_ref],
+    )
+    provider_org_text = sa.Column(sa.Unicode, nullable=True)
+    provider_org_activity_id = sa.Column(sa.Unicode, nullable=True)
+
+    receiver_org_ref = sa.Column(sa.Unicode, sa.ForeignKey("organisation.ref"))
+    receiver_org = sa.orm.relationship(
+        "Organisation",
+        primaryjoin=receiver_org_ref == Organisation.ref,
+        foreign_keys=[receiver_org_ref],
+    )
+    receiver_org_text = sa.Column(sa.Unicode, nullable=True)
+    receiver_org_activity_id = sa.Column(sa.Unicode, nullable=True)
     type = sa.Column(codelists.TransactionType.db_type(), nullable=False)
     date = sa.Column(sa.Date, nullable=False)
     value_date = sa.Column(sa.Date, nullable=False)
-    value_amount = sa.Column(sa.BigInteger, nullable=False)
+    value_amount = sa.Column(sa.Numeric(), nullable=False)
     value_currency = sa.Column(codelists.Currency.db_type(), nullable=False)
-    value = sa.orm.composite(TransactionValue, value_date, value_amount, value_currency)
-    activity = sa.orm.relationship("Activity")
+    value = sa.orm.composite(TransactionValue, value_date, value_amount,
+                             value_currency)
 
     def __unicode__(self):
         return u"%s: %s/%s" % (
@@ -258,7 +286,7 @@ class Budget(db.Model):
     period_end = sa.Column(sa.Date, nullable=True)
     period_start = sa.Column(sa.Date, nullable=True)
     value_currency = sa.Column(codelists.Currency.db_type())
-    value_amount = sa.Column(sa.Integer)
+    value_amount = sa.Column(sa.Numeric(), nullable=False)
     activity = sa.orm.relationship("Activity")
 
 
