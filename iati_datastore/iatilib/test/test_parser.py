@@ -120,7 +120,7 @@ class TestParseActivity(AppTestCase):
 
     def test_date_start_planned(self):
         act = parse.activity(fixture("default_currency.xml"))
-        self.assertEquals(None, act.start_planned)
+        self.assertEquals(datetime.date(2009, 10, 03), act.start_planned)
 
     def test_date_start_actual(self):
         act = parse.activity(fixture("default_currency.xml"))
@@ -128,11 +128,12 @@ class TestParseActivity(AppTestCase):
 
     def test_date_end_planned(self):
         act = parse.activity(fixture("default_currency.xml"))
-        self.assertEquals(None, act.end_planned)
+        self.assertEquals(datetime.date(2009, 10, 04), act.end_planned)
 
     def test_date_end_actual(self):
         act = parse.activity(fixture("default_currency.xml"))
-        self.assertEquals(None, act.end_actual)
+        self.assertEquals(datetime.date(2009, 10, 02), act.end_actual)
+
 
     def test_sector_percentage_count(self):
         act = next(parse.document(

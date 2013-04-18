@@ -194,8 +194,14 @@ def activity(xml_resource):
         "recipient_region_percentages": recipient_region_percentages(
             xml.xpath("./recipient-region")),
         "transactions": transactions(xml.xpath("./transaction")),
+        "start_planned": iati_date(
+            xval(xml, "./activity-date[@type='start-planned']/@iso-date", None)),
+        "end_planned": iati_date(
+            xval(xml, "./activity-date[@type='end-planned']/@iso-date", None)),
         "start_actual": iati_date(
             xval(xml, "./activity-date[@type='start-actual']/@iso-date", None)),
+        "end_actual": iati_date(
+            xval(xml, "./activity-date[@type='end-actual']/@iso-date", None)),
         "sector_percentages": sector_percentages(xml.xpath("./sector")),
         "budgets": budgets(xml.xpath("./budget")),
         "raw_xml": ET.tostring(xml, encoding=unicode)
@@ -212,6 +218,7 @@ def document(xml_resource):
                     yield activity(elem)
                 except Exception, exe:
                     log.warn("Failed to parse activity %r", exe)
+
                 elem.clear()
     except ET.XMLSyntaxError, exe:
         raise XMLError(exe.msg)

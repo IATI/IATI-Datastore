@@ -88,11 +88,29 @@ class TestCSVExample(CSVTstMixin, TestCase):
         ])
         self.assertField({"description": "Description of Project 123"}, data[0])
 
+    def test_start_planned(self):
+        data = self.process([fac.ActivityFactory.build(
+            start_planned=datetime.date(2011, 1, 1))
+        ])
+        self.assertField({"start-planned": "2011-01-01"}, data[0])
+
+    def test_end_planned(self):
+        data = self.process([fac.ActivityFactory.build(
+            end_planned=datetime.date(2012, 1, 2))
+        ])
+        self.assertField({"end-planned": "2012-01-02"}, data[0])
+        
+    def test_start_actual(self):
+        data = self.process([fac.ActivityFactory.build(
+            start_actual=datetime.date(2012, 1, 3))
+        ])
+        self.assertField({"start-actual": "2012-01-03"}, data[0])
+
     def test_end_actual(self):
         data = self.process([fac.ActivityFactory.build(
-            end_actual=datetime.date(2012, 1, 1))
+            end_actual=datetime.date(2012, 1, 4))
         ])
-        self.assertField({"end-actual": "2012-01-01"}, data[0])
+        self.assertField({"end-actual": "2012-01-04"}, data[0])
 
     def test_recepient_country_code(self):
         data = self.process([fac.ActivityFactory.build(
@@ -121,7 +139,7 @@ class TestCSVExample(CSVTstMixin, TestCase):
             ]
         )])
         self.assertField({"recipient-country-percentage": "80;20"}, data[0])
-    #
+
     def test_recipient_region_code(self):
         data = self.process([fac.ActivityFactory.build(
             recipient_region_percentages=[
@@ -156,7 +174,54 @@ class TestCSVExample(CSVTstMixin, TestCase):
             ]
         )])
         self.assertField({"recipient-region-percentage": "80;20"}, data[0])
-    #
+
+    def test_accountable_org(self):
+        data = self.process([fac.ActivityFactory.build(
+            participating_orgs=[
+                fac.ParticipationFactory.build(
+                    organisation=fac.OrganisationFactory.build(name='acc'),
+                    role=cl.OrganisationRole.accountable,
+
+                ),
+                fac.ParticipationFactory.build(
+                    role=cl.OrganisationRole.funding),
+                fac.ParticipationFactory.build(
+                    role=cl.OrganisationRole.implementing),
+            ]
+        )])
+        self.assertField({"accountable-org": "acc"}, data[0])
+
+    def test_funding_org(self):
+        data = self.process([fac.ActivityFactory.build(
+            participating_orgs=[
+                fac.ParticipationFactory.build(
+                    organisation=fac.OrganisationFactory.build(name='fund'),
+                    role=cl.OrganisationRole.funding),
+            ]
+        )])
+        self.assertField({"funding-org": "fund"}, data[0])
+
+    def test_implementing_org(self):
+        data = self.process([fac.ActivityFactory.build(
+            participating_orgs=[
+                fac.ParticipationFactory.build(
+                    organisation=fac.OrganisationFactory.build(name='impl'),
+                    role=cl.OrganisationRole.implementing),
+            ]
+        )])
+        self.assertField({"implementing-org": "impl"}, data[0])
+
+    def test_extending_org(self):
+        data = self.process([fac.ActivityFactory.build(
+            participating_orgs=[
+                fac.ParticipationFactory.build(
+                    organisation=fac.OrganisationFactory.build(name='ext'),
+                    role=cl.OrganisationRole.extending),
+            ]
+        )])
+        self.assertField({"extending-org": "ext"}, data[0])
+
+
     def test_sector_code(self):
         data = self.process([fac.ActivityFactory.build(
             sector_percentages=[
