@@ -1,4 +1,5 @@
 import datetime
+from decimal import Decimal
 
 from flask import current_app
 from flask import json as jsonlib
@@ -60,7 +61,7 @@ def json_rep(obj):
         return {
             "value": {
                 "currency": obj.value.currency.value,
-                "amount": obj.value.amount,
+                "amount": str(obj.value.amount),
                 "date": obj.value.date
             }
         }
@@ -96,7 +97,7 @@ def json_rep(obj):
             "period_end": obj.period_end,
             "value": {
                 "currency": obj.value_currency.value,
-                "amount": obj.value_amount,
+                "amount": str(obj.value_amount),
             }
         }
     return {}
