@@ -266,7 +266,6 @@ def document(xml_resource):
                 try:
                     yield activity(elem)
                 except Exception, exe:
-                    import ipdb; ipdb.set_trace()
                     log.warn("Failed to parse activity %r", exe)
 
                 elem.clear()
