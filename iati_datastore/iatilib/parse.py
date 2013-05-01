@@ -110,19 +110,32 @@ def recipient_region_percentages(xml):
             region=cl.Region.from_string(xval(ele, "@code")),
             )
             for ele in xml]
-
+        
 
 def transactions(xml):
-    def currency(code):
-        return cl.Currency.from_string(code) if code is not None else None
+    def from_cl(code, codelist):
+        return codelist.from_string(code) if code is not None else None
+
+    def from_org(org):
+        return Organisation.as_unique(db.session, ref=org) if org else None
 
     def process(ele):
-        t = Transaction(
+        return Transaction(
             date=iati_date(xval(ele, "transaction-date/@iso-date")),
             description=xval(ele, "description/text()", None),
+            flow_type=from_cl(xval(ele, "flow-type/@code", None), cl.FlowType),
+            finance_type=from_cl(xval(ele, "finance-type/@code", None),
+                                 cl.FinanceType),
+            aid_type=from_cl(xval(ele, "aid-type/@code", None),cl.AidType),
+            tied_status=from_cl(xval(ele, "tied-status/@code", None), cl.TiedStatus),
+            disbursement_channel=from_cl(xval(ele,"disbursement-channel/@code",
+                                       None), cl.DisbursementChannel),
+            provider_org=from_org(xval(ele, "provider-org/@ref", None)),
+
             provider_org_text=xval(ele, "provider-org/text()", None),
             provider_org_activity_id=xval(
                                 ele, "provider-org/@provider-activity-id", None),
+            receiver_org=from_org(xval(ele, "receiver-org/@ref", None)),
             receiver_org_text=xval(ele, "receiver-org/text()", None),
             receiver_org_activity_id=xval(
                                 ele, "receiver-org/@receiver-activity-id", None),
@@ -131,38 +144,8 @@ def transactions(xml):
                                 xval(ele, "transaction-type/@code")),
             value_date=iati_date(xval(ele, "value/@value-date")),
             value_amount=iati_decimal(xval(ele, "value/text()")),
-            value_currency=currency(xval(ele, "../@default-currency", None)),
+            value_currency=from_cl(xval(ele, "../@default-currency", None), cl.Currency),
         )
-
-        flow_type = xval(ele, "flow-type/@code", None)
-        if flow_type:
-            t.flow_type = cl.FlowType.from_string(flow_type)
-
-        finance_type= xval(ele, "finance-type/@code", None)
-        if finance_type:
-            t.finance_type = cl.FinanceType.from_string(finance_type)
-
-        aid_type = xval(ele, "aid-type/@code", None)
-        if aid_type:
-            t.aid_type = cl.AidType.from_string(aid_type)
-
-        tied_status = xval(ele, "tied-status/@code", None)
-        if tied_status:
-            t.tied_status = cl.TiedStatus.from_string(tied_status)
-
-        disbursement_channel = xval(ele, "disbursement-channel/@code", None)
-        if disbursement_channel:
-            t.disbursement_channel = cl.DisbursementChannel.from_string(
-                                                        disbursement_channel)
-
-        provider_val = xval(ele, "provider-org/@ref", None)
-        if provider_val:
-            t.provider_org = Organisation.as_unique(db.session, ref=provider_val)
-        receiver_val = xval(ele, "receiver-org/@ref", None)
-        if receiver_val:
-            t.receiver_org = Organisation.as_unique(db.session, ref=receiver_val)
-
-        return t
 
     ret = []
     for ele in xml:
