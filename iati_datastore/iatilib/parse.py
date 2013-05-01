@@ -49,6 +49,11 @@ def xval(ele, xpath, default=NODEFAULT):
             raise MissingValue("Missing %r from %s" % (xpath, ele.tag))
         return default
 
+def xval_date(xml, xpath, default=None):
+    iso_date = xval(xml, xpath + "/text()", default)
+    if not iso_date:
+        iso_date = xval(xml, xpath + "/@iso-date", default)
+    return iso_date
 
 def iati_date(str):
     if str is None:
@@ -222,6 +227,7 @@ def _open_resource(xml_resource):
     return xmlfile
 
 
+
 def activity(xml_resource):
     xml = ET.parse(_open_resource(xml_resource))
     data = {
@@ -238,13 +244,13 @@ def activity(xml_resource):
             xml.xpath("./recipient-region")),
         "transactions": transactions(xml.xpath("./transaction")),
         "start_planned": iati_date(
-            xval(xml, "./activity-date[@type='start-planned']/@iso-date", None)),
+            xval_date(xml, "./activity-date[@type='start-planned']", None)),
         "end_planned": iati_date(
-            xval(xml, "./activity-date[@type='end-planned']/@iso-date", None)),
+            xval_date(xml, "./activity-date[@type='end-planned']", None)),
         "start_actual": iati_date(
-            xval(xml, "./activity-date[@type='start-actual']/@iso-date", None)),
+            xval_date(xml, "./activity-date[@type='start-actual']", None)),
         "end_actual": iati_date(
-            xval(xml, "./activity-date[@type='end-actual']/@iso-date", None)),
+            xval_date(xml, "./activity-date[@type='end-actual']", None)),
         "sector_percentages": sector_percentages(xml.xpath("./sector")),
         "budgets": budgets(xml.xpath("./budget")),
         "raw_xml": ET.tostring(xml, encoding=unicode)
@@ -260,6 +266,7 @@ def document(xml_resource):
                 try:
                     yield activity(elem)
                 except Exception, exe:
+                    import ipdb; ipdb.set_trace()
                     log.warn("Failed to parse activity %r", exe)
 
                 elem.clear()

@@ -269,6 +269,13 @@ class TestActivity(AppTestCase):
                 '''))
         self.assertEquals(0, len(list(activities)))
 
+    def test_something(self):
+        activities = list(parse.document(fixture_filename("CD.xml")))
+        self.assertEquals(datetime.date(2004, 1, 1), activities[0].start_planned)
+        self.assertEquals(datetime.date(2004, 1, 1), activities[0].start_actual)
+        self.assertEquals(datetime.date(2010, 12, 31), activities[0].end_planned)
+        self.assertEquals(datetime.date(2010, 12, 31), activities[0].end_actual)
+
 
 class TestTransaction(AppTestCase):
     def __init__(self, methodName='runTest'):
