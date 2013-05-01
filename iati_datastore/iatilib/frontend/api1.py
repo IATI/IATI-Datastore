@@ -1,3 +1,4 @@
+from datetime import datetime
 import sqlalchemy as sa
 from flask import request, Response, Blueprint, jsonify, abort
 from flask.views import MethodView
@@ -5,24 +6,41 @@ from werkzeug.datastructures import MultiDict
 from flask.ext.sqlalchemy import Pagination
 
 from iatilib import db
-from iatilib.model import Activity, Transaction
+from iatilib.model import Activity, Resource, Transaction
 
 from . import dsfilter, validators, serialize
 
 
 api = Blueprint('api', __name__)
 
+def dictify(resource):
+    fields = []
+    for key in resource._fields:
+        if isinstance(resource.__dict__[key], datetime):
+            fields.append((key, resource.__dict__[key].isoformat()))
+        else:
+            fields.append((key, resource.__dict__[key]))
+    return dict(fields)
 
 @api.route('/about')
 def about():
     # General status info
     count_activity = db.session.query(Activity).count()
     count_transaction = db.session.query(Transaction).count()
+    res =  db.session.query(Resource.dataset_id,
+                            Resource.url,
+                            Resource.last_fetch,
+                            Resource.last_status_code,
+                            Resource.last_succ,
+                            Resource.last_parsed,
+                            Resource.last_parse_error,
+                           )
     return jsonify(
         ok=True,
         status='healthy',
         indexed_activities=count_activity,
-        indexed_transactions=count_transaction
+        indexed_transactions=count_transaction,
+        resources=[dictify(i) for i in res],
     )
 
 

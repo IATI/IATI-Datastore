@@ -14,7 +14,7 @@ def db_log_exception(job, exc_type, exc_value, tb):
     db.session.remove()
     log = Log()
     log.name = "queue"
-    log.msg = "Exception in job %r" % job
+    log.msg = "Exception in job %r" % job.description
     log.level = "ERROR"
     log.trace = traceback.format_exception(exc_type, exc_value, tb)
     db.session.add(log)
