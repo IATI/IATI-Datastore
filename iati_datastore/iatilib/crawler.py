@@ -71,7 +71,7 @@ def fetch_resource(resource):
 def parse_resource(resource):
     db.session.add(resource)
     Activity.query.filter_by(resource_url=resource.url).delete()
-    resource.activities = list(parse.document(resource.document))
+    resource.activities = list(parse.document(resource.document, resource))
     log.info(
         "Parsed %d activities from %s",
         len(resource.activities),

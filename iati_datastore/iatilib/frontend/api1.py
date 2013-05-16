@@ -6,7 +6,7 @@ from werkzeug.datastructures import MultiDict
 from flask.ext.sqlalchemy import Pagination
 
 from iatilib import db
-from iatilib.model import Activity, Resource, Transaction
+from iatilib.model import Activity, Resource, Transaction, Dataset, Log
 
 from . import dsfilter, validators, serialize
 
@@ -27,21 +27,59 @@ def about():
     # General status info
     count_activity = db.session.query(Activity).count()
     count_transaction = db.session.query(Transaction).count()
-    res =  db.session.query(Resource.dataset_id,
-                            Resource.url,
-                            Resource.last_fetch,
-                            Resource.last_status_code,
-                            Resource.last_succ,
-                            Resource.last_parsed,
-                            Resource.last_parse_error,
-                           )
     return jsonify(
         ok=True,
         status='healthy',
         indexed_activities=count_activity,
         indexed_transactions=count_transaction,
-        resources=[dictify(i) for i in res],
     )
+
+@api.route('/about/dataset')
+def datasets():
+    pass
+
+
+@api.route('/about/dataset/<dataset>')
+def about_dataset(dataset):
+    dataset = db.session.query(Dataset).get(dataset)
+    resources = []
+    for r in dataset.resources:
+        resources.append({
+                'url': r.url,
+                'last_fetch': r.last_fetch.isoformat() if r.last_fetch else None,
+                'last_status_code': r.last_status_code,
+                'last_successful_fetch': r.last_succ.isoformat() if r.last_succ else None,
+                'last_parsed': r.last_parsed.isoformat() if r.last_parsed else None,
+        }) 
+        
+    return jsonify(
+            dataset=dataset.name,
+            last_modified=dataset.last_modified.isoformat(),
+            num_resources=len(dataset.resources),
+            resources=resources
+    )
+
+@api.route('/error')
+def error():
+    logs = db.session.query(Log.dataset).distinct()
+    return jsonify(
+            errored_datasets=[ i[0] for i in logs.all() ]
+    )
+
+@api.route('/error/<dataset_id>')
+def dataset_error(dataset_id):
+    error_logs = db.session.query(Log).filter(Log.dataset == dataset_id)
+    errors = []
+    for log in error_logs.all():
+        error = {}
+        error['resource_url'] = log.resource
+        error['logger'] = log.logger
+        error['msg'] = log.msg
+        error['traceback'] = log.trace
+        error['datestamp'] = log.created_at.isoformat()
+        errors.append(error)
+
+    return jsonify(errors=errors)
 
 
 class DataStoreView(MethodView):

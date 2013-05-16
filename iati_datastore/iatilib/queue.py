@@ -4,7 +4,7 @@ from flask.ext.script import Manager
 from flask.ext.rq import get_worker as _get_worker, get_queue
 
 from . import db
-from .model import Log
+from .model import Log, Resource
 
 manager = Manager(usage="Background task queue")
 
@@ -12,10 +12,13 @@ manager = Manager(usage="Background task queue")
 def db_log_exception(job, exc_type, exc_value, tb):
     # as this is called when an exception occurs session is probably a mess
     db.session.remove()
+    resource = Resource.query.get(job.args[0])
     log = Log()
-    log.name = "queue"
+    log.logger = "queue"
+    log.dataset = resource.dataset_id
+    log.resource = resource.url
     log.msg = "Exception in job %r" % job.description
-    log.level = "ERROR"
+    log.level = "error"
     log.trace = traceback.format_exception(exc_type, exc_value, tb)
     db.session.add(log)
     db.session.commit()

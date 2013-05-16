@@ -1,6 +1,7 @@
 import os
 import datetime
 import logging
+import traceback
 from decimal import Decimal
 from StringIO import StringIO
 
@@ -10,7 +11,7 @@ from dateutil.parser import parse as parse_date
 from . import db
 from iatilib.model import (
     Activity, Organisation, Participation, CountryPercentage, Transaction,
-    SectorPercentage, Budget, RegionPercentage)
+    SectorPercentage, Budget, RegionPercentage, Log)
 from iatilib import codelists as cl
 
 log = logging.getLogger("parser")
@@ -200,7 +201,10 @@ def budgets(xml):
 def _open_resource(xml_resource):
     if isinstance(xml_resource, basestring):
         if os.path.exists(xml_resource):
-            xmlfile = open(xml_resource)
+            #https://bugzilla.redhat.com/show_bug.cgi?id=874546
+            f = open(xml_resource)
+            lines = f.read()
+            xmlfile =StringIO(lines)
         else:
             xmlfile = StringIO(xml_resource)
     else:
@@ -241,7 +245,7 @@ def activity(xml_resource):
     return Activity(**data)
 
 
-def document(xml_resource):
+def document(xml_resource, resource=None):
     xmlfile = _open_resource(xml_resource)
     try:
         for event, elem in ET.iterparse(xmlfile):
@@ -249,6 +253,25 @@ def document(xml_resource):
                 try:
                     yield activity(elem)
                 except Exception, exe:
+
+                    db_log = Log()
+
+                    resource_url = ""
+                    dataset = ""
+                    if resource:
+                        resource_url = resource.url
+                        dataset = resource.dataset_id
+
+                    db_log.dataset = dataset
+                    db_log.resource = resource_url
+                    db_log.logger = "Parser"
+                    db_log.msg = "Failed to parse activity {0} for {1}".format(exe, resource_url)
+                    db_log.dataset = dataset
+
+                    db_log.level = "warn"
+                    db_log.trace = traceback.format_exc()
+                    db.session.add(db_log)
+                    db.session.commit()
                     log.warn("Failed to parse activity %r", exe)
 
                 elem.clear()
