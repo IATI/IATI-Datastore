@@ -188,44 +188,44 @@ class BudgetsBySectorView(DataStoreCSVView):
 
 
 api.add_url_rule(
-    '/access/activities',
+    '/access/activity',
     defaults={"format": ".json"},
-    view_func=ActivityView.as_view('activities')
+    view_func=ActivityView.as_view('activity')
 )
 
 api.add_url_rule(
-    '/access/activities<format>',
-    view_func=ActivityView.as_view('activities')
+    '/access/activity<format>',
+    view_func=ActivityView.as_view('activity')
 )
 
 api.add_url_rule(
-    '/access/activities/by_country<format>',
-    view_func=ActivityByCountryView.as_view('activities_by_country'))
+    '/access/activity/by_country<format>',
+    view_func=ActivityByCountryView.as_view('activity_by_country'))
 
 api.add_url_rule(
-    '/access/activities/by_sector<format>',
-    view_func=ActivityBySectorView.as_view('activities_by_sector'))
+    '/access/activity/by_sector<format>',
+    view_func=ActivityBySectorView.as_view('activity_by_sector'))
 
 api.add_url_rule(
-    '/access/transactions<format>',
-    view_func=TransactionsView.as_view('transactions_list'))
+    '/access/transaction<format>',
+    view_func=TransactionsView.as_view('transaction_list'))
 
 api.add_url_rule(
-    '/access/transactions/by_country<format>',
-    view_func=TransactionsByCountryView.as_view('transactions_by_country'))
+    '/access/transaction/by_country<format>',
+    view_func=TransactionsByCountryView.as_view('transaction_by_country'))
 
 api.add_url_rule(
-    '/access/transactions/by_sector<format>',
-    view_func=TransactionsBySectorView.as_view('transactions_by_sector'))
+    '/access/transaction/by_sector<format>',
+    view_func=TransactionsBySectorView.as_view('transaction_by_sector'))
 
 api.add_url_rule(
-    '/access/budgets<format>',
-    view_func=BudgetsView.as_view('budgets_list'))
+    '/access/budget<format>',
+    view_func=BudgetsView.as_view('budget_list'))
 
 api.add_url_rule(
-    '/access/budgets/by_country<format>',
-    view_func=BudgetsByCountryView.as_view('budgets_by_country'))
+    '/access/budget/by_country<format>',
+    view_func=BudgetsByCountryView.as_view('budget_by_country'))
 
 api.add_url_rule(
-    '/access/budgets/by_sector<format>',
-    view_func=BudgetsBySectorView.as_view('budgets_by_sector'))
+    '/access/budget/by_sector<format>',
+    view_func=BudgetsBySectorView.as_view('budget_by_sector'))

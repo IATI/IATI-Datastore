@@ -24,7 +24,7 @@ class TestAbout(ClientTestCase):
 
 
 class TestEmptyDb_JSON(ClientTestCase):
-    url = '/api/1/access/activities'
+    url = '/api/1/access/activity'
 
     def test_http_ok(self):
         resp = self.client.get(self.url)
@@ -61,7 +61,7 @@ class TestEmptyDb_XML(ClientTestCase):
        </result-activities>
     </result>
     """
-    url = '/api/1/access/activities.xml'
+    url = '/api/1/access/activity.xml'
 
     def test_http_ok(self):
         resp = self.client.get(self.url)
@@ -96,7 +96,7 @@ class TestEmptyDb_ActivityCSV(ClientTestCase):
     """
     CSV for empty db
     """
-    url = '/api/1/access/activities.csv'
+    url = '/api/1/access/activity.csv'
 
     def test_http_ok(self):
         resp = self.client.get(self.url)
@@ -117,7 +117,7 @@ class TestEmptyDb_TransactionCSV(ClientTestCase):
     """
     CSV for empty db
     """
-    url = '/api/1/access/transactions.csv'
+    url = '/api/1/access/transaction.csv'
 
     def test_http_ok(self):
         resp = self.client.get(self.url)
@@ -132,7 +132,7 @@ class TestEmptyDb_BudgetCSV(ClientTestCase):
     """
     CSV for empty db
     """
-    url = '/api/1/access/budgets.csv'
+    url = '/api/1/access/budget.csv'
 
     def test_http_ok(self):
         resp = self.client.get(self.url)
@@ -162,14 +162,14 @@ class TestSingleActivity(ClientTestCase):
 
     def test_xml_activity_count(self):
         load_fix("single_activity.xml")
-        resp = self.client.get('/api/1/access/activities.xml')
+        resp = self.client.get('/api/1/access/activity.xml')
         xml = ET.fromstring(resp.data)
         self.assertEquals(1, len(xml.findall('.//iati-activity')))
 
     def test_xml_activity_data(self):
         load_fix("single_activity.xml")
         in_xml = ET.parse(fixture_filename("single_activity.xml"))
-        resp = self.client.get('/api/1/access/activities.xml')
+        resp = self.client.get('/api/1/access/activity.xml')
         xml = ET.fromstring(resp.data)
         x1 = in_xml.find('.//iati-activity')
         x2 = xml.find('.//iati-activity')
@@ -178,21 +178,21 @@ class TestSingleActivity(ClientTestCase):
     def test_csv_activity_count(self):
         load_fix("single_activity.xml")
         with self.client as client:
-            resp = client.get('/api/1/access/activities.csv')
+            resp = client.get('/api/1/access/activity.csv')
             self.assertEquals(2, resp.data.count("\n"))
 
 
 class TestManyActivities(ClientTestCase):
     def test_xml_activity_count(self):
         load_fix("many_activities.xml")
-        resp = self.client.get('/api/1/access/activities.xml')
+        resp = self.client.get('/api/1/access/activity.xml')
         xml = ET.fromstring(resp.data)
         self.assertEquals(2, len(xml.findall('.//iati-activity')))
 
     def test_xml_activity_data(self):
         load_fix("many_activities.xml")
         in_xml = ET.parse(fixture_filename("many_activities.xml"))
-        resp = self.client.get('/api/1/access/activities.xml')
+        resp = self.client.get('/api/1/access/activity.xml')
         xml = ET.fromstring(resp.data)
         self.assertEquals(
             ET.tostring(in_xml.find('.//iati-activity')),
@@ -201,18 +201,18 @@ class TestManyActivities(ClientTestCase):
     def test_csv_activity_count(self):
         load_fix("many_activities.xml")
         with self.client as client:
-            resp = client.get('/api/1/access/activities.csv')
+            resp = client.get('/api/1/access/activity.csv')
             reader = csv.DictReader(StringIO(resp.data))
             self.assertEquals(2, len(list(reader)))
 
 
 class TestPagination(ClientTestCase):
     def test_missing_page(self):
-        resp = self.client.get('/api/1/access/activities?page=2')
+        resp = self.client.get('/api/1/access/activity?page=2')
         self.assertEquals(404, resp.status_code)
 
     def test_invalid_page(self):
-        resp = self.client.get('/api/1/access/activities?page=-1')
+        resp = self.client.get('/api/1/access/activity?page=-1')
         self.assertEquals(404, resp.status_code)
 
 
@@ -238,19 +238,19 @@ class ApiViewMixin(object):
 
 
 class TestActivityView(ClientTestCase, ApiViewMixin):
-    base_url = '/api/1/access/activities.csv'
+    base_url = '/api/1/access/activity.csv'
     filter = 'iatilib.frontend.api1.ActivityView.filter'
     serializer = 'iatilib.frontend.api1.serialize.csv'
 
 
 class TestActivityBySectorView(ClientTestCase, ApiViewMixin):
-    base_url = '/api/1/access/activities/by_sector.csv'
+    base_url = '/api/1/access/activity/by_sector.csv'
     filter = 'iatilib.frontend.api1.ActivityBySectorView.filter'
     serializer = 'iatilib.frontend.api1.ActivityBySectorView.serializer'
 
 
 class TestActivityByCountryView(ClientTestCase, ApiViewMixin):
-    base_url = '/api/1/access/activities/by_country.csv'
+    base_url = '/api/1/access/activity/by_country.csv'
     filter = 'iatilib.frontend.api1.ActivityByCountryView.filter'
     serializer = 'iatilib.frontend.api1.ActivityByCountryView.serializer'
 
@@ -367,36 +367,36 @@ class CommonTransactionTests(object):
         self.assertEquals(u'2', output[1][i])
 
 class TestTransactionView(ClientTestCase, ApiViewMixin, CommonTransactionTests):
-    base_url = '/api/1/access/transactions.csv'
+    base_url = '/api/1/access/transaction.csv'
     filter = 'iatilib.frontend.api1.TransactionsView.filter'
     serializer = 'iatilib.frontend.api1.TransactionsView.serializer'
 
 
 class TestTransactionByCountryView(ClientTestCase, ApiViewMixin, CommonTransactionTests):
-    base_url = '/api/1/access/transactions/by_country.csv'
+    base_url = '/api/1/access/transaction/by_country.csv'
     filter = 'iatilib.frontend.api1.TransactionsByCountryView.filter'
     serializer = 'iatilib.frontend.api1.TransactionsByCountryView.serializer'
 
 
 class TestTransactionBySectorView(ClientTestCase, ApiViewMixin, CommonTransactionTests):
-    base_url = '/api/1/access/transactions/by_sector.csv'
+    base_url = '/api/1/access/transaction/by_sector.csv'
     filter = 'iatilib.frontend.api1.TransactionsBySectorView.filter'
     serializer = 'iatilib.frontend.api1.TransactionsBySectorView.serializer'
 
 
 class TestBudgetView(ClientTestCase):
-    base_url = '/api/1/access/budgets.csv'
+    base_url = '/api/1/access/budget.csv'
     filter = 'iatilib.frontend.api1.dsfilter.budgets'
     serializer = 'iatilib.frontend.api1.serialize.budget_csv'
 
 
 class TestBudgetByCountryView(ClientTestCase, ApiViewMixin):
-    base_url = '/api/1/access/budgets/by_country.csv'
+    base_url = '/api/1/access/budget/by_country.csv'
     filter = 'iatilib.frontend.api1.BudgetsByCountryView.filter'
     serializer = 'iatilib.frontend.api1.BudgetsByCountryView.serializer'
 
 
 class TestBudgetBySectorView(ClientTestCase, ApiViewMixin):
-    base_url = '/api/1/access/budgets/by_sector.csv'
+    base_url = '/api/1/access/budget/by_sector.csv'
     filter = 'iatilib.frontend.api1.BudgetsBySectorView.filter'
     serializer = 'iatilib.frontend.api1.BudgetsBySectorView.serializer'
