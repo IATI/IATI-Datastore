@@ -213,7 +213,7 @@ class TestPagination(ClientTestCase):
 
     def test_invalid_page(self):
         resp = self.client.get('/api/1/access/activity?page=-1')
-        self.assertEquals(404, resp.status_code)
+        self.assertEquals(400, resp.status_code)
 
 
 class ApiViewMixin(object):
@@ -224,7 +224,7 @@ class ApiViewMixin(object):
 
     def test_filter_called(self):
         with mock.patch(self.filter) as mm:
-            self.client.get(self.base_url + '?country_code=MW')
+            self.client.get(self.base_url + '?recipient-country=MW')
             self.assertEquals(1, mm.call_count)
 
     def test_serializer_called(self):

@@ -103,7 +103,7 @@ class DataStoreView(MethodView):
             try:
                 self._valid_args = validators.activity_api_args(MultiDict(request.args))
             except validators.Invalid:
-                abort(404)
+                abort(400)
         return self._valid_args
 
     def get_response(self, serializer=None, mimetype="text/csv"):

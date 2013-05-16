@@ -16,4 +16,11 @@ activity_api_args = v.Schema({
     "page": v.All(v.Coerce(int), v.Range(min=1)),
     "date": apidate,
     "stream": v.All(v.Coerce(bool)),
-}, extra=True)
+    "recipient-country" : v.All(v.Coerce(str)),
+    #"recipient-country.code" : recipient_country,
+    "recipient-region" : v.All(v.Coerce(str)),
+    "reporting-org" : v.All(v.Coerce(str)),
+    "reporting-org_type" : v.All(v.Coerce(str)),
+    "sector" : v.All(v.Coerce(str)),
+    "participating-org" : v.All(v.Coerce(str)),
+})

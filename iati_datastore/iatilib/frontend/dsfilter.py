@@ -3,50 +3,66 @@ from iatilib.model import (
     Activity, Budget, Transaction, CountryPercentage, SectorPercentage,
     RegionPercentage, Participation, Organisation)
 
+class BadFilterException(Exception):
+    pass
 
 def _filter(query, args):
-    if "recipient-country" in args:
-        country = codelists.Country.from_string(args["recipient-country"])
-        query = query.filter(
+    def recipient_country(country_arg):
+        country = codelists.Country.from_string(country_arg)
+        return query.filter(
             Activity.recipient_country_percentages.any(
                 CountryPercentage.country == country
             )
         )
 
-    if "recipient-region" in args:
-        region = codelists.Region.from_string(args["recipient-region"])
-        query = query.filter(
+    def recipient_region(region_string):
+        region = codelists.Region.from_string(region_string)
+        return query.filter(
             Activity.recipient_region_percentages.any(
                 RegionPercentage.region == region
             )
         )
 
-    if "reporting-org" in args:
-        query = query.filter(
-            Activity.reporting_org_ref == args["reporting-org"])
+    def reporting_org(organisation):
+        return query.filter(Activity.reporting_org_ref == organisation)
 
-    if "reporting-org_type" in args:
-        code = codelists.OrganisationType.from_string(args["reporting-org_type"])
-        query = query.filter(
+    def reporting_org_type(organisation_type):
+        code = codelists.OrganisationType.from_string(organisation_type)
+        return query.filter(
             Activity.reporting_org.has(
                 Organisation.type == code
             )
         )
 
-    if "sector" in args:
-        code = codelists.Sector.from_string(args["sector"])
-        query = query.filter(
+    def sector(sector_string):
+        code = codelists.Sector.from_string(sector_string)
+        return query.filter(
             Activity.sector_percentages.any(
                 SectorPercentage.sector == code
             )
         )
 
-    if "participating-org" in args:
-        query = query.filter(
+    def participating_org(organisation):
+        return query.filter(
             Activity.participating_orgs.any(
-                Participation.organisation_ref == args["participating-org"]
+                Participation.organisation_ref == organisation
             )
         )
+
+    filter_functions = {
+            'recipient-country' : recipient_country,
+            #'recipient-country.code' : recipient_country,
+            'recipient-region' : recipient_region,
+            'reporting-org' : reporting_org,
+            'reporting-org_type' : reporting_org_type,
+            'sector' : sector,
+            'participating-org' : participating_org,
+    }
+
+    for filter, search_string in args.items():
+        filter_function = filter_functions.get(filter, None)
+        if filter_function:
+            query = filter_function(search_string)
 
     return query
 
