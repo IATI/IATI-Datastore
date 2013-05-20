@@ -343,6 +343,7 @@ common_transaction_csv = (
     (u'transaction_tied-status_code', transaction_tied_status),
     (u'transaction_disbursement-channel_code',
             transaction_disbursement_channel),
+    (u'reporting-org', lambda t: t.activity.reporting_org_ref),
 )
 
 transaction_csv = CSVSerializer((
