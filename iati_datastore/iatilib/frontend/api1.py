@@ -1,6 +1,6 @@
 from datetime import datetime
 import sqlalchemy as sa
-from flask import request, Response, Blueprint, jsonify, abort
+from flask import request, Response, Blueprint, jsonify, abort, render_template
 from flask.views import MethodView
 from werkzeug.datastructures import MultiDict
 from flask.ext.sqlalchemy import Pagination
@@ -51,23 +51,47 @@ def about_dataset(dataset):
             'last_status_code': r.last_status_code,
             'last_successful_fetch': r.last_succ.isoformat() if r.last_succ else None,
             'last_parsed': r.last_parsed.isoformat() if r.last_parsed else None,
+            'num_of_activities': len(r.activities),
         }) 
         
     return jsonify(
             dataset=dataset.name,
             last_modified=dataset.last_modified.isoformat(),
             num_resources=len(dataset.resources),
-            resources=resources
+            resources=resources,
     )
 
-@api.route('/error')
+
+@api.route('/error/dataset')
 def error():
-    logs = db.session.query(Log.dataset).distinct()
+    #logs = db.session.query(Log.dataset).distinct()
+    logs = db.session.query(Log.dataset, Log.logger).\
+            group_by(Log.dataset, Log.logger).\
+            order_by(Log.dataset)
     return jsonify(
-            errored_datasets=[ i[0] for i in logs.all() ]
+            errored_datasets=[ {'dataset': i[0], 'logger': i[1]} for i in logs.all() ]
     )
 
-@api.route('/error/<dataset_id>')
+@api.route('/error/resource')
+def resource_error():
+    resource_url = request.args.get('url')
+    if not resource_url:
+        abort(404)
+    error_logs = db.session.query(Log).filter(Log.resource == resource_url)
+    errors = []
+    for log in error_logs.all():
+        error = {}
+        error['resource_url'] = log.resource
+        error['dataset'] = log.dataset
+        error['logger'] = log.logger
+        error['msg'] = log.msg
+        error['traceback'] = log.trace
+        error['datestamp'] = log.created_at.isoformat()
+        errors.append(error)
+
+    return jsonify(errors=errors)
+
+@api.route('/error/dataset/<dataset_id>')
 def dataset_error(dataset_id):
     error_logs = db.session.query(Log).filter(Log.dataset == dataset_id)
     errors = []
@@ -81,6 +105,27 @@ def dataset_error(dataset_id):
         errors.append(error)
 
     return jsonify(errors=errors)
+
+@api.route('/error/dataset.log')
+def dataset_log():
+    logs = db.session.query(Log.dataset).distinct()
+    return render_template('datasets.log', logs=logs)
+    
+@api.route('/error/dataset.log/<dataset_id>')
+def dataset_log_error(dataset_id):
+    error_logs = db.session.query(Log).order_by(sa.desc(Log.created_at)).\
+                        filter(Log.dataset == dataset_id)
+    errors = []
+    for log in error_logs.all():
+        error = {}
+        error['resource_url'] = log.resource
+        error['logger'] = log.logger
+        error['msg'] = log.msg
+        error['traceback'] = log.trace.split('\n')
+        error['datestamp'] = log.created_at.isoformat()
+        errors.append(error)
+
+    return render_template('dataset.log', errors=errors)
 
 
 class DataStoreView(MethodView):
