@@ -30,6 +30,7 @@ class ResourceFactory(factory.Factory):
 
 class CountryPercentageFactory(factory.Factory):
     country = codelists.Country.united_states
+    name = ""
     percentage = 0
 
 

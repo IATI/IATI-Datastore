@@ -67,6 +67,8 @@ class TestParseActivity(AppTestCase):
         self.assertEquals(
             cl.Country.armenia,
             act.recipient_country_percentages[0].country)
+        self.assertEquals(
+            "Armenia", act.recipient_country_percentages[0].name)
 
     def test_recipient_region_percentages(self):
         act = parse.activity(fixture("iati_activity_JP.xml"))
@@ -74,6 +76,8 @@ class TestParseActivity(AppTestCase):
         self.assertEquals(
             cl.Country.japan,
             act.recipient_country_percentages[0].country)
+        self.assertEquals(
+            "Far East Asia, regional", act.recipient_region_percentages[0].name)
 
     def test_transaction_count(self):
         act = parse.activity(fixture("default_currency.xml"))
@@ -202,6 +206,7 @@ class TestSector(AppTestCase):
             u'<sector vocabulary="DAC" code="16010">Child Protection Systems Strengthening</sector>'
         )])[0]
         self.assertEquals(cl.Sector.social_welfare_services, sec.sector)
+        self.assertEquals(u"Child Protection Systems Strengthening", sec.text)
 
     def test_missing_code(self):
         sec = parse.sector_percentages([ET.XML(
@@ -269,7 +274,7 @@ class TestActivity(AppTestCase):
                 '''))
         self.assertEquals(0, len(list(activities)))
 
-    def test_something(self):
+    def test_dates(self):
         activities = list(parse.document(fixture_filename("CD.xml")))
         self.assertEquals(datetime.date(2004, 1, 1), activities[0].start_planned)
         self.assertEquals(datetime.date(2004, 1, 1), activities[0].start_actual)

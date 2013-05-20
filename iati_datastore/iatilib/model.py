@@ -136,6 +136,11 @@ class Activity(db.Model):
     sector_percentages = act_relationship("SectorPercentage")
     budgets = act_relationship("Budget")
     resource = sa.orm.relationship("Resource")
+    #related_parent_id = sa.Column(sa.Unicode, sa.ForeignKey('activity.iati_identifier'))
+    #related_activities = sa.orm.relationship(
+    #    "Activity",
+    #    backref=sa.orm.backref('related_parent', remote_side=[iati_identifier]),
+    #)
 
 
 class Organisation(db.Model, UniqueMixin):
@@ -182,6 +187,7 @@ class PercentageMixin(object):
         )
     id = sa.Column(sa.Integer, primary_key=True)
     percentage = sa.Column(sa.Integer, nullable=True)
+    name = sa.Column(sa.Unicode, nullable=True)
 
 
 class CountryPercentage(db.Model, PercentageMixin):
@@ -262,6 +268,7 @@ class Transaction(db.Model):
 class SectorPercentage(db.Model):
     __tablename__ = "sector_percentage"
     id = sa.Column(sa.Integer, primary_key=True)
+    text = sa.Column(sa.Unicode)
     activity_id = sa.Column(
         act_ForeignKey("activity.iati_identifier"),
         nullable=False,

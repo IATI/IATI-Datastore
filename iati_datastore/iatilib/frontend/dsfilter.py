@@ -1,3 +1,4 @@
+from functools import partial
 from iatilib import codelists, db
 from iatilib.model import (
     Activity, Budget, Transaction, CountryPercentage, SectorPercentage,
@@ -6,12 +7,21 @@ from iatilib.model import (
 class BadFilterException(Exception):
     pass
 
+def filter_from_codelist(query, codelist, column, related_column, code):
+    value = codelist.from_string(code)
+    return query.filter(column.any(related_column == value))
+
+def filter_from_text(query, column, related_column, text):
+    return query.filter(column.any(related_column == text))
+
 def _filter(query, args):
-    def recipient_country(country_arg):
-        country = codelists.Country.from_string(country_arg)
+    recipient_country = partial(filter_from_codelist, query, codelists.Country,
+        Activity.recipient_country_percentages, CountryPercentage.country)
+
+    def recipient_country_text(country):
         return query.filter(
             Activity.recipient_country_percentages.any(
-                CountryPercentage.country == country
+                CountryPercentage.name == country
             )
         )
 
@@ -23,14 +33,44 @@ def _filter(query, args):
             )
         )
 
+    def recipient_region_text(region):
+        return query.filter(
+            Activity.recipient_region_percentages.any(
+                RegionPercentage.name == region
+            )
+        )
+
     def reporting_org(organisation):
         return query.filter(Activity.reporting_org_ref == organisation)
+
+    def reporting_org_text(organisation):
+        return query.filter(
+            Activity.reporting_org.has(
+                Organisation.name == organisation
+            )
+        )
 
     def reporting_org_type(organisation_type):
         code = codelists.OrganisationType.from_string(organisation_type)
         return query.filter(
             Activity.reporting_org.has(
                 Organisation.type == code
+            )
+        )
+
+    def participating_org(organisation):
+        return query.filter(
+            Activity.participating_orgs.any(
+                Participation.organisation_ref == organisation
+            )
+        )
+ 
+    def participating_org_text(organisation):
+        return query.filter(
+            Activity.participating_orgs.any(
+                Participation.organisation.has(
+                    Organisation.name == organisation
+                )
             )
         )
 
@@ -42,21 +82,77 @@ def _filter(query, args):
             )
         )
 
-    def participating_org(organisation):
+    def sector_text(sector):
         return query.filter(
-            Activity.participating_orgs.any(
-                Participation.organisation_ref == organisation
+            Activity.sector_percentages.any(
+                SectorPercentage.text == sector 
+            )
+        )
+
+    def transaction_ref(transaction):
+        return query.filter(
+            Activity.transactions.any(
+                Transaction.ref == transaction
+            )
+        )
+
+    def transaction_provider_org(organisation):
+        return query.filter(
+            Activity.transactions.any(
+                Transaction.provider_org_ref == organisation
+            )
+        )
+
+    def transaction_provider_org_name(organisation):
+        return query.filter(
+            Activity.transactions.any(
+                Transaction.provider_org.has(
+                    Organisation.name == organisation
+                )
+            )
+        )
+
+    def transaction_receiver_org(organisation):
+        return query.filter(
+            Activity.transactions.any(
+                Transaction.receiver_org_ref == organisation
+            )
+        )
+
+    def transaction_receiver_org_name(organisation):
+        return query.filter(
+            Activity.transactions.any(
+                Transaction.receiver_org.has(
+                    Organisation.name == organisation
+                )
             )
         )
 
     filter_functions = {
             'recipient-country' : recipient_country,
-            #'recipient-country.code' : recipient_country,
+            'recipient-country.code' : recipient_country,
+            'recipient-country.text' : recipient_country_text,
             'recipient-region' : recipient_region,
+            'recipient-region.code' : recipient_region,
+            'recipient-region.text' : recipient_region_text,
             'reporting-org' : reporting_org,
-            'reporting-org_type' : reporting_org_type,
+            'reporting-org.code' : reporting_org,
+            'reporting-org.type' : reporting_org_type,
+            'reporting-org.text' : reporting_org_text,
             'sector' : sector,
+            'sector.code' : sector,
+            'sector.text' : sector_text,
             'participating-org' : participating_org,
+            'participating-org.ref' : participating_org,
+            'participating-org.text' : participating_org_text,
+            'transaction_ref' : transaction_ref,
+            'transaction' : transaction_ref,
+            'transaction_provider-org' : transaction_provider_org,
+            'transaction_provider-org_ref' : transaction_provider_org,
+            'transaction_provider-org_text' : transaction_provider_org_name,
+            'transaction_receiver-org' : transaction_receiver_org,
+            'transaction_receiver-org_ref' : transaction_receiver_org,
+            'transaction_receiver-org_text' : transaction_receiver_org_name,
     }
 
     for filter, search_string in args.items():

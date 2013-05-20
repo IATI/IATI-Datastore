@@ -102,12 +102,14 @@ def websites(xml):
 
 def recipient_country_percentages(xml):
     return [CountryPercentage(
+            name=xval(ele, "text()", None),
             country=cl.Country.from_string(xval(ele, "@code")),
             )
             for ele in xml]
 
 def recipient_region_percentages(xml):
     return [RegionPercentage(
+            name=xval(ele, "text()", None),
             region=cl.Region.from_string(xval(ele, "@code")),
             )
             for ele in xml]
@@ -167,6 +169,8 @@ def sector_percentages(xml):
             sp.vocabulary = cl.Vocabulary.from_string(xval(ele, "@vocabulary"))
         if ele.xpath("@percentage"):
             sp.percentage = int(xval(ele, "@percentage"))
+        if ele.xpath("text()"):
+            sp.text = xval(ele, "text()")
         if any(getattr(sp, attr) for attr in "sector vocabulary percentage".split()):
             ret.append(sp)
     return ret
@@ -250,7 +254,9 @@ def document(xml_resource, resource=None):
     try:
         for event, elem in ET.iterparse(xmlfile):
             if elem.tag == 'iati-activity':
+                iati_identifier = ""
                 try:
+                    iati_identifier = xval(elem, "./iati-identifier/text()"),
                     yield activity(elem)
                 except Exception, exe:
 
@@ -265,7 +271,7 @@ def document(xml_resource, resource=None):
                     db_log.dataset = dataset
                     db_log.resource = resource_url
                     db_log.logger = "Parser"
-                    db_log.msg = "Failed to parse activity {0} for {1}".format(exe, resource_url)
+                    db_log.msg = "Failed to parse activity {0} for {1}".format(exe, iati_identifier)
                     db_log.dataset = dataset
 
                     db_log.level = "warn"
