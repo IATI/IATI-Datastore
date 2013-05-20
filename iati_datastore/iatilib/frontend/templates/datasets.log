@@ -1,0 +1,4 @@
+{% for error in logs-%}
+{{ error.0 }}
+{% endfor -%}
+

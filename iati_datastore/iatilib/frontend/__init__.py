@@ -36,6 +36,13 @@ def create_app(**config):
             contents = f.read()
         return render_template('doc.html', doc=contents)
 
+    @app.route('/error')
+    def error():
+        from flask import render_template
+        with app.open_resource('docs/error.md') as f:
+            contents = f.read()
+        return render_template('doc.html', doc=contents)
+
     from .api1 import api
 
     app.register_blueprint(api, url_prefix="/api/1")

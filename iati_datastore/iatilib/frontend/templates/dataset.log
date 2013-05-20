@@ -1,0 +1,6 @@
+{% for error in errors -%}
+[{{ error.datestamp }}][{{ error.logger }}]: {{ error.msg}} {{ error.resource_url}}
+{%- for line in error.traceback %}
+[{{ error.datestamp }}][{{ error.logger }}]: "{{line}}" {% endfor %}
+{% endfor -%}
+
