@@ -103,8 +103,22 @@ Getting all the results at once
 The CSV format supports returning all results at once in a 'stream'. To
 request all results add 'stream=True' to your parameters. So
 
-[`/api/1/access/transactions.csv?reporting_org_ref=GB-1&stream=True`](http://datastore.herokuapp.com/api/1/access/transactions.csv?reporting_org_ref=GB-1&stream=True)
+[`/api/1/access/transactions.csv?reporting_org_ref=GB-1&stream=True`](http://iati-datastore.herokuapp.com/api/1/access/transactions.csv?reporting_org_ref=GB-1&stream=True)
 
 will respond with all the DFID transactions data.
 
 
+
+Checking the Data
+-----------------
+
+The datastore keeps information on any errors it encountered whilst fetching and parsing any of tthe resources
+
+
+* list of datasets which have errored[`api/1/error`](http://iati-datastore.herokuapp.com/api/1/error)
+* list of errors for specific dataset `api/1/error/<errored dataset>`
+
+General information about the datasets, such as the urls for the resources and when they were fetched
+ 
+* List of datasets[`api/1/about/datasets`](http://iati-datastore.herokuapp.com/api/1/about/dataset)
+* Specific details of dataset `api/1/about/dataset/<dataset name>`
