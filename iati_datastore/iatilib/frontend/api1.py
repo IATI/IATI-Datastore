@@ -36,7 +36,8 @@ def about():
 
 @api.route('/about/dataset')
 def datasets():
-    pass
+    datasets = db.session.query(Dataset.name)
+    return jsonify(datasets=[ i.name for i in datasets.all()] )
 
 
 @api.route('/about/dataset/<dataset>')
@@ -45,11 +46,11 @@ def about_dataset(dataset):
     resources = []
     for r in dataset.resources:
         resources.append({
-                'url': r.url,
-                'last_fetch': r.last_fetch.isoformat() if r.last_fetch else None,
-                'last_status_code': r.last_status_code,
-                'last_successful_fetch': r.last_succ.isoformat() if r.last_succ else None,
-                'last_parsed': r.last_parsed.isoformat() if r.last_parsed else None,
+            'url': r.url,
+            'last_fetch': r.last_fetch.isoformat() if r.last_fetch else None,
+            'last_status_code': r.last_status_code,
+            'last_successful_fetch': r.last_succ.isoformat() if r.last_succ else None,
+            'last_parsed': r.last_parsed.isoformat() if r.last_parsed else None,
         }) 
         
     return jsonify(
