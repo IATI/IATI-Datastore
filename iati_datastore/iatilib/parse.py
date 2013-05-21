@@ -276,18 +276,15 @@ def document(xml_resource, resource=None):
                     db.session.add(Log(
                         dataset=dataset,
                         resource=resource_url,
-                        logger="parser",
-                        msg="Failed to parse activity {0}, error was: {1}".format(iati_identifier, exe),
+                        logger="activity_importer",
+                        msg="Failed to import a valid activity {0}, error was: {1}".format(iati_identifier, exe),
                         level="warn",
                         trace=traceback.format_exc(),
                         created_at=datetime.datetime.now()
                     ))
-                    import ipdb; ipdb.set_trace()
                     db.session.commit()
-                    log.warn("Failed to parse activity %r", exe)
+                    log.warn("Failed to import a valid activity %r", exe)
 
                 elem.clear()
     except ET.XMLSyntaxError, exe:
-        raise XMLError(exe.msg)
-
-
+        raise XMLError()

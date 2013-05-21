@@ -1,5 +1,6 @@
 import datetime
 import logging
+import traceback
 
 import sqlalchemy as sa
 import requests
@@ -9,7 +10,7 @@ from .queue import get_queue
 from werkzeug.http import http_date
 
 from iatilib import db, parse
-from iatilib.model import Dataset, Resource, Activity
+from iatilib.model import Dataset, Resource, Activity, Log
 
 log = logging.getLogger("crawler")
 
@@ -79,7 +80,6 @@ def parse_resource(resource):
     resource.last_parsed = datetime.datetime.utcnow()
     return resource
 
-
 def update_activities(resource_url):
     resource = Resource.query.get(resource_url)
     try:
@@ -103,6 +103,15 @@ def update_activities(resource_url):
     except parse.ParserError, exc:
         db.session.rollback()
         resource.last_parse_error = str(exc)
+        db.session.add(Log(
+            dataset=resource.dataset,
+            resource=resource.resource_url,
+            logger="xml_parser",
+            msg="Failed to parse XML file {0} error was".format(resource_url, exc),
+            level="error",
+            trace=traceback.format_exc(),
+            created_at=datetime.datetime.now()
+        ))
         db.session.commit()
 
 

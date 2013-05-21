@@ -14,7 +14,7 @@ def db_log_exception(job, exc_type, exc_value, tb):
     db.session.remove()
     resource = Resource.query.get(job.args[0])
     log = Log()
-    log.logger = "queue"
+    log.logger = "fetch"
     log.dataset = resource.dataset_id
     log.resource = resource.url
     log.msg = "Exception in job %r" % job.description
