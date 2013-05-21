@@ -40,6 +40,7 @@ urls = {
     "AidType": iati_url("AidType", version="1.0"),
     "TiedStatus": iati_url("TiedStatus", version="1.0"),
     "DisbursementChannel": iati_url("DisbursementChannel", version="1.0"),
+    "PolicyMarker": iati_url("PolicyMarker", version="1.0"),
 }
 
 data_dir = os.path.dirname(__file__)

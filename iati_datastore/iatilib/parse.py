@@ -10,8 +10,9 @@ from dateutil.parser import parse as parse_date
 
 from . import db
 from iatilib.model import (
-    Activity, Organisation, Participation, CountryPercentage, Transaction,
-    SectorPercentage, Budget, RegionPercentage, Log)
+    Activity, Budget,  CountryPercentage, Log, Transaction, Organisation,
+    Participation, PolicyMarker, RegionPercentage, RelatedActivity,
+    SectorPercentage)
 from iatilib import codelists as cl
 
 log = logging.getLogger("parser")
@@ -208,6 +209,15 @@ def budgets(xml):
     return ret
 
 
+def policy_markers(element):
+    return [ PolicyMarker(code=cl.PolicyMarker.from_string(xval(ele, "@code")),
+                          text=xval(ele, "text()", None),
+            ) for ele in element ]
+
+def related_activities(element):
+    return [ RelatedActivity(ref=xval(ele, "@ref"),
+                             text=xval(ele, "text()", None))
+             for ele in element ]
 
 def _open_resource(xml_resource):
     if isinstance(xml_resource, basestring):
@@ -251,6 +261,8 @@ def activity(xml_resource):
             xval_date(xml, "./activity-date[@type='end-actual']", None)),
         "sector_percentages": sector_percentages(xml.xpath("./sector")),
         "budgets": budgets(xml.xpath("./budget")),
+        "policy_markers": policy_markers(xml.xpath("./policy-marker")),
+        "related_activities": related_activities(xml.xpath("./related-activity")),
         "raw_xml": ET.tostring(xml, encoding=unicode)
     }
     return Activity(**data)

@@ -6,7 +6,8 @@ from iatilib import codelists
 from iatilib.frontend import db
 from iatilib.model import (
     Activity, Transaction, Organisation, SectorPercentage, CountryPercentage,
-    Participation, Budget, Resource, RegionPercentage
+    Participation, Budget, Resource, RegionPercentage, PolicyMarker,
+    RelatedActivity
 )
 
 
@@ -53,6 +54,11 @@ class ParticipationFactory(factory.Factory):
     organisation = factory.SubFactory(OrganisationFactory)
     role = codelists.OrganisationRole.funding
 
+class PolicyMarkerFactory(factory.Factory):
+    code = codelists.PolicyMarker.gender_equality
+
+class RelatedActivityFactory(factory.Factory):
+    ref = "test_ref"
 
 class ActivityFactory(factory.Factory):
     iati_identifier = factory.Sequence(lambda n: u'test-act-{0}'.format(n))

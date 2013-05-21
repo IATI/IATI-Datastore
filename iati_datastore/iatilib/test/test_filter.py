@@ -228,6 +228,32 @@ class TestActivityFilter(AppTestCase):
         })
         self.assertIn(trans_in.activity, text.all())
 
+    def test_policy_markers(self):
+        act_in = fac.ActivityFactory.create(
+                policy_markers=[fac.PolicyMarkerFactory.build()],
+        )
+        act_not = fac.ActivityFactory.create(
+                policy_markers=[fac.PolicyMarkerFactory.build(
+                    code=cl.PolicyMarker.trade_development)
+                ],
+        )
+        activities = dsfilter.activities({
+            "policy-marker": u"1"
+        })
+        self.assertIn(act_in, activities.all())
+        self.assertNotIn(act_not, activities.all())
+
+    def test_related_activities(self):
+        act_in = fac.ActivityFactory.create(
+                related_activities=[fac.RelatedActivityFactory.build(ref="ra-1")])
+        act_not = fac.ActivityFactory.create(
+                related_activities=[fac.RelatedActivityFactory.build(ref="ra-2")])
+        activities = dsfilter.activities({
+            "related-activity": u"ra-1"
+        })
+        self.assertIn(act_in, activities.all())
+        self.assertNotIn(act_not, activities.all())
+
 class TestTransactionFilter(AppTestCase):
     def test_by_country_code(self):
         trans_in = fac.TransactionFactory.create(

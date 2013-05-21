@@ -62,7 +62,7 @@ def about_dataset(dataset):
     )
 
 
-@api.route('/error/dataset')
+@api.route('/error/dataset/')
 def error():
     #logs = db.session.query(Log.dataset).distinct()
     logs = db.session.query(Log.dataset, Log.logger).\
@@ -77,7 +77,9 @@ def resource_error():
     resource_url = request.args.get('url')
     if not resource_url:
         abort(404)
-    error_logs = db.session.query(Log).filter(Log.resource == resource_url)
+    error_logs = db.session.query(Log).\
+                    filter(Log.resource == resource_url).\
+                    order_by(sa.desc(Log.created_at))
     errors = []
     for log in error_logs.all():
         error = {}
@@ -93,7 +95,9 @@ def resource_error():
 
 @api.route('/error/dataset/<dataset_id>')
 def dataset_error(dataset_id):
-    error_logs = db.session.query(Log).filter(Log.dataset == dataset_id)
+    error_logs = db.session.query(Log).\
+            filter(Log.dataset == dataset_id).\
+            order_by(sa.desc(Log.created_at))
     errors = []
     for log in error_logs.all():
         error = {}

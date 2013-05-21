@@ -171,6 +171,22 @@ class TestParseActivity(AppTestCase):
         activity = parse.activity(fixture("default_currency.xml"))
         self.assertEquals(6, len(activity.budgets))
 
+    def test_policy_markers(self):
+        activities = [ a for a in parse.document(fixture_filename("CD.xml")) ]
+
+        self.assertEquals(8, len(activities[1].policy_markers))
+        self.assertEquals(cl.PolicyMarker.gender_equality, activities[1].policy_markers[0].code)
+        self.assertEquals(cl.PolicyMarker.aid_to_environment, activities[1].policy_markers[1].code)
+        self.assertEquals(cl.PolicyMarker.participatory_developmentgood_governance,
+                activities[1].policy_markers[2].code)
+        self.assertEquals(cl.PolicyMarker.trade_development, activities[1].policy_markers[3].code)
+
+    def test_related_activity(self):
+        activities = [ a for a in parse.document(fixture_filename("CD.xml")) ]
+        self.assertEquals(4, len(activities[0].related_activities))
+        self.assertEquals("GB-1-105838-101", activities[0].related_activities[0].ref)
+        
+
 
 class TestFunctional(AppTestCase):
     def test_save_parsed_activity(self):

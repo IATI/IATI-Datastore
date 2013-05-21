@@ -135,6 +135,8 @@ class Activity(db.Model):
     transactions = act_relationship("Transaction")
     sector_percentages = act_relationship("SectorPercentage")
     budgets = act_relationship("Budget")
+    policy_markers = act_relationship("PolicyMarker")
+    related_activities = act_relationship("RelatedActivity")
     resource = sa.orm.relationship("Resource")
 
 
@@ -200,6 +202,32 @@ class RegionPercentage(db.Model, PercentageMixin):
         nullable=False,
         index=True)
 
+class PolicyMarker(db.Model):
+    __tablename__ = "policy_marker"
+    id = sa.Column(sa.Integer, primary_key=True)
+    activity_id = sa.Column(
+        act_ForeignKey("activity.iati_identifier"),
+        nullable=False,
+        index=True)
+    code = sa.Column(codelists.PolicyMarker.db_type(), nullable=False, index=True)
+    text = sa.Column(sa.Unicode(), nullable=True)
+    activity = sa.orm.relationship("Activity")
+
+class RelatedActivity(db.Model):
+    __tablename__ = "related_activity"
+    id = sa.Column(sa.Integer, primary_key=True)
+    activity_id = sa.Column(
+        act_ForeignKey("activity.iati_identifier"),
+        nullable=False,
+        index=True)
+    ref = sa.Column(sa.Unicode(), nullable=False)
+    text = sa.Column(sa.Unicode())
+    # i'd like to make this column a foreign key to activity, infact a self referential
+    # relation would be nice but the standard allows a related-activity to have a type
+    # which describes the type of relationship (parent, child, sibling etc) that makes
+    # it nontrivial to model. It's probably best just to have it as free text, it will
+    # will only be filtered on rather than joined.
+    activity = sa.orm.relationship("Activity")
 
 class TransactionValue(namedtuple("TransactionValue", "date amount currency")):
     def __composite_values__(self):

@@ -2,7 +2,8 @@ from functools import partial
 from iatilib import codelists, db
 from iatilib.model import (
     Activity, Budget, Transaction, CountryPercentage, SectorPercentage,
-    RegionPercentage, Participation, Organisation)
+    RegionPercentage, Participation, Organisation, PolicyMarker,
+    RelatedActivity)
 
 class BadFilterException(Exception):
     pass
@@ -128,6 +129,22 @@ def _filter(query, args):
             )
         )
 
+    def policy_marker(code):
+        policy = codelists.PolicyMarker.from_string(code)
+        return query.filter(
+            Activity.policy_markers.any(
+                PolicyMarker.code == policy
+            )
+        )
+
+    def related_activity(ref):
+        return query.filter(
+            Activity.related_activities.any(
+                RelatedActivity.ref == ref
+            )
+        )
+
+
     filter_functions = {
             'recipient-country' : recipient_country,
             'recipient-country.code' : recipient_country,
@@ -142,9 +159,13 @@ def _filter(query, args):
             'sector' : sector,
             'sector.code' : sector,
             'sector.text' : sector_text,
+            'policy-marker' : policy_marker,
+            'policy-marker.code' : policy_marker,
             'participating-org' : participating_org,
             'participating-org.ref' : participating_org,
             'participating-org.text' : participating_org_text,
+            'related-activity': related_activity,
+            'related-activity.ref' : related_activity,
             'transaction_ref' : transaction_ref,
             'transaction' : transaction_ref,
             'transaction_provider-org' : transaction_provider_org,
