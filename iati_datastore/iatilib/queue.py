@@ -22,7 +22,8 @@ def db_log_exception(job, exc_type, exc_value, tb):
     log.trace = traceback.format_exception(exc_type, exc_value, tb)
     db.session.add(log)
     db.session.commit()
-    job.cleanup()
+    job.cancel()
+    job.delete()
 
 
 def get_worker():
