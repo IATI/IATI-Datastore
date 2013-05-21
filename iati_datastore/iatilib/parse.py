@@ -36,6 +36,9 @@ class SpecError(ParserError):
 class MissingValue(SpecError):
     pass
 
+class InvalidDateError(ParserError):
+    pass
+
 
 def xval(ele, xpath, default=NODEFAULT):
     try:
@@ -59,7 +62,10 @@ def xval_date(xml, xpath, default=None):
 def iati_date(str):
     if str is None:
         return None
-    return parse_date(str).date()
+    try:
+        return parse_date(str).date()
+    except ValueError:
+        raise InvalidDateError('could not parse {0} as date'.format(str))
 
 
 def iati_int(str):
@@ -202,6 +208,7 @@ def budgets(xml):
     return ret
 
 
+
 def _open_resource(xml_resource):
     if isinstance(xml_resource, basestring):
         if os.path.exists(xml_resource):
@@ -258,25 +265,24 @@ def document(xml_resource, resource=None):
                 try:
                     iati_identifier = xval(elem, "./iati-identifier/text()"),
                     yield activity(elem)
-                except Exception, exe:
-
-                    db_log = Log()
-
-                    resource_url = ""
-                    dataset = ""
+                except (MissingValue, InvalidDateError, ValueError), exe:
                     if resource:
                         resource_url = resource.url
                         dataset = resource.dataset_id
+                    else:
+                        resource_url = ""
+                        dataset = ""
 
-                    db_log.dataset = dataset
-                    db_log.resource = resource_url
-                    db_log.logger = "Parser"
-                    db_log.msg = "Failed to parse activity {0} for {1}".format(exe, iati_identifier)
-                    db_log.dataset = dataset
-
-                    db_log.level = "warn"
-                    db_log.trace = traceback.format_exc()
-                    db.session.add(db_log)
+                    db.session.add(Log(
+                        dataset=dataset,
+                        resource=resource_url,
+                        logger="parser",
+                        msg="Failed to parse activity {0}, error was: {1}".format(iati_identifier, exe),
+                        level="warn",
+                        trace=traceback.format_exc(),
+                        created_at=datetime.datetime.now()
+                    ))
+                    import ipdb; ipdb.set_trace()
                     db.session.commit()
                     log.warn("Failed to parse activity %r", exe)
 

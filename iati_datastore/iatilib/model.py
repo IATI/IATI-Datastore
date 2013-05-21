@@ -136,11 +136,6 @@ class Activity(db.Model):
     sector_percentages = act_relationship("SectorPercentage")
     budgets = act_relationship("Budget")
     resource = sa.orm.relationship("Resource")
-    #related_parent_id = sa.Column(sa.Unicode, sa.ForeignKey('activity.iati_identifier'))
-    #related_activities = sa.orm.relationship(
-    #    "Activity",
-    #    backref=sa.orm.backref('related_parent', remote_side=[iati_identifier]),
-    #)
 
 
 class Organisation(db.Model, UniqueMixin):
@@ -350,11 +345,6 @@ class Log(db.Model):
         sa.DateTime,
         default=sa.func.now())  # the current timestamp
 
-    def __init__(self, logger=None, level=None, trace=None, msg=None):
-        self.logger = logger
-        self.level = level
-        self.trace = trace
-        self.msg = msg
 
     def __unicode__(self):
         return self.__repr__()
