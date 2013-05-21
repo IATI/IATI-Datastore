@@ -302,6 +302,7 @@ def update(verbose=False, limit=None, dataset=None):
         rq.enqueue(update_dataset, args=(dataset,), result_ttl=0)
         res = Resource.query.filter(Resource.dataset_id==dataset)
         for resource in res:
+            rq.enqueue(update_resource, args=(resource.url,), result_ttl=0)
             rq.enqueue(update_activities, args=(resource.url,), result_ttl=0)
     else:
         fetch_dataset_list()

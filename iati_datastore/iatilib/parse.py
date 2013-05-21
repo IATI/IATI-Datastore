@@ -7,6 +7,7 @@ from StringIO import StringIO
 
 from lxml import etree as ET
 from dateutil.parser import parse as parse_date
+from requests.packages import charade
 
 from . import db
 from iatilib.model import (
@@ -221,11 +222,15 @@ def related_activities(element):
 
 def _open_resource(xml_resource):
     if isinstance(xml_resource, basestring):
+        encoding = charade.detect(xml_resource)['encoding']
+        if encoding in ('UTF-16LE', 'UTF-16BE'):
+            xml_resource = xml_resource.decode('UTF-16').encode('utf-8')
+
         if os.path.exists(xml_resource):
             #https://bugzilla.redhat.com/show_bug.cgi?id=874546
             f = open(xml_resource)
             lines = f.read()
-            xmlfile =StringIO(lines)
+            xmlfile = StringIO(lines)
         else:
             xmlfile = StringIO(xml_resource)
     else:
