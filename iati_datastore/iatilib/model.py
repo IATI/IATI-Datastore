@@ -332,7 +332,7 @@ class Dataset(db.Model):
         nullable=False,
         default=sa.func.now())
     last_modified = sa.Column(sa.DateTime, nullable=True)
-    resources = sa.orm.relationship("Resource")
+    resources = sa.orm.relationship("Resource", cascade="all, delete, delete-orphan",passive_deletes=True)
     resource_urls = association_proxy(
         "resources",
         "url",
@@ -342,7 +342,7 @@ class Dataset(db.Model):
 class Resource(db.Model):
     __tablename__ = "resource"
     url = sa.Column(sa.Unicode, primary_key=True)
-    dataset_id = sa.Column(sa.ForeignKey("dataset.name"), index=True)
+    dataset_id = sa.Column(sa.ForeignKey("dataset.name", ondelete='CASCADE'), index=True)
     last_fetch = sa.Column(sa.DateTime)       # most recent request of this url
     last_status_code = sa.Column(sa.Integer)  # status code from last fetch
     last_succ = sa.Column(sa.DateTime)        # last time status code was 200

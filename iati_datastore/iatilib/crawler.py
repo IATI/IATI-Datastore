@@ -25,12 +25,21 @@ def fetch_dataset_list():
     existing_datasets = Dataset.query.all()
     existing_ds_names = set(ds.name for ds in existing_datasets)
     incoming_ds_names = set(registry.package_register_get())
+    
     new_datasets = [Dataset(name=n) for n
                     in incoming_ds_names - existing_ds_names]
     all_datasets = existing_datasets + new_datasets
     for dataset in all_datasets:
         dataset.last_seen = datetime.datetime.utcnow()
     db.session.add_all(all_datasets)
+    db.session.commit()
+
+    deleted_ds_names = existing_ds_names - incoming_ds_names
+    if deleted_ds_names:
+        deleted_datasets = db.session.query(Dataset).filter(Dataset.name.in_(deleted_ds_names))
+        deleted = deleted_datasets.delete(synchronize_session='fetch')
+        log.info("Deleted {0} datasets".format(deleted))
+    
     return all_datasets
 
 
