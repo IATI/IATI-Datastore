@@ -13,10 +13,13 @@ def db_log_exception(job, exc_type, exc_value, tb):
     # as this is called when an exception occurs session is probably a mess
     db.session.remove()
     resource = Resource.query.get(job.args[0])
+    if resource:
+        dataset = resource.dataset_id
+        url = resource.url
     log = Log()
     log.logger = "fetch"
-    log.dataset = resource.dataset_id
-    log.resource = resource.url
+    log.dataset = dataset
+    log.resource = url
     log.msg = "Exception in job %r" % job.description
     log.level = "error"
     log.trace = traceback.format_exception(exc_type, exc_value, tb)
