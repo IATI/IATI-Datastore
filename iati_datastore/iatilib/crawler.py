@@ -4,7 +4,7 @@ import traceback
 
 import sqlalchemy as sa
 import requests
-import ckanclient
+import ckanapi
 from dateutil.parser import parse as date_parser
 from .queue import get_queue
 from werkzeug.http import http_date
@@ -16,42 +16,54 @@ log = logging.getLogger("crawler")
 
 
 CKAN_WEB_BASE = 'http://iatiregistry.org/dataset/%s'
-CKAN_API = 'http://iatiregistry.org/api'
+CKAN_API = 'http://iatiregistry.org'
 
-registry = ckanclient.CkanClient(base_location=CKAN_API)
+registry = ckanapi.RemoteCKAN(CKAN_API)
 
+class CouldNotFetchPackageList(Exception):
+    pass
 
 def fetch_dataset_list():
     existing_datasets = Dataset.query.all()
     existing_ds_names = set(ds.name for ds in existing_datasets)
-    incoming_ds_names = set(registry.package_register_get())
-    
-    new_datasets = [Dataset(name=n) for n
-                    in incoming_ds_names - existing_ds_names]
-    all_datasets = existing_datasets + new_datasets
-    for dataset in all_datasets:
-        dataset.last_seen = datetime.datetime.utcnow()
-    db.session.add_all(all_datasets)
-    db.session.commit()
+    package_list = registry.action.package_list()
 
-    deleted_ds_names = existing_ds_names - incoming_ds_names
-    if deleted_ds_names:
-        deleted_datasets = db.session.query(Dataset).filter(Dataset.name.in_(deleted_ds_names))
-        deleted = deleted_datasets.delete(synchronize_session='fetch')
-        log.info("Deleted {0} datasets".format(deleted))
-    
-    return all_datasets
+    if package_list.get('success', False):
+        incoming_ds_names = set(package_list['result'])
+        
+        new_datasets = [Dataset(name=n) for n
+                        in incoming_ds_names - existing_ds_names]
+        all_datasets = existing_datasets + new_datasets
+        for dataset in all_datasets:
+            dataset.last_seen = datetime.datetime.utcnow()
+        db.session.add_all(all_datasets)
+        db.session.commit()
+
+        deleted_ds_names = existing_ds_names - incoming_ds_names
+        if deleted_ds_names:
+            deleted_datasets = db.session.query(Dataset).filter(Dataset.name.in_(deleted_ds_names))
+            deleted = deleted_datasets.delete(synchronize_session='fetch')
+            all_datasets = Dataset.query.all()
+            log.info("Deleted {0} datasets".format(deleted))
+        
+        return all_datasets
+    else:
+        raise CouldNotFetchPackageList()
 
 
 def fetch_dataset_metadata(dataset):
-    ds_entity = registry.package_entity_get(dataset.name)
-    dataset.last_modified = date_parser(ds_entity.get('metadata_modified', ""))
-    new_urls = [resource['url'] for resource
-                in ds_entity.get('resources', [])
-                if resource['url'] not in dataset.resource_urls]
-    dataset.resource_urls.extend(new_urls)
-    db.session.add(dataset)
-    return dataset
+    ds_reg = registry.action.package_show_rest(id=dataset.name)
+    if ds_reg.get('success', False):
+        ds_entity = ds_reg['result']
+        dataset.last_modified = date_parser(ds_entity.get('metadata_modified', ""))
+        new_urls = [resource['url'] for resource
+                    in ds_entity.get('resources', [])
+                    if resource['url'] not in dataset.resource_urls]
+        dataset.resource_urls.extend(new_urls)
+        db.session.add(dataset)
+        return dataset
+    else:
+        raise CouldNotFetchPackageList()
 
 
 def fetch_resource(resource):

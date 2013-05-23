@@ -11,48 +11,72 @@ from iatilib.model import Dataset, Resource, Activity
 
 
 class TestCrawler(AppTestCase):
-    @mock.patch('iatilib.crawler.ckanclient.CkanClient.package_register_get')
+    @mock.patch('iatilib.crawler.registry')
     def test_fetch_package_list(self, mock):
-        mock.return_value = [u"tst-a", u"tst-b"]
+        mock.action.package_list.return_value = {'success': True, 'result': [u"tst-a", u"tst-b"]}
         datasets = crawler.fetch_dataset_list()
+        mock.action.package_list.assert_called_once_with()
         self.assertIn("tst-a", [ds.name for ds in datasets])
         self.assertIn("tst-b", [ds.name for ds in datasets])
 
-    @mock.patch('iatilib.crawler.ckanclient.CkanClient.package_register_get')
+    @mock.patch('iatilib.crawler.registry')
     def test_update_adds_datasets(self, mock):
-        mock.return_value = [u"tst-a"]
+        mock.action.package_list.return_value = {'success': True, 'result': [u"tst-a"]}
         datasets = crawler.fetch_dataset_list()
-        mock.return_value = [u"tst-a", u"tst-b"]
+        mock.action.package_list.assert_called_once_with()
+        mock.action.package_list.return_value = {'success': True, 'result': [u"tst-a", u"tst-b"]}
         datasets = crawler.fetch_dataset_list()
         self.assertEquals(2, len(datasets))
 
-    @mock.patch('iatilib.crawler.ckanclient.CkanClient.package_entity_get')
+    @mock.patch('iatilib.crawler.registry')
+    def test_update_deletes_datasets(self, mock):
+        mock.action.package_list.return_value = {'success': True, 'result': [u"tst-a", u"tst-b"]}
+        datasets = crawler.fetch_dataset_list()
+        mock.action.package_list.assert_called_once_with()
+        mock.action.package_list.return_value = {'success': True, 'result': [u"tst-a"]}
+        datasets = crawler.fetch_dataset_list()
+        self.assertEquals(1, len(datasets))
+
+    @mock.patch('iatilib.crawler.registry')
     def test_fetch_dataset(self, mock):
-        mock.return_value = {"resources": [{"url": "http://foo"}]}
+        mock.action.package_show_rest.return_value = {
+                'success' : True,
+                'result' : { "resources": [{"url": "http://foo"}], },
+                }
         dataset = crawler.fetch_dataset_metadata(Dataset())
+        mock.action.package_show_rest.assert_called_once_with(id=None)
         self.assertEquals(1, len(dataset.resources))
         self.assertEquals("http://foo", dataset.resources[0].url)
 
-    @mock.patch('iatilib.crawler.ckanclient.CkanClient.package_entity_get')
+    @mock.patch('iatilib.crawler.registry')
     def test_fetch_dataset_with_many_resources(self, mock):
-        mock.return_value = {"resources": [
-            {"url": "http://foo"},
-            {"url": "http://bar"},
-            {"url": "http://baz"},
-        ]}
+        mock.action.package_show_rest.return_value = {
+            'success' : True,
+            'result' : {
+                "resources": [ 
+                    {"url": "http://foo"}, {"url": "http://bar"},
+                    {"url": "http://baz"},
+                ]
+            }
+        }
         dataset = crawler.fetch_dataset_metadata(Dataset())
+        mock.action.package_show_rest.assert_called_once_with(id=None)
         self.assertEquals(3, len(dataset.resources))
 
-    @mock.patch('iatilib.crawler.ckanclient.CkanClient.package_entity_get')
+    @mock.patch('iatilib.crawler.registry')
     def test_fetch_dataset_count_commited_resources(self, mock):
-        mock.return_value = {
-            "resources": [
-                {"url": u"http://foo"},
-                {"url": u"http://bar"},
-                {"url": u"http://baz"},
-            ]
+        mock.action.package_show_rest.return_value = {
+            'success' : True,
+            'result' : {
+                "resources": [ 
+                    {"url": "http://foo"},
+                    {"url": "http://bar"},
+                    {"url": "http://baz"},
+                ]
+            }
         }
         crawler.fetch_dataset_metadata(Dataset(name=u"tstds"))
+        mock.action.package_show_rest.assert_called_once_with(id="tstds")
         db.session.commit()
         self.assertEquals(3, Resource.query.count())
 

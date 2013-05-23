@@ -6,7 +6,7 @@ Jinja2==2.6
 SQLAlchemy==0.8
 Flask-SQLAlchemy==0.16
 Werkzeug==0.8.3
-ckanclient==0.10
+ckanapi==1.5
 iso8601==0.1.4
 lxml==3.1
 psycopg2==2.4.6
