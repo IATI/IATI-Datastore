@@ -176,11 +176,21 @@ class TestCSVExample(CSVTstMixin, TestCase):
         )])
         self.assertField({"recipient-region-percentage": "80;20"}, data[0])
 
+    def test_reporting_org(self):
+        data = self.process([fac.ActivityFactory.build(
+            reporting_org=fac.OrganisationFactory.build(name='rep',
+                    ref='rep_ref', type=cl.OrganisationType.foundation),
+            reporting_org_ref='rep_ref',
+        )])
+        self.assertField({"reporting-org": "rep"}, data[0])
+        self.assertField({"reporting-org-ref": "rep_ref"}, data[0])
+        self.assertField({"reporting-org-type": "Foundation"}, data[0])
+
     def test_accountable_org(self):
         data = self.process([fac.ActivityFactory.build(
             participating_orgs=[
                 fac.ParticipationFactory.build(
-                    organisation=fac.OrganisationFactory.build(name='acc'),
+                    organisation=fac.OrganisationFactory.build(name='acc', ref='acc_ref', type=cl.OrganisationType.foundation),
                     role=cl.OrganisationRole.accountable,
 
                 ),
@@ -190,37 +200,48 @@ class TestCSVExample(CSVTstMixin, TestCase):
                     role=cl.OrganisationRole.implementing),
             ]
         )])
-        self.assertField({"accountable-org": "acc"}, data[0])
+        self.assertField({"participating-org (Accountable)": "acc"}, data[0])
+        self.assertField({"participating-org-ref (Accountable)": "acc_ref"}, data[0])
+        self.assertField({"participating-org-type (Accountable)": "Foundation"}, data[0])
 
     def test_funding_org(self):
         data = self.process([fac.ActivityFactory.build(
             participating_orgs=[
                 fac.ParticipationFactory.build(
-                    organisation=fac.OrganisationFactory.build(name='fund'),
+                    organisation=fac.OrganisationFactory.build(name='fund',
+                        ref='fund_ref', type=cl.OrganisationType.foundation),
                     role=cl.OrganisationRole.funding),
             ]
         )])
-        self.assertField({"funding-org": "fund"}, data[0])
+        self.assertField({"participating-org (Funding)": "fund"}, data[0])
+        self.assertField({"participating-org-ref (Funding)": "fund_ref"}, data[0])
+        self.assertField({"participating-org-type (Funding)": "Foundation"}, data[0])
 
     def test_implementing_org(self):
         data = self.process([fac.ActivityFactory.build(
             participating_orgs=[
                 fac.ParticipationFactory.build(
-                    organisation=fac.OrganisationFactory.build(name='impl'),
+                    organisation=fac.OrganisationFactory.build(name='impl',
+                        ref="impl_ref", type=cl.OrganisationType.foundation),
                     role=cl.OrganisationRole.implementing),
             ]
         )])
-        self.assertField({"implementing-org": "impl"}, data[0])
+        self.assertField({"participating-org (Implementing)": "impl"}, data[0])
+        self.assertField({"participating-org-ref (Implementing)": "impl_ref"}, data[0])
+        self.assertField({"participating-org-type (Implementing)": "Foundation"}, data[0])
 
     def test_extending_org(self):
         data = self.process([fac.ActivityFactory.build(
             participating_orgs=[
                 fac.ParticipationFactory.build(
-                    organisation=fac.OrganisationFactory.build(name='ext'),
+                    organisation=fac.OrganisationFactory.build(name='ext',
+                        ref="ext_ref", type=cl.OrganisationType.foundation),
                     role=cl.OrganisationRole.extending),
             ]
         )])
-        self.assertField({"extending-org": "ext"}, data[0])
+        self.assertField({"participating-org (Extending)": "ext"}, data[0])
+        self.assertField({"participating-org-ref (Extending)": "ext_ref"}, data[0])
+        self.assertField({"participating-org-type (Extending)": "Foundation"}, data[0])
 
 
     def test_sector_code(self):
@@ -233,6 +254,19 @@ class TestCSVExample(CSVTstMixin, TestCase):
             ]
         )])
         self.assertField({"sector-code": "11130;11220"}, data[0])
+
+    def test_sector_vocabulary(self):
+        data = self.process([fac.ActivityFactory.build(
+            sector_percentages=[
+                fac.SectorPercentageFactory.build(
+                    sector=cl.Sector.teacher_training,
+                    vocabulary=cl.Vocabulary.aiddata),
+                fac.SectorPercentageFactory.build(
+                    sector=cl.Sector.primary_education,
+                    vocabulary=cl.Vocabulary.world_bank),
+            ]
+        )])
+        self.assertField({"sector-vocabulary": "AidData;World Bank"}, data[0])
 
     def test_sector(self):
         data = self.process([fac.ActivityFactory.build(

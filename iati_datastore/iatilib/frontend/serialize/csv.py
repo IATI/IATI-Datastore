@@ -57,6 +57,12 @@ def sector(activity):
         for sec in activity.sector_percentages)
 
 
+def sector_vocabulary(activity):
+    return u";".join(
+        u"%s" % sec.vocabulary.description if sec.vocabulary else u""
+        for sec in activity.sector_percentages)
+
+
 def default_currency(transaction):
     if transaction.value_currency:
         return transaction.value_currency.value
@@ -131,15 +137,30 @@ def recipient_region_percentage(activity):
 def reporting_org_name(activity):
     return activity.reporting_org.name
 
-def participating_org(role, activity):
+def reporting_org_type(activity):
+    try:
+        return activity.reporting_org.type.description
+    except AttributeError:
+        return ""
+
+def participating_org(attr, role, activity):
     activity_by_role = dict(
             [(a.role, a) for a in activity.participating_orgs])
 
     participant = activity_by_role.get(role, "")
     if participant:
-        return participant.organisation.name
+        return getattr(participant.organisation, attr)
     else:
         return ''
+
+participating_org_name = partial(participating_org, "name")
+participating_org_ref = partial(participating_org, "ref")
+def participating_org_type(role, activity):
+    code=  participating_org( "type", role, activity)
+    if code:
+        return code.description
+    else:
+        return ""
 
 def period_start_date(budget):
     if budget.period_start:
@@ -165,6 +186,7 @@ class FieldDict(OrderedDict):
         u"sector-code": sector_code,
         u"sector": sector,
         u"sector-percentage": sector_percentage,
+        u"sector-vocabulary": sector_vocabulary,
         u"recipient-country-code": recipient_country_code,
         u"recipient-country": recipient_country,
         u"recipient-country-percentage": recipient_country_percentage,
@@ -249,6 +271,7 @@ csv = CSVSerializer((
     u"sector-code",
     u"sector",
     u"sector-percentage",
+    u"sector-vocabulary",
     u"currency",
     u'total-Commitment',
     u"total-Disbursement",
@@ -262,13 +285,31 @@ csv = CSVSerializer((
     (u"start-actual", attrgetter(u"start_actual")),
     (u"end-actual", attrgetter(u"end_actual")),
     (u"reporting-org", reporting_org_name),
-    (u"accountable-org", partial(participating_org,
+    (u"reporting-org-ref", lambda x: x.reporting_org_ref),
+    (u"reporting-org-type", reporting_org_type),
+    (u"participating-org (Accountable)", partial(participating_org_name,
                             codelists.OrganisationRole.accountable)),
-    (u"funding-org", partial(participating_org,
+    (u"participating-org-ref (Accountable)", partial(participating_org_ref,
+                            codelists.OrganisationRole.accountable)),
+    (u"participating-org-type (Accountable)", partial(participating_org_type,
+                            codelists.OrganisationRole.accountable)),
+    (u"participating-org (Funding)", partial(participating_org_name,
                             codelists.OrganisationRole.funding)),
-    (u"extending-org", partial(participating_org,
+    (u"participating-org-ref (Funding)", partial(participating_org_ref,
+                            codelists.OrganisationRole.funding)),
+    (u"participating-org-type (Funding)", partial(participating_org_type,
+                            codelists.OrganisationRole.funding)),
+    (u"participating-org (Extending)", partial(participating_org_name,
                             codelists.OrganisationRole.extending)),
-    (u"implementing-org", partial(participating_org,
+    (u"participating-org-ref (Extending)", partial(participating_org_ref,
+                            codelists.OrganisationRole.extending)),
+    (u"participating-org-type (Extending)", partial(participating_org_type,
+                            codelists.OrganisationRole.extending)),
+    (u"participating-org (Implementing)", partial(participating_org_name,
+                            codelists.OrganisationRole.implementing)),
+    (u"participating-org-ref (Implementing)", partial(participating_org_ref,
+                            codelists.OrganisationRole.implementing)),
+    (u"participating-org-type (Implementing)", partial(participating_org_type,
                             codelists.OrganisationRole.implementing)),
     (u"activity-status-code", partial(codelist_code, "activity_status")),
     (u"collaboration-type-code", partial(codelist_code, "collaboration_type")),
