@@ -220,6 +220,10 @@ class TestParseActivity(AppTestCase):
         activities = [ a for a in parse.document(fixture_filename("default_currency.xml")) ]
         self.assertEquals(cl.RelatedActivityType.parent, activities[0].hierarchy) 
 
+    def test_default_language(self):
+        activities = [ a for a in parse.document(fixture_filename("default_currency.xml")) ]
+        self.assertEquals(cl.Language.english, activities[0].default_language) 
+
 class TestFunctional(AppTestCase):
     def test_save_parsed_activity(self):
         act = parse.activity(fixture("default_currency.xml"))

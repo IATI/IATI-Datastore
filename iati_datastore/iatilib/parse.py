@@ -233,7 +233,12 @@ def last_updated_datetime(xml):
     xml_value = xval(xml, "@last-updated-datetime", None)
     return iati_date(xml_value)
 
-
+def default_language(xml):
+    xml_value = xval(xml, "@xml:lang", None)
+    try:
+        return cl.Language.from_string(xml_value)
+    except ValueError:
+        return None
 
 def _open_resource(xml_resource):
     if isinstance(xml_resource, basestring):
@@ -271,6 +276,7 @@ def activity(xml_resource):
         "title": xval(xml, "./title/text()", u""),
         "hierarchy": hierarchy(xml),
         "last_updated_datetime" : last_updated_datetime(xml),
+        "default_language" : default_language(xml),
         "description": xval(xml, "./description/text()", u""),
         "reporting_org": reporting_org(xml.xpath("./reporting-org")[0]),
         "websites": websites(xml.xpath("./activity-website")),

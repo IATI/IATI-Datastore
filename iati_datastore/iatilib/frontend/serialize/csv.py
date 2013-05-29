@@ -259,9 +259,10 @@ class CSVSerializer(object):
 csv = CSVSerializer((
     "iati-identifier",
     u"title",
+    u"description",
     (u"hierarchy", partial(codelist_code, 'hierarchy')),
     (u"last-updated-datetime", attrgetter(u'last_updated_datetime')),
-    u"description",
+    (u"default-language", partial(codelist_code, 'default_language')),
     (u"recipient-country-code", recipient_country_code),
     (u"recipient-country", recipient_country),
     (u"recipient-country-percentage", recipient_country_percentage),

@@ -44,6 +44,7 @@ urls = {
     "ActivityStatus": iati_url("ActivityStatus", version="1.0"),
     "CollaborationType": iati_url("CollaborationType", version="1.0"),
     "RelatedActivityType": iati_url("RelatedActivityType", version="1.0"),
+    "Language": iati_url("Language", version="1.0"),
 }
 
 data_dir = os.path.dirname(__file__)

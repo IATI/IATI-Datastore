@@ -363,6 +363,12 @@ class TestCSVExample(CSVTstMixin, TestCase):
         )])
         self.assertField({'hierarchy': "1"}, data[0])
 
+    def test_default_language(self):
+        data = self.process([fac.ActivityFactory.build(
+            default_language=cl.Language.english
+        )])
+        self.assertField({'default-language': "en"}, data[0])
+
     def test_last_updated_datetime(self):
         data = self.process([fac.ActivityFactory.build(
             last_updated_datetime=datetime.date(2012, 1, 1)

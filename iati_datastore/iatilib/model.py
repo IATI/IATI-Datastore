@@ -91,6 +91,7 @@ class Activity(db.Model):
     __tablename__ = "activity"
     iati_identifier = sa.Column(sa.Unicode, primary_key=True, nullable=False)
     hierarchy = sa.Column(codelists.RelatedActivityType.db_type())
+    default_language = sa.Column(codelists.Language.db_type())
     last_updated_datetime = sa.Column(sa.Date, nullable=True)
     resource_url = sa.Column(
         sa.ForeignKey("resource.url"),
