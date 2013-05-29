@@ -30,6 +30,21 @@ def sector_code(activity):
         for sec in activity.sector_percentages)
 
 
+def codelist_code(column_name, activity):
+    column = getattr(activity, column_name)
+    if column:
+        return column.value
+    else:
+        return ""
+
+def activity_status(activity):
+    return activity.activity_status.description if activity.activity_status else ""
+
+
+def collaboration_type(activity):
+    return activity.collaboration_type.description if activity.collaboration_type else ""
+
+
 def sector_percentage(activity):
     return u";".join(
         u"%d" % sec.percentage if sec.percentage else ""
@@ -46,7 +61,6 @@ def default_currency(transaction):
     if transaction.value_currency:
         return transaction.value_currency.value
     return ""
-
 
 def transaction_type(transaction):
     return transaction.type.value
@@ -222,8 +236,9 @@ class CSVSerializer(object):
 
 csv = CSVSerializer((
     "iati-identifier",
-    (u"reporting-org", reporting_org_name),
     u"title",
+    (u"hierarchy", partial(codelist_code, 'hierarchy')),
+    (u"last-updated-datetime", attrgetter(u'last_updated_datetime')),
     u"description",
     (u"recipient-country-code", recipient_country_code),
     (u"recipient-country", recipient_country),
@@ -246,6 +261,7 @@ csv = CSVSerializer((
     (u"end-planned", attrgetter(u"end_planned")),
     (u"start-actual", attrgetter(u"start_actual")),
     (u"end-actual", attrgetter(u"end_actual")),
+    (u"reporting-org", reporting_org_name),
     (u"accountable-org", partial(participating_org,
                             codelists.OrganisationRole.accountable)),
     (u"funding-org", partial(participating_org,
@@ -254,6 +270,14 @@ csv = CSVSerializer((
                             codelists.OrganisationRole.extending)),
     (u"implementing-org", partial(participating_org,
                             codelists.OrganisationRole.implementing)),
+    (u"activity-status-code", partial(codelist_code, "activity_status")),
+    (u"collaboration-type-code", partial(codelist_code, "collaboration_type")),
+    (u"activity-status-code", partial(codelist_code, "activity_status")),
+    (u"default-finance-type-code", partial(codelist_code,
+        "default_finance_type")),
+    (u"default-flow-type-code", partial(codelist_code, "default_flow_type")),
+    (u"default-aid-type-code", partial(codelist_code, "default_aid_type")),
+    (u"default-tied-status-code", partial(codelist_code, "default_tied_status")),
 ))
 
 

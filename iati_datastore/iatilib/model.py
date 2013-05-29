@@ -90,6 +90,8 @@ class Participation(db.Model):
 class Activity(db.Model):
     __tablename__ = "activity"
     iati_identifier = sa.Column(sa.Unicode, primary_key=True, nullable=False)
+    hierarchy = sa.Column(codelists.RelatedActivityType.db_type())
+    last_updated_datetime = sa.Column(sa.Date, nullable=True)
     resource_url = sa.Column(
         sa.ForeignKey("resource.url"),
         index=True,
@@ -138,6 +140,12 @@ class Activity(db.Model):
     policy_markers = act_relationship("PolicyMarker")
     related_activities = act_relationship("RelatedActivity")
     resource = sa.orm.relationship("Resource")
+    activity_status = sa.Column(codelists.ActivityStatus.db_type())
+    collaboration_type = sa.Column(codelists.CollaborationType.db_type())
+    default_finance_type = sa.Column(codelists.FinanceType.db_type())
+    default_flow_type = sa.Column(codelists.FlowType.db_type())
+    default_aid_type = sa.Column(codelists.AidType.db_type())
+    default_tied_status = sa.Column(codelists.TiedStatus.db_type())
 
 
 class Organisation(db.Model, UniqueMixin):

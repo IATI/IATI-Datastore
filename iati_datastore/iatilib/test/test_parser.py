@@ -29,6 +29,10 @@ class TestParseActivity(AppTestCase):
              u"Epicemic in the Republic of Armenia"),
             act.title)
 
+    def test_last_updated_time(self):
+        act = parse.activity(fixture("default_currency.xml"))
+        self.assertEquals(datetime.date(2012, 9, 25), act.last_updated_datetime)
+
     def test_description(self):
         act = parse.activity(fixture("default_currency.xml"))
         self.assert_(act.description.startswith(
@@ -185,8 +189,36 @@ class TestParseActivity(AppTestCase):
         activities = [ a for a in parse.document(fixture_filename("CD.xml")) ]
         self.assertEquals(4, len(activities[0].related_activities))
         self.assertEquals("GB-1-105838-101", activities[0].related_activities[0].ref)
-        
 
+    def test_activity_status(self):
+        activities = [ a for a in parse.document(fixture_filename("default_currency.xml")) ]
+        self.assertEquals(cl.ActivityStatus.implementation, activities[0].activity_status)
+
+    def test_collaboration_type(self):
+        activities = [ a for a in parse.document(fixture_filename("CD.xml")) ]
+        self.assertEquals(cl.CollaborationType.bilateral, activities[1].collaboration_type)
+        
+    def test_default_finance_type(self):
+        activities = [ a for a in parse.document(fixture_filename("CD.xml")) ]
+        self.assertEquals(cl.FinanceType.aid_grant_excluding_debt_reorganisation,
+                activities[1].default_finance_type)
+
+    def test_default_flow_type(self):
+        activities = [ a for a in parse.document(fixture_filename("CD.xml")) ]
+        self.assertEquals(cl.FlowType.oda, activities[1].default_flow_type)
+
+    def test_default_aid_type(self):
+        activities = [ a for a in parse.document(fixture_filename("CD.xml")) ]
+        self.assertEquals(cl.AidType.projecttype_interventions,
+                activities[1].default_aid_type)
+
+    def test_default_tied_status(self):
+        activities = [ a for a in parse.document(fixture_filename("CD.xml")) ]
+        self.assertEquals(cl.TiedStatus.untied, activities[1].default_tied_status) 
+
+    def test_default_hierarchy(self):
+        activities = [ a for a in parse.document(fixture_filename("default_currency.xml")) ]
+        self.assertEquals(cl.RelatedActivityType.parent, activities[0].hierarchy) 
 
 class TestFunctional(AppTestCase):
     def test_save_parsed_activity(self):

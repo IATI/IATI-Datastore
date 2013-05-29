@@ -121,6 +121,8 @@ def recipient_region_percentages(xml):
             region=cl.Region.from_string(xval(ele, "@code")),
             )
             for ele in xml]
+
+
         
 
 def transactions(xml):
@@ -220,6 +222,19 @@ def related_activities(element):
                              text=xval(ele, "text()", None))
              for ele in element ]
 
+def hierarchy(xml):
+    xml_value = xval(xml, "@hierarchy", None)
+    try:
+        return cl.RelatedActivityType.from_string(xml_value)
+    except ValueError:
+        return None
+
+def last_updated_datetime(xml):
+    xml_value = xval(xml, "@last-updated-datetime", None)
+    return iati_date(xml_value)
+
+
+
 def _open_resource(xml_resource):
     if isinstance(xml_resource, basestring):
         encoding = charade.detect(xml_resource)['encoding']
@@ -242,10 +257,20 @@ def _open_resource(xml_resource):
 
 
 def activity(xml_resource):
+    def from_codelist(codelist, xml):
+        if xml:
+            code = xval(xml[0], "@code", None)
+            if code:
+                return codelist.from_string(code)
+
+        return None
+
     xml = ET.parse(_open_resource(xml_resource))
     data = {
         "iati_identifier": xval(xml, "./iati-identifier/text()"),
         "title": xval(xml, "./title/text()", u""),
+        "hierarchy": hierarchy(xml),
+        "last_updated_datetime" : last_updated_datetime(xml),
         "description": xval(xml, "./description/text()", u""),
         "reporting_org": reporting_org(xml.xpath("./reporting-org")[0]),
         "websites": websites(xml.xpath("./activity-website")),
@@ -268,6 +293,18 @@ def activity(xml_resource):
         "budgets": budgets(xml.xpath("./budget")),
         "policy_markers": policy_markers(xml.xpath("./policy-marker")),
         "related_activities": related_activities(xml.xpath("./related-activity")),
+        'activity_status' : from_codelist(cl.ActivityStatus,
+            (xml.xpath("./activity-status"))),
+        'collaboration_type' : from_codelist(cl.CollaborationType,
+            (xml.xpath("./collaboration-type"))),
+        'default_finance_type' : from_codelist(cl.FinanceType,
+            (xml.xpath("./default-finance-type"))),
+        'default_flow_type' : from_codelist(cl.FlowType,
+            (xml.xpath("./default-flow-type"))),
+        'default_aid_type' : from_codelist(cl.AidType,
+            (xml.xpath("./default-aid-type"))),
+        'default_tied_status' : from_codelist(cl.TiedStatus,
+            (xml.xpath("./default-tied-status"))),
         "raw_xml": ET.tostring(xml, encoding=unicode)
     }
     return Activity(**data)

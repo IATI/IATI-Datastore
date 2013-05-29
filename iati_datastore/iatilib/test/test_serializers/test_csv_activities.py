@@ -66,6 +66,7 @@ class TestCSVSerializer(CSVTstMixin, TestCase):
         self.assertField({"description": ""}, data[0])
 
 
+
 class TestCSVExample(CSVTstMixin, TestCase):
     # these tests are based around an example from IATI
     # https://docs.google.com/a/okfn.org/spreadsheet/ccc?key=0AqR8dXc6Ji4JdHJIWDJtaXhBV0IwOG56N0p1TE04V2c#gid=4
@@ -285,6 +286,54 @@ class TestCSVExample(CSVTstMixin, TestCase):
             ]
         )])
         self.assertField({"currency": "!Mixed currency"}, data[0])
+
+    def test_activity_status(self):
+        data = self.process([fac.ActivityFactory.build(
+            activity_status=cl.ActivityStatus.pipelineidentification
+        )])
+        self.assertField({'activity-status-code': "1"}, data[0])
+
+    def test_collaboration_type(self):
+        data = self.process([fac.ActivityFactory.build(
+            collaboration_type=cl.CollaborationType.bilateral
+        )])
+        self.assertField({'collaboration-type-code': "1"}, data[0])
+
+    def test_default_finance_type(self):
+        data = self.process([fac.ActivityFactory.build(
+            default_finance_type=cl.FinanceType.bank_bonds
+        )])
+        self.assertField({'default-finance-type-code': "810"}, data[0])
+
+    def test_default_flow_type(self):
+        data = self.process([fac.ActivityFactory.build(
+            default_flow_type=cl.FlowType.private_grants
+        )])
+        self.assertField({'default-flow-type-code': "30"}, data[0])
+
+    def test_default_aid_type(self):
+        data = self.process([fac.ActivityFactory.build(
+            default_aid_type=cl.AidType.debt_relief
+        )])
+        self.assertField({'default-aid-type-code': "F01"}, data[0])
+
+    def test_default_tied_status(self):
+        data = self.process([fac.ActivityFactory.build(
+            default_tied_status=cl.TiedStatus.tied
+        )])
+        self.assertField({'default-tied-status-code': "4"}, data[0])
+
+    def test_hierarchy(self):
+        data = self.process([fac.ActivityFactory.build(
+            hierarchy=cl.RelatedActivityType.parent
+        )])
+        self.assertField({'hierarchy': "1"}, data[0])
+
+    def test_last_updated_datetime(self):
+        data = self.process([fac.ActivityFactory.build(
+            last_updated_datetime=datetime.date(2012, 1, 1)
+        )])
+        self.assertField({'last-updated-datetime': "2012-01-01"}, data[0])
 
     def test_currency_missing(self):
         # If there is no default currency specified on the activity and
