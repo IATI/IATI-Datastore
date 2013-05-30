@@ -1,6 +1,9 @@
+from collections import namedtuple
 from StringIO import StringIO
 
 import unicodecsv
+
+TestWrapper = namedtuple('TestWrapper', 'items total page per_page')
 
 
 def load_csv(data):
@@ -10,7 +13,7 @@ def load_csv(data):
 
 class CSVTstMixin(object):
     def process(self, data):
-        csv_str = u"".join(self.serialize(data)).encode('utf-8')
+        csv_str = u"".join(self.serialize(TestWrapper(data, 0, 0, 0))).encode('utf-8')
         return load_csv(csv_str)
 
     def serialize(self, data):

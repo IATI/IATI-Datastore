@@ -103,10 +103,11 @@ def json_rep(obj):
     return {}
 
 
-def json(items):
+def json(pagination):
     return jsonlib.dumps({
         "ok": True,
-        "results": [json_rep(a) for a in items]
+        "number-of-results": pagination.total,
+        "results": [json_rep(a) for a in pagination.items]
     },
     indent=2 if current_app.debug else 0,
     cls=JSONEncoder)

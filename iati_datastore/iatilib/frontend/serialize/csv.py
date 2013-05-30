@@ -295,7 +295,7 @@ class CSVSerializer(object):
             writer.writerow(row)
             return out.getvalue().decode('utf-8')
         yield line(self.fields.keys())
-        for obj in data:
+        for obj in data.items:
             row = [accessor(obj) for accessor in self.fields.values()]
             yield line(row)
 

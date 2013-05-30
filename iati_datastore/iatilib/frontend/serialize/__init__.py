@@ -6,9 +6,14 @@ from .csv import (
 from .json import json
 
 
-def xml(items):
-    out = u"<result><ok>True</ok><result-activity>"
-    for activity in items:
+def xml(pagination):
+    out = u"""<result>
+    <ok>True</ok>
+    <number-of-results>{0}</number-of-results>
+    <page>{1}</page>
+    <per_page>{2}</per_page>
+    <result-activity>""".format(pagination.total, pagination.page, pagination.per_page)
+    for activity in pagination.items:
         out += activity.raw_xml
     out += u"</result-activity></result>"
     return out

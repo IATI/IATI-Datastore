@@ -172,7 +172,7 @@ class DataStoreView(MethodView):
                 valid_args.get("page", 1),
                 valid_args.get("per_page", 50),
             )
-            body = u"".join(serializer(pagination.items))
+            body = u"".join(serializer(pagination))
         return Response(body, mimetype=mimetype)
 
 
