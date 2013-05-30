@@ -1,4 +1,5 @@
 from functools import partial
+from sqlalchemy import or_
 from iatilib import codelists, db
 from iatilib.model import (
     Activity, Budget, Transaction, CountryPercentage, SectorPercentage,
@@ -8,144 +9,112 @@ from iatilib.model import (
 class BadFilterException(Exception):
     pass
 
-def filter_from_codelist(query, codelist, column, related_column, code):
+def filter_from_codelist(codelist, column, related_column, code):
     value = codelist.from_string(code)
-    return query.filter(column.any(related_column == value))
+    return column.any(related_column == value)
 
 def filter_from_text(query, column, related_column, text):
     return query.filter(column.any(related_column == text))
 
 def _filter(query, args):
-    recipient_country = partial(filter_from_codelist, query, codelists.Country,
+    recipient_country = partial(filter_from_codelist, codelists.Country,
         Activity.recipient_country_percentages, CountryPercentage.country)
 
     def recipient_country_text(country):
-        return query.filter(
-            Activity.recipient_country_percentages.any(
-                CountryPercentage.name == country
-            )
+        return Activity.recipient_country_percentages.any(
+            CountryPercentage.name == country
         )
 
     def recipient_region(region_string):
         region = codelists.Region.from_string(region_string)
-        return query.filter(
-            Activity.recipient_region_percentages.any(
-                RegionPercentage.region == region
-            )
+        return Activity.recipient_region_percentages.any(
+            RegionPercentage.region == region
         )
 
     def recipient_region_text(region):
-        return query.filter(
-            Activity.recipient_region_percentages.any(
-                RegionPercentage.name == region
-            )
+        return Activity.recipient_region_percentages.any(
+            RegionPercentage.name == region
         )
 
     def reporting_org(organisation):
-        return query.filter(Activity.reporting_org_ref == organisation)
+        return Activity.reporting_org_ref == organisation
 
     def reporting_org_text(organisation):
-        return query.filter(
-            Activity.reporting_org.has(
-                Organisation.name == organisation
-            )
+        return Activity.reporting_org.has(
+            Organisation.name == organisation
         )
 
     def reporting_org_type(organisation_type):
         code = codelists.OrganisationType.from_string(organisation_type)
-        return query.filter(
-            Activity.reporting_org.has(
-                Organisation.type == code
-            )
+        return Activity.reporting_org.has(
+            Organisation.type == code
         )
 
     def participating_org(organisation):
-        return query.filter(
-            Activity.participating_orgs.any(
-                Participation.organisation_ref == organisation
-            )
+        return Activity.participating_orgs.any(
+            Participation.organisation_ref == organisation
         )
  
     def participating_org_text(organisation):
-        return query.filter(
-            Activity.participating_orgs.any(
-                Participation.organisation.has(
-                    Organisation.name == organisation
-                )
+        return Activity.participating_orgs.any(
+            Participation.organisation.has(
+                Organisation.name == organisation
             )
         )
 
     def sector(sector_string):
         code = codelists.Sector.from_string(sector_string)
-        return query.filter(
-            Activity.sector_percentages.any(
-                SectorPercentage.sector == code
-            )
+        return Activity.sector_percentages.any(
+            SectorPercentage.sector == code
         )
 
     def sector_text(sector):
-        return query.filter(
-            Activity.sector_percentages.any(
-                SectorPercentage.text == sector 
-            )
+        return Activity.sector_percentages.any(
+            SectorPercentage.text == sector 
         )
 
     def transaction_ref(transaction):
-        return query.filter(
-            Activity.transactions.any(
-                Transaction.ref == transaction
-            )
+        return Activity.transactions.any(
+            Transaction.ref == transaction
         )
 
     def transaction_provider_org(organisation):
-        return query.filter(
-            Activity.transactions.any(
-                Transaction.provider_org_ref == organisation
-            )
+        return Activity.transactions.any(
+            Transaction.provider_org_ref == organisation
         )
 
     def transaction_provider_org_name(organisation):
-        return query.filter(
-            Activity.transactions.any(
-                Transaction.provider_org.has(
-                    Organisation.name == organisation
-                )
+        return Activity.transactions.any(
+            Transaction.provider_org.has(
+                Organisation.name == organisation
             )
         )
 
     def transaction_receiver_org(organisation):
-        return query.filter(
-            Activity.transactions.any(
-                Transaction.receiver_org_ref == organisation
-            )
+        return Activity.transactions.any(
+            Transaction.receiver_org_ref == organisation
         )
 
     def transaction_receiver_org_name(organisation):
-        return query.filter(
-            Activity.transactions.any(
-                Transaction.receiver_org.has(
-                    Organisation.name == organisation
-                )
+        return Activity.transactions.any(
+            Transaction.receiver_org.has(
+                Organisation.name == organisation
             )
         )
 
     def policy_marker(code):
         policy = codelists.PolicyMarker.from_string(code)
-        return query.filter(
-            Activity.policy_markers.any(
-                PolicyMarker.code == policy
-            )
+        return Activity.policy_markers.any(
+            PolicyMarker.code == policy
         )
 
     def related_activity(ref):
-        return query.filter(
-            Activity.related_activities.any(
-                RelatedActivity.ref == ref
-            )
+        return Activity.related_activities.any(
+            RelatedActivity.ref == ref
         )
 
 
-    filter_functions = {
+    filter_conditions = {
             'recipient-country' : recipient_country,
             'recipient-country.code' : recipient_country,
             'recipient-country.text' : recipient_country_text,
@@ -177,9 +146,15 @@ def _filter(query, args):
     }
 
     for filter, search_string in args.items():
-        filter_function = filter_functions.get(filter, None)
-        if filter_function:
-            query = filter_function(search_string)
+        filter_condition = filter_conditions.get(filter, None)
+        if filter_condition:
+            terms = search_string.split('|')
+            if len(terms) == 1:
+                query = query.filter(filter_condition(search_string))
+            else:
+                conditions = tuple([ filter_condition(term) for term in terms ])
+                query = query.filter(or_(*conditions))
+
 
     return query
 

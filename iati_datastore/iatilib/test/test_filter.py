@@ -94,6 +94,17 @@ class TestActivityFilter(AppTestCase):
         self.assertIn(act_in, activities.all())
         self.assertNotIn(act_not, activities.all())
 
+    def test_or_filter(self):
+        act_a = fac.ActivityFactory.create(reporting_org__ref=u"AAA")
+        act_b = fac.ActivityFactory.create(reporting_org__ref=u"BBB")
+        act_not = fac.ActivityFactory.create(reporting_org__ref=u"ZZZ")
+        activities = dsfilter.activities({
+            "reporting-org": u"AAA|BBB"
+        })
+        self.assertIn(act_a, activities.all())
+        self.assertIn(act_b, activities.all())
+        self.assertNotIn(act_not, activities.all())
+
     def test_by_recipient_region_text(self):
         act_in = fac.ActivityFactory.create(
             recipient_region_percentages=[
