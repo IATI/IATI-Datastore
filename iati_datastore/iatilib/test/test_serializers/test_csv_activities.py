@@ -66,7 +66,6 @@ class TestCSVSerializer(CSVTstMixin, TestCase):
         self.assertField({"description": ""}, data[0])
 
 
-
 class TestCSVExample(CSVTstMixin, TestCase):
     # these tests are based around an example from IATI
     # https://docs.google.com/a/okfn.org/spreadsheet/ccc?key=0AqR8dXc6Ji4JdHJIWDJtaXhBV0IwOG56N0p1TE04V2c#gid=4
@@ -405,6 +404,63 @@ class TestCSVExample(CSVTstMixin, TestCase):
         self.assertField({"total-Disbursement": "1"}, data[0])
         self.assertField({"total-Expenditure": "2"}, data[0])
 
+    def test_column_list(self):
+        data = self.process([
+            fac.ActivityFactory.build(iati_identifier=u"GB-1-123")
+        ])
+        cols = [
+            "iati-identifier",
+            "hierarchy",
+            "last-updated-datetime",
+            "default-language",
+            "reporting-org",
+            "reporting-org-ref",
+            "reporting-org-type",
+            "title",
+            "description",
+            "activity-status-code",
+            "start-planned",
+            "end-planned",
+            "start-actual",
+            "end-actual",
+            "participating-org (Accountable)",
+            "participating-org-ref (Accountable)",
+            "participating-org-type (Accountable)",
+            "participating-org (Funding)",
+            "participating-org-ref (Funding)",
+            "participating-org-type (Funding)",
+            "participating-org (Extending)",
+            "participating-org-ref (Extending)",
+            "participating-org-type (Extending)",
+            "participating-org (Implementing)",
+            "participating-org-ref (Implementing)",
+            "participating-org-type (Implementing)",
+            "recipient-country-code",
+            "recipient-country",
+            "recipient-country-percentage",
+            "recipient-region-code",
+            "recipient-region",
+            "recipient-region-percentage",
+            "sector-code",
+            "sector",
+            "sector-percentage",
+            "sector-vocabulary",
+            "collaboration-type-code",
+            "default-finance-type-code",
+            "default-flow-type-code",
+            "default-aid-type-code",
+            "default-tied-status-code",
+            "currency",
+            "total-Commitment",
+            "total-Disbursement",
+            "total-Expenditure",
+            "total-Incoming Funds",
+            "total-Interest Repayment",
+            "total-Loan Repayment",
+            "total-Reimbursement"
+        ]
+        for col in cols:
+            self.assertIn(col, data[0].keys(), msg="Missing col %s" % col)
 
 class ActivityExample(object):
     def example(self):
@@ -451,6 +507,7 @@ class ActivityExample(object):
         return activity
 
 
+
 class TestActivityByCountry(CSVTstMixin, ActivityExample, TestCase):
     def serialize(self, data):
         return serialize.csv_activity_by_country(data)
@@ -462,26 +519,55 @@ class TestActivityByCountry(CSVTstMixin, ActivityExample, TestCase):
             (activity, activity.recipient_country_percentages[1])
         ]
 
-
-    def test_no_rows(self):
-        data = self.process(self.example())
-        self.assertEquals(2, len(data))
-
     def test_column_list(self):
-        data = self.process(self.example())
+        data = self.process([
+            (
+                fac.ActivityFactory.build(iati_identifier=u"GB-1-123"),
+                fac.CountryPercentageFactory.build()
+            )
+        ])
         cols = [
+            "iati-identifier",
+            "hierarchy",
+            "last-updated-datetime",
+            "default-language",
+            "reporting-org",
+            "reporting-org-ref",
+            "reporting-org-type",
+            "title",
+            "description",
+            "activity-status-code",
+            "start-planned",
+            "end-planned",
+            "start-actual",
+            "end-actual",
+            "participating-org (Accountable)",
+            "participating-org-ref (Accountable)",
+            "participating-org-type (Accountable)",
+            "participating-org (Funding)",
+            "participating-org-ref (Funding)",
+            "participating-org-type (Funding)",
+            "participating-org (Extending)",
+            "participating-org-ref (Extending)",
+            "participating-org-type (Extending)",
+            "participating-org (Implementing)",
+            "participating-org-ref (Implementing)",
+            "participating-org-type (Implementing)",
             "recipient-country-code",
             "recipient-country",
             "recipient-country-percentage",
             "recipient-region-code",
             "recipient-region",
             "recipient-region-percentage",
-            "iati-identifier",
-            "title",
-            "description",
             "sector-code",
             "sector",
             "sector-percentage",
+            "sector-vocabulary",
+            "collaboration-type-code",
+            "default-finance-type-code",
+            "default-flow-type-code",
+            "default-aid-type-code",
+            "default-tied-status-code",
             "currency",
             "total-Commitment",
             "total-Disbursement",
@@ -493,6 +579,10 @@ class TestActivityByCountry(CSVTstMixin, ActivityExample, TestCase):
         ]
         for col in cols:
             self.assertIn(col, data[0].keys(), msg="Missing col %s" % col)
+
+    def test_no_rows(self):
+        data = self.process(self.example())
+        self.assertEquals(2, len(data))
 
     def test_country_code_0(self):
         data = self.process(self.example())
@@ -586,6 +676,67 @@ class TestActivityBySector(CSVTstMixin, ActivityExample, TestCase):
             (activity, activity.sector_percentages[0]),
             (activity, activity.sector_percentages[1])
         ]
+
+    def test_column_list(self):
+        data = self.process([
+            (
+                fac.ActivityFactory.build(iati_identifier=u"GB-1-123"),
+                fac.SectorPercentageFactory.build()
+            )
+        ])
+        cols = [
+            "iati-identifier",
+            "hierarchy",
+            "last-updated-datetime",
+            "default-language",
+            "reporting-org",
+            "reporting-org-ref",
+            "reporting-org-type",
+            "title",
+            "description",
+            "activity-status-code",
+            "start-planned",
+            "end-planned",
+            "start-actual",
+            "end-actual",
+            "participating-org (Accountable)",
+            "participating-org-ref (Accountable)",
+            "participating-org-type (Accountable)",
+            "participating-org (Funding)",
+            "participating-org-ref (Funding)",
+            "participating-org-type (Funding)",
+            "participating-org (Extending)",
+            "participating-org-ref (Extending)",
+            "participating-org-type (Extending)",
+            "participating-org (Implementing)",
+            "participating-org-ref (Implementing)",
+            "participating-org-type (Implementing)",
+            "recipient-country-code",
+            "recipient-country",
+            "recipient-country-percentage",
+            "recipient-region-code",
+            "recipient-region",
+            "recipient-region-percentage",
+            "sector-code",
+            "sector",
+            "sector-percentage",
+            "sector-vocabulary",
+            "collaboration-type-code",
+            "default-finance-type-code",
+            "default-flow-type-code",
+            "default-aid-type-code",
+            "default-tied-status-code",
+            "currency",
+            "total-Commitment",
+            "total-Disbursement",
+            "total-Expenditure",
+            "total-Incoming Funds",
+            "total-Interest Repayment",
+            "total-Loan Repayment",
+            "total-Reimbursement"
+        ]
+        for col in cols:
+            self.assertIn(col, data[0].keys(), msg="Missing col %s" % col)
 
     def test_no_rows(self):
         data = self.process(self.example())
