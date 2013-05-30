@@ -65,6 +65,76 @@ def example():
 
 
 class TestCSVTransactionExample(TestCase, CSVTstMixin):
+    def test_column_list(self):
+        data = self.process([
+            fac.TransactionFactory.build()
+        ])
+        cols = [
+            "transaction-type",
+            "transaction-date",
+            "default-currency",
+            "transaction-value",
+
+            "iati-identifier",
+            "hierarchy",
+            "last-updated-datetime",
+            "default-language",
+            "reporting-org",
+            "reporting-org-ref",
+            "reporting-org-type",
+            "title",
+            "description",
+            "activity-status-code",
+            "start-planned",
+            "end-planned",
+            "start-actual",
+            "end-actual",
+            "participating-org (Accountable)",
+            "participating-org-ref (Accountable)",
+            "participating-org-type (Accountable)",
+            "participating-org (Funding)",
+            "participating-org-ref (Funding)",
+            "participating-org-type (Funding)",
+            "participating-org (Extending)",
+            "participating-org-ref (Extending)",
+            "participating-org-type (Extending)",
+            "participating-org (Implementing)",
+            "participating-org-ref (Implementing)",
+            "participating-org-type (Implementing)",
+            "recipient-country-code",
+            "recipient-country",
+            "recipient-country-percentage",
+            "recipient-region-code",
+            "recipient-region",
+            "recipient-region-percentage",
+            "sector-code",
+            "sector",
+            "sector-percentage",
+            "sector-vocabulary",
+            "collaboration-type-code",
+            "default-finance-type-code",
+            "default-flow-type-code",
+            "default-aid-type-code",
+            "default-tied-status-code",
+            'transaction_ref',
+            'transaction_value_currency',
+            'transaction_value_value-date',
+            'transaction_provider-org',
+            'transaction_provider-org_ref',
+            'transaction_provider-org_provider-activity-id',
+            'transaction_receiver-org',
+            'transaction_receiver-org_ref',
+            'transaction_receiver-org_receiver-activity-id',
+            'transaction_description',
+            'transaction_flow-type_code',
+            'transaction_finance-type_code',
+            'transaction_aid-type_code',
+            'transaction_tied-status_code',
+            'transaction_disbursement-channel_code',
+        ]
+        for col in cols:
+            self.assertIn(col, data[0].keys(), msg="Missing col %s" % col)
+
     # See example here: https://docs.google.com/a/okfn.org/spreadsheet/ccc?key=0AqR8dXc6Ji4JdHJIWDJtaXhBV0IwOG56N0p1TE04V2c&usp=sharing#gid=5
     def test_transaction_type(self):
         data = self.process([
@@ -114,6 +184,46 @@ class TestCSVTransactionExample(TestCase, CSVTstMixin):
         ])
         self.assertField({"iati-identifier": "GB-1-123"}, data[0])
 
+    def test_hierarchy(self):
+        activity = fac.ActivityFactory.build(
+            hierarchy=cl.RelatedActivityType.parent
+        )
+        data = self.process([
+            fac.TransactionFactory.build(activity=activity)
+        ])
+        self.assertField({'hierarchy': "1"}, data[0])
+
+    def test_last_updated_datetime(self):
+        activity = fac.ActivityFactory.build(
+            last_updated_datetime=datetime.date(2012, 1, 1)
+        )
+        data = self.process([
+            fac.TransactionFactory.build(activity=activity)
+        ])
+        self.assertField({'last-updated-datetime': "2012-01-01"}, data[0])
+
+    def test_default_language(self):
+        activity = fac.ActivityFactory.build(
+            default_language=cl.Language.english
+        )
+        data = self.process([
+            fac.TransactionFactory.build(activity=activity)
+        ])
+        self.assertField({'default-language': "en"}, data[0])
+
+    def test_reporting_org(self):
+        activity = fac.ActivityFactory.build(
+            reporting_org=fac.OrganisationFactory.build(name='rep',
+                    ref='rep_ref', type=cl.OrganisationType.foundation),
+            reporting_org_ref='rep_ref',
+        )
+        data = self.process([
+            fac.TransactionFactory.build(activity=activity)
+        ])
+        self.assertField({"reporting-org": "rep"}, data[0])
+        self.assertField({"reporting-org-ref": "rep_ref"}, data[0])
+        self.assertField({"reporting-org-type": "Foundation"}, data[0])
+
     def test_title(self):
         data = self.process([
             fac.TransactionFactory.build(
@@ -128,6 +238,116 @@ class TestCSVTransactionExample(TestCase, CSVTstMixin):
         ])
         self.assertField({"description": "test desc"}, data[0])
 
+    def test_activity_status(self):
+        activity = fac.ActivityFactory.build(
+            activity_status=cl.ActivityStatus.pipelineidentification
+        )
+        data = self.process([
+            fac.TransactionFactory.build(activity=activity)
+        ])
+        self.assertField({'activity-status-code': "1"}, data[0])
+
+    def test_start_planned(self):
+        activity = fac.ActivityFactory.build(
+            start_planned=datetime.date(2011, 1, 1))
+        data = self.process([
+            fac.TransactionFactory.build(activity=activity)
+        ])
+        self.assertField({"start-planned": "2011-01-01"}, data[0])
+
+    def test_end_planned(self):
+        activity = fac.ActivityFactory.build(
+            end_planned=datetime.date(2012, 1, 2))
+        data = self.process([
+            fac.TransactionFactory.build(activity=activity)
+        ])
+        self.assertField({"end-planned": "2012-01-02"}, data[0])
+        
+    def test_start_actual(self):
+        activity = fac.ActivityFactory.build(
+            start_actual=datetime.date(2012, 1, 3))
+        data = self.process([
+            fac.TransactionFactory.build(activity=activity)
+        ])
+        self.assertField({"start-actual": "2012-01-03"}, data[0])
+
+    def test_end_actual(self):
+        activity = fac.ActivityFactory.build(
+            end_actual=datetime.date(2012, 1, 4))
+        data = self.process([
+            fac.TransactionFactory.build(activity=activity)
+        ])
+        self.assertField({"end-actual": "2012-01-04"}, data[0])
+
+    def test_accountable_org(self):
+        activity = fac.ActivityFactory.build(
+            participating_orgs=[
+                fac.ParticipationFactory.build(
+                    organisation=fac.OrganisationFactory.build(name='acc', ref='acc_ref', type=cl.OrganisationType.foundation),
+                    role=cl.OrganisationRole.accountable,
+
+                ),
+                fac.ParticipationFactory.build(
+                    role=cl.OrganisationRole.funding),
+                fac.ParticipationFactory.build(
+                    role=cl.OrganisationRole.implementing),
+            ]
+        )
+        data = self.process([
+            fac.TransactionFactory.build(activity=activity)
+        ])
+
+        self.assertField({"participating-org (Accountable)": "acc"}, data[0])
+        self.assertField({"participating-org-ref (Accountable)": "acc_ref"}, data[0])
+        self.assertField({"participating-org-type (Accountable)": "Foundation"}, data[0])
+
+    def test_funding_org(self):
+        activity = fac.ActivityFactory.build(
+            participating_orgs=[
+                fac.ParticipationFactory.build(
+                    organisation=fac.OrganisationFactory.build(name='fund',
+                        ref='fund_ref', type=cl.OrganisationType.foundation),
+                    role=cl.OrganisationRole.funding),
+            ]
+        )
+        data = self.process([
+            fac.TransactionFactory.build(activity=activity)
+        ])
+        self.assertField({"participating-org (Funding)": "fund"}, data[0])
+        self.assertField({"participating-org-ref (Funding)": "fund_ref"}, data[0])
+        self.assertField({"participating-org-type (Funding)": "Foundation"}, data[0])
+
+    def test_implementing_org(self):
+        activity = fac.ActivityFactory.build(
+            participating_orgs=[
+                fac.ParticipationFactory.build(
+                    organisation=fac.OrganisationFactory.build(name='impl',
+                        ref="impl_ref", type=cl.OrganisationType.foundation),
+                    role=cl.OrganisationRole.implementing),
+            ]
+        )
+        data = self.process([
+            fac.TransactionFactory.build(activity=activity)
+        ])
+        self.assertField({"participating-org (Implementing)": "impl"}, data[0])
+        self.assertField({"participating-org-ref (Implementing)": "impl_ref"}, data[0])
+        self.assertField({"participating-org-type (Implementing)": "Foundation"}, data[0])
+
+    def test_extending_org(self):
+        activity = fac.ActivityFactory.build(
+            participating_orgs=[
+                fac.ParticipationFactory.build(
+                    organisation=fac.OrganisationFactory.build(name='ext',
+                        ref="ext_ref", type=cl.OrganisationType.foundation),
+                    role=cl.OrganisationRole.extending),
+            ]
+        )
+        data = self.process([
+            fac.TransactionFactory.build(activity=activity)
+        ])
+        self.assertField({"participating-org (Extending)": "ext"}, data[0])
+        self.assertField({"participating-org-ref (Extending)": "ext_ref"}, data[0])
+        self.assertField({"participating-org-type (Extending)": "Foundation"}, data[0])
 
     def test_recipient_country_code(self):
         data = self.process([
@@ -252,6 +472,43 @@ class TestCSVTransactionExample(TestCase, CSVTstMixin):
             )
         ])
         self.assertField({"sector-percentage": ""}, data[0])
+
+    
+    def test_default_finance_type(self):
+        activity = fac.ActivityFactory.build(
+            default_finance_type=cl.FinanceType.bank_bonds
+        )
+        data = self.process([
+            fac.TransactionFactory.build(activity=activity)
+        ])
+        self.assertField({'default-finance-type-code': "810"}, data[0])
+
+    def test_default_flow_type(self):
+        activity = fac.ActivityFactory.build(
+            default_flow_type=cl.FlowType.private_grants
+        )
+        data = self.process([
+            fac.TransactionFactory.build(activity=activity)
+        ])
+        self.assertField({'default-flow-type-code': "30"}, data[0])
+
+    def test_default_aid_type(self):
+        activity = fac.ActivityFactory.build(
+            default_aid_type=cl.AidType.debt_relief
+        )
+        data = self.process([
+            fac.TransactionFactory.build(activity=activity)
+        ])
+        self.assertField({'default-aid-type-code': "F01"}, data[0])
+
+    def test_default_tied_status(self):
+        activity = fac.ActivityFactory.build(
+            default_tied_status=cl.TiedStatus.tied
+        )
+        data = self.process([
+            fac.TransactionFactory.build(activity=activity)
+        ])
+        self.assertField({'default-tied-status-code': "4"}, data[0])
 
 
 class TestTransactionByCountry(TestCase, CSVTstMixin):

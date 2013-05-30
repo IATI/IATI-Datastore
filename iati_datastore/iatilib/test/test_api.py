@@ -260,7 +260,7 @@ class CommonTransactionTests(object):
         load_fix("transaction_ref.xml")
         output = list(csv.reader(StringIO(self.client.get(self.base_url).data)))
         csv_headers = output[0]
-        i = csv_headers.index('reporting-org')
+        i = csv_headers.index('reporting-org-ref')
         self.assertEquals(u'GB-CHC-285776', output[1][i])
 
     def test_ref_output(self):
