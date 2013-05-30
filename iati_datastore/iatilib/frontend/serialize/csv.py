@@ -427,9 +427,9 @@ csv_activity_by_country = CSVSerializer((
 
 
 csv_activity_by_sector = CSVSerializer((
-    (u"sector-code", lambda (a, sp): sp.sector.value),
-    (u"sector", lambda (a, sp): sp.sector.description.title()),
-    (u"sector-percentage", lambda (a, sp): sp.percentage),
+    (u"sector-code", lambda (t, sp): sp.sector.value if sp.sector else ""),
+    (u"sector", lambda (t, sp): sp.sector.description.title() if sp.sector else ""),
+    (u"sector-percentage", lambda (a, sp): sp.percentage if sp.percentage else ""),
     (u"sector-vocabulary", lambda (a, sp): sp.vocabulary.description if sp.vocabulary else ""),
     "iati-identifier",
     "hierarchy",
