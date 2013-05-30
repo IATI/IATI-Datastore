@@ -1,5 +1,7 @@
+from datetime import datetime
 from functools import partial
 from sqlalchemy import or_
+from sqlalchemy.sql.operators import gt, lt
 from iatilib import codelists, db
 from iatilib.model import (
     Activity, Budget, Transaction, CountryPercentage, SectorPercentage,
@@ -113,6 +115,9 @@ def _filter(query, args):
             RelatedActivity.ref == ref
         )
 
+    def date_condition(condition, column, date):
+        return condition(column, date)
+
 
     filter_conditions = {
             'recipient-country' : recipient_country,
@@ -143,17 +148,28 @@ def _filter(query, args):
             'transaction_receiver-org' : transaction_receiver_org,
             'transaction_receiver-org_ref' : transaction_receiver_org,
             'transaction_receiver-org_text' : transaction_receiver_org_name,
+            'start-planned__gt' : partial(gt, Activity.start_planned),
+            'start-planned__lt' : partial(lt, Activity.start_planned),
+            'start-actual__gt' : partial(gt, Activity.start_actual),
+            'start-actual__lt' : partial(lt, Activity.start_actual),
+            'end-planned__gt' : partial(gt, Activity.end_planned),
+            'end-planned__lt' : partial(lt, Activity.end_planned),
+            'end-actual__gt' : partial(gt, Activity.end_actual),
+            'end-actual__lt' : partial(lt, Activity.end_actual),
     }
 
     for filter, search_string in args.items():
         filter_condition = filter_conditions.get(filter, None)
         if filter_condition:
-            terms = search_string.split('|')
-            if len(terms) == 1:
-                query = query.filter(filter_condition(search_string))
+            if isinstance(search_string, basestring):
+                terms = search_string.split('|')
+                if len(terms) >= 1:
+                    conditions = tuple([ filter_condition(term) for term in terms ])
+                    query = query.filter(or_(*conditions))
+                else:
+                    query = query.filter(filter_condition(search_string))
             else:
-                conditions = tuple([ filter_condition(term) for term in terms ])
-                query = query.filter(or_(*conditions))
+                query = query.filter(filter_condition(search_string))
 
 
     return query

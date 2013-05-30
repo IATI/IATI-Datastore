@@ -265,6 +265,80 @@ class TestActivityFilter(AppTestCase):
         self.assertIn(act_in, activities.all())
         self.assertNotIn(act_not, activities.all())
 
+    def test_start_planned_greater_than(self):
+        act_in = fac.ActivityFactory.create(start_planned=datetime.date(2013, 1, 1))
+        act_not = fac.ActivityFactory.create(start_planned=datetime.date(2000,1, 1))
+        activities = dsfilter.activities({
+            "start-planned__gt": datetime.date(2010, 1, 1)
+        })
+        self.assertIn(act_in, activities.all())
+        self.assertNotIn(act_not, activities.all())
+
+    def test_start_actual_greater_than(self):
+        act_in = fac.ActivityFactory.create(start_actual=datetime.date(2013, 1, 1))
+        act_not = fac.ActivityFactory.create(start_actual=datetime.date(2000,1, 1))
+        activities = dsfilter.activities({
+            "start-actual__gt": datetime.date(2010, 1, 1)
+        })
+        self.assertIn(act_in, activities.all())
+        self.assertNotIn(act_not, activities.all())
+
+    def test_end_planned_greater_than(self):
+        act_in = fac.ActivityFactory.create(end_planned=datetime.date(2013, 1, 1))
+        act_not = fac.ActivityFactory.create(end_planned=datetime.date(2000,1, 1))
+        activities = dsfilter.activities({
+            "end-planned__gt": datetime.date(2010, 1, 1)
+        })
+        self.assertIn(act_in, activities.all())
+        self.assertNotIn(act_not, activities.all())
+
+    def test_end_actual_greater_than(self):
+        act_in = fac.ActivityFactory.create(end_actual=datetime.date(2013, 1, 1))
+        act_not = fac.ActivityFactory.create(end_actual=datetime.date(2000,1, 1))
+        activities = dsfilter.activities({
+            "end-actual__gt": datetime.date(2010, 1, 1)
+        })
+        self.assertIn(act_in, activities.all())
+        self.assertNotIn(act_not, activities.all())
+
+    def test_start_planned_lesser_than(self):
+        act_in = fac.ActivityFactory.create(start_planned=datetime.date(2000, 1, 1))
+        act_not = fac.ActivityFactory.create(start_planned=datetime.date(2013,1, 1))
+        activities = dsfilter.activities({
+            "start-planned__lt" : datetime.date(2010, 1, 1)
+        })
+        self.assertIn(act_in, activities.all())
+        self.assertNotIn(act_not, activities.all())
+
+    def test_start_actual_lesser_than(self):
+        act_in = fac.ActivityFactory.create(start_actual=datetime.date(2000, 1, 1))
+        act_not = fac.ActivityFactory.create(start_actual=datetime.date(2013,1, 1))
+        activities = dsfilter.activities({
+            "start-actual__lt":datetime.date(2010, 1, 1)
+
+        })
+        self.assertIn(act_in, activities.all())
+        self.assertNotIn(act_not, activities.all())
+
+    def test_end_planned_lesser_than(self):
+        act_in = fac.ActivityFactory.create(end_planned=datetime.date(2000, 1, 1))
+        act_not = fac.ActivityFactory.create(end_planned=datetime.date(2013,1, 1))
+        activities = dsfilter.activities({
+            "end-planned__lt": datetime.date(2010, 1, 1)
+        })
+        self.assertIn(act_in, activities.all())
+        self.assertNotIn(act_not, activities.all())
+
+    def test_end_actual_lesser_than(self):
+        act_in = fac.ActivityFactory.create(end_actual=datetime.date(2000, 1, 1))
+        act_not = fac.ActivityFactory.create(end_actual=datetime.date(2013,1, 1))
+        activities = dsfilter.activities({
+            "end-actual__lt": datetime.date(2010, 1, 1)
+
+        })
+        self.assertIn(act_in, activities.all())
+        self.assertNotIn(act_not, activities.all())
+
 class TestTransactionFilter(AppTestCase):
     def test_by_country_code(self):
         trans_in = fac.TransactionFactory.create(
