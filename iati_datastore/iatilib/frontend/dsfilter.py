@@ -148,10 +148,10 @@ def _filter(query, args):
             'transaction_receiver-org' : transaction_receiver_org,
             'transaction_receiver-org_ref' : transaction_receiver_org,
             'transaction_receiver-org_text' : transaction_receiver_org_name,
-            'start_date__gt' : partial(gt, Activity.start_actual),
-            'start_date__lt' : partial(lt, Activity.start_actual),
-            'end_date__gt' : partial(gt, Activity.end_actual),
-            'end_date__lt' : partial(lt, Activity.end_actual),
+            'start-date__gt' : partial(gt, Activity.start_actual),
+            'start-date__lt' : partial(lt, Activity.start_actual),
+            'end-date__gt' : partial(gt, Activity.end_actual),
+            'end-date__lt' : partial(lt, Activity.end_actual),
     }
 
     for filter, search_string in args.items():

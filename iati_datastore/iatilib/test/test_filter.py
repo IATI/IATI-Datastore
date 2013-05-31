@@ -269,7 +269,7 @@ class TestActivityFilter(AppTestCase):
         act_in = fac.ActivityFactory.create(start_actual=datetime.date(2013, 1, 1))
         act_not = fac.ActivityFactory.create(start_actual=datetime.date(2000,1, 1))
         activities = dsfilter.activities({
-            "start_date__gt": datetime.date(2010, 1, 1)
+            "start-date__gt": datetime.date(2010, 1, 1)
         })
         self.assertIn(act_in, activities.all())
         self.assertNotIn(act_not, activities.all())
@@ -278,7 +278,7 @@ class TestActivityFilter(AppTestCase):
         act_in = fac.ActivityFactory.create(end_actual=datetime.date(2013, 1, 1))
         act_not = fac.ActivityFactory.create(end_actual=datetime.date(2000,1, 1))
         activities = dsfilter.activities({
-            "end_date__gt": datetime.date(2010, 1, 1)
+            "end-date__gt": datetime.date(2010, 1, 1)
         })
         self.assertIn(act_in, activities.all())
         self.assertNotIn(act_not, activities.all())
@@ -287,7 +287,7 @@ class TestActivityFilter(AppTestCase):
         act_in = fac.ActivityFactory.create(start_actual=datetime.date(2000, 1, 1))
         act_not = fac.ActivityFactory.create(start_actual=datetime.date(2013,1, 1))
         activities = dsfilter.activities({
-            "start_date__lt":datetime.date(2010, 1, 1)
+            "start-date__lt":datetime.date(2010, 1, 1)
 
         })
         self.assertIn(act_in, activities.all())
@@ -298,7 +298,7 @@ class TestActivityFilter(AppTestCase):
         act_in = fac.ActivityFactory.create(end_actual=datetime.date(2000, 1, 1))
         act_not = fac.ActivityFactory.create(end_actual=datetime.date(2013,1, 1))
         activities = dsfilter.activities({
-            "end_date__lt": datetime.date(2010, 1, 1)
+            "end-date__lt": datetime.date(2010, 1, 1)
 
         })
         self.assertIn(act_in, activities.all())

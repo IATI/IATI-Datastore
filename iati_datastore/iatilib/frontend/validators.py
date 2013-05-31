@@ -37,8 +37,8 @@ activity_api_args = v.Schema({
     'related-activity.ref': v.All(v.Coerce(str)),
     'transaction_ref' : v.All(v.Coerce(str)),
     'transaction' : v.All(v.Coerce(str)),
-    'start_date__gt' : apidate,
-    'start_date__lt' : apidate,
-    'end_date__gt' : apidate,
-    'end_date__lt' : apidate,
+    'start-date__gt' : apidate,
+    'start-date__lt' : apidate,
+    'end-date__gt' : apidate,
+    'end-date__lt' : apidate,
 })
