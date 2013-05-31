@@ -1,6 +1,7 @@
 from datetime import datetime
 import sqlalchemy as sa
-from flask import request, Response, Blueprint, jsonify, abort, render_template
+from flask import (request, Response, Blueprint, jsonify, abort,
+                   render_template, make_response)
 from flask.views import MethodView
 from werkzeug.datastructures import MultiDict
 from flask.ext.sqlalchemy import Pagination
@@ -150,17 +151,17 @@ class DataStoreView(MethodView):
 
     def validate_args(self):
         if not hasattr(self, "_valid_args"):
-            try:
-                self._valid_args = validators.activity_api_args(MultiDict(request.args))
-            except validators.Invalid:
-                abort(400)
+            self._valid_args = validators.activity_api_args(MultiDict(request.args))
         return self._valid_args
 
     def get_response(self, serializer=None, mimetype="text/csv"):
         if serializer is None:
             serializer = self.serializer
 
-        valid_args = self.validate_args()
+        try:
+            valid_args = self.validate_args()
+        except validators.Invalid, e:
+            return make_response(render_template('invalid_filter.html', errors=e.path), 400)
         query = self.filter(valid_args)
 
         if self.streaming:

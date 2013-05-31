@@ -1,0 +1,13 @@
+<html>
+    <head>
+        <title>Invalid Filter</title>
+    </head>
+    <body>
+        <h1>Invalid Request</h1>
+        Invalid arguments passed as filter, bad filters were : [
+        {%- for error in errors -%}
+        {{ error }}, 
+        {%- endfor -%} ]
+    </body>
+
+</html>
