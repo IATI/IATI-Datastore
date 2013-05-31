@@ -69,18 +69,44 @@ Filtering
         <td>sector</td>
         <td><a href="http://iatistandard.org/activity-standard/sector/">Sector</td>
     </tr>
+        <td>policy-marker</td>
+        <td><a href="http://iatistandard.org/activity-standard/thematic-marker/">Policy Marker</td>
+    </tr>
     <tr>
         <td>participating-org</td>
         <td><a href="http://iatistandard.org/activity-standard/participating-org/">Participating Org</a></td>
     </tr>
+    <tr>
+        <td>related-activity</td>
+        <td><a href="http://iatistandard.org/activity-standard/related-activity/">Related Activity</a></td>
+    </tr>
+    <tr>
+        <td>transaction</td>
+        <td><a href="http://iatistandard.org/activity-standard/transaction/">Transaction</a></td>
+    </tr>
+    <tr>
+        <td>transaction_provider-org</td>
+        <td><a href="http://iatistandard.org/activity-standard/transaction/provider-org">Transaction Provider Organisation</a></td>
+    </tr>
+
+    <tr>
+        <td>start_date</td>
+        <td><a href="http://iatistandard.org/activity-standard/transaction/provider-org">Start Actuale</a></td>
+    </tr>
 </table>
 
 
-Combining filters gives the results that furfill all the terms. So
+Combining filters gives the results that fufill all the terms. So
 
 [`/api/1/access/activity.xml?reporting-org=GB-1&recipient-country=CD`](http://iati-datastore.herokuapp.com/api/1/access/activity.xml?reporting-org=GB-1&recipient-country=CD)
 
 will respond with all the DFID data for the Democratic Republic of Congo.
+
+###Complex Filtering###
+
+To filter by recipient-country as Democratic Republic of Congo OR Uganda
+
+[`/api/1/access/activity.xml?reporting-org=GB-1&recipient-country=CD|UG)`](http://iati-datastore.herokuapp.com/api/1/access/activity.xml?reporting-org=GB-1&recipient-country=CD|UG)
 
 
 Paging through results
