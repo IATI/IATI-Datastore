@@ -1,6 +1,6 @@
 from datetime import datetime
 from functools import partial
-from sqlalchemy import or_
+from sqlalchemy import or_, and_
 from sqlalchemy.sql.operators import gt, lt
 from iatilib import codelists, db
 from iatilib.model import (
@@ -115,8 +115,12 @@ def _filter(query, args):
             RelatedActivity.ref == ref
         )
 
-    def date_condition(condition, column, date):
-        return condition(column, date)
+    def date_condition(condition, actual_date, planned_date, date):
+        return or_(
+                condition(actual_date, date),
+                and_(condition(planned_date, date), actual_date == None),
+        )
+
 
 
     filter_conditions = {
@@ -148,10 +152,10 @@ def _filter(query, args):
             'transaction_receiver-org' : transaction_receiver_org,
             'transaction_receiver-org_ref' : transaction_receiver_org,
             'transaction_receiver-org_text' : transaction_receiver_org_name,
-            'start-date__gt' : partial(gt, Activity.start_actual),
-            'start-date__lt' : partial(lt, Activity.start_actual),
-            'end-date__gt' : partial(gt, Activity.end_actual),
-            'end-date__lt' : partial(lt, Activity.end_actual),
+            'start-date__gt' : partial(date_condition, gt, Activity.start_actual, Activity.start_planned),
+            'start-date__lt' : partial(date_condition, lt, Activity.start_actual, Activity.start_planned),
+            'end-date__gt' : partial(date_condition, gt, Activity.end_actual, Activity.end_planned),
+            'end-date__lt' : partial(date_condition, lt, Activity.end_actual, Activity.end_planned),
     }
 
     for filter, search_string in args.items():
