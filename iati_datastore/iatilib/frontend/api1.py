@@ -133,6 +133,13 @@ def dataset_log_error(dataset_id):
     return render_template('dataset.log', errors=errors)
 
 
+class Stream(object):
+    """
+    Wrapper to make a query object quack like a pagination object
+    """
+    def __init__(self, query):
+        self.items = query
+
 class DataStoreView(MethodView):
     filter = None
     serializer = None
@@ -166,7 +173,7 @@ class DataStoreView(MethodView):
 
         if self.streaming:
             query = query.yield_per(100)
-            body = serializer(query)
+            body = serializer(Stream(query))
         else:
             pagination = self.paginate(
                 query,
