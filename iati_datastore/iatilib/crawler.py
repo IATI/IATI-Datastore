@@ -10,7 +10,7 @@ from .queue import get_queue
 from werkzeug.http import http_date
 
 from iatilib import db, parse
-from iatilib.model import Dataset, Resource, Activity, Log
+from iatilib.model import Dataset, Resource, Activity, Log, DeletedActivity
 
 log = logging.getLogger("crawler")
 
@@ -41,14 +41,33 @@ def fetch_dataset_list():
 
         deleted_ds_names = existing_ds_names - incoming_ds_names
         if deleted_ds_names:
-            deleted_datasets = db.session.query(Dataset).filter(Dataset.name.in_(deleted_ds_names))
-            deleted = deleted_datasets.delete(synchronize_session='fetch')
+            delete_datasets(deleted_ds_names)
             all_datasets = Dataset.query.all()
-            log.info("Deleted {0} datasets".format(deleted))
-        
+
         return all_datasets
     else:
         raise CouldNotFetchPackageList()
+
+
+def delete_datasets(datasets):
+    deleted_datasets = db.session.query(Dataset).filter(Dataset.name.in_(datasets))
+
+    activities_to_delete = db.session.query(Activity).\
+                                filter(Activity.resource_url==Resource.url).\
+                                filter(Resource.dataset_id.in_(datasets))
+
+                                            
+    now = datetime.datetime.now()
+    deleted_activities = [ DeletedActivity(
+                            iati_identifier=a.iati_identifier,
+                            deletion_date=now
+                           ) 
+                           for a in activities_to_delete ]
+    db.session.add_all(deleted_activities)
+    db.session.commit()
+    deleted = deleted_datasets.delete(synchronize_session='fetch')
+    log.info("Deleted {0} datasets".format(deleted))
+    return deleted
 
 
 def fetch_dataset_metadata(dataset):
@@ -92,8 +111,27 @@ def fetch_resource(resource):
 
 def parse_resource(resource):
     db.session.add(resource)
+    current = Activity.query.filter_by(resource_url=resource.url)
+    current_identifiers = set([ i.iati_identifier for i in current.all() ])
+
     Activity.query.filter_by(resource_url=resource.url).delete()
     resource.activities = list(parse.document(resource.document, resource))
+
+    #add any identifiers that are no longer present to deleted_activity table
+    new_identifiers = set([ i.iati_identifier for i in resource.activities ])
+    diff = current_identifiers - new_identifiers 
+    now = datetime.datetime.now()
+    deleted = [ 
+            DeletedActivity(iati_identifier=deleted_activity, deletion_date=now)
+            for deleted_activity in diff ]
+    if deleted:
+        db.session.add_all(deleted)
+
+    #remove any new identifiers from the deleted_activity table
+    db.session.query(DeletedActivity)\
+            .filter(DeletedActivity.iati_identifier.in_(new_identifiers))\
+            .delete(synchronize_session="fetch")
+
     log.info(
         "Parsed %d activities from %s",
         len(resource.activities),

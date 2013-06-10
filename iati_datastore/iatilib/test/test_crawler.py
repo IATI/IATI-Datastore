@@ -7,7 +7,7 @@ from . import AppTestCase, fixture_filename
 from . import factories as fac
 
 from iatilib import crawler, db, parse
-from iatilib.model import Dataset, Resource, Activity
+from iatilib.model import Dataset, Resource, Activity, DeletedActivity
 
 
 class TestCrawler(AppTestCase):
@@ -111,24 +111,79 @@ class TestCrawler(AppTestCase):
 
     def test_parse_resource_succ_replaces_activities(self):
         # what's in the db before the resource is updated
-        act = fac.ActivityFactory.build()
-        fac.ResourceFactory.create(
+        act = fac.ActivityFactory.build(iati_identifier="deleted_activity")
+        resource = fac.ResourceFactory.create(
             url=u"http://test",
             activities=[act]
         )
         # the updated resource (will remove the activities)
-        resource = Resource(
+        resource.document="<iati-activities />"
+        resource = crawler.parse_resource(resource)
+        db.session.commit()
+        self.assertEquals(None, Activity.query.get(act.iati_identifier))
+        self.assertIn(
+            "deleted_activity",
+            [da.iati_identifier for da in DeletedActivity.query.all()]
+        )
+
+    def test_deleted_activity_removal(self):
+        db.session.add(DeletedActivity(iati_identifier='test_deleted_activity',
+                deletion_date=datetime.datetime(2000, 1, 1)))
+        db.session.commit()
+        resource = fac.ResourceFactory.create(
             url=u"http://test",
-            document="<iati-activities />"
+            document="""
+                <iati-activities>
+                  <iati-activity>
+                    <iati-identifier>test_deleted_activity</iati-identifier>
+                    <title>test_deleted_activity</title>
+                    <reporting-org ref="GB-CHC-202918" type="21">Oxfam GB</reporting-org>
+                  </iati-activity>
+                </iati-activities>
+            """,
+        )
+        self.assertIn(
+            "test_deleted_activity",
+            [da.iati_identifier for da in db.session.query(DeletedActivity).all()]
         )
         resource = crawler.parse_resource(resource)
-        self.assertEquals(None, Activity.query.get(act.iati_identifier))
+        db.session.commit()
+        self.assertNotIn(
+            "test_deleted_activity",
+            [da.iati_identifier for da in DeletedActivity.query.all()]
+        )
 
     def test_parse_resource_fail(self):
         resource = Resource(document="")
         with self.assertRaises(parse.ParserError):
             resource = crawler.parse_resource(resource)
             self.assertEquals(None, resource.last_parsed)
+            
+    @mock.patch('iatilib.crawler.registry')
+    def test_deleted_activities(self, mock):
+        fac.DatasetFactory.create(
+            name='deleteme',
+            resources=[ fac.ResourceFactory.create(
+                url=u"http://yes",
+                activities=[
+                    fac.ActivityFactory.build(
+                        iati_identifier=u"deleted_activity",
+                        title=u"orig",
+                    )
+                ]
+            )]
+        )
+        mock.action.package_list.return_value = {
+            'success': True,
+            'result': [u"tst-a", u"tst-b"]
+        }
+        self.assertIn("deleteme", [ds.name for ds in Dataset.query.all()])
+        datasets = crawler.fetch_dataset_list()
+        self.assertNotIn("deleteme", [ds.name for ds in datasets])
+        self.assertIn(
+            "deleted_activity",
+            [da.iati_identifier for da in DeletedActivity.query.all()]
+        )
 
 
 class TestResourceUpdate(AppTestCase):

@@ -94,7 +94,7 @@ class Activity(db.Model):
     default_language = sa.Column(codelists.Language.db_type())
     last_updated_datetime = sa.Column(sa.Date, nullable=True)
     resource_url = sa.Column(
-        sa.ForeignKey("resource.url"),
+        sa.ForeignKey("resource.url", ondelete='CASCADE'),
         index=True,
         nullable=True)
     reporting_org_ref = sa.Column(
@@ -147,6 +147,11 @@ class Activity(db.Model):
     default_flow_type = sa.Column(codelists.FlowType.db_type())
     default_aid_type = sa.Column(codelists.AidType.db_type())
     default_tied_status = sa.Column(codelists.TiedStatus.db_type())
+
+class DeletedActivity(db.Model):
+    __tablename__ = "deleted_activity"
+    iati_identifier = sa.Column(sa.Unicode, primary_key=True, nullable=False)
+    deletion_date = sa.Column(sa.Date)
 
 
 class Organisation(db.Model, UniqueMixin):
@@ -359,7 +364,7 @@ class Resource(db.Model):
     last_parse_error = sa.Column(sa.Unicode)  # last error from xml parser
     document = sa.orm.deferred(sa.Column(sa.LargeBinary))
     etag = sa.Column(sa.Unicode)
-    activities = act_relationship("Activity")
+    activities = act_relationship("Activity", cascade="all,delete", passive_deletes=True)
 
 
 class Log(db.Model):

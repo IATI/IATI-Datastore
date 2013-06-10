@@ -7,7 +7,7 @@ from iatilib.frontend import db
 from iatilib.model import (
     Activity, Transaction, Organisation, SectorPercentage, CountryPercentage,
     Participation, Budget, Resource, RegionPercentage, PolicyMarker,
-    RelatedActivity
+    RelatedActivity, Dataset, DeletedActivity
 )
 
 
@@ -78,3 +78,7 @@ class BudgetFactory(factory.Factory):
     activity = factory.SubFactory(ActivityFactory)
     type = codelists.BudgetType.original
     value_amount = 0
+
+class DatasetFactory(factory.Factory):
+    name = 'test_dataset'
+    resources = factory.SubFactory(ResourceFactory)
