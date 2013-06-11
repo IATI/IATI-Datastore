@@ -7,7 +7,8 @@ from werkzeug.datastructures import MultiDict
 from flask.ext.sqlalchemy import Pagination
 
 from iatilib import db
-from iatilib.model import Activity, Resource, Transaction, Dataset, Log
+from iatilib.model import (Activity, Resource, Transaction, Dataset,
+                           Log, DeletedActivity)
 
 from . import dsfilter, validators, serialize
 
@@ -62,6 +63,21 @@ def about_dataset(dataset):
             resources=resources,
     )
 
+@api.route('/about/deleted')
+def deleted_activities():
+    deleted_activities = db.session.query(DeletedActivity)\
+                                   .order_by(DeletedActivity.deletion_date)
+    return jsonify(
+        deleted_activities=[ 
+          {
+            'iati_identifier' : da.iati_identifier,
+            'deletion_date' : da.deletion_date.isoformat(),
+          } 
+          for da in deleted_activities
+        ],
+    )
+
+
 
 @api.route('/error/dataset/')
 def error():
@@ -81,17 +97,15 @@ def resource_error():
     error_logs = db.session.query(Log).\
                     filter(Log.resource == resource_url).\
                     order_by(sa.desc(Log.created_at))
-    errors = []
-    for log in error_logs.all():
-        error = {}
-        error['resource_url'] = log.resource
-        error['dataset'] = log.dataset
-        error['logger'] = log.logger
-        error['msg'] = log.msg
-        error['traceback'] = log.trace
-        error['datestamp'] = log.created_at.isoformat()
-        errors.append(error)
-
+    errors = [ {
+                'resource_url' : log.resource,
+                'dataset' : log.dataset,
+                'logger' : log.logger,
+                'msg' : log.msg,
+                'traceback' : log.trace,
+                'datestamp' : log.created_at.isoformat(),
+            } for log in error_logs.all()
+    ]
     return jsonify(errors=errors)
 
 @api.route('/error/dataset/<dataset_id>')
@@ -99,15 +113,14 @@ def dataset_error(dataset_id):
     error_logs = db.session.query(Log).\
             filter(Log.dataset == dataset_id).\
             order_by(sa.desc(Log.created_at))
-    errors = []
-    for log in error_logs.all():
-        error = {}
-        error['resource_url'] = log.resource
-        error['logger'] = log.logger
-        error['msg'] = log.msg
-        error['traceback'] = log.trace
-        error['datestamp'] = log.created_at.isoformat()
-        errors.append(error)
+    errors = [ {
+                'resource_url' : log.resource,
+                'dataset' : log.dataset,
+                'logger' : log.logger,
+                'msg' : log.msg,
+                'traceback' : log.trace,
+                'datestamp' : log.created_at.isoformat(),
+            } for log in error_logs.all() ]
 
     return jsonify(errors=errors)
 

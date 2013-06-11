@@ -1,5 +1,6 @@
 import os
 import json
+from datetime import datetime
 from xml.etree import ElementTree as ET
 import csv
 from StringIO import StringIO
@@ -8,7 +9,7 @@ from unittest import skip
 import mock
 
 from . import AppTestCase
-from iatilib import parse, db
+from iatilib import parse, db, model
 
 
 class ClientTestCase(AppTestCase):
@@ -22,6 +23,19 @@ class TestAbout(ClientTestCase):
         resp = self.client.get('/api/1/about')
         self.assertEquals(200, resp.status_code)
 
+class TestDeletedActivitiesView(ClientTestCase):
+    def test_deleted_activities(self):
+        db.session.add(model.DeletedActivity(
+            iati_identifier='test',
+            deletion_date=datetime(2000, 1, 1))
+        )
+        db.session.commit()
+        resp = self.client.get('api/1/about/deleted')
+        data = json.loads(resp.data)
+        deleted_activities = data['deleted_activities']
+        self.assertEquals("test", deleted_activities[0]['iati_identifier'])
+        self.assertEquals("2000-01-01", deleted_activities[0]['deletion_date'])
+        
 
 class TestEmptyDb_JSON(ClientTestCase):
     url = '/api/1/access/activity'
@@ -407,3 +421,4 @@ class TestBudgetBySectorView(ClientTestCase, ApiViewMixin):
     base_url = '/api/1/access/budget/by_sector.csv'
     filter = 'iatilib.frontend.api1.BudgetsBySectorView.filter'
     serializer = 'iatilib.frontend.api1.BudgetsBySectorView.serializer'
+
