@@ -8,12 +8,19 @@ from iatilib.model import (
     Activity, Organisation, Transaction, Participation, SectorPercentage,
     CountryPercentage, Budget
 )
+from iatilib import codelists
 
 
 class JSONEncoder(jsonlib.JSONEncoder):
+    TWOPLACES = Decimal(10) ** -2
+
     def default(self, o):
         if isinstance(o, datetime.date):
             return o.strftime("%Y-%m-%d")
+        if isinstance(o, codelists.enum.EnumSymbol):
+            return o.value
+        if isinstance(o, Decimal):
+            return str(o.quantize(self.TWOPLACES))
         return super(JSONEncoder, self).default(o)
 
 
@@ -25,46 +32,28 @@ def code(attr):
         }
     return None
 
-
 def json_rep(obj):
     if isinstance(obj, Activity):
         return {
-            "iati_identifier": obj.iati_identifier,
+            "iati-identifier": obj.iati_identifier,
             "title": obj.title,
             "description": obj.description,
-            "reporting_org": json_rep(obj.reporting_org),
-            "start_planned": obj.start_planned,
-            "end_planned": obj.end_planned,
-            "start_actual": obj.start_actual,
-            "end_actual": obj.end_actual,
-            "activity_websites": list(obj.websites),
-            "transactions": {
-                "commitments": [json_rep(o) for o in obj.commitments],
-                "disbursements": [json_rep(o) for o in obj.disbursements],
-                "expenditures": [json_rep(o) for o in obj.expenditures],
-                "incoming_funds": [json_rep(o) for o in obj.incoming_funds],
-                "interest_repayment": [json_rep(o) for o in obj.interest_repayment],
-                "loan_repayments": [json_rep(o) for o in obj.loan_repayments],
-                "reembursements": [json_rep(o) for o in obj.reembursements],
-            },
-            "participating_orgs": [json_rep(o) for o in obj.participating_orgs],
-            "recipient_countries": [json_rep(o) for o in obj.recipient_country_percentages],
-            "sector_percentages": [json_rep(o) for o in obj.sector_percentages],
+            "reporting-org": json_rep(obj.reporting_org),
+            "start-planned": obj.start_planned,
+            "end-planned": obj.end_planned,
+            "start-actual": obj.start_actual,
+            "end-actual": obj.end_actual,
+            "activity-websites": list(obj.websites),
+            "transactions": [json_rep(o) for o in obj.transactions],
+            "participating-orgs": [json_rep(o) for o in obj.participating_orgs],
+            "recipient-countries": [json_rep(o) for o in obj.recipient_country_percentages],
+            "sector-percentages": [json_rep(o) for o in obj.sector_percentages],
             "budgets": {},
         }
     if isinstance(obj, Organisation):
-        return {
-            "ref": obj.ref,
-            "name": obj.name
-        }
+        return obj.as_dict()
     if isinstance(obj, Transaction):
-        return {
-            "value": {
-                "currency": obj.value.currency.value,
-                "amount": str(obj.value.amount),
-                "date": obj.value.date
-            }
-        }
+        return obj.as_dict()
     if isinstance(obj, Participation):
         return {
             "organisation": json_rep(obj.organisation),
@@ -93,8 +82,8 @@ def json_rep(obj):
                 "code": obj.type.value,
                 "name": obj.type.description,
             },
-            "period_start": obj.period_start,
-            "period_end": obj.period_end,
+            "period-start": obj.period_start,
+            "period-end": obj.period_end,
             "value": {
                 "currency": obj.value_currency.value,
                 "amount": str(obj.value_amount),
