@@ -16,7 +16,7 @@ unicodecsv==0.9.4
 voluptuous==0.7.1
 Flask-Script==0.5.3
 prettytable==0.7
-alembic==0.4.2
+alembic==0.5.0
 gunicorn==0.17.2
 defusedxml==0.4
 redis==2.7.2

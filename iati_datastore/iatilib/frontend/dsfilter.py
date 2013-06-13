@@ -39,7 +39,9 @@ def _filter(query, args):
         )
 
     def reporting_org(organisation):
-        return Activity.reporting_org_ref == organisation
+        return Activity.reporting_org.has(
+            Organisation.ref == organisation
+        )
 
     def reporting_org_text(organisation):
         return Activity.reporting_org.has(
@@ -54,7 +56,9 @@ def _filter(query, args):
 
     def participating_org(organisation):
         return Activity.participating_orgs.any(
-            Participation.organisation_ref == organisation
+            Participation.organisation.has(
+                Organisation.ref == organisation
+            )
         )
  
     def participating_org_text(organisation):
@@ -82,7 +86,9 @@ def _filter(query, args):
 
     def transaction_provider_org(organisation):
         return Activity.transactions.any(
-            Transaction.provider_org_ref == organisation
+            Transaction.provider_org.has(
+                Organisation.ref == organisation
+            )
         )
 
     def transaction_provider_org_name(organisation):
@@ -94,7 +100,9 @@ def _filter(query, args):
 
     def transaction_receiver_org(organisation):
         return Activity.transactions.any(
-            Transaction.receiver_org_ref == organisation
+            Transaction.receiver_org.has(
+                Organisation.ref == organisation
+            )
         )
 
     def transaction_receiver_org_name(organisation):

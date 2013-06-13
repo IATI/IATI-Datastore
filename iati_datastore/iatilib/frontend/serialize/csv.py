@@ -96,6 +96,15 @@ def transaction_disbursement_channel(transaction):
         return transaction.disbursement_channel.value 
     return ""
 
+def transaction_org(field, transaction):
+    organisation = getattr(transaction, field)
+    if organisation:
+        return organisation.ref
+    else:
+        return ""
+provider_org = partial(transaction_org, 'provider_org')
+receiver_org = partial(transaction_org, 'receiver_org')
+
 title = attrgetter("title")
 description = attrgetter("description")
 iati_identifier = attrgetter("iati_identifier")
@@ -133,6 +142,9 @@ def recipient_region_percentage(activity):
     return u";".join(
         u"%d" % rrp.percentage if rrp.percentage else ""
         for rrp in activity.recipient_region_percentages)
+
+def reporting_org_ref(activity):
+    return activity.reporting_org.ref
 
 def reporting_org_name(activity):
     return activity.reporting_org.name
@@ -185,7 +197,7 @@ class FieldDict(OrderedDict):
         u"last-updated-datetime": attrgetter(u'last_updated_datetime'),
         u"default-language" : partial(codelist_code, 'default_language'),
         u"reporting-org" : reporting_org_name,
-        u"reporting-org-ref" : lambda x: x.reporting_org_ref,
+        u"reporting-org-ref" : reporting_org_ref,
         u"reporting-org-type" : reporting_org_type,
         u"title": title,
         u"description": description,
@@ -483,11 +495,11 @@ common_transaction_csv = (
     (u'transaction_value_currency', lambda t: t.value_currency.value),
     (u'transaction_value_value-date', lambda t: t.value_date),
     (u'transaction_provider-org', lambda t: t.provider_org_text),
-    (u'transaction_provider-org_ref', lambda t: t.provider_org_ref),
+    (u'transaction_provider-org_ref', provider_org),
     (u'transaction_provider-org_provider-activity-id',
             lambda t: t.provider_org_activity_id),
     (u'transaction_receiver-org', lambda t: t.receiver_org_text),
-    (u'transaction_receiver-org_ref', lambda t: t.receiver_org_ref),
+    (u'transaction_receiver-org_ref', receiver_org),
     (u'transaction_receiver-org_receiver-activity-id',
             lambda t: t.receiver_org_activity_id),
     (u'transaction_description', lambda t: t.description),

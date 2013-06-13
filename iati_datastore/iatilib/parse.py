@@ -77,6 +77,16 @@ def iati_int(str):
 def iati_decimal(str):
     return Decimal(str.replace(",", ""))
 
+def parse_org(xml):
+    data = {
+        "ref": xval(xml, "@ref"),
+        "name": xval(xml, 'text()', u""),
+    }
+    try:
+        data['type'] = cl.OrganisationType.from_string(xval(xml, "@type"))
+    except (MissingValue, ValueError):
+        data['type'] = None
+    return Organisation.as_unique(db.session, **data)
 
 def reporting_org(xml):
     data = {
@@ -88,7 +98,7 @@ def reporting_org(xml):
             "type": cl.OrganisationType.from_string(xval(xml, "@type"))
         })
     except MissingValue:
-        pass
+        data['type'] = None
     return Organisation.as_unique(db.session, **data)
 
 
@@ -97,7 +107,7 @@ def participating_orgs(xml):
     seen = set()
     for ele in [e for e in xml if e.xpath("@ref")]:
         role = cl.OrganisationRole.from_string(xval(ele, "@role").title())
-        organisation = Organisation.as_unique(db.session, ref=xval(ele, "@ref"))
+        organisation = parse_org(ele)
         if not (role, organisation.ref) in seen:
             seen.add((role, organisation.ref))
             ret.append(Participation(role=role, organisation=organisation))
@@ -129,8 +139,14 @@ def transactions(xml):
     def from_cl(code, codelist):
         return codelist.from_string(code) if code is not None else None
 
-    def from_org(org):
-        return Organisation.as_unique(db.session, ref=org) if org else None
+    def from_org(ele, path):
+        organisation = ele.xpath(path)
+        if organisation:
+            try:
+                return parse_org(organisation[0])
+            except MissingValue:
+                return None
+        #return Organisation.as_unique(db.session, ref=org) if org else Nonejk
 
     def process(ele):
         return Transaction(
@@ -143,12 +159,12 @@ def transactions(xml):
             tied_status=from_cl(xval(ele, "tied-status/@code", None), cl.TiedStatus),
             disbursement_channel=from_cl(xval(ele,"disbursement-channel/@code",
                                        None), cl.DisbursementChannel),
-            provider_org=from_org(xval(ele, "provider-org/@ref", None)),
 
+            provider_org=from_org(ele, "provider-org"),
             provider_org_text=xval(ele, "provider-org/text()", None),
             provider_org_activity_id=xval(
                                 ele, "provider-org/@provider-activity-id", None),
-            receiver_org=from_org(xval(ele, "receiver-org/@ref", None)),
+            receiver_org=from_org(ele, "receiver-org"),
             receiver_org_text=xval(ele, "receiver-org/text()", None),
             receiver_org_activity_id=xval(
                                 ele, "receiver-org/@receiver-activity-id", None),
@@ -266,7 +282,10 @@ def activity(xml_resource):
         if xml:
             code = xval(xml[0], "@code", None)
             if code:
-                return codelist.from_string(code)
+                try:
+                    return codelist.from_string(code)
+                except MissingValue:
+                    pass
 
         return None
 
@@ -278,7 +297,7 @@ def activity(xml_resource):
         "last_updated_datetime" : last_updated_datetime(xml),
         "default_language" : default_language(xml),
         "description": xval(xml, "./description/text()", u""),
-        "reporting_org": reporting_org(xml.xpath("./reporting-org")[0]),
+        "reporting_org": parse_org(xml.xpath("./reporting-org")[0]),
         "websites": websites(xml.xpath("./activity-website")),
         "participating_orgs": participating_orgs(
             xml.xpath("./participating-org")),

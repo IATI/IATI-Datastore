@@ -215,7 +215,6 @@ class TestCSVTransactionExample(TestCase, CSVTstMixin):
         activity = fac.ActivityFactory.build(
             reporting_org=fac.OrganisationFactory.build(name='rep',
                     ref='rep_ref', type=cl.OrganisationType.foundation),
-            reporting_org_ref='rep_ref',
         )
         data = self.process([
             fac.TransactionFactory.build(activity=activity)

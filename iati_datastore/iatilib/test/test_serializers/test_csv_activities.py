@@ -179,7 +179,6 @@ class TestCSVExample(CSVTstMixin, TestCase):
         data = self.process([fac.ActivityFactory.build(
             reporting_org=fac.OrganisationFactory.build(name='rep',
                     ref='rep_ref', type=cl.OrganisationType.foundation),
-            reporting_org_ref='rep_ref',
         )])
         self.assertField({"reporting-org": "rep"}, data[0])
         self.assertField({"reporting-org-ref": "rep_ref"}, data[0])

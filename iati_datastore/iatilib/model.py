@@ -78,8 +78,8 @@ class Participation(db.Model):
     activity_identifier = sa.Column(
         act_ForeignKey("activity.iati_identifier"),
         primary_key=True)
-    organisation_ref = sa.Column(
-        sa.ForeignKey("organisation.ref"),
+    organisation_id = sa.Column(
+        sa.ForeignKey("organisation.id"),
         primary_key=True)
     role = sa.Column(
         codelists.OrganisationRole.db_type(),
@@ -97,9 +97,9 @@ class Activity(db.Model):
         sa.ForeignKey("resource.url", ondelete='CASCADE'),
         index=True,
         nullable=True)
-    reporting_org_ref = sa.Column(
-        sa.ForeignKey("organisation.ref"),
-        nullable=False,
+    reporting_org_id = sa.Column(
+        sa.ForeignKey("organisation.id"),
+        nullable=True,
         index=True)
     start_planned = sa.Column(sa.Date, nullable=True)
     start_actual = sa.Column(sa.Date, nullable=True)
@@ -156,17 +156,19 @@ class DeletedActivity(db.Model):
 
 class Organisation(db.Model, UniqueMixin):
     __tablename__ = "organisation"
-    ref = sa.Column(sa.Unicode, primary_key=True, nullable=False)
+    id = sa.Column(sa.Integer, primary_key=True, nullable=False)
+    ref = sa.Column(sa.Unicode, nullable=False)
     name = sa.Column(sa.Unicode, default=u"", nullable=False)
     type = sa.Column(codelists.OrganisationType.db_type())
+    __table_args__ = (sa.UniqueConstraint('ref', 'name', 'type'),)
 
     @classmethod
-    def unique_hash(cls, ref, **kw):
-        return ref
+    def unique_hash(cls, ref, name, type, **kw):
+        return ref, name, type
 
     @classmethod
-    def unique_filter(cls, query, ref, **kw):
-        return query.filter(cls.ref == ref)
+    def unique_filter(cls, query, ref, name, type, **kw):
+        return query.filter(cls.ref == ref and cls.name == name and cls.type == type)
 
     def __repr__(self):
         return "Organisation(ref=%r)" % self.ref
@@ -272,20 +274,20 @@ class Transaction(db.Model):
     # The spec examples allows <provider-org ref="GB-1">DFID</provider-org>
     # the Organisation.name with ref is actually "Department for International
     # Development". So the text DFID is being stored in provider_org_text
-    provider_org_ref = sa.Column(sa.Unicode, sa.ForeignKey("organisation.ref"))
+    provider_org_id = sa.Column(sa.Integer, sa.ForeignKey("organisation.id"))
     provider_org = sa.orm.relationship(
         "Organisation",
-        primaryjoin=provider_org_ref == Organisation.ref,
-        foreign_keys=[provider_org_ref],
+        primaryjoin=provider_org_id == Organisation.id,
+        foreign_keys=[provider_org_id],
     )
     provider_org_text = sa.Column(sa.Unicode, nullable=True)
     provider_org_activity_id = sa.Column(sa.Unicode, nullable=True)
 
-    receiver_org_ref = sa.Column(sa.Unicode, sa.ForeignKey("organisation.ref"))
+    receiver_org_id = sa.Column(sa.Integer, sa.ForeignKey("organisation.id"))
     receiver_org = sa.orm.relationship(
         "Organisation",
-        primaryjoin=receiver_org_ref == Organisation.ref,
-        foreign_keys=[receiver_org_ref],
+        primaryjoin=receiver_org_id == Organisation.id,
+        foreign_keys=[receiver_org_id],
     )
     receiver_org_text = sa.Column(sa.Unicode, nullable=True)
     receiver_org_activity_id = sa.Column(sa.Unicode, nullable=True)
