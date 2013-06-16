@@ -3,6 +3,7 @@ import datetime
 import logging
 import traceback
 from decimal import Decimal
+from functools import partial
 from StringIO import StringIO
 
 from lxml import etree as ET
@@ -24,7 +25,6 @@ NODEFAULT = object()
 class ParserError(Exception):
     pass
 
-
 class XMLError(ParserError):
     # Errors raised by XML parser
     pass
@@ -33,7 +33,6 @@ class XMLError(ParserError):
 class SpecError(ParserError):
     # Errors raised by spec violations
     pass
-
 
 class MissingValue(SpecError):
     pass
@@ -55,20 +54,18 @@ def xval(ele, xpath, default=NODEFAULT):
             raise MissingValue("Missing %r from %s" % (xpath, ele.tag))
         return default
 
-def xval_date(xml, xpath, default=None):
-    iso_date = xval(xml, xpath + "/text()", default)
-    if not iso_date:
-        iso_date = xval(xml, xpath + "/@iso-date", default)
-    return iso_date
+def xval_date(xpath, xml):
+    iso_date = xval(xml, xpath + "/text()", None) or xval(xml, xpath + "/@iso-date", None)
+    return iati_date(iso_date)
 
-def iati_date(str):
-    if str is None:
-        return None
-    try:
-        return parse_date(str).date()
-    except ValueError:
-        raise InvalidDateError('could not parse {0} as date'.format(str))
-
+def iati_date(iso_date):
+    if iso_date:
+        try:
+            return parse_date(iso_date).date()
+        except ValueError:
+            raise InvalidDateError('could not parse {0} as date'.format(str))
+    else:
+        return None 
 
 def iati_int(str):
     return int(str.replace(",", ""))
@@ -88,7 +85,8 @@ def parse_org(xml):
         data['type'] = None
     return Organisation.as_unique(db.session, **data)
 
-def reporting_org(xml):
+def reporting_org(element):
+    xml = element.xpath("./reporting-org")[0]
     data = {
         "ref": xval(xml, "@ref"),
         "name": xval(xml, 'text()', u""),
@@ -105,7 +103,7 @@ def reporting_org(xml):
 def participating_orgs(xml):
     ret = []
     seen = set()
-    for ele in [e for e in xml if e.xpath("@ref")]:
+    for ele in [e for e in xml.xpath("./participating-org") if e.xpath("@ref")]:
         role = cl.OrganisationRole.from_string(xval(ele, "@role").title())
         organisation = parse_org(ele)
         if not (role, organisation.ref) in seen:
@@ -115,17 +113,19 @@ def participating_orgs(xml):
 
 
 def websites(xml):
-    return [xval(ele, "text()") for ele in xml]
+    return [xval(ele, "text()") for ele in xml.xpath("./activity-website") ]
 
 
-def recipient_country_percentages(xml):
+def recipient_country_percentages(element):
+    xml = element.xpath("./recipient-country")
     return [CountryPercentage(
             name=xval(ele, "text()", None),
             country=cl.Country.from_string(xval(ele, "@code")),
             )
             for ele in xml]
 
-def recipient_region_percentages(xml):
+def recipient_region_percentages(element):
+    xml = element.xpath("./recipient-region")
     return [RegionPercentage(
             name=xval(ele, "text()", None),
             region=cl.Region.from_string(xval(ele, "@code")),
@@ -177,7 +177,7 @@ def transactions(xml):
         )
 
     ret = []
-    for ele in xml:
+    for ele in xml.xpath("./transaction"):
         try:
             ret.append(process(ele))
         except MissingValue:
@@ -187,7 +187,7 @@ def transactions(xml):
 
 def sector_percentages(xml):
     ret = []
-    for ele in xml:
+    for ele in xml.xpath("./sector"):
         sp = SectorPercentage()
         if ele.xpath("@code") and xval(ele, "@code") in cl.Sector.values():
             sp.sector = cl.Sector.from_string(xval(ele, "@code"))
@@ -220,7 +220,7 @@ def budgets(xml):
         )
 
     ret = []
-    for ele in xml:
+    for ele in xml.xpath("./budget"):
         try:
             ret.append(process(ele))
         except MissingValue:
@@ -228,12 +228,14 @@ def budgets(xml):
     return ret
 
 
-def policy_markers(element):
+def policy_markers(xml):
+    element = xml.xpath("./policy-marker")
     return [ PolicyMarker(code=cl.PolicyMarker.from_string(xval(ele, "@code")),
                           text=xval(ele, "text()", None),
             ) for ele in element ]
 
-def related_activities(element):
+def related_activities(xml):
+    element = xml.xpath("./related-activity")
     return [ RelatedActivity(ref=xval(ele, "@ref"),
                              text=xval(ele, "text()", None))
              for ele in element ]
@@ -276,62 +278,70 @@ def _open_resource(xml_resource):
     return xmlfile
 
 
+def from_codelist(codelist, path, xml):
+    element = xml.xpath(path)
+    if element:
+        code = xval(element[0], "@code", None)
+        if code:
+            try:
+                return codelist.from_string(code)
+            except MissingValue:
+                pass
+
+    return None
+
+start_planned = partial(xval_date, "./activity-date[@type='start-planned']")
+end_planned = partial(xval_date, "./activity-date[@type='end-planned']")
+start_actual = partial(xval_date, "./activity-date[@type='start-actual']")
+end_actual = partial(xval_date, "./activity-date[@type='end-actual']")
+
+activity_status = partial(from_codelist, cl.ActivityStatus, "./activity-status")
+collaboration_type = partial(from_codelist, cl.CollaborationType, "./collaboration-type")
+default_finance_type = partial(from_codelist, cl.FinanceType, "./default-finance-type")
+default_flow_type = partial(from_codelist, cl.FlowType, "./default-flow-type")
+default_aid_type = partial(from_codelist, cl.AidType, "./default-aid-type")
+default_tied_status = partial(from_codelist, cl.TiedStatus, "./default-tied-status")
 
 def activity(xml_resource):
-    def from_codelist(codelist, xml):
-        if xml:
-            code = xval(xml[0], "@code", None)
-            if code:
-                try:
-                    return codelist.from_string(code)
-                except MissingValue:
-                    pass
-
-        return None
 
     xml = ET.parse(_open_resource(xml_resource))
+
     data = {
         "iati_identifier": xval(xml, "./iati-identifier/text()"),
         "title": xval(xml, "./title/text()", u""),
-        "hierarchy": hierarchy(xml),
-        "last_updated_datetime" : last_updated_datetime(xml),
-        "default_language" : default_language(xml),
         "description": xval(xml, "./description/text()", u""),
-        "reporting_org": parse_org(xml.xpath("./reporting-org")[0]),
-        "websites": websites(xml.xpath("./activity-website")),
-        "participating_orgs": participating_orgs(
-            xml.xpath("./participating-org")),
-        "recipient_country_percentages": recipient_country_percentages(
-            xml.xpath("./recipient-country")),
-        "recipient_region_percentages": recipient_region_percentages(
-            xml.xpath("./recipient-region")),
-        "transactions": transactions(xml.xpath("./transaction")),
-        "start_planned": iati_date(
-            xval_date(xml, "./activity-date[@type='start-planned']", None)),
-        "end_planned": iati_date(
-            xval_date(xml, "./activity-date[@type='end-planned']", None)),
-        "start_actual": iati_date(
-            xval_date(xml, "./activity-date[@type='start-actual']", None)),
-        "end_actual": iati_date(
-            xval_date(xml, "./activity-date[@type='end-actual']", None)),
-        "sector_percentages": sector_percentages(xml.xpath("./sector")),
-        "budgets": budgets(xml.xpath("./budget")),
-        "policy_markers": policy_markers(xml.xpath("./policy-marker")),
-        "related_activities": related_activities(xml.xpath("./related-activity")),
-        'activity_status' : from_codelist(cl.ActivityStatus,
-            (xml.xpath("./activity-status"))),
-        'collaboration_type' : from_codelist(cl.CollaborationType,
-            (xml.xpath("./collaboration-type"))),
-        'default_finance_type' : from_codelist(cl.FinanceType,
-            (xml.xpath("./default-finance-type"))),
-        'default_flow_type' : from_codelist(cl.FlowType,
-            (xml.xpath("./default-flow-type"))),
-        'default_aid_type' : from_codelist(cl.AidType,
-            (xml.xpath("./default-aid-type"))),
-        'default_tied_status' : from_codelist(cl.TiedStatus,
-            (xml.xpath("./default-tied-status"))),
         "raw_xml": ET.tostring(xml, encoding=unicode)
     }
+
+    field_functions = {
+        "hierarchy": hierarchy,
+        "last_updated_datetime" : last_updated_datetime,
+        "default_language" : default_language,
+        "reporting_org": reporting_org,
+        "websites": websites,
+        "participating_orgs": participating_orgs,
+        "recipient_country_percentages": recipient_country_percentages,
+        "recipient_region_percentages": recipient_region_percentages,
+        "transactions": transactions,
+        "start_planned": start_planned,
+        "end_planned": end_planned,
+        "start_actual": start_actual,
+        "end_actual": end_actual,
+        "sector_percentages": sector_percentages,
+        "budgets": budgets,
+        "policy_markers": policy_markers,
+        "related_activities": related_activities,
+        'activity_status' : activity_status,
+        'collaboration_type' : collaboration_type,
+        'default_finance_type' : default_finance_type,
+        'default_flow_type' : default_flow_type,
+        'default_aid_type' : default_aid_type,
+        'default_tied_status' : default_tied_status,
+    }
+
+    for field, function in field_functions.items():
+        data[field] = function(xml)
+
     return Activity(**data)
 
 

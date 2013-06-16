@@ -254,42 +254,42 @@ class TestFunctional(AppTestCase):
 
 class TestSector(AppTestCase):
     def test_code(self):
-        sec = parse.sector_percentages([ET.XML(
-            u'<sector vocabulary="DAC" code="16010">Child Protection Systems Strengthening</sector>'
-        )])[0]
+        sec = parse.sector_percentages(ET.XML(
+            u'<wrapper><sector vocabulary="DAC" code="16010">Child Protection Systems Strengthening</sector></wrapper>'
+        ))[0]
         self.assertEquals(cl.Sector.social_welfare_services, sec.sector)
         self.assertEquals(u"Child Protection Systems Strengthening", sec.text)
 
     def test_missing_code(self):
-        sec = parse.sector_percentages([ET.XML(
-            u'<sector vocabulary="DAC">Child Protection Systems Strengthening</sector>'
-        )])[0]
+        sec = parse.sector_percentages(ET.XML(
+            u'<wrapper><sector vocabulary="DAC">Child Protection Systems Strengthening</sector></wrapper>'
+        ))[0]
         self.assertEquals(None, sec.sector)
 
     def test_missing_everything(self):
-        sec = parse.sector_percentages([ET.XML(
-            u'<sector />'
-        )])
+        sec = parse.sector_percentages(ET.XML(
+            u'<wrapper><sector /></wrapper>'
+        ))
         self.assertEquals([], sec)
 
 
 class TestOrganisation(AppTestCase):
     def test_org_role_looseness(self):
         # organisationrole should be "Implementing" but can be "implementing"
-        orgrole = parse.participating_orgs([ET.XML(
-            u'<test role="implementing" ref="test" />'
-        )])[0]
+        orgrole = parse.participating_orgs(ET.XML(
+            u'<wrap><participating-org role="implementing" ref="test" /></wrap>'
+        ))[0]
         self.assertEquals(orgrole.role, cl.OrganisationRole.implementing)
 
     def test_org_type(self):
         orgtype = parse.reporting_org(ET.XML(
-            u"""<reporting-org ref="GB-CHC-202918" type="21" />"""
+            u"""<wrap><reporting-org ref="GB-CHC-202918" type="21" /></wrap>"""
         ))
         self.assertEquals(cl.OrganisationType.international_ngo, orgtype.type)
 
     def test_org_type_missing(self):
         orgtype = parse.reporting_org(ET.XML(
-            u"""<reporting-org ref="GB-CHC-202918" />"""
+            u"""<wrap><reporting-org ref="GB-CHC-202918" /></wrap>"""
         ))
         self.assertEquals(None, orgtype.type)
 
@@ -298,17 +298,24 @@ class TestOrganisation(AppTestCase):
 class TestParticipation(AppTestCase):
     def test_repeated_participation(self):
         # Identical participations should be filtered
-        participations = parse.participating_orgs([
-            ET.XML(u'<participating-org ref="GB-CHC-272465" role="implementing" type="21">Concern Universal</participating-org>'),
-            ET.XML(u'<participating-org ref="GB-CHC-272465" role="implementing" type="21">Concern Universal</participating-org>')
-        ])
+        participations = parse.participating_orgs(
+            ET.XML(u"""
+                <wrap> 
+                <participating-org ref="GB-CHC-272465" role="implementing" type="21">Concern Universal</participating-org>
+            <participating-org ref="GB-CHC-272465" role="implementing" type="21">Concern Universal</participating-org>
+                </wrap> 
+                """),
+        )
         self.assertEquals(1, len(participations))
 
     def test_same_org_different_role(self):
-        participations = parse.participating_orgs([
-            ET.XML(u'<participating-org ref="GB-CHC-272465" role="implementing" type="21">Concern Universal</participating-org>'),
-            ET.XML(u'<participating-org ref="GB-CHC-272465" role="Funding" type="21">Concern Universal</participating-org>')
-        ])
+        participations = parse.participating_orgs(
+            ET.XML(u"""<wrap>
+            <participating-org ref="GB-CHC-272465" role="implementing" type="21">Concern Universal</participating-org>
+            <participating-org ref="GB-CHC-272465" role="Funding" type="21">Concern Universal</participating-org>
+            </wrap>
+            """)
+        )
         self.assertEquals(2, len(participations))
 
 
@@ -338,7 +345,7 @@ class TestTransaction(AppTestCase):
     def __init__(self, methodName='runTest'):
         super(TestTransaction, self).__init__(methodName)
         self.codelists = """
-            <transaction>
+            <activity><transaction>
               <transaction-type code="C"/>
               <value value-date="2012-12-31">4119000</value>
               <transaction-date iso-date="2012-12-31"/>
@@ -347,143 +354,147 @@ class TestTransaction(AppTestCase):
               <aid-type code="B01"/>
               <disbursement-channel code="2"/>
               <tied-status code="5"/>
-            </transaction>
+            </transaction></activity>
         """
 
     def test_missing_code(self):
-        transactions = parse.transactions([
-            ET.XML(u'''<transaction>
+        transactions = parse.transactions(
+            ET.XML(u'''<activity><transaction>
                 <transaction-date iso-date="31/12/2011" />
                 <description>test</description>
                 <value value-date="31/12/2011">116,017</value>
                 <transaction-type>Disbursement</transaction-type>
-                </transaction>''')
-        ])
+                </transaction></activity>''')
+        )
         self.assertEquals(0, len(transactions))
 
     def test_big_value(self):
-        transaction = parse.transactions([
-            ET.XML(u'''<transaction>
+        transaction = parse.transactions(
+            ET.XML(u'''<activity><transaction>
                 <transaction-date iso-date="31/12/2011" />
                 <description>test</description>
                 <value value-date="31/12/2011">2663000000</value>
                 <transaction-type code="D">Disbursement</transaction-type>
-                </transaction>''')
-        ])[0]
+                </transaction></activity>''')
+        )[0]
         self.assertEquals(2663000000, transaction.value_amount)
 
     @mock.patch('iatilib.parse.iati_decimal')
     def test_iati_int_called(self, mock):
-        transaction = parse.transactions([
-            ET.XML(u'''<transaction>
+        transaction = parse.transactions(
+            ET.XML(u'''<activity><transaction>
                 <transaction-date iso-date="31/12/2011" />
                 <description>test</description>
                 <value value-date="31/12/2011">-1000</value>
                 <transaction-type code="D">Disbursement</transaction-type>
-                </transaction>''')
-        ])[0]
+                </transaction></activity>''')
+        )[0]
         self.assertEquals(1, mock.call_count)
 
     def test_provider_activity_id(self):
-        sample = """<transaction>
+        sample = """<activity><transaction>
           <transaction-type code="IF"/>
           <provider-org ref="GB-1" provider-activity-id="GB-1-202907">
             DFID
           </provider-org>
           <value value-date="2012-07-02" currency="GBP">51693</value>
           <transaction-date iso-date="2012-07-02"/>
-        </transaction>
+        </transaction></activity>
         """
-        transaction = parse.transactions([ET.XML(sample)])[0]
+        transaction = parse.transactions(ET.XML(sample))[0]
         self.assertEquals(u'GB-1-202907', transaction.provider_org_activity_id)
 
     def test_provider_org_text(self):
-        sample = """<transaction>
+        sample = """<activity><transaction>
           <transaction-type code="IF"/>
           <provider-org>DFID</provider-org>
           <value value-date="2012-07-02" currency="GBP">51693</value>
           <transaction-date iso-date="2012-07-02"/>
-        </transaction>
+        </transaction></activity>
         """
-        transaction = parse.transactions([ET.XML(sample)])[0]
+        transaction = parse.transactions(ET.XML(sample))[0]
         self.assertEquals(u'DFID', transaction.provider_org_text)
 
     def test_receiver_activity_id(self):
-        sample = """<transaction>
+        sample = """<activity><transaction>
           <transaction-type code="IF"/>
           <receiver-org ref="GB-CHC-1068839" receiver-activity-id="GB-CHC-1068839-dfid_ag_11-13">Bond</receiver-org>
           <value value-date="2011-06-01" currency="GBP">271111</value>
           <transaction-date iso-date="2012-03-31"/>
-          </transaction>
+          </transaction></activity>
         """
-        transaction = parse.transactions([ET.XML(sample)])[0]
+        transaction = parse.transactions(ET.XML(sample))[0]
         self.assertEquals(u'GB-CHC-1068839-dfid_ag_11-13', transaction.receiver_org_activity_id)
 
     def test_receiver_org_text(self):
-        sample = """<transaction>
+        sample = """<activity><transaction>
           <transaction-type code="IF"/>
           <receiver-org ref="GB-CHC-1068839" receiver-activity-id="GB-CHC-1068839-dfid_ag_11-13">Bond</receiver-org>
           <value value-date="2012-07-02" currency="GBP">51693</value>
           <transaction-date iso-date="2012-07-02"/>
-        </transaction>
+        </transaction></activity>
         """
-        transaction = parse.transactions([ET.XML(sample)])[0]
+        transaction = parse.transactions(ET.XML(sample))[0]
         self.assertEquals(u'Bond', transaction.receiver_org_text)
 
     def test_description(self):
-        sample = """<transaction>
+        sample = """<activity><transaction>
           <transaction-type code="IF"/>
           <value value-date="2011-08-19" currency="GBP">29143</value>
           <description>Funds received from DFID for activities in Aug- Sept 2011</description>
           <transaction-date iso-date="2011-08-19"/>
-        </transaction> """
-        transaction = parse.transactions([ET.XML(sample)])[0]
+        </transaction></activity>"""
+        transaction = parse.transactions(ET.XML(sample))[0]
         self.assertEquals(
                 u'Funds received from DFID for activities in Aug- Sept 2011',
                 transaction.description
         )
 
     def test_flow_type(self):
-        transaction = parse.transactions([ET.XML(self.codelists)])[0]
+        transaction = parse.transactions(ET.XML(self.codelists))[0]
         self.assertEquals(u'30', transaction.flow_type.value) 
 
     def test_finance_type(self):
-        transaction = parse.transactions([ET.XML(self.codelists)])[0]
+        transaction = parse.transactions(ET.XML(self.codelists))[0]
         self.assertEquals(u'110', transaction.finance_type.value) 
 
     def test_aid_type(self):
-        transaction = parse.transactions([ET.XML(self.codelists)])[0]
+        transaction = parse.transactions(ET.XML(self.codelists))[0]
         self.assertEquals(u'B01', transaction.aid_type.value) 
 
     def test_tied_status(self):
-        transaction = parse.transactions([ET.XML(self.codelists)])[0]
+        transaction = parse.transactions(ET.XML(self.codelists))[0]
         self.assertEquals(u'5', transaction.tied_status.value) 
 
     def test_disbursement_channel(self):
-        transaction = parse.transactions([ET.XML(self.codelists)])[0]
+        transaction = parse.transactions(ET.XML(self.codelists))[0]
         self.assertEquals(u'2', transaction.disbursement_channel.value) 
 
 class TestBudget(TestCase):
 
     def parse_budget(self):
-        return parse.budgets([ET.XML("""
+        return parse.budgets(ET.XML("""
+            <wrapper>
             <budget type="1">
                 <period-end iso-date="2010-03-31" />
                 <value currency="USD">1840852</value>
             </budget>
-        """)])[0]
+            </wrapper>
+        """))[0]
 
     def test_budget_type(self):
         budget = self.parse_budget()
         self.assertEquals(budget.type, cl.BudgetType.original)
 
     def test_budget_type_looser(self):
-        budget = parse.budgets([ET.XML("""
+        budget = parse.budgets(ET.XML("""
+            <wrapper>
             <budget type="Original">
                 <period-end iso-date="2010-03-31" />
                 <value currency="USD">1840852</value>
             </budget>
-        """)])[0]
+            </wrapper>
+        """))[0]
         self.assertEquals(budget.type, cl.BudgetType.original)
 
     def test_budget_period_end(self):

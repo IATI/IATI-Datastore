@@ -16,13 +16,17 @@ def db_log_exception(job, exc_type, exc_value, tb):
     if resource:
         dataset = resource.dataset_id
         url = resource.url
-    log = Log()
-    log.logger = "fetch"
-    log.dataset = dataset
-    log.resource = url
-    log.msg = "Exception in job %r" % job.description
-    log.level = "error"
-    log.trace = traceback.format_exception(exc_type, exc_value, tb)
+    else:
+        dataset = "nodataset"
+        url = "noresource"
+    log = Log(
+        logger="job {0}".format(job.func_name),
+        dataset=dataset,
+        resource=url,
+        msg="Exception in job %r" % job.description,
+        level="error",
+        trace=traceback.format_exception(exc_type, exc_value, tb)
+    )
     db.session.add(log)
     db.session.commit()
     job.cancel()
