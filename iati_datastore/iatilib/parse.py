@@ -1,7 +1,6 @@
 import os
 import datetime
 import logging
-import traceback
 from decimal import Decimal
 from functools import partial
 from StringIO import StringIO
@@ -12,12 +11,17 @@ from requests.packages import charade
 
 from . import db
 from iatilib.model import (
-    Activity, Budget,  CountryPercentage, Log, Transaction, Organisation,
+    Activity, Budget, CountryPercentage, Transaction, Organisation,
     Participation, PolicyMarker, RegionPercentage, RelatedActivity,
     SectorPercentage)
 from iatilib import codelists as cl
+from iatilib import loghandlers
+from iatilib.loghandlers import DatasetMessage as _
 
 log = logging.getLogger("parser")
+sqlalchemyLog = loghandlers.SQLAlchemyHandler()
+sqlalchemyLog.setLevel(logging.WARNING)
+log.addHandler(sqlalchemyLog)
 
 NODEFAULT = object()
 
@@ -242,10 +246,7 @@ def related_activities(xml):
 
 def hierarchy(xml):
     xml_value = xval(xml, "@hierarchy", None)
-    try:
-        return cl.RelatedActivityType.from_string(xml_value)
-    except ValueError:
-        return None
+    return cl.RelatedActivityType.from_string(xml_value)
 
 def last_updated_datetime(xml):
     xml_value = xval(xml, "@last-updated-datetime", None)
@@ -253,10 +254,7 @@ def last_updated_datetime(xml):
 
 def default_language(xml):
     xml_value = xval(xml, "@xml:lang", None)
-    try:
-        return cl.Language.from_string(xml_value)
-    except ValueError:
-        return None
+    return cl.Language.from_string(xml_value)
 
 def _open_resource(xml_resource):
     if isinstance(xml_resource, basestring):
@@ -282,11 +280,7 @@ def from_codelist(codelist, path, xml):
     element = xml.xpath(path)
     if element:
         code = xval(element[0], "@code", None)
-        if code:
-            try:
-                return codelist.from_string(code)
-            except MissingValue:
-                pass
+        return codelist.from_string(code)
 
     return None
 
@@ -302,12 +296,12 @@ default_flow_type = partial(from_codelist, cl.FlowType, "./default-flow-type")
 default_aid_type = partial(from_codelist, cl.AidType, "./default-aid-type")
 default_tied_status = partial(from_codelist, cl.TiedStatus, "./default-tied-status")
 
-def activity(xml_resource):
+def activity(xml_resource, resource=None):
 
     xml = ET.parse(_open_resource(xml_resource))
 
     data = {
-        "iati_identifier": xval(xml, "./iati-identifier/text()"),
+        "iati_identifier": xval(xml.getroot(), "./iati-identifier/text()"),
         "title": xval(xml, "./title/text()", u""),
         "description": xval(xml, "./description/text()", u""),
         "raw_xml": ET.tostring(xml, encoding=unicode)
@@ -340,8 +334,23 @@ def activity(xml_resource):
     }
 
     for field, function in field_functions.items():
-        data[field] = function(xml)
+        try:
+            data[field] = function(xml)
+        except (MissingValue, InvalidDateError, ValueError), exe:
+            data[field] = None
 
+            if resource:
+                resource_url = resource.url
+                dataset = resource.dataset_id
+            else:
+                resource_url = ""
+                dataset = ""
+            log.warn(
+                _("Failed to import a valid {0} in activity {1}, error was: {2}".format(
+                    field, data['iati_identifier'], exe),
+                logger='activity_importer', dataset=dataset, resource=resource_url),
+                exc_info=exe
+            )
     return Activity(**data)
 
 
@@ -350,29 +359,18 @@ def document(xml_resource, resource=None):
     try:
         for event, elem in ET.iterparse(xmlfile):
             if elem.tag == 'iati-activity':
-                iati_identifier = ""
                 try:
-                    iati_identifier = xval(elem, "./iati-identifier/text()"),
-                    yield activity(elem)
-                except (MissingValue, InvalidDateError, ValueError), exe:
+                    yield activity(elem, resource=resource)
+                except MissingValue, exe:
                     if resource:
                         resource_url = resource.url
                         dataset = resource.dataset_id
                     else:
                         resource_url = ""
                         dataset = ""
-
-                    db.session.add(Log(
-                        dataset=dataset,
-                        resource=resource_url,
-                        logger="activity_importer",
-                        msg="Failed to import a valid activity {0}, error was: {1}".format(iati_identifier, exe),
-                        level="warn",
-                        trace=traceback.format_exc(),
-                        created_at=datetime.datetime.now()
-                    ))
-                    db.session.commit()
-                    log.warn("Failed to import a valid activity %r", exe)
+                    log.error(_("Failed to import a valid Activity error was: {0}".format(exe),
+                            logger='activity_importer', dataset=dataset, resource=resource_url),
+                            exc_info=exe)
 
                 elem.clear()
     except ET.XMLSyntaxError, exe:
