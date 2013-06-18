@@ -36,16 +36,16 @@ class TestJson(AppTestCase):
         output = json.load(StringIO(json_output))
 
         transactions = {
-            "transaction-type": { "-code": "C" },
+            "transaction-type": { "code": "C" },
             "value": {
-                "-value-date": "2012-12-31",
-                "#text": "4119000.00"
+                "value-date": "2012-12-31",
+                "text": "4119000.00"
             },
-            "transaction-date": { "-iso-date": "2012-12-31" },
-            "flow-type": { "-code": "30" },
-            "finance-type": { "-code": "110" },
-            "aid-type": { "-code": "A01" },
-            "disbursement-channel": { "-code": "4" },
-            "tied-status": { "-code": "5" }
+            "transaction-date": { "iso-date": "2012-12-31" },
+            "flow-type": { "code": "30" },
+            "finance-type": { "code": "110" },
+            "aid-type": { "code": "A01" },
+            "disbursement-channel": { "code": "4" },
+            "tied-status": { "code": "5" }
         }
         self.assertItemsEqual(transactions, output['results'][0]['transactions'][0])

@@ -176,11 +176,6 @@ class Organisation(db.Model, UniqueMixin):
     def __unicode__(self):
         return u"Organisation ref='%s'" % self.ref
 
-    def as_dict(self):
-        return {
-            "ref" : self.ref,
-            "name" : self.name,
-        }
 
 class ActivityWebsite(db.Model):
     __tablename__ = "website"
@@ -308,21 +303,6 @@ class Transaction(db.Model):
     def __repr__(self):
         return u"Transaction(id=%r)" % self.id
 
-    def as_dict(self):
-        return {
-            "transaction-type": { "-code": self.type.value },
-            "value": {
-                "-value-date": self.value.date,
-                "#text": self.value.amount,
-                "currency": self.value.currency.value,
-            },
-            "transaction-date": { "-iso-date": self.date },
-            "flow-type": { "-code": self.flow_type },
-            "finance-type": { "-code": self.finance_type },
-            "aid-type": { "-code": self.aid_type },
-            "disbursement-channel": { "-code": self.disbursement_channel},
-            "tied-status": { "-code": self.tied_status}
-        }
 
 
 class SectorPercentage(db.Model):

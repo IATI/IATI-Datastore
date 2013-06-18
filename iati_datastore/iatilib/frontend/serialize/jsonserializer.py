@@ -51,9 +51,25 @@ def json_rep(obj):
             "budgets": {},
         }
     if isinstance(obj, Organisation):
-        return obj.as_dict()
+        return {
+            "ref" : obj.ref,
+            "name" : obj.name,
+        }
     if isinstance(obj, Transaction):
-        return obj.as_dict()
+        return {
+            "transaction-type": { "code": obj.type.value },
+            "value": {
+                "value-date": obj.value.date,
+                "text": obj.value.amount,
+                "currency": obj.value.currency.value,
+            },
+            "transaction-date": { "iso-date": obj.date },
+            "flow-type": { "code": obj.flow_type },
+            "finance-type": { "code": obj.finance_type },
+            "aid-type": { "code": obj.aid_type },
+            "disbursement-channel": { "code": obj.disbursement_channel},
+            "tied-status": { "code": obj.tied_status}
+        }
     if isinstance(obj, Participation):
         return {
             "organisation": json_rep(obj.organisation),
