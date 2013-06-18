@@ -225,7 +225,7 @@ class PolicyMarker(db.Model):
         act_ForeignKey("activity.iati_identifier"),
         nullable=False,
         index=True)
-    code = sa.Column(codelists.PolicyMarker.db_type(), nullable=False, index=True)
+    code = sa.Column(codelists.PolicyMarker.db_type(), nullable=True, index=True)
     text = sa.Column(sa.Unicode(), nullable=True)
     activity = sa.orm.relationship("Activity")
 

@@ -142,21 +142,22 @@ def websites(xml, resource=None):
     return [xval(ele, "text()") for ele in xml.xpath("./activity-website") ]
 
 
-def recipient_country_percentages(element, resource=None):
+def recipient_country_percentages(element, resource=no_resource):
     xml = element.xpath("./recipient-country")
-    return [CountryPercentage(
-            name=xval(ele, "text()", None),
-            country=cl.Country.from_string(xval(ele, "@code")),
-            )
-            for ele in xml]
+    results = []
+    for ele in xml:
+        name = xval(ele, "text()", None)
+        code = from_codelist(cl.Country, "@code", ele, resource)
+        results.append(CountryPercentage(name=name, country=code))
+    return results
 
-def recipient_region_percentages(element, resource=None):
+def recipient_region_percentages(element, resource=no_resource):
     xml = element.xpath("./recipient-region")
-    return [RegionPercentage(
-            name=xval(ele, "text()", None),
-            region=cl.Region.from_string(xval(ele, "@code")),
-            )
-            for ele in xml]
+    return [ RegionPercentage(
+             name=xval(ele, "text()", None),
+             region=from_codelist(cl.Region, "@code", ele, resource),
+             ) for ele in xml
+           ]
 
 def currency(path, xml, resource=None):
     code = xval(xml, path, None)
@@ -190,14 +191,14 @@ def transactions(xml, resource=no_resource):
 
         field_functions = {
             'date' : partial(xpath_date, "transaction-date/@iso-date"),
-            'flow_type' : partial(from_codelist, cl.FlowType, "./flow-type"),
-            'finance_type' : partial(from_codelist, cl.FinanceType, "./finance-type"),
-            'aid_type' : partial(from_codelist, cl.AidType, "./aid-type"),
-            'tied_status' : partial(from_codelist, cl.TiedStatus, "./tied-status"),
-            'disbursement_channel' : partial(from_codelist, cl.DisbursementChannel, "./disbursement-channel"),
+            'flow_type' : partial(from_codelist, cl.FlowType, "./flow-type/@code"),
+            'finance_type' : partial(from_codelist, cl.FinanceType, "./finance-type/@code"),
+            'aid_type' : partial(from_codelist, cl.AidType, "./aid-type/@code"),
+            'tied_status' : partial(from_codelist, cl.TiedStatus, "./tied-status/@code"),
+            'disbursement_channel' : partial(from_codelist, cl.DisbursementChannel, "./disbursement-channel/@code"),
             'provider_org' : partial(from_org, "./provider-org"),
             'receiver_org' : partial(from_org, "./receiver-org"),
-            'type' : partial(from_codelist, cl.TransactionType, "./transaction-type"),
+            'type' : partial(from_codelist, cl.TransactionType, "./transaction-type/@code"),
             'value_currency' : partial(currency, "value/@currency"),
             'value_date' : partial(xpath_date, "value/@value-date"),
         }
@@ -232,14 +233,27 @@ def transactions(xml, resource=no_resource):
     return ret
 
 
-def sector_percentages(xml, resource=None):
+def sector_percentages(xml, resource=no_resource):
     ret = []
     for ele in xml.xpath("./sector"):
         sp = SectorPercentage()
-        if ele.xpath("@code") and xval(ele, "@code") in cl.Sector.values():
-            sp.sector = cl.Sector.from_string(xval(ele, "@code"))
-        if ele.xpath("@vocabulary"):
-            sp.vocabulary = cl.Vocabulary.from_string(xval(ele, "@vocabulary"))
+        field_functions = {
+            'sector' : partial(from_codelist, cl.Sector, "@code"),
+            'vocabulary' : partial(from_codelist, cl.Vocabulary, "@vocabulary"),
+        }
+
+        for field, function in field_functions.items():
+            try:
+                setattr(sp, field, function(ele, resource))
+            except (MissingValue, ValueError), exe:
+                iati_identifier = xval(xml, "/iati-activity/iati-identifier/text()", 'no_identifier')
+                log.warn(
+                    _("Failed to import a valid {0} in activity {1}, error was: {2}".format(
+                        field, iati_identifier, exe),
+                    logger='activity_importer', dataset=resource.dataset_id, resource=resource.url),
+                    exc_info=exe
+                )
+        
         if ele.xpath("@percentage"):
             sp.percentage = int(xval(ele, "@percentage"))
         if ele.xpath("text()"):
@@ -292,23 +306,10 @@ def budgets(xml, resource=no_resource):
 
 def policy_markers(xml, resource=no_resource):
     element = xml.xpath("./policy-marker")
-    results = []
-    for ele in element:
-        text=xval(ele, "text()", None)
-        try:
-            code = cl.PolicyMarker.from_string(xval(ele, "@code", None))
-        except ValueError as e:
-            code = None
-            iati_identifier = xval(xml, "/iati-activity/iati-identifier/text()", 'no_identifier')
-            log.warn(
-                _("Failed to import a valid policy-marker in activity {0}, error was: {1}".format(
-                    iati_identifier, e),
-                logger='activity_importer', dataset=resource.dataset_id, resource=resource.url),
-                exc_info=e
-            )
-        results.append(PolicyMarker(code=code, text=text))
-    return results
-
+    return [ PolicyMarker(
+                code=from_codelist(cl.PolicyMarker, "@code", ele, resource),
+                text=xval(ele, "text()", None),
+             ) for ele in element ]
 
 def related_activities(xml, resource=no_resource):
     element = xml.xpath("./related-activity")
@@ -316,9 +317,9 @@ def related_activities(xml, resource=no_resource):
     for ele in element:
         text=xval(ele, "text()", None)
         try:
-            code = cl.RelatedActivity.from_string(xval(ele, "@ref", None))
-        except ValueError as e:
-            code = None
+            ref = xval(ele, "@ref")
+            results.append(RelatedActivity(ref=ref, text=text))
+        except MissingValue as e:
             iati_identifier = xval(xml, "/iati-activity/iati-identifier/text()", 'no_identifier')
             log.warn(
                 _("Failed to import a valid related-activity in activity {0}, error was: {1}".format(
@@ -326,7 +327,6 @@ def related_activities(xml, resource=no_resource):
                 logger='activity_importer', dataset=resource.dataset_id, resource=resource.url),
                 exc_info=e
             )
-        results.append(RelatedActivity(ref=code, text=text))
     return results
 
 def hierarchy(xml, resource=None):
@@ -363,10 +363,24 @@ def _open_resource(xml_resource):
     return xmlfile
 
 
-def from_codelist(codelist, path, xml, resource=None):
-    code = xval(xml, path + "/@code", None)
+def from_codelist(codelist, path, xml, resource=no_resource):
+    code = xval(xml, path, None)
     if code:
-        return codelist.from_string(code)
+        try:
+            return codelist.from_string(code)
+        except (MissingValue, ValueError) as e:
+            iati_identifier = xval(xml, "/iati-activity/iati-identifier/text()",
+                'no_identifier')
+
+            log.warn(
+                _(("Failed to import a valid {0} in activity"
+                   "{1}, error was: {2}".format(codelist, iati_identifier, e)),
+                   logger='activity_importer',
+                   dataset=resource.dataset_id,
+                   resource=resource.url
+                ),
+                exc_info=e
+            )
     return None
 
 start_planned = partial(xval_date, "./activity-date[@type='start-planned']")
@@ -374,12 +388,12 @@ end_planned = partial(xval_date, "./activity-date[@type='end-planned']")
 start_actual = partial(xval_date, "./activity-date[@type='start-actual']")
 end_actual = partial(xval_date, "./activity-date[@type='end-actual']")
 
-activity_status = partial(from_codelist, cl.ActivityStatus, "./activity-status")
-collaboration_type = partial(from_codelist, cl.CollaborationType, "./collaboration-type")
-default_finance_type = partial(from_codelist, cl.FinanceType, "./default-finance-type")
-default_flow_type = partial(from_codelist, cl.FlowType, "./default-flow-type")
-default_aid_type = partial(from_codelist, cl.AidType, "./default-aid-type")
-default_tied_status = partial(from_codelist, cl.TiedStatus, "./default-tied-status")
+activity_status = partial(from_codelist, cl.ActivityStatus, "./activity-status/@code")
+collaboration_type = partial(from_codelist, cl.CollaborationType, "./collaboration-type/@code")
+default_finance_type = partial(from_codelist, cl.FinanceType, "./default-finance-type/@code")
+default_flow_type = partial(from_codelist, cl.FlowType, "./default-flow-type/@code")
+default_aid_type = partial(from_codelist, cl.AidType, "./default-aid-type/@code")
+default_tied_status = partial(from_codelist, cl.TiedStatus, "./default-tied-status/@code")
 
 def activity(xml_resource, resource=no_resource):
 
