@@ -1,10 +1,11 @@
-[![Build Status](https://api.travis-ci.org/okfn/iati-datastore.png)](https://travis-ci.org/[https://api.travis-ci.org/okfn/iati-datastore.png)]
+[![Build Status](https://api.travis-ci.org/okfn/iati-datastore.png)](https://travis-ci.org/[https://api.travis-ci.org/okfn/iati-datastore.png)
+
 IATI Datastore
 ==============
 
 The International Aid Transparency Initiative (IATI) aims to make
 information about aid spending easier to access. To this end,
-they publish the [IATI standardd](http://iatistandard.org) and keep a
+they publish the [IATI standard](http://iatistandard.org) and keep a
 [registry of data that form](http://www.iatiregistry.org).
 
 The *IATI Datastore* is provided to help users of IATI's data access the
