@@ -1,5 +1,3 @@
-[![Build Status](https://api.travis-ci.org/okfn/iati-datastore.png)](https://travis-ci.org/[https://api.travis-ci.org/okfn/iati-datastore.png)
-
 IATI Datastore
 ==============
 
@@ -13,9 +11,10 @@ extracts they are interested in. A public instance is available here:
 
 http://iati-datastore.herokuapp.com
 
-
 Installing for development
 ==========================
+
+[![Build Status](https://api.travis-ci.org/okfn/iati-datastore.png)](https://travis-ci.org/[https://api.travis-ci.org/okfn/iati-datastore.png)
 
 You will need [Redis](http://redis.io) and [Postgres](http://postgresql.org)
 to run the full setup.
