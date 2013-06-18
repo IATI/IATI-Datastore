@@ -163,7 +163,7 @@ def update_activities(resource_url):
         db.session.rollback()
         resource.last_parse_error = str(exc)
         db.session.add(Log(
-            dataset=resource.dataset,
+            dataset=resource.dataset_id,
             resource=resource.resource_url,
             logger="xml_parser",
             msg="Failed to parse XML file {0} error was".format(resource_url, exc),
