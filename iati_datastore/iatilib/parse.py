@@ -25,7 +25,8 @@ sqlalchemyLog.setLevel(logging.WARNING)
 log.addHandler(sqlalchemyLog)
 
 NODEFAULT = object()
-DummyResource = namedtuple('DummyResource', 'url dataset_id')
+no_resource = namedtuple('DummyResource', 'url dataset_id')('no_url', 'no_dataset')
+
 
 
 class ParserError(Exception):
@@ -91,7 +92,7 @@ def xpath_decimal(xpath, xml, resource=None):
     else:
         return None
 
-def parse_org(xml, resource=DummyResource('no_url', 'no_dataset')):
+def parse_org(xml, resource=no_resource):
     data = {
         "ref": xval(xml, "@ref", u""),
         "name": xval(xml, 'text()', u""),
@@ -102,7 +103,7 @@ def parse_org(xml, resource=DummyResource('no_url', 'no_dataset')):
         data['type'] = None
     return Organisation.as_unique(db.session, **data)
 
-def reporting_org(element, resource=DummyResource('no_url', 'no_dataset')):
+def reporting_org(element, resource=no_resource):
     xml = element.xpath("./reporting-org")[0]
     data = {
         "ref": xval(xml, "@ref"),
@@ -165,7 +166,7 @@ def currency(path, xml, resource=None):
         return None
         
 
-def transactions(xml, resource=DummyResource('no_url', 'no_dataset')):
+def transactions(xml, resource=no_resource):
     def from_cl(code, codelist):
         return codelist.from_string(code) if code is not None else None
 
@@ -206,7 +207,7 @@ def transactions(xml, resource=DummyResource('no_url', 'no_dataset')):
                 data[field] = function(ele, resource)
             except (MissingValue, InvalidDateError, ValueError), exe:
                 data[field] = None
-                iati_identifier = xval(xml, "/iati-identifier/text()", 'no_identifier')
+                iati_identifier = xval(xml, "/iati-activity/iati-identifier/text()", 'no_identifier')
                 log.warn(
                     _("Failed to import a valid {0} in activity {1}, error was: {2}".format(
                         field, iati_identifier, exe),
@@ -248,7 +249,7 @@ def sector_percentages(xml, resource=None):
     return ret
 
 
-def budgets(xml, resource=DummyResource('no_url', 'no_dataset')):
+def budgets(xml, resource=no_resource):
     def budget_type(ele, resource=None):
         typestr = xval(ele, "@type", None)
         if typestr:
@@ -289,7 +290,7 @@ def budgets(xml, resource=DummyResource('no_url', 'no_dataset')):
     return ret
 
 
-def policy_markers(xml, resource=DummyResource('no_url', 'no_dataset')):
+def policy_markers(xml, resource=no_resource):
     element = xml.xpath("./policy-marker")
     results = []
     for ele in element:
@@ -309,15 +310,30 @@ def policy_markers(xml, resource=DummyResource('no_url', 'no_dataset')):
     return results
 
 
-def related_activities(xml, resource=None):
+def related_activities(xml, resource=no_resource):
     element = xml.xpath("./related-activity")
-    return [ RelatedActivity(ref=xval(ele, "@ref"),
-                             text=xval(ele, "text()", None))
-             for ele in element ]
+    results = []
+    for ele in element:
+        text=xval(ele, "text()", None)
+        try:
+            code = cl.RelatedActivity.from_string(xval(ele, "@ref", None))
+        except ValueError as e:
+            code = None
+            iati_identifier = xval(xml, "/iati-activity/iati-identifier/text()", 'no_identifier')
+            log.warn(
+                _("Failed to import a valid related-activity in activity {0}, error was: {1}".format(
+                    iati_identifier, e),
+                logger='activity_importer', dataset=resource.dataset_id, resource=resource.url),
+                exc_info=e
+            )
+        results.append(RelatedActivity(ref=code, text=text))
+    return results
 
 def hierarchy(xml, resource=None):
     xml_value = xval(xml, "@hierarchy", None)
-    return cl.RelatedActivityType.from_string(xml_value)
+    if xml_value:
+        return cl.RelatedActivityType.from_string(xml_value)
+    return None
 
 def last_updated_datetime(xml, resource=None):
     xml_value = xval(xml, "@last-updated-datetime", None)
@@ -348,11 +364,9 @@ def _open_resource(xml_resource):
 
 
 def from_codelist(codelist, path, xml, resource=None):
-    element = xml.xpath(path)
-    if element:
-        code = xval(element[0], "@code", None)
+    code = xval(xml, path + "/@code", None)
+    if code:
         return codelist.from_string(code)
-
     return None
 
 start_planned = partial(xval_date, "./activity-date[@type='start-planned']")
@@ -367,7 +381,7 @@ default_flow_type = partial(from_codelist, cl.FlowType, "./default-flow-type")
 default_aid_type = partial(from_codelist, cl.AidType, "./default-aid-type")
 default_tied_status = partial(from_codelist, cl.TiedStatus, "./default-tied-status")
 
-def activity(xml_resource, resource=DummyResource('no_url', 'no_dataset')):
+def activity(xml_resource, resource=no_resource):
 
     xml = ET.parse(_open_resource(xml_resource))
 
@@ -419,7 +433,7 @@ def activity(xml_resource, resource=DummyResource('no_url', 'no_dataset')):
     return Activity(**data)
 
 
-def document(xml_resource, resource=DummyResource('no_url', 'no_dataset')):
+def document(xml_resource, resource=no_resource):
     xmlfile = _open_resource(xml_resource)
     try:
         for event, elem in ET.iterparse(xmlfile):
