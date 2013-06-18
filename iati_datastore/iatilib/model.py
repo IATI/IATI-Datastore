@@ -158,7 +158,7 @@ class Organisation(db.Model, UniqueMixin):
     __tablename__ = "organisation"
     id = sa.Column(sa.Integer, primary_key=True, nullable=False)
     ref = sa.Column(sa.Unicode, nullable=False)
-    name = sa.Column(sa.Unicode, default=u"", nullable=False)
+    name = sa.Column(sa.Unicode, default=u"", nullable=True)
     type = sa.Column(codelists.OrganisationType.db_type())
     __table_args__ = (sa.UniqueConstraint('ref', 'name', 'type'),)
 
@@ -292,9 +292,9 @@ class Transaction(db.Model):
     receiver_org_text = sa.Column(sa.Unicode, nullable=True)
     receiver_org_activity_id = sa.Column(sa.Unicode, nullable=True)
     type = sa.Column(codelists.TransactionType.db_type(), nullable=False)
-    date = sa.Column(sa.Date, nullable=False)
-    value_date = sa.Column(sa.Date, nullable=False)
-    value_amount = sa.Column(sa.Numeric(), nullable=False)
+    date = sa.Column(sa.Date, nullable=True)
+    value_date = sa.Column(sa.Date, nullable=True)
+    value_amount = sa.Column(sa.Numeric(), nullable=True)
     value_currency = sa.Column(codelists.Currency.db_type())
     value = sa.orm.composite(TransactionValue, value_date, value_amount,
                              value_currency)
@@ -353,7 +353,7 @@ class Budget(db.Model):
     period_end = sa.Column(sa.Date, nullable=True)
     period_start = sa.Column(sa.Date, nullable=True)
     value_currency = sa.Column(codelists.Currency.db_type())
-    value_amount = sa.Column(sa.Numeric(), nullable=False)
+    value_amount = sa.Column(sa.Numeric(), nullable=True)
     activity = sa.orm.relationship("Activity")
 
 
