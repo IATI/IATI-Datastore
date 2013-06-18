@@ -189,6 +189,11 @@ def period_end_date(budget):
 def budget_value(budget):
     return budget.value_amount
 
+def value_currency(transaction):
+    if transaction.value_currency:
+        return transaction.value_currency.value
+    else:
+        return u"" 
 
 class FieldDict(OrderedDict):
     common_field = {
@@ -492,7 +497,7 @@ csv_activity_by_sector = CSVSerializer((
 
 common_transaction_csv = (
     (u'transaction_ref', lambda t: t.ref),
-    (u'transaction_value_currency', lambda t: t.value_currency.value),
+    (u'transaction_value_currency', value_currency),
     (u'transaction_value_value-date', lambda t: t.value_date),
     (u'transaction_provider-org', lambda t: t.provider_org_text),
     (u'transaction_provider-org_ref', provider_org),

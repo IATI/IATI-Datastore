@@ -295,7 +295,7 @@ class Transaction(db.Model):
     date = sa.Column(sa.Date, nullable=False)
     value_date = sa.Column(sa.Date, nullable=False)
     value_amount = sa.Column(sa.Numeric(), nullable=False)
-    value_currency = sa.Column(codelists.Currency.db_type(), nullable=False)
+    value_currency = sa.Column(codelists.Currency.db_type())
     value = sa.orm.composite(TransactionValue, value_date, value_amount,
                              value_currency)
 

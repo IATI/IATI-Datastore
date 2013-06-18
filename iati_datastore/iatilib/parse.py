@@ -3,6 +3,7 @@ import datetime
 import logging
 from decimal import Decimal
 from functools import partial
+from collections import namedtuple
 from StringIO import StringIO
 
 from lxml import etree as ET
@@ -24,6 +25,7 @@ sqlalchemyLog.setLevel(logging.WARNING)
 log.addHandler(sqlalchemyLog)
 
 NODEFAULT = object()
+DummyResource = namedtuple('DummyResource', 'url dataset_id')
 
 
 class ParserError(Exception):
@@ -58,8 +60,12 @@ def xval(ele, xpath, default=NODEFAULT):
             raise MissingValue("Missing %r from %s" % (xpath, ele.tag))
         return default
 
-def xval_date(xpath, xml):
+def xval_date(xpath, xml, resource=None):
     iso_date = xval(xml, xpath + "/text()", None) or xval(xml, xpath + "/@iso-date", None)
+    return iati_date(iso_date)
+
+def xpath_date(xpath, xml, resource=None):
+    iso_date = xval(xml, xpath)
     return iati_date(iso_date)
 
 def iati_date(iso_date):
@@ -78,18 +84,25 @@ def iati_int(str):
 def iati_decimal(str):
     return Decimal(str.replace(",", ""))
 
-def parse_org(xml):
+def parse_org(xml, resource=DummyResource('no_url', 'no_dataset')):
     data = {
         "ref": xval(xml, "@ref"),
         "name": xval(xml, 'text()', u""),
     }
     try:
         data['type'] = cl.OrganisationType.from_string(xval(xml, "@type"))
-    except (MissingValue, ValueError):
+    except (MissingValue, ValueError) as exe:
         data['type'] = None
+        iati_identifier = xval(xml, "/iati-identifier/text()", 'no_identifier')
+        log.warn(
+            _("Failed to import a valid OrganisationType in activity {0}, error was: {1}".format(
+                iati_identifier, exe),
+            logger='activity_importer', dataset=resource.dataset_id, resource=resource.url),
+            exc_info=exe
+        )
     return Organisation.as_unique(db.session, **data)
 
-def reporting_org(element):
+def reporting_org(element, resource=DummyResource('no_url', 'no_dataset')):
     xml = element.xpath("./reporting-org")[0]
     data = {
         "ref": xval(xml, "@ref"),
@@ -99,12 +112,20 @@ def reporting_org(element):
         data.update({
             "type": cl.OrganisationType.from_string(xval(xml, "@type"))
         })
-    except MissingValue:
+    except MissingValue as exe:
         data['type'] = None
+        iati_identifier = xval(xml, "/iati-identifier/text()", 'no_identifier')
+        log.warn(
+            _("Failed to import a valid reporting-org_type in activity {0}, error was: {1}".format(
+                iati_identifier, exe),
+            logger='activity_importer', dataset=resource.dataset_id, resource=resource.url),
+            exc_info=exe
+        )
+
     return Organisation.as_unique(db.session, **data)
 
 
-def participating_orgs(xml):
+def participating_orgs(xml, resource=None):
     ret = []
     seen = set()
     for ele in [e for e in xml.xpath("./participating-org") if e.xpath("@ref")]:
@@ -116,11 +137,11 @@ def participating_orgs(xml):
     return ret
 
 
-def websites(xml):
+def websites(xml, resource=None):
     return [xval(ele, "text()") for ele in xml.xpath("./activity-website") ]
 
 
-def recipient_country_percentages(element):
+def recipient_country_percentages(element, resource=None):
     xml = element.xpath("./recipient-country")
     return [CountryPercentage(
             name=xval(ele, "text()", None),
@@ -128,7 +149,7 @@ def recipient_country_percentages(element):
             )
             for ele in xml]
 
-def recipient_region_percentages(element):
+def recipient_region_percentages(element, resource=None):
     xml = element.xpath("./recipient-region")
     return [RegionPercentage(
             name=xval(ele, "text()", None),
@@ -136,60 +157,79 @@ def recipient_region_percentages(element):
             )
             for ele in xml]
 
-
+def currency(path, xml, resource=None):
+    code = xval(xml, path + "/@currency", None)
+    if code:
+        return cl.Currency.from_string(code)
         
 
-def transactions(xml):
+def transactions(xml, resource=DummyResource('no_url', 'no_dataset')):
     def from_cl(code, codelist):
         return codelist.from_string(code) if code is not None else None
 
-    def from_org(ele, path):
+    def from_org(path, ele, resource=None):
         organisation = ele.xpath(path)
         if organisation:
-            try:
-                return parse_org(organisation[0])
-            except MissingValue:
-                return None
+            return parse_org(organisation[0])
         #return Organisation.as_unique(db.session, ref=org) if org else Nonejk
 
     def process(ele):
-        return Transaction(
-            date=iati_date(xval(ele, "transaction-date/@iso-date")),
-            description=xval(ele, "description/text()", None),
-            flow_type=from_cl(xval(ele, "flow-type/@code", None), cl.FlowType),
-            finance_type=from_cl(xval(ele, "finance-type/@code", None),
-                                 cl.FinanceType),
-            aid_type=from_cl(xval(ele, "aid-type/@code", None),cl.AidType),
-            tied_status=from_cl(xval(ele, "tied-status/@code", None), cl.TiedStatus),
-            disbursement_channel=from_cl(xval(ele,"disbursement-channel/@code",
-                                       None), cl.DisbursementChannel),
-
-            provider_org=from_org(ele, "provider-org"),
-            provider_org_text=xval(ele, "provider-org/text()", None),
-            provider_org_activity_id=xval(
+        data = {
+            'description' : xval(ele, "description/text()", None),
+            'provider_org_text' : xval(ele, "provider-org/text()", None),
+            'provider_org_activity_id' : xval(
                                 ele, "provider-org/@provider-activity-id", None),
-            receiver_org=from_org(ele, "receiver-org"),
-            receiver_org_text=xval(ele, "receiver-org/text()", None),
-            receiver_org_activity_id=xval(
-                                ele, "receiver-org/@receiver-activity-id", None),
-            ref = xval(ele, "@ref", default=None),
-            type=cl.TransactionType.from_string(
-                                xval(ele, "transaction-type/@code")),
-            value_date=iati_date(xval(ele, "value/@value-date")),
-            value_amount=iati_decimal(xval(ele, "value/text()")),
-            value_currency=from_cl(xval(ele, "../@default-currency", None), cl.Currency),
-        )
+            'receiver_org_text' : xval(ele, "receiver-org/text()", None),
+            'receiver_org_activity_id' : xval(ele, "receiver-org/@receiver-activity-id", None),
+            'ref' : xval(ele, "@ref", None),
+            'value_amount' : iati_decimal(xval(ele, "value/text()")),
+        }
+
+        field_functions = {
+            'date' : partial(xpath_date, "transaction-date/@iso-date"),
+            'flow_type' : partial(from_codelist, cl.FlowType, "./flow-type"),
+            'finance_type' : partial(from_codelist, cl.FinanceType, "./finance-type"),
+            'aid_type' : partial(from_codelist, cl.AidType, "./aid-type"),
+            'tied_status' : partial(from_codelist, cl.TiedStatus, "./tied-status"),
+            'disbursement_channel' : partial(from_codelist, cl.DisbursementChannel, "./disbursement-channel"),
+            'provider_org' : partial(from_org, "./provider-org"),
+            'receiver_org' : partial(from_org, "./receiver-org"),
+            'type' : partial(from_codelist, cl.TransactionType, "./transaction-type"),
+            'value_currency' : partial(currency, "value"),
+            'value_date' : partial(xpath_date, "value/@value-date"),
+        }
+
+        for field, function in field_functions.items():
+            try:
+                data[field] = function(ele, resource)
+            except (MissingValue, InvalidDateError, ValueError), exe:
+                data[field] = None
+                iati_identifier = xval(xml, "/iati-identifier/text()", 'no_identifier')
+                log.warn(
+                    _("Failed to import a valid {0} in activity {1}, error was: {2}".format(
+                        field, iati_identifier, exe),
+                    logger='activity_importer', dataset=resource.dataset_id, resource=resource.url),
+                    exc_info=exe
+                )
+        
+        return Transaction(**data)
 
     ret = []
     for ele in xml.xpath("./transaction"):
         try:
             ret.append(process(ele))
-        except MissingValue:
-            pass
+        except MissingValue as exe:
+            iati_identifier = xval(xml, "/iati-identifier/text()", 'no_identifier')
+            log.warn(
+                _("Failed to import a valid transaction in activity {0}, error was: {1}".format(
+                    iati_identifier, exe),
+                logger='activity_importer', dataset=resource.dataset_id, resource=resource.url),
+                exc_info=exe
+            )
     return ret
 
 
-def sector_percentages(xml):
+def sector_percentages(xml, resource=None):
     ret = []
     for ele in xml.xpath("./sector"):
         sp = SectorPercentage()
@@ -206,7 +246,7 @@ def sector_percentages(xml):
     return ret
 
 
-def budgets(xml):
+def budgets(xml, resource=None):
     def budget_type(ele):
         typestr = xval(ele, "@type")
         try:
@@ -227,32 +267,38 @@ def budgets(xml):
     for ele in xml.xpath("./budget"):
         try:
             ret.append(process(ele))
-        except MissingValue:
-            pass
+        except MissingValue as exe:
+            iati_identifier = xval(xml, "/iati-identifier/text()", 'no_identifier')
+            log.warn(
+                _("Failed to import a valid budget in activity {0}, error was: {1}".format(
+                    iati_identifier, exe),
+                logger='activity_importer', dataset=resource.dataset_id, resource=resource.url),
+                exc_info=exe
+            )
     return ret
 
 
-def policy_markers(xml):
+def policy_markers(xml, resource=None):
     element = xml.xpath("./policy-marker")
     return [ PolicyMarker(code=cl.PolicyMarker.from_string(xval(ele, "@code")),
                           text=xval(ele, "text()", None),
             ) for ele in element ]
 
-def related_activities(xml):
+def related_activities(xml, resource=None):
     element = xml.xpath("./related-activity")
     return [ RelatedActivity(ref=xval(ele, "@ref"),
                              text=xval(ele, "text()", None))
              for ele in element ]
 
-def hierarchy(xml):
+def hierarchy(xml, resource=None):
     xml_value = xval(xml, "@hierarchy", None)
     return cl.RelatedActivityType.from_string(xml_value)
 
-def last_updated_datetime(xml):
+def last_updated_datetime(xml, resource=None):
     xml_value = xval(xml, "@last-updated-datetime", None)
     return iati_date(xml_value)
 
-def default_language(xml):
+def default_language(xml, resource=None):
     xml_value = xval(xml, "@xml:lang", None)
     return cl.Language.from_string(xml_value)
 
@@ -276,7 +322,7 @@ def _open_resource(xml_resource):
     return xmlfile
 
 
-def from_codelist(codelist, path, xml):
+def from_codelist(codelist, path, xml, resource=None):
     element = xml.xpath(path)
     if element:
         code = xval(element[0], "@code", None)
@@ -296,7 +342,7 @@ default_flow_type = partial(from_codelist, cl.FlowType, "./default-flow-type")
 default_aid_type = partial(from_codelist, cl.AidType, "./default-aid-type")
 default_tied_status = partial(from_codelist, cl.TiedStatus, "./default-tied-status")
 
-def activity(xml_resource, resource=None):
+def activity(xml_resource, resource=DummyResource('no_url', 'no_dataset')):
 
     xml = ET.parse(_open_resource(xml_resource))
 
@@ -335,26 +381,19 @@ def activity(xml_resource, resource=None):
 
     for field, function in field_functions.items():
         try:
-            data[field] = function(xml)
+            data[field] = function(xml, resource)
         except (MissingValue, InvalidDateError, ValueError), exe:
             data[field] = None
-
-            if resource:
-                resource_url = resource.url
-                dataset = resource.dataset_id
-            else:
-                resource_url = ""
-                dataset = ""
             log.warn(
                 _("Failed to import a valid {0} in activity {1}, error was: {2}".format(
                     field, data['iati_identifier'], exe),
-                logger='activity_importer', dataset=dataset, resource=resource_url),
+                logger='activity_importer', dataset=resource.dataset_id, resource=resource.url),
                 exc_info=exe
             )
     return Activity(**data)
 
 
-def document(xml_resource, resource=None):
+def document(xml_resource, resource=DummyResource('no_url', 'no_dataset')):
     xmlfile = _open_resource(xml_resource)
     try:
         for event, elem in ET.iterparse(xmlfile):
@@ -362,14 +401,8 @@ def document(xml_resource, resource=None):
                 try:
                     yield activity(elem, resource=resource)
                 except MissingValue, exe:
-                    if resource:
-                        resource_url = resource.url
-                        dataset = resource.dataset_id
-                    else:
-                        resource_url = ""
-                        dataset = ""
                     log.error(_("Failed to import a valid Activity error was: {0}".format(exe),
-                            logger='activity_importer', dataset=dataset, resource=resource_url),
+                            logger='activity_importer', dataset=resource.dataset_id, resource=resource.url),
                             exc_info=exe)
 
                 elem.clear()

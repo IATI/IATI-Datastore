@@ -113,15 +113,15 @@ class TestParseActivity(AppTestCase):
 
     def test_transaction_currency(self):
         # currency is picked up from default currency
-        act = parse.activity(fixture("default_currency.xml"))
+        act = parse.activity(fixture("transaction_provider.xml"))
         self.assertEquals(
-            cl.Currency.us_dollar,
+            cl.Currency.pound_sterling,
             act.transactions[0].value_currency)
 
     def test_transaction_value_composite(self):
-        act = parse.activity(fixture("default_currency.xml"))
+        act = parse.activity(fixture("transaction_provider.xml"))
         self.assertEquals(
-            (datetime.date(2009, 10, 01), 3991675, cl.Currency.us_dollar),
+            (datetime.date(2011, 8, 19), 29143, cl.Currency.pound_sterling),
             act.transactions[0].value)
 
     def test_transaction_ref(self):
@@ -366,7 +366,7 @@ class TestTransaction(AppTestCase):
                 <transaction-type>Disbursement</transaction-type>
                 </transaction></activity>''')
         )
-        self.assertEquals(0, len(transactions))
+        self.assertEquals(1, len(transactions))
 
     def test_big_value(self):
         transaction = parse.transactions(
