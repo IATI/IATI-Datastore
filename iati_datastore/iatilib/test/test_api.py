@@ -60,7 +60,7 @@ class TestEmptyDb_JSON(ClientTestCase):
     def test_json_results(self):
         resp = self.client.get(self.url)
         js = json.loads(resp.data)
-        self.assertEquals(js["results"], [])
+        self.assertEquals(js["iati-activities"], [])
 
 
 class TestEmptyDb_XML(ClientTestCase):

@@ -44,7 +44,7 @@ def json_rep(obj):
             "start-actual": obj.start_actual,
             "end-actual": obj.end_actual,
             "activity-websites": list(obj.websites),
-            "transactions": [json_rep(o) for o in obj.transactions],
+            "transaction": [json_rep(o) for o in obj.transactions],
             "participating-orgs": [json_rep(o) for o in obj.participating_orgs],
             "recipient-countries": [json_rep(o) for o in obj.recipient_country_percentages],
             "sector-percentages": [json_rep(o) for o in obj.sector_percentages],
@@ -57,12 +57,12 @@ def json_rep(obj):
         }
     if isinstance(obj, Transaction):
         return {
-            "transaction-type": { "code": obj.type.value },
             "value": {
                 "value-date": obj.value.date,
                 "text": obj.value.amount,
                 "currency": obj.value.currency.value,
             },
+            "transaction-type": { "code": obj.type.value },
             "transaction-date": { "iso-date": obj.date },
             "flow-type": { "code": obj.flow_type },
             "finance-type": { "code": obj.finance_type },
@@ -112,7 +112,7 @@ def json(pagination):
     return jsonlib.dumps({
         "ok": True,
         "total-count": pagination.total,
-        "results": [json_rep(a) for a in pagination.items]
+        "iati-activities": [json_rep(a) for a in pagination.items]
     },
     indent=2 if current_app.debug else 0,
     cls=JSONEncoder)

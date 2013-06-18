@@ -48,4 +48,4 @@ class TestJson(AppTestCase):
             "disbursement-channel": { "code": "4" },
             "tied-status": { "code": "5" }
         }
-        self.assertItemsEqual(transactions, output['results'][0]['transactions'][0])
+        self.assertItemsEqual(transactions, output['iati-activities'][0]['transaction'][0])
