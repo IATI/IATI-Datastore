@@ -221,7 +221,10 @@ def documents(verbose=False):
         for resource in dataset.resources:
             if verbose:
                 print "Fetching %s" % resource.url,
-            fetch_resource(resource)
+            try:
+                fetch_resource(resource)
+            except IOError:
+                print "Failed to fetch %s" % resource.url,
             if verbose:
                 print resource.last_status_code
             db.session.commit()
