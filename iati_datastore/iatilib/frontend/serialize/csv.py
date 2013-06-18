@@ -195,6 +195,12 @@ def value_currency(transaction):
     else:
         return u"" 
 
+def activity_default_currency(activity):
+    if activity.default_currency:
+        return activity.default_currency.value
+    else:
+        return u""
+
 class FieldDict(OrderedDict):
     common_field = {
         u"iati-identifier": iati_identifier,
@@ -254,6 +260,7 @@ class FieldDict(OrderedDict):
         u"recipient-region-code": recipient_region_code,
         u"recipient-region": recipient_region,
         u"recipient-region-percentage": recipient_region_percentage,
+        u"default-currency": activity_default_currency,
         u"currency": currency,
         u'total-Commitment': total("commitments"),
         u"total-Disbursement": total("disbursements"),
@@ -359,6 +366,7 @@ csv = CSVSerializer((
     u"default-flow-type-code",
     u"default-aid-type-code",
     u"default-tied-status-code",
+    u"default-currency",
     u"currency",
     u'total-Commitment',
     u"total-Disbursement",

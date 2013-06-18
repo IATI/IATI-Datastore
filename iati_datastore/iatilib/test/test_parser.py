@@ -55,6 +55,13 @@ class TestParseActivity(AppTestCase):
             [u"http://portfolio.theglobalfund.org/en/Grant/Index/ARM-202-G05-H-00"],
             act.websites)
 
+    def test_default_currency(self):
+        act = parse.activity(fixture("default_currency.xml"))
+        self.assertEquals(
+            cl.Currency.us_dollar,
+            act.default_currency
+        )
+
     def test_participating_org(self):
         act = parse.activity(fixture("default_currency.xml"))
         self.assertEquals(

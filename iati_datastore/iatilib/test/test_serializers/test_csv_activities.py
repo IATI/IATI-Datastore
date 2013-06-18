@@ -296,6 +296,13 @@ class TestCSVExample(CSVTstMixin, TestCase):
         )])
         self.assertField({"sector-percentage": "60;40"}, data[0])
 
+    def test_default_currency(self):
+        data = self.process([fac.ActivityFactory.build(
+            default_currency=cl.Currency.us_dollar
+        )])
+        self.assertField({"default-currency": "USD"}, data[0])
+
+
     def test_currency(self):
         data = self.process([fac.ActivityFactory.build(
             transactions=[
