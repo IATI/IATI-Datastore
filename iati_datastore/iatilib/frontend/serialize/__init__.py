@@ -11,10 +11,10 @@ def xml(pagination):
     out = u"""<result>
     <ok>True</ok>
     <total-count>{0}</total-count>
-    <page>{1}</page>
-    <per_page>{2}</per_page>
+    <offset>{1}</offset>
+    <limit>{2}</limit>
     <iati-activities generated-datetime='{3}'>""".format(pagination.total,
-            pagination.page, pagination.per_page, datetime.now().isoformat())
+            pagination.offset, pagination.limit, datetime.now().isoformat())
     for activity in pagination.items:
         out += activity.raw_xml
     out += u"</iati-activities></result>"

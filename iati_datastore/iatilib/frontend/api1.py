@@ -1,3 +1,4 @@
+from collections import namedtuple
 from datetime import datetime
 import sqlalchemy as sa
 from flask import (request, Response, Blueprint, jsonify, abort,
@@ -14,6 +15,7 @@ from . import dsfilter, validators, serialize
 
 
 api = Blueprint('api', __name__)
+Scrollination = namedtuple('Scrollination', 'query offset limit total items')
 
 def dictify(resource):
     fields = []
@@ -161,13 +163,13 @@ class DataStoreView(MethodView):
     def streaming(self):
         return self.validate_args().get("stream", False)
 
-    def paginate(self, query, page, per_page):
-        if page < 1:
+    def paginate(self, query, offset, limit):
+        if offset < 0:
             abort(404)
-        items = query.limit(per_page).offset((page - 1) * per_page).all()
-        if not items and page != 1:
+        items = query.limit(limit).offset(offset).all()
+        if not items and offset != 0:
             abort(404)
-        return Pagination(query, page, per_page, query.count(), items)
+        return Scrollination(query, offset, limit, query.count(), items)
 
     def validate_args(self):
         if not hasattr(self, "_valid_args"):
@@ -190,8 +192,8 @@ class DataStoreView(MethodView):
         else:
             pagination = self.paginate(
                 query,
-                valid_args.get("page", 1),
-                valid_args.get("per_page", 50),
+                valid_args.get("offset", 0),
+                valid_args.get("limit", 50),
             )
             body = u"".join(serializer(pagination))
         return Response(body, mimetype=mimetype)

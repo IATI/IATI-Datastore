@@ -220,13 +220,13 @@ class TestManyActivities(ClientTestCase):
             self.assertEquals(2, len(list(reader)))
 
 
-class TestPagination(ClientTestCase):
+class TestPgination(ClientTestCase):
     def test_missing_page(self):
-        resp = self.client.get('/api/1/access/activity?page=2')
+        resp = self.client.get('/api/1/access/activity?offset=100')
         self.assertEquals(404, resp.status_code)
 
     def test_invalid_page(self):
-        resp = self.client.get('/api/1/access/activity?page=-1')
+        resp = self.client.get('/api/1/access/activity?offset=-1')
         self.assertEquals(400, resp.status_code)
 
 

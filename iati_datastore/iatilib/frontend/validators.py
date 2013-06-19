@@ -11,8 +11,8 @@ def apidate(value):
         raise Invalid(u"Date must be in the form yyyy-mm-dd")
 
 activity_api_args = v.Schema({
-    "per_page": v.All(v.Coerce(int), v.Range(max=250000)),
-    "page": v.All(v.Coerce(int), v.Range(min=1)),
+    "limit": v.All(v.Coerce(int), v.Range(max=250000)),
+    "offset": v.All(v.Coerce(int), v.Range(min=1)),
     "date": apidate,
     "stream": v.All(v.Coerce(bool)),
     'recipient-country' : v.All(v.Coerce(str)),

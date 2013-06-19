@@ -19,12 +19,12 @@ class TestApiDate(TestCase):
 class TestApiSchema(TestCase):
     def test_max_per_page(self):
         with self.assertRaises(validators.MultipleInvalid):
-            validators.activity_api_args({"per_page": 1000000})
+            validators.activity_api_args({"limit": 1000000})
 
     def test_per_page_string(self):
         self.assertEquals(
-            validators.activity_api_args({"per_page": "10"}),
-            {"per_page": 10}
+            validators.activity_api_args({"limit": "10"}),
+            {"limit": 10}
             )
 
     def test_date(self):

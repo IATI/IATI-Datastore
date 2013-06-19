@@ -3,7 +3,7 @@ from StringIO import StringIO
 
 import unicodecsv
 
-TestWrapper = namedtuple('TestWrapper', 'items total page per_page')
+TestWrapper = namedtuple('TestWrapper', 'items total offset limit')
 
 
 def load_csv(data):
