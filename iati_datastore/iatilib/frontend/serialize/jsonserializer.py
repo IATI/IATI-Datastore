@@ -27,8 +27,9 @@ class JSONEncoder(jsonlib.JSONEncoder):
 def code(attr):
     if attr:
         return {
-            "value": attr.value,
-            "description": attr.description
+             "code": attr.value
+        #    "value": attr.value,
+        #    "description": attr.description
         }
     return None
 
@@ -60,7 +61,7 @@ def json_rep(obj):
             "value": {
                 "value-date": obj.value.date,
                 "text": obj.value.amount,
-                "currency": obj.value.currency.value,
+                "currency": code(obj.value.currency),
             },
             "transaction-type": { "code": obj.type.value },
             "transaction-date": { "iso-date": obj.date },
@@ -73,15 +74,12 @@ def json_rep(obj):
     if isinstance(obj, Participation):
         return {
             "organisation": json_rep(obj.organisation),
-            "role": {
-                "code": obj.role.value,
-                "description": obj.role.description,
-            }
+            "role": code(obj.role), 
         }
     if isinstance(obj, CountryPercentage):
         return {
             "country": {
-                "code": obj.country.value,
+                "code": code(obj.country),
                 "name": obj.country.description,
             },
             "percentage": obj.percentage,
@@ -94,10 +92,7 @@ def json_rep(obj):
         }
     if isinstance(obj, Budget):
         return {
-            "type": {
-                "code": obj.type.value,
-                "name": obj.type.description,
-            },
+            "type": code(obj.type), 
             "period-start": obj.period_start,
             "period-end": obj.period_end,
             "value": {
