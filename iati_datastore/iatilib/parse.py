@@ -458,7 +458,17 @@ def document(xml_resource, resource=no_resource):
                     log.error(_("Failed to import a valid Activity error was: {0}".format(exe),
                             logger='activity_importer', dataset=resource.dataset_id, resource=resource.url),
                             exc_info=exe)
-
                 elem.clear()
     except ET.XMLSyntaxError, exe:
         raise XMLError()
+
+def document_metadata(xml_resource):
+    license = None
+    version = None
+    for event, elem in ET.iterparse(_open_resource(xml_resource)):
+        if elem.tag == '{http://iatiregistry.org/ns/record#}registry-record':
+            license = elem.get('license')
+        elif elem.tag == 'iati-activities':
+            version = elem.get('version')
+        elem.clear()
+    return license, version

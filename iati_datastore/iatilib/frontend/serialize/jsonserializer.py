@@ -33,6 +33,7 @@ def code(attr):
         }
     return None
 
+
 def json_rep(obj):
     if isinstance(obj, Activity):
         return {
@@ -40,6 +41,8 @@ def json_rep(obj):
             "title": obj.title,
             "description": obj.description,
             "reporting-org": json_rep(obj.reporting_org),
+            "license" : obj.resource.license if obj.resource else None,
+            "version" : obj.resource.version if obj.resource else None,
             "start-planned": obj.start_planned,
             "end-planned": obj.end_planned,
             "start-actual": obj.start_actual,
@@ -50,6 +53,7 @@ def json_rep(obj):
             "recipient-country": [json_rep(o) for o in obj.recipient_country_percentages],
             "sector": [json_rep(o) for o in obj.sector_percentages],
             "budget": {},
+            
         }
     if isinstance(obj, Organisation):
         return {

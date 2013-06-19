@@ -368,6 +368,8 @@ class Resource(db.Model):
     document = sa.orm.deferred(sa.Column(sa.LargeBinary))
     etag = sa.Column(sa.Unicode)
     activities = act_relationship("Activity", cascade="all,delete", passive_deletes=True)
+    license = sa.Column(sa.Unicode)
+    version = sa.Column(sa.Unicode)
 
 
 class Log(db.Model):

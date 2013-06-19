@@ -116,6 +116,9 @@ def parse_resource(resource):
 
     Activity.query.filter_by(resource_url=resource.url).delete()
     resource.activities = list(parse.document(resource.document, resource))
+    license, version = parse.document_metadata(resource.document)
+    resource.license = license
+    resource.version = version
 
     #add any identifiers that are no longer present to deleted_activity table
     new_identifiers = set([ i.iati_identifier for i in resource.activities ])
@@ -128,9 +131,10 @@ def parse_resource(resource):
         db.session.add_all(deleted)
 
     #remove any new identifiers from the deleted_activity table
-    db.session.query(DeletedActivity)\
-            .filter(DeletedActivity.iati_identifier.in_(new_identifiers))\
-            .delete(synchronize_session="fetch")
+    if new_identifiers:
+        db.session.query(DeletedActivity)\
+                .filter(DeletedActivity.iati_identifier.in_(new_identifiers))\
+                .delete(synchronize_session="fetch")
 
     log.info(
         "Parsed %d activities from %s",
@@ -381,3 +385,4 @@ def update(verbose=False, limit=None, dataset=None):
                 print "Enquing %s" % dataset.name
             rq.enqueue(update_dataset, args=(dataset.name,), result_ttl=0)
 
+            import ipdb; ipdb.set_trace()

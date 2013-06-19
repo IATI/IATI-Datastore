@@ -185,6 +185,16 @@ class TestCrawler(AppTestCase):
             [da.iati_identifier for da in DeletedActivity.query.all()]
         )
 
+    def test_document_metadata(self):
+        res = fac.ResourceFactory.create(
+            url=u"http://res2",
+            document=open(fixture_filename("complex_example_dfid.xml")).read()
+        )
+        result = crawler.parse_resource(res)
+        
+        self.assertEquals("IATI", result.license)
+        self.assertEquals("1.00", result.version)
+
 
 class TestResourceUpdate(AppTestCase):
     def test_activity_in_two_resources(self):
