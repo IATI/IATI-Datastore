@@ -44,12 +44,12 @@ def json_rep(obj):
             "end-planned": obj.end_planned,
             "start-actual": obj.start_actual,
             "end-actual": obj.end_actual,
-            "activity-websites": list(obj.websites),
+            "activity-website": list(obj.websites),
             "transaction": [json_rep(o) for o in obj.transactions],
-            "participating-orgs": [json_rep(o) for o in obj.participating_orgs],
-            "recipient-countries": [json_rep(o) for o in obj.recipient_country_percentages],
-            "sector-percentages": [json_rep(o) for o in obj.sector_percentages],
-            "budgets": {},
+            "participating-org": [json_rep(o) for o in obj.participating_orgs],
+            "recipient-country": [json_rep(o) for o in obj.recipient_country_percentages],
+            "sector": [json_rep(o) for o in obj.sector_percentages],
+            "budget": {},
         }
     if isinstance(obj, Organisation):
         return {
@@ -79,8 +79,8 @@ def json_rep(obj):
     if isinstance(obj, CountryPercentage):
         return {
             "country": {
-                "code": code(obj.country),
-                "name": obj.country.description,
+                "code": obj.country.value,
+                "name": obj.name,
             },
             "percentage": obj.percentage,
         }
