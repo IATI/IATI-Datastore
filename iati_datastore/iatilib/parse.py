@@ -343,11 +343,12 @@ def default_language(xml, resource=None):
     xml_value = xval(xml, "@xml:lang", None)
     return cl.Language.from_string(xml_value)
 
-def _open_resource(xml_resource):
+def _open_resource(xml_resource, detect_encoding=False):
     if isinstance(xml_resource, basestring):
-        encoding = charade.detect(xml_resource)['encoding']
-        if encoding in ('UTF-16LE', 'UTF-16BE'):
-            xml_resource = xml_resource.decode('UTF-16').encode('utf-8')
+        if detect_encoding:
+            encoding = charade.detect(xml_resource)['encoding']
+            if encoding in ('UTF-16LE', 'UTF-16BE'):
+                xml_resource = xml_resource.decode('UTF-16').encode('utf-8')
 
         if os.path.exists(xml_resource):
             #https://bugzilla.redhat.com/show_bug.cgi?id=874546
@@ -448,7 +449,13 @@ def activity(xml_resource, resource=no_resource):
 
 
 def document(xml_resource, resource=no_resource):
-    xmlfile = _open_resource(xml_resource)
+    try:
+        return activities(_open_resource(xml_resource), resource) 
+    except UnicodeDecodeError:
+        return activities(_open_resource(xml_resource, detect_encoding=True), resource) 
+
+
+def activities(xmlfile, resource=no_resource):
     try:
         for event, elem in ET.iterparse(xmlfile):
             if elem.tag == 'iati-activity':
