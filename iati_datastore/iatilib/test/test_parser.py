@@ -16,70 +16,63 @@ def fixture(fix_name, encoding='utf-8'):
 
 
 class TestParseActivity(AppTestCase):
+    def setUp(self):
+        super(TestParseActivity, self).setUp()
+        self.act = parse.activity(fixture("default_currency.xml"))
+
     def test_id(self):
-        act = parse.activity(fixture("default_currency.xml"))
         self.assertEquals(
             u"47045-ARM-202-G05-H-00",
-            act.iati_identifier)
+            self.act.iati_identifier)
 
     def test_title(self):
-        act = parse.activity(fixture("default_currency.xml"))
         self.assertEquals(
             (u"Support to the National Program on the Response to HIV " +
              u"Epicemic in the Republic of Armenia"),
-            act.title)
+            self.act.title)
 
     def test_last_updated_time(self):
-        act = parse.activity(fixture("default_currency.xml"))
-        self.assertEquals(datetime.date(2012, 9, 25), act.last_updated_datetime)
+        self.assertEquals(datetime.date(2012, 9, 25), self.act.last_updated_datetime)
 
     def test_description(self):
-        act = parse.activity(fixture("default_currency.xml"))
-        self.assert_(act.description.startswith(
+        self.assert_(self.act.description.startswith(
             u"While Armenia is still a country with a concentrated HIV"))
 
     def test_reporting_org_ref(self):
-        act = parse.activity(fixture("default_currency.xml"))
-        self.assertEquals(u"47045", act.reporting_org.ref)
+        self.assertEquals(u"47045", self.act.reporting_org.ref)
 
     def test_reporting_org_type(self):
-        act = parse.activity(fixture("default_currency.xml"))
         self.assertEquals(
             cl.OrganisationType.multilateral,
-            act.reporting_org.type
+            self.act.reporting_org.type
         )
 
     def test_activity_websites(self):
-        act = parse.activity(fixture("default_currency.xml"))
         self.assertEquals(
             [u"http://portfolio.theglobalfund.org/en/Grant/Index/ARM-202-G05-H-00"],
-            act.websites)
+            self.act.websites)
 
     def test_default_currency(self):
-        act = parse.activity(fixture("default_currency.xml"))
         self.assertEquals(
             cl.Currency.us_dollar,
-            act.default_currency
+            self.act.default_currency
         )
 
     def test_participating_org(self):
-        act = parse.activity(fixture("default_currency.xml"))
         self.assertEquals(
             cl.OrganisationRole.funding,
-            act.participating_orgs[0].role)
+            self.act.participating_orgs[0].role)
 
     def test_rejects_participatng_org_without_ref(self):
-        act = parse.activity(fixture("default_currency.xml"))
-        self.assertEquals(1, len(act.participating_orgs))
+        self.assertEquals(1, len(self.act.participating_orgs))
 
     def test_recipient_country_percentages(self):
-        act = parse.activity(fixture("default_currency.xml"))
-        self.assertEquals(1, len(act.recipient_country_percentages))
+        self.assertEquals(1, len(self.act.recipient_country_percentages))
         self.assertEquals(
             cl.Country.armenia,
-            act.recipient_country_percentages[0].country)
+            self.act.recipient_country_percentages[0].country)
         self.assertEquals(
-            "Armenia", act.recipient_country_percentages[0].name)
+            "Armenia", self.act.recipient_country_percentages[0].name)
 
     def test_recipient_region_percentages(self):
         act = parse.activity(fixture("iati_activity_JP.xml"))
@@ -91,32 +84,27 @@ class TestParseActivity(AppTestCase):
             "Far East Asia, regional", act.recipient_region_percentages[0].name)
 
     def test_transaction_count(self):
-        act = parse.activity(fixture("default_currency.xml"))
-        self.assertEquals(1, len(act.transactions))
+        self.assertEquals(1, len(self.act.transactions))
 
     def test_transaction_type(self):
-        act = parse.activity(fixture("default_currency.xml"))
         self.assertEquals(
             cl.TransactionType.commitment,
-            act.transactions[0].type)
+            self.act.transactions[0].type)
 
     def test_transaction_date(self):
-        act = parse.activity(fixture("default_currency.xml"))
         self.assertEquals(
             datetime.date(2009, 10, 01),
-            act.transactions[0].date)
+            self.act.transactions[0].date)
 
     def test_transaction_value_date(self):
-        act = parse.activity(fixture("default_currency.xml"))
         self.assertEquals(
             datetime.date(2009, 10, 01),
-            act.transactions[0].value_date)
+            self.act.transactions[0].value_date)
 
     def test_transaction_value_amount(self):
-        act = parse.activity(fixture("default_currency.xml"))
         self.assertEquals(
             3991675,
-            act.transactions[0].value_amount)
+            self.act.transactions[0].value_amount)
 
     def test_transaction_currency(self):
         # currency is picked up from default currency
@@ -147,20 +135,16 @@ class TestParseActivity(AppTestCase):
                             act.transactions[0].receiver_org.ref)
 
     def test_date_start_planned(self):
-        act = parse.activity(fixture("default_currency.xml"))
-        self.assertEquals(datetime.date(2009, 10, 03), act.start_planned)
+        self.assertEquals(datetime.date(2009, 10, 03), self.act.start_planned)
 
     def test_date_start_actual(self):
-        act = parse.activity(fixture("default_currency.xml"))
-        self.assertEquals(datetime.date(2009, 10, 01), act.start_actual)
+        self.assertEquals(datetime.date(2009, 10, 01), self.act.start_actual)
 
     def test_date_end_planned(self):
-        act = parse.activity(fixture("default_currency.xml"))
-        self.assertEquals(datetime.date(2009, 10, 04), act.end_planned)
+        self.assertEquals(datetime.date(2009, 10, 04), self.act.end_planned)
 
     def test_date_end_actual(self):
-        act = parse.activity(fixture("default_currency.xml"))
-        self.assertEquals(datetime.date(2009, 10, 02), act.end_actual)
+        self.assertEquals(datetime.date(2009, 10, 02), self.act.end_actual)
 
 
     def test_sector_percentage_count(self):
@@ -169,9 +153,8 @@ class TestParseActivity(AppTestCase):
         self.assertEquals(5, len(act.sector_percentages))
 
     def test_raw_xml(self):
-        act = parse.activity(fixture_filename("default_currency.xml"))
         norm_xml = ET.tostring(ET.parse(fixture_filename("default_currency.xml")))
-        self.assertEquals(norm_xml, act.raw_xml)
+        self.assertEquals(norm_xml, self.act.raw_xml)
 
     def test_no_start_actual(self):
         activities = parse.document(fixture_filename("missing_dates.xml"))
@@ -179,8 +162,7 @@ class TestParseActivity(AppTestCase):
         self.assertEquals(None, act[u"GB-CHC-272465-680"].start_actual)
 
     def test_budget(self):
-        activity = parse.activity(fixture("default_currency.xml"))
-        self.assertEquals(6, len(activity.budgets))
+        self.assertEquals(6, len(self.act.budgets))
 
     def test_policy_markers(self):
         activities = [ a for a in parse.document(fixture_filename("CD.xml")) ]
