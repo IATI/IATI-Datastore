@@ -184,7 +184,7 @@ def update_resource(resource_url):
     db.session.commit()
 
     if resource.last_status_code == 200:
-        rq.enqueue(update_activities, args=(resource.url,), result_ttl=0, timeout=500)
+        rq.enqueue(update_activities, args=(resource.url,), result_ttl=0, timeout=1000)
 
 
 def update_dataset(dataset_name):
@@ -350,7 +350,7 @@ def enqueue(careful=False):
             update_activities,
             args=(resource.url,),
             result_ttl=0,
-            timeout=500)
+            timeout=1000)
 
 
 @manager.option('--dataset', action="store", type=unicode,
@@ -371,7 +371,7 @@ def update(verbose=False, limit=None, dataset=None):
         for resource in res:
             rq.enqueue(update_resource, args=(resource.url,), result_ttl=0)
             rq.enqueue(update_activities, args=(resource.url,), result_ttl=0,
-                    timeout=500)
+                    timeout=1000)
     else:
         fetch_dataset_list()
         db.session.commit()
