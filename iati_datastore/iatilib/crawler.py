@@ -184,7 +184,7 @@ def update_resource(resource_url):
     db.session.commit()
 
     if resource.last_status_code == 200:
-        rq.enqueue(update_activities, args=(resource.url,), result_ttl=0)
+        rq.enqueue(update_activities, args=(resource.url,), result_ttl=0, timeout=500)
 
 
 def update_dataset(dataset_name):
