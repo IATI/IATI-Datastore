@@ -1,3 +1,4 @@
+from collections import OrderedDict
 import datetime
 from decimal import Decimal
 
@@ -36,25 +37,25 @@ def code(attr):
 
 def json_rep(obj):
     if isinstance(obj, Activity):
-        return {
-            "iati-identifier": obj.iati_identifier,
-            "title": obj.title,
-            "description": obj.description,
-            "reporting-org": json_rep(obj.reporting_org),
-            "license" : obj.resource.license if obj.resource else None,
-            "version" : obj.resource.version if obj.resource else None,
-            "start-planned": obj.start_planned,
-            "end-planned": obj.end_planned,
-            "start-actual": obj.start_actual,
-            "end-actual": obj.end_actual,
-            "activity-website": list(obj.websites),
-            "transaction": [json_rep(o) for o in obj.transactions],
-            "participating-org": [json_rep(o) for o in obj.participating_orgs],
-            "recipient-country": [json_rep(o) for o in obj.recipient_country_percentages],
-            "sector": [json_rep(o) for o in obj.sector_percentages],
-            "budget": {},
-            
-        }
+        return OrderedDict((
+            ("iati-identifier", obj.iati_identifier),
+            ("title", obj.title),
+            ("description", obj.description),
+            ("reporting-org", json_rep(obj.reporting_org)),
+            ("license" , obj.resource.license if obj.resource else None),
+            ("version" , obj.resource.version if obj.resource else None),
+            ("start-planned", obj.start_planned),
+            ("end-planned", obj.end_planned),
+            ("start-actual", obj.start_actual),
+            ("end-actual", obj.end_actual),
+            ("activity-website", list(obj.websites)),
+            ("transaction", [json_rep(o) for o in obj.transactions]),
+            ("participating-org", [json_rep(o) for o in obj.participating_orgs]),
+            ("recipient-country", [json_rep(o) for o in obj.recipient_country_percentages]),
+            ("sector", [json_rep(o) for o in obj.sector_percentages]),
+            ("budget", {}),
+
+        ),)
     if isinstance(obj, Organisation):
         return {
             "ref" : obj.ref,
