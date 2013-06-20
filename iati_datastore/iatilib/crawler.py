@@ -349,7 +349,8 @@ def enqueue(careful=False):
         rq.enqueue(
             update_activities,
             args=(resource.url,),
-            result_ttl=0)
+            result_ttl=0,
+            timeout=500)
 
 
 @manager.option('--dataset', action="store", type=unicode,
@@ -369,7 +370,8 @@ def update(verbose=False, limit=None, dataset=None):
         res = Resource.query.filter(Resource.dataset_id==dataset)
         for resource in res:
             rq.enqueue(update_resource, args=(resource.url,), result_ttl=0)
-            rq.enqueue(update_activities, args=(resource.url,), result_ttl=0)
+            rq.enqueue(update_activities, args=(resource.url,), result_ttl=0,
+                    timeout=500)
     else:
         fetch_dataset_list()
         db.session.commit()
