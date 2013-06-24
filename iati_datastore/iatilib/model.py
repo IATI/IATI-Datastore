@@ -205,10 +205,7 @@ class PercentageMixin(object):
 
 class CountryPercentage(db.Model, PercentageMixin):
     __tablename__ = "country_percentage"
-    country = sa.Column(
-        codelists.Country.db_type(),
-        nullable=False,
-        index=True)
+    country = sa.Column(codelists.Country.db_type(), index=True)
 
 
 class RegionPercentage(db.Model, PercentageMixin):

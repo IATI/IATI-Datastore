@@ -108,20 +108,46 @@ def fetch_resource(resource):
     db.session.add(resource)
     return resource
 
+def check_for_duplicates(activities):
+    dup_activity = Activity.query.filter(
+        Activity.iati_identifier.in_(
+            a.iati_identifier for a in activities
+        )
+    )
+    for db_activity in dup_activity:
+        res_activity = next(
+            a for a in activities
+            if a.iati_identifier == db_activity.iati_identifier
+        )
+        activities.remove(res_activity)
+    return activities
 
 def parse_resource(resource):
     db.session.add(resource)
     current = Activity.query.filter_by(resource_url=resource.url)
     current_identifiers = set([ i.iati_identifier for i in current.all() ])
 
-    Activity.query.filter_by(resource_url=resource.url).delete()
-    resource.activities = list(parse.document(resource.document, resource))
+    db.session.query(Activity).filter_by(resource_url=resource.url).delete()
+    new_identifiers = set()
+    activities = []
+    for activity in parse.document(resource.document, resource):
+        activity.resource = resource
+        new_identifiers.add(activity.iati_identifier)
+        activities.append(activity)
+        if len(db.session.new) > 50:
+            activities = check_for_duplicates(activities)
+            db.session.add_all(activities)
+            db.session.commit()
+            activities = []
+    activities = check_for_duplicates(activities)
+    db.session.add_all(activities)
+    db.session.commit()
+
     license, version = parse.document_metadata(resource.document)
     resource.license = license
     resource.version = version
 
     #add any identifiers that are no longer present to deleted_activity table
-    new_identifiers = set([ i.iati_identifier for i in resource.activities ])
     diff = current_identifiers - new_identifiers 
     now = datetime.datetime.now()
     deleted = [ 
@@ -141,27 +167,12 @@ def parse_resource(resource):
         len(resource.activities),
         resource.url)
     resource.last_parsed = datetime.datetime.utcnow()
-    return resource
+    return resource#, new_identifiers
 
 def update_activities(resource_url):
     resource = Resource.query.get(resource_url)
     try:
         parse_resource(resource)
-        # if this resource duplicates any activities from other resources
-        # then remove them.
-        dup_activity = Activity.query.filter(
-            Activity.iati_identifier.in_(
-                a.iati_identifier for a in resource.activities
-            )
-        )
-        for db_activity in dup_activity:
-            res_activity = next(
-                a for a in resource.activities
-                if a.iati_identifier == db_activity.iati_identifier
-            )
-            resource.activities.remove(res_activity)
-            db.session.expunge(res_activity)
-        log.info("Removed %d duplicate activities", dup_activity.count())
         db.session.commit()
     except parse.ParserError, exc:
         db.session.rollback()
@@ -386,5 +397,3 @@ def update(verbose=False, limit=None, dataset=None):
             if verbose:
                 print "Enquing %s" % dataset.name
             rq.enqueue(update_dataset, args=(dataset.name,), result_ttl=0)
-
-            import ipdb; ipdb.set_trace()

@@ -100,7 +100,7 @@ class TestCrawler(AppTestCase):
         self.assertEquals(u"stillhere", resource.document)
 
     def test_parse_resource_succ(self):
-        resource = Resource(document="<iati-activities />")
+        resource = Resource(document="<iati-activities />", url="http://foo")
         resource = crawler.parse_resource(resource)
         self.assertEquals([], resource.activities)
         self.assertEquals(None, resource.last_parse_error)
