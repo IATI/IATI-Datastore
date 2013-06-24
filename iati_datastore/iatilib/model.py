@@ -168,7 +168,9 @@ class Organisation(db.Model, UniqueMixin):
 
     @classmethod
     def unique_filter(cls, query, ref, name, type, **kw):
-        return query.filter(cls.ref == ref and cls.name == name and cls.type == type)
+        return query.filter( 
+            (cls.ref == ref) & (cls.name == name) & (cls.type == type)
+        )
 
     def __repr__(self):
         return "Organisation(ref=%r)" % self.ref
