@@ -113,7 +113,7 @@ def reporting_org(element, resource=no_resource):
         data.update({
             "type": cl.OrganisationType.from_string(xval(xml, "@type"))
         })
-    except MissingValue as exe:
+    except (MissingValue, ValueError) as exe:
         data['type'] = None
         iati_identifier = xval(xml, "/iati-identifier/text()", 'no_identifier')
         log.warn(

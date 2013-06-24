@@ -84,7 +84,7 @@ def json_rep(obj):
     if isinstance(obj, CountryPercentage):
         return {
             "country": {
-                "code": obj.country.value,
+                "code": obj.country.value if obj.country else None,
                 "name": obj.name,
             },
             "percentage": obj.percentage,

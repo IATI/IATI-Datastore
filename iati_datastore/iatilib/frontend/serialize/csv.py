@@ -112,7 +112,7 @@ iati_identifier = attrgetter("iati_identifier")
 
 def recipient_country_code(activity):
     return u";".join(
-        rcp.country.value
+        rcp.country.value if rcp.country else "none"
         for rcp in activity.recipient_country_percentages)
 
 
