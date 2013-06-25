@@ -463,7 +463,7 @@ def activities(xmlfile, resource=no_resource):
                     yield activity(elem, resource=resource)
                 except MissingValue, exe:
                     log.error(_("Failed to import a valid Activity error was: {0}".format(exe),
-                            logger='activity_importer', dataset=resource.dataset_id, resource=resource.url),
+                            logger='failed_activity', dataset=resource.dataset_id, resource=resource.url),
                             exc_info=exe)
                 elem.clear()
     except ET.XMLSyntaxError, exe:

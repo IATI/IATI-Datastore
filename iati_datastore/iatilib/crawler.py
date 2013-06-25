@@ -109,17 +109,18 @@ def fetch_resource(resource):
     return resource
 
 def check_for_duplicates(activities):
-    dup_activity = Activity.query.filter(
-        Activity.iati_identifier.in_(
-            a.iati_identifier for a in activities
+    if activities:
+        dup_activity = Activity.query.filter(
+            Activity.iati_identifier.in_(
+                a.iati_identifier for a in activities
+            )
         )
-    )
-    for db_activity in dup_activity:
-        res_activity = next(
-            a for a in activities
-            if a.iati_identifier == db_activity.iati_identifier
-        )
-        activities.remove(res_activity)
+        for db_activity in dup_activity:
+            res_activity = next(
+                a for a in activities
+                if a.iati_identifier == db_activity.iati_identifier
+            )
+            activities.remove(res_activity)
     return activities
 
 def parse_resource(resource):
@@ -172,6 +173,11 @@ def parse_resource(resource):
 def update_activities(resource_url):
     resource = Resource.query.get(resource_url)
     try:
+        db.session.query(Log).filter(sa.and_(
+            Log.logger.in_(
+                ['activity_importer', 'failed_activity', 'xml_parser']),
+            Log.resource==resource_url,
+        )).delete(synchronize_session=False)
         parse_resource(resource)
         db.session.commit()
     except parse.ParserError, exc:
