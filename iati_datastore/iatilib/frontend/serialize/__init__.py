@@ -10,10 +10,13 @@ from .jsonserializer import json
 def xml(pagination):
     out = u"""<result>
     <ok>True</ok>
-    <total-count>{0}</total-count>
-    <offset>{1}</offset>
-    <limit>{2}</limit>
-    <iati-activities generated-datetime='{3}'>""".format(pagination.total,
+    <iati-activities generated-datetime='{3}'>
+      <query>
+        <total-count>{0}</total-count>
+        <start>{1}</start>
+        <limit>{2}</limit>
+      </query>
+    """.format(pagination.total,
             pagination.offset, pagination.limit, datetime.now().isoformat())
     for activity in pagination.items:
         out += activity.raw_xml

@@ -38,5 +38,5 @@ class TestXMLSerializer(TestCase):
         data =[ fac.ActivityFactory.build(raw_xml=u"<test />") ]
         ser_data = serialize.xml(TestWrapper(data, 1, 0, 0))
         result = ET.fromstring(ser_data)
-        self.assertEquals("1", result[1].text)
+        self.assertEquals("1", result[1][0][0].text)
 

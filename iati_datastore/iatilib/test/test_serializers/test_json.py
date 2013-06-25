@@ -9,6 +9,8 @@ from iatilib.test import factories, AppTestCase
 class FakePage(object):
     def __init__(self, items):
         self.items = items
+        self.offset = 0
+        self.limit = 50
 
     @property
     def total(self):
