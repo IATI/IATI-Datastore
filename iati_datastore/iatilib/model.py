@@ -357,6 +357,8 @@ class Dataset(db.Model):
         "resources",
         "url",
         creator=lambda url: Resource(url=url))
+    license = sa.Column(sa.Unicode)
+    is_open = sa.Column(sa.Boolean)
 
 
 class Resource(db.Model):
@@ -371,7 +373,6 @@ class Resource(db.Model):
     document = sa.orm.deferred(sa.Column(sa.LargeBinary))
     etag = sa.Column(sa.Unicode)
     activities = act_relationship("Activity", cascade="all,delete", passive_deletes=True)
-    license = sa.Column(sa.Unicode)
     version = sa.Column(sa.Unicode)
 
 

@@ -80,6 +80,8 @@ def fetch_dataset_metadata(dataset):
                     in ds_entity.get('resources', [])
                     if resource['url'] not in dataset.resource_urls]
         dataset.resource_urls.extend(new_urls)
+        dataset.license = ds_reg.get('license', '')
+        dataset.is_open = ds_reg.get('isopen', False)
         db.session.add(dataset)
         return dataset
     else:
@@ -162,9 +164,7 @@ def parse_resource(resource):
     activities = check_for_duplicates(activities)
     db.session.commit()
 
-    license, version = parse.document_metadata(resource.document)
-    resource.license = license
-    resource.version = version
+    resource.version = parse.document_metadata(resource.document)
 
     #add any identifiers that are no longer present to deleted_activity table
     diff = current_identifiers - new_identifiers 

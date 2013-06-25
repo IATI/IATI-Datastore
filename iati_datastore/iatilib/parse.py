@@ -470,12 +470,9 @@ def activities(xmlfile, resource=no_resource):
         raise XMLError()
 
 def document_metadata(xml_resource):
-    license = None
     version = None
     for event, elem in ET.iterparse(_open_resource(xml_resource)):
-        if elem.tag == '{http://iatiregistry.org/ns/record#}registry-record':
-            license = elem.get('license')
-        elif elem.tag == 'iati-activities':
+        if elem.tag == 'iati-activities':
             version = elem.get('version')
         elem.clear()
-    return license, version
+    return version

@@ -42,7 +42,7 @@ def json_rep(obj):
             ("title", obj.title),
             ("description", obj.description),
             ("reporting-org", json_rep(obj.reporting_org)),
-            ("license" , obj.resource.license if obj.resource else None),
+            ("license" , obj.resource.dataset.license if obj.resource else None),
             ("version" , obj.resource.version if obj.resource else None),
             ("start-planned", obj.start_planned),
             ("end-planned", obj.end_planned),

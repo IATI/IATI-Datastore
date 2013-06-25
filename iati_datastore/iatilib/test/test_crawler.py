@@ -223,7 +223,6 @@ class TestCrawler(AppTestCase):
         )
         result = crawler.parse_resource(res)
         
-        self.assertEquals("IATI", result.license)
         self.assertEquals("1.00", result.version)
 
 

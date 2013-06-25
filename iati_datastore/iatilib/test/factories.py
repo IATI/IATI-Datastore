@@ -82,3 +82,4 @@ class BudgetFactory(factory.Factory):
 class DatasetFactory(factory.Factory):
     name = 'test_dataset'
     resources = factory.SubFactory(ResourceFactory)
+    is_open = True
