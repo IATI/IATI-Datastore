@@ -352,7 +352,10 @@ class Dataset(db.Model):
         nullable=False,
         default=sa.func.now())
     last_modified = sa.Column(sa.DateTime, nullable=True)
-    resources = sa.orm.relationship("Resource", cascade="all, delete, delete-orphan",passive_deletes=True)
+    resources = sa.orm.relationship("Resource", 
+        cascade="all, delete, delete-orphan",
+        passive_deletes=True,
+        backref="dataset")
     resource_urls = association_proxy(
         "resources",
         "url",
