@@ -54,6 +54,7 @@ def json_rep(obj):
             ("recipient-country", [json_rep(o) for o in obj.recipient_country_percentages]),
             ("sector", [json_rep(o) for o in obj.sector_percentages]),
             ("budget", {}),
+            ("last-change", obj.last_change_datetime),
 
         ),)
     if isinstance(obj, Organisation):
