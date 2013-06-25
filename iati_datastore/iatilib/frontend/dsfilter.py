@@ -179,7 +179,6 @@ def _filter(query, args):
             else:
                 query = query.filter(filter_condition(search_string))
 
-
     return query
 
 

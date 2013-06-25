@@ -92,7 +92,11 @@ class Activity(db.Model):
     iati_identifier = sa.Column(sa.Unicode, primary_key=True, nullable=False)
     hierarchy = sa.Column(codelists.RelatedActivityType.db_type())
     default_language = sa.Column(codelists.Language.db_type())
-    last_updated_datetime = sa.Column(sa.Date, nullable=True)
+    #parsed from xml iati-activity@last-updated-datetime
+    last_updated_datetime = sa.Column(sa.DateTime, nullable=True)
+    #last time datastore has seen change in the activity
+    last_change_datetime = sa.Column(sa.DateTime, nullable=False,
+        default=sa.func.now())
     resource_url = sa.Column(
         sa.ForeignKey("resource.url", ondelete='CASCADE'),
         index=True,

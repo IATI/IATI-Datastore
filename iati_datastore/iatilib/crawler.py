@@ -1,4 +1,5 @@
 import datetime
+import hashlib
 import logging
 import traceback
 
@@ -121,12 +122,22 @@ def check_for_duplicates(activities):
                 if a.iati_identifier == db_activity.iati_identifier
             )
             activities.remove(res_activity)
+            db.session.expunge(res_activity)
     return activities
+
+def hash(string):
+    m = hashlib.md5()
+    m.update(string.encode('utf-8'))
+    return m.digest()
 
 def parse_resource(resource):
     db.session.add(resource)
     current = Activity.query.filter_by(resource_url=resource.url)
     current_identifiers = set([ i.iati_identifier for i in current.all() ])
+
+    old_xml = dict([ (i[0], (i[1], hash(i[2]))) for i in db.session.query(
+        Activity.iati_identifier, Activity.last_change_datetime,
+        Activity.raw_xml).filter_by(resource_url=resource.url) ])
 
     db.session.query(Activity).filter_by(resource_url=resource.url).delete()
     new_identifiers = set()
@@ -134,14 +145,21 @@ def parse_resource(resource):
     for activity in parse.document(resource.document, resource):
         activity.resource = resource
         new_identifiers.add(activity.iati_identifier)
+        try:
+            if hash(activity.raw_xml) == old_xml[activity.iati_identifier][1]:
+                activity.last_change_datetime = old_xml[activity.iati_identifier][0]
+            else:
+                activity.last_change_datetime = datetime.datetime.now()
+        except KeyError:
+            activity.last_change_datetime = datetime.datetime.now()
         activities.append(activity)
+        db.session.add(activity)
         if len(db.session.new) > 50:
             activities = check_for_duplicates(activities)
-            db.session.add_all(activities)
             db.session.commit()
             activities = []
-    activities = check_for_duplicates(activities)
     db.session.add_all(activities)
+    activities = check_for_duplicates(activities)
     db.session.commit()
 
     license, version = parse.document_metadata(resource.document)

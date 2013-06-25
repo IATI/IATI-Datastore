@@ -153,6 +153,37 @@ class TestCrawler(AppTestCase):
             [da.iati_identifier for da in DeletedActivity.query.all()]
         )
 
+    def test_last_changed_datetime(self):
+        resource = fac.ResourceFactory.create(
+            url=u"http://test",
+            document="""
+                <iati-activities>
+                  <iati-activity>
+                    <iati-identifier>test_deleted_activity</iati-identifier>
+                    <title>test_deleted_activity</title>
+                    <reporting-org ref="GB-CHC-202918" type="21">Oxfam GB</reporting-org>
+                  </iati-activity>
+                  <iati-activity>
+                    <iati-identifier>test_deleted_activity_2</iati-identifier>
+                    <title>test_deleted_activity_2</title>
+                    <reporting-org ref="GB-CHC-202918" type="21">Oxfam GB</reporting-org>
+                  </iati-activity>
+                </iati-activities>
+            """
+        )
+        crawler.parse_resource(resource)
+        db.session.commit()
+        db.session.query(Activity).update(
+            values={'last_change_datetime': datetime.datetime(2000, 1, 1)},
+            synchronize_session=False)
+        db.session.commit()
+        crawler.parse_resource(resource)
+        acts = db.session.query(Activity).all()
+        self.assertEquals(datetime.datetime(2000, 1, 1),
+            acts[0].last_change_datetime)
+
+
+
     def test_parse_resource_fail(self):
         resource = Resource(document="")
         with self.assertRaises(parse.ParserError):
