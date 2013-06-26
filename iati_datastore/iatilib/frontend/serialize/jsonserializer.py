@@ -110,12 +110,12 @@ def json_rep(obj):
 
 
 def json(pagination):
-    return jsonlib.dumps({
-        "ok": True,
-        "total-count": pagination.total,
-        "start" : pagination.offset,
-        "limit" : pagination.limit,
-        "iati-activities": [json_rep(a) for a in pagination.items]
-    },
+    return jsonlib.dumps(OrderedDict((
+        ("ok", True),
+        ("total-count", pagination.total),
+        ("start", pagination.offset),
+        ("limit", pagination.limit),
+        ("iati-activities", [json_rep(a) for a in pagination.items]),
+    )),
     indent=2 if current_app.debug else 0,
     cls=JSONEncoder)
