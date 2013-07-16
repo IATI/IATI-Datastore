@@ -80,9 +80,16 @@ def fetch_dataset_metadata(dataset):
                     in ds_entity.get('resources', [])
                     if resource['url'] not in dataset.resource_urls]
         dataset.resource_urls.extend(new_urls)
-        dataset.license = ds_reg.get('license', '')
+        try:
+            dataset.license = ds_reg['result']['license']
+        except KeyError:
+            pass
         dataset.is_open = ds_reg.get('isopen', False)
         db.session.add(dataset)
+        try:
+            db.session.commit()
+        except sa.exc.IntegrityError:
+            db.session.rollback()
         return dataset
     else:
         raise CouldNotFetchPackageList()
@@ -249,7 +256,6 @@ def metadata(verbose=False):
         if verbose:
             print "Fetching metadata for %s" % dataset.name
         fetch_dataset_metadata(dataset)
-        db.session.commit()
 
 
 @manager.command
