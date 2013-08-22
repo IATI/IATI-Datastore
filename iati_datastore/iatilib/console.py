@@ -5,6 +5,7 @@ import datetime as dt
 
 import requests
 from flask.ext.script import Manager
+from sqlalchemy import not_
 
 from iatilib.frontend import create_app
 from iatilib import parse, codelists, model, db, redis
@@ -48,7 +49,9 @@ def cleanup():
     from iatilib.model import Log
     Log.query.filter(
         Log.created_at < dt.datetime.utcnow() - dt.timedelta(days=5)
-    ).delete()
+    ).filter(not_(Log.logger.in_(
+        ['activity_importer', 'failed_activity', 'xml_parser']),
+    )).delete(synchronize_session='fetch')
 
 
 
