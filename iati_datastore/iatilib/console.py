@@ -47,11 +47,11 @@ def download_codelists():
 @manager.command
 def cleanup():
     from iatilib.model import Log
-    Log.query.filter(
+    db.session.query(Log).filter(
         Log.created_at < dt.datetime.utcnow() - dt.timedelta(days=5)
     ).filter(not_(Log.logger.in_(
         ['activity_importer', 'failed_activity', 'xml_parser']),
-    )).delete(synchronize_session='fetch')
+    )).delete('fetch')
 
 
 
