@@ -118,7 +118,7 @@ def recipient_country_code(activity):
 
 def recipient_country(activity):
     return u";".join(
-        rcp.country.description.title()
+        rcp.country.description.title() if rcp.country else ""
         for rcp in activity.recipient_country_percentages)
 
 
