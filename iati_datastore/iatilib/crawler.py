@@ -283,6 +283,17 @@ def status_line(msg, filt, tot):
         msg=msg
     )
 
+@manager.option('--dataset', action="store", type=unicode,
+                help="update a single dataset")
+def manual_update(dataset=None):
+    if dataset:
+        print "Updating {0}".format(dataset)
+        update_dataset(dataset)
+        res = Resource.query.filter(Resource.dataset_id==dataset)
+        for resource in res:
+            update_resource(resource.url)
+            update_activities(resource.url)
+
 
 @manager.command
 def status():
@@ -427,3 +438,4 @@ def update(verbose=False, limit=None, dataset=None):
             if verbose:
                 print "Enquing %s" % dataset.name
             rq.enqueue(update_dataset, args=(dataset.name,), result_ttl=0)
+
