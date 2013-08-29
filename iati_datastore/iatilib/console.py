@@ -53,8 +53,8 @@ def cleanup():
         ['activity_importer', 'failed_activity', 'xml_parser']),
     )).delete('fetch')
     db.session.commit()
-
-
+    db.engine.dispose()
+    
 
 @manager.option(
     '-x', '--fail-on-xml-errors',
