@@ -52,6 +52,7 @@ def cleanup():
     ).filter(not_(Log.logger.in_(
         ['activity_importer', 'failed_activity', 'xml_parser']),
     )).delete('fetch')
+    db.session.commit()
 
 
 
