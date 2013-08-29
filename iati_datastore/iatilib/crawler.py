@@ -443,4 +443,4 @@ def update(verbose=False, limit=None, dataset=None):
             if verbose:
                 print "Enquing %s" % dataset.name
             rq.enqueue(update_dataset, args=(dataset.name,), result_ttl=0)
-
+    db.session.close()
