@@ -141,6 +141,7 @@ def hash(string):
 
 def parse_resource(resource):
     db.session.add(resource)
+    now = datetime.datetime.utcnow()
     current = Activity.query.filter_by(resource_url=resource.url)
     current_identifiers = set([ i.iati_identifier for i in current.all() ])
 
@@ -175,7 +176,7 @@ def parse_resource(resource):
 
     #add any identifiers that are no longer present to deleted_activity table
     diff = current_identifiers - new_identifiers 
-    now = datetime.datetime.now()
+    now = datetime.datetime.utcnow()
     deleted = [ 
             DeletedActivity(iati_identifier=deleted_activity, deletion_date=now)
             for deleted_activity in diff ]
@@ -192,7 +193,7 @@ def parse_resource(resource):
         "Parsed %d activities from %s",
         len(resource.activities),
         resource.url)
-    resource.last_parsed = datetime.datetime.utcnow()
+    resource.last_parsed = now
     return resource#, new_identifiers
 
 def update_activities(resource_url):
@@ -288,11 +289,15 @@ def status_line(msg, filt, tot):
 def manual_update(dataset=None):
     if dataset:
         print "Updating {0}".format(dataset)
-        update_dataset(dataset)
+        ds = Dataset.query.get(dataset)
+        fetch_dataset_metadata(ds)
+        db.session.commit()
         res = Resource.query.filter(Resource.dataset_id==dataset)
         for resource in res:
-            update_resource(resource.url)
+            fetch_resource(resource)
+            db.session.commit()
             update_activities(resource.url)
+
 
 
 @manager.command

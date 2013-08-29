@@ -104,10 +104,11 @@ class TestCrawler(AppTestCase):
         resource = crawler.parse_resource(resource)
         self.assertEquals([], resource.activities)
         self.assertEquals(None, resource.last_parse_error)
+        now = datetime.datetime.utcnow()
         self.assertAlmostEquals(
             resource.last_parsed,
-            datetime.datetime.utcnow(),
-            delta=datetime.timedelta(seconds=5))
+            now,
+            delta=datetime.timedelta(seconds=15))
 
     def test_parse_resource_succ_replaces_activities(self):
         # what's in the db before the resource is updated
