@@ -34,9 +34,9 @@ There are several additional CSV formats to get access to more data.
 * Transactions by country [`/api/1/access/transaction/by_country.csv`](http://iati-datastore.herokuapp.com/api/1/access/transaction/by_country.csv)
 
 
-* List of budgets [`/api/1/access/budgets.csv`](http://iati-datastore.herokuapp.com/api/1/access/budgets.csv)
-* Budgets by sector [`/api/1/access/budgets/by_sector.csv`](http://iati-datastore.herokuapp.com/api/1/access/budgets/by_sector.csv)
-* Budgets by country [`/api/1/access/budgets/by_country.csv`](http://iati-datastore.herokuapp.com/api/1/access/budgets/by_country.csv)
+* List of budgets [`/api/1/access/budget.csv`](http://iati-datastore.herokuapp.com/api/1/access/budget.csv)
+* Budgets by sector [`/api/1/access/budget/by_sector.csv`](http://iati-datastore.herokuapp.com/api/1/access/budget/by_sector.csv)
+* Budgets by country [`/api/1/access/budget/by_country.csv`](http://iati-datastore.herokuapp.com/api/1/access/budget/by_country.csv)
 
 
 
