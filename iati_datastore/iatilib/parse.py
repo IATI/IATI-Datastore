@@ -139,8 +139,7 @@ def participating_orgs(xml, resource=None):
 
 
 def websites(xml, resource=None):
-    return [xval(ele, "text()") for ele in xml.xpath("./activity-website") ]
-
+    return [xval(ele, "text()") for ele in xml.xpath("./activity-website") if xval(ele, "text()", None) ]
 
 def recipient_country_percentages(element, resource=no_resource):
     xml = element.xpath("./recipient-country")
