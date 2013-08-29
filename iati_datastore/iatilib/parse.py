@@ -153,11 +153,13 @@ def recipient_country_percentages(element, resource=no_resource):
 
 def recipient_region_percentages(element, resource=no_resource):
     xml = element.xpath("./recipient-region")
-    return [ RegionPercentage(
-             name=xval(ele, "text()", None),
-             region=from_codelist(cl.Region, "@code", ele, resource),
-             ) for ele in xml
-           ]
+    results = []
+    for ele in xml:
+        name=xval(ele, "text()", None)
+        region=from_codelist(cl.Region, "@code", ele, resource)
+        if region:
+            results.append(RegionPercentage(name=name, region=region))
+    return results
 
 def currency(path, xml, resource=None):
     code = xval(xml, path, None)
