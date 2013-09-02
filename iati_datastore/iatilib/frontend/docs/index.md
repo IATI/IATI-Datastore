@@ -61,7 +61,7 @@ Filtering
         <td><a href="http://iatistandard.org/activity-standard/reporting-org/">Reporting Org</td>
     </tr>
     <tr>
-        <td>reporting-org_type</td>
+        <td>reporting-org.type</td>
         <td><a href="http://iatistandard.org/activity-standard/reporting-org/">Reporting Org Type</td>
     </tr>
     <tr>
