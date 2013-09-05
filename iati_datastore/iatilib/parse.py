@@ -129,11 +129,11 @@ def reporting_org(element, resource=no_resource):
 def participating_orgs(xml, resource=None):
     ret = []
     seen = set()
-    for ele in [e for e in xml.xpath("./participating-org") if e.xpath("@ref")]:
+    for ele in [e for e in xml.xpath("./participating-org")]:
         role = cl.OrganisationRole.from_string(xval(ele, "@role").title())
         organisation = parse_org(ele)
-        if not (role, organisation.ref) in seen:
-            seen.add((role, organisation.ref))
+        if not (role, organisation.name, organisation.ref) in seen:
+            seen.add((role, organisation.name, organisation.ref))
             ret.append(Participation(role=role, organisation=organisation))
     return ret
 
