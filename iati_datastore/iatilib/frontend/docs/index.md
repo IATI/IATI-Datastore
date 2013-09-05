@@ -111,11 +111,11 @@ To filter by recipient-country as Democratic Republic of Congo OR Uganda
 Paging through results
 ----------------------
 
-Results are normally returned one page at a time, increment the the `page`
-paramter to get the next page.
+Results are normally returned one page at a time, increment the the `offset`
+parameter to get the next page.
 
 * [`/api/1/access/activity.xml`](http://iati-datastore.herokuapp.com/api/1/access/activity.xml)
-* [`/api/1/access/activity.xml?page=2`](http://iati-datastore.herokuapp.com/api/1/access/activity.xml?page=2)
+* [`/api/1/access/activity.xml?offset=2`](http://iati-datastore.herokuapp.com/api/1/access/activity.xml?offset=2)
 
 The datastore will respond with an HTTP 404 when you have asked for the page
 beyond the last page.
