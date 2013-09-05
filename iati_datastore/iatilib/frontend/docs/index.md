@@ -3,10 +3,10 @@ IATI Datastore
 
 The International Aid Transparency Initiative (IATI) aims to make
 information about aid spending easier to access. To this end,
-they publish the [IATI standard](http://iatistandard.org) and keep a
-[registry of data in that form](http://www.iatiregistry.org).
+they publish the [IATI Standard](http://iatistandard.org) and keep a
+[Registry of data in that form](http://www.iatiregistry.org).
 
-The *IATI Datastore* is provided to help users of IATI's data access the
+The *IATI Datastore* is provided to help users of IATI data access the
 extracts they are interested in.
 
 
