@@ -49,6 +49,7 @@ def json_rep(obj):
             ("end-planned", obj.end_planned),
             ("start-actual", obj.start_actual),
             ("end-actual", obj.end_actual),
+            ("activity-status", code(obj.activity_status)),
             ("activity-website", list(obj.websites)),
             ("transaction", [json_rep(o) for o in obj.transactions]),
             ("participating-org", [json_rep(o) for o in obj.participating_orgs]),
