@@ -90,7 +90,7 @@ Filtering
 
     <tr>
         <td>start_date</td>
-        <td><a href="http://iatistandard.org/activity-standard/transaction/provider-org">Start Actuale</a></td>
+        <td><a href="http://iatistandard.org/activities-standard/activity-dates/">Start Actual</a></td>
     </tr>
 </table>
 
