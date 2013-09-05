@@ -12,7 +12,7 @@ def apidate(value):
 
 activity_api_args = v.Schema({
     "limit": v.All(v.Coerce(int), v.Range(max=250000)),
-    "offset": v.All(v.Coerce(int), v.Range(min=1)),
+    "offset": v.All(v.Coerce(int), v.Range(min=0)),
     "date": apidate,
     "stream": v.All(v.Coerce(bool)),
     'recipient-country' : v.All(v.Coerce(str)),
