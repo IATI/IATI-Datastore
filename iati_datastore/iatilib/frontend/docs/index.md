@@ -147,3 +147,8 @@ General information about the datasets, such as the urls for the resources and w
  
 * List of datasets[`api/1/about/dataset`](http://iati-datastore.herokuapp.com/api/1/about/dataset)
 * Specific details of dataset `api/1/about/dataset/<dataset name>`
+
+Source code
+-----------
+
+The IATI Datastore is still under development. You can [browse the source code and report bugs on Github](https://github.com/okfn/iati-datastore).
