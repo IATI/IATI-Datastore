@@ -120,6 +120,11 @@ parameter to get the next page.
 The datastore will respond with an HTTP 404 when you have asked for the page
 beyond the last page.
 
+You can also set the maximum number of results to receive via the `limit`
+parameter:
+* [`/api/1/access/activity.xml?limit=50`](http://iati-datastore.herokuapp.com/api/1/access/activity.xml?limit=100)
+
+The default is 50.
 
 
 Getting all the results at once
