@@ -86,6 +86,18 @@ class Participation(db.Model):
         primary_key=True)
     organisation = sa.orm.relationship("Organisation")
 
+class Location(db.Model):
+    __tablename__ = "location"
+    id = sa.Column(sa.Integer, primary_key=True)
+    activity_identifier = sa.Column(
+        act_ForeignKey("activity.iati_identifier"))
+    name = sa.Column(sa.Unicode, nullable=True)
+    coordinates_latitude = sa.Column(sa.Unicode, nullable=True)
+    coordinates_longitude = sa.Column(sa.Unicode, nullable=True)
+    coordinates_precision = sa.Column(sa.Unicode, nullable=True)
+    location_type = sa.Column(sa.Unicode, nullable=True)
+    location_type_code = sa.Column(sa.Unicode, nullable=True)
+
 
 class Result(db.Model):
     __tablename__ = "result"
@@ -194,6 +206,7 @@ class Activity(db.Model):
     default_aid_type = sa.Column(codelists.AidType.db_type())
     default_tied_status = sa.Column(codelists.TiedStatus.db_type())
     results = act_relationship("Result")
+    locations = act_relationship("Location")
 
 class DeletedActivity(db.Model):
     __tablename__ = "deleted_activity"
