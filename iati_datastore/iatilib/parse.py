@@ -14,7 +14,7 @@ from . import db
 from iatilib.model import (
     Activity, Budget, CountryPercentage, Transaction, Organisation,
     Participation, PolicyMarker, RegionPercentage, RelatedActivity,
-    SectorPercentage, Result, Indicator, IndicatorPeriod)
+    SectorPercentage, Result, Indicator, IndicatorPeriod, Location)
 from iatilib import codelists as cl
 from iatilib import loghandlers
 from iatilib.loghandlers import DatasetMessage as _
@@ -336,6 +336,24 @@ def related_activities(xml, resource=no_resource):
             )
     return results
 
+def locations(xml, resource=no_resource):
+    element = xml.xpath("./location")
+    locations = []
+    for ele in element:
+        ldata = {
+            "name": xval(ele, 'name/text()', None),
+            "coordinates_longitude": xval(ele, 'coordinates/@longitude', None),
+            "coordinates_latitude": xval(ele, 'coordinates/@latitude', None),
+            "location_type": xval(ele, 'location-type/text()', u""),
+            "location_type_code": from_codelist(cl.LocationType, "location-type/@type", ele, resource),
+        }
+        l = Location()
+        for attribute, value in ldata.items():
+            setattr(l, attribute, value)
+
+        locations.append(l)
+    return locations
+
 def resultsdata(xml, resource=no_resource):
     element = xml.xpath("./result")
     results = []
@@ -514,6 +532,7 @@ def activity(xml_resource, resource=no_resource):
         'default_aid_type' : default_aid_type,
         'default_tied_status' : default_tied_status,
         'results': resultsdata,
+        'locations': locations,
     }
 
     for field, function in field_functions.items():
