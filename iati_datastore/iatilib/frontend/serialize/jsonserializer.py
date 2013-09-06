@@ -8,7 +8,8 @@ from flask import json as jsonlib
 from iatilib.model import (
     Activity, Organisation, Transaction, Participation, SectorPercentage,
     CountryPercentage, Budget,
-    Result, Indicator, IndicatorPeriod
+    Result, Indicator, IndicatorPeriod,
+    Location
 )
 from iatilib import codelists
 
@@ -58,6 +59,7 @@ def json_rep(obj):
             ("budget", {}),
             ("last-change", obj.last_change_datetime),
             ("result", [json_rep(r) for r in obj.results]),
+            ("location", [json_rep(l) for l in obj.locations]),
 
         ),)
     if isinstance(obj, Organisation):
@@ -108,6 +110,14 @@ def json_rep(obj):
                 "currency": obj.value_currency.value,
                 "amount": str(obj.value_amount),
             }
+        }
+    if isinstance(obj, Location):
+        return {
+            "location_type": code(obj.location_type_code),
+            "name": obj.name,
+            "coordinates_longitude": obj.coordinates_longitude,
+            "coordinates_latitude": obj.coordinates_latitude,
+            "coordinates_precision": obj.coordinates_precision,
         }
     if isinstance(obj, Result):
         return {
