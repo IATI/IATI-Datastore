@@ -99,6 +99,28 @@ class Location(db.Model):
     location_type_code = sa.Column(sa.Unicode, nullable=True)
 
 
+class DocumentLink(db.Model):
+    __tablename__ = "document_link"
+    id = sa.Column(sa.Integer, primary_key=True)
+    activity_identifier = sa.Column(
+        act_ForeignKey("activity.iati_identifier"))
+    title = sa.Column(sa.Unicode, default=u"", nullable=False)
+    url = sa.Column(sa.Unicode, default=u"", nullable=False)
+    format = sa.Column(sa.Unicode, default=u"", nullable=False)
+    # format could use FileFormat codelist, but it's quite limited
+    # right now.
+    documentcategories = act_relationship("DocumentCategory")
+
+
+class DocumentCategory(db.Model):
+    document_link_id = sa.Column(
+        act_ForeignKey("document_link.id"),
+        primary_key=True)
+    category = sa.Column(
+        codelists.DocumentCategory.db_type(),
+        primary_key=True)
+
+
 class Result(db.Model):
     __tablename__ = "result"
     id = sa.Column(sa.Integer, primary_key=True)
@@ -207,6 +229,7 @@ class Activity(db.Model):
     default_tied_status = sa.Column(codelists.TiedStatus.db_type())
     results = act_relationship("Result")
     locations = act_relationship("Location")
+    documents = act_relationship("DocumentLink")
 
 class DeletedActivity(db.Model):
     __tablename__ = "deleted_activity"
