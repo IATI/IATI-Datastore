@@ -9,7 +9,7 @@ from iatilib.model import (
     Activity, Organisation, Transaction, Participation, SectorPercentage,
     CountryPercentage, Budget,
     Result, Indicator, IndicatorPeriod,
-    Location
+    Location, DocumentLink, DocumentCategory
 )
 from iatilib import codelists
 
@@ -60,6 +60,7 @@ def json_rep(obj):
             ("last-change", obj.last_change_datetime),
             ("result", [json_rep(r) for r in obj.results]),
             ("location", [json_rep(l) for l in obj.locations]),
+            ("document-link", [json_rep(d) for d in obj.documents]),
 
         ),)
     if isinstance(obj, Organisation):
@@ -110,6 +111,17 @@ def json_rep(obj):
                 "currency": obj.value_currency.value,
                 "amount": str(obj.value_amount),
             }
+        }
+    if isinstance(obj, DocumentLink):
+        return {
+            "title": obj.title,
+            "url": obj.url,
+            "format": obj.format,
+            "category": [json_rep(r) for r in obj.documentcategories],
+        }
+    if isinstance(obj, DocumentCategory):
+        return {
+            "category": code(obj.category),
         }
     if isinstance(obj, Location):
         return {
