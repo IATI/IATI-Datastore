@@ -48,6 +48,7 @@ urls = {
     "IndicatorMeasure": iati_url("IndicatorMeasure", version="1.0"),
     "ResultType": iati_url("ResultType", version="1.0"),
     "LocationType": iati_url("LocationType", version="1.0"),
+    "DocumentCategory": iati_url("DocumentCategory", version="1.0"),
 }
 
 data_dir = os.path.dirname(__file__)
