@@ -14,7 +14,8 @@ from . import db
 from iatilib.model import (
     Activity, Budget, CountryPercentage, Transaction, Organisation,
     Participation, PolicyMarker, RegionPercentage, RelatedActivity,
-    SectorPercentage, Result, Indicator, IndicatorPeriod, Location)
+    SectorPercentage, Result, Indicator, IndicatorPeriod, Location,
+    DocumentLink, DocumentCategory)
 from iatilib import codelists as cl
 from iatilib import loghandlers
 from iatilib.loghandlers import DatasetMessage as _
@@ -336,6 +337,31 @@ def related_activities(xml, resource=no_resource):
             )
     return results
 
+def documents(xml, resource=no_resource):
+    element = xml.xpath("./document-link")
+    docs = []
+    for ele in element:
+        ddata = {
+            "title": xval(ele, 'title/text()', None),
+            "url": xval(ele, '@url', None),
+            "format": xval(ele, '@format', None),
+        }
+
+        doc_element = ele.xpath("./category")
+        ddata['documentcategories'] = []
+        for dele in doc_element:
+            category_code = from_codelist(cl.DocumentCategory, "@code", dele, resource)
+            ddata['documentcategories'].append(DocumentCategory(category=category_code))
+        if not ddata['documentcategories']:
+            ddata['documentcategories'] = None        
+
+        d = DocumentLink()
+        for attribute, value in ddata.items():
+            setattr(d, attribute, value)
+
+        docs.append(d)
+    return docs
+
 def locations(xml, resource=no_resource):
     element = xml.xpath("./location")
     locations = []
@@ -533,6 +559,7 @@ def activity(xml_resource, resource=no_resource):
         'default_tied_status' : default_tied_status,
         'results': resultsdata,
         'locations': locations,
+        'documents': documents,
     }
 
     for field, function in field_functions.items():
