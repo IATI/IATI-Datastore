@@ -27,6 +27,15 @@ class TestApiSchema(TestCase):
             {"limit": 10}
             )
 
+    def test_limit_zero(self):
+        """
+        [#96] offset of zero should be allowed!
+        """
+        self.assertEquals(
+            validators.activity_api_args({"offset": "0"}),
+            {"offset": 0}
+            )
+
     def test_date(self):
         self.assertEquals(
             validators.activity_api_args({"date": "2007-05-25"}),
