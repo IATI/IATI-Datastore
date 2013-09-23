@@ -117,7 +117,7 @@ def reporting_org(element, resource=no_resource):
         data['type'] = None
         iati_identifier = xval(xml, "/iati-identifier/text()", 'no_identifier')
         log.warn(
-            _("Failed to import a valid reporting-org_type in activity {0}, error was: {1}".format(
+            _("Failed to import a valid reporting-org.type in activity {0}, error was: {1}".format(
                 iati_identifier, exe),
             logger='activity_importer', dataset=resource.dataset_id, resource=resource.url),
             exc_info=exe
