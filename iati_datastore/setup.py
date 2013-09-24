@@ -27,6 +27,7 @@ Flask-RQ==0.2
 flask-heroku==0.1.4
 Flask-And-Redis==0.4
 Flask-Markdown==0.3
+xmltodict==0.7.0
 """
 
 tests_require = """

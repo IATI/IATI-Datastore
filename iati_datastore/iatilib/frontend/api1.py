@@ -206,6 +206,7 @@ class ActivityView(DataStoreView):
         forms = {
             ".xml": (serialize.xml, "application/xml"),
             ".json": (serialize.json, "application/json"),  # rfc4627
+            ".db.json": (serialize.datastore_json, "application/json"),
             ".csv": (serialize.csv, "text/csv")  # rfc4180
         }
         if format not in forms:

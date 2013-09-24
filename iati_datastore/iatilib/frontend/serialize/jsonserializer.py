@@ -5,12 +5,13 @@ from decimal import Decimal
 from flask import current_app
 from flask import json as jsonlib
 
+import xmltodict
+
 from iatilib.model import (
     Activity, Organisation, Transaction, Participation, SectorPercentage,
     CountryPercentage, Budget
 )
 from iatilib import codelists
-
 
 class JSONEncoder(jsonlib.JSONEncoder):
     TWOPLACES = Decimal(10) ** -2
@@ -22,8 +23,24 @@ class JSONEncoder(jsonlib.JSONEncoder):
             return o.value
         if isinstance(o, Decimal):
             return str(o.quantize(self.TWOPLACES))
+        if isinstance(o, Activity):
+            return xmltodict.parse(o.raw_xml, attr_prefix='', cdata_key='text')
         return super(JSONEncoder, self).default(o)
 
+
+class DatastoreJSONEncoder(jsonlib.JSONEncoder):
+    TWOPLACES = Decimal(10) ** -2
+
+    def default(self, o):
+        if isinstance(o, datetime.date):
+            return o.strftime("%Y-%m-%d")
+        if isinstance(o, codelists.enum.EnumSymbol):
+            return o.value
+        if isinstance(o, Decimal):
+            return str(o.quantize(self.TWOPLACES))
+        if isinstance(o, Activity):
+            return json_rep(o)
+        return super(DatastoreJSONEncoder, self).default(o)
 
 def code(attr):
     if attr:
@@ -115,7 +132,18 @@ def json(pagination):
         ("total-count", pagination.total),
         ("start", pagination.offset),
         ("limit", pagination.limit),
-        ("iati-activities", [json_rep(a) for a in pagination.items]),
+        ("iati-activities", pagination.items),
     )),
     indent=2 if current_app.debug else 0,
     cls=JSONEncoder)
+
+def datastore_json(pagination):
+    return jsonlib.dumps(OrderedDict((
+        ("ok", True),
+        ("total-count", pagination.total),
+        ("start", pagination.offset),
+        ("limit", pagination.limit),
+        ("iati-activities", pagination.items),
+    )),
+    indent=2 if current_app.debug else 0,
+    cls=DatastoreJSONEncoder)
