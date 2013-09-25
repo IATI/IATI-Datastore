@@ -163,11 +163,15 @@ class TestCSVTransactionExample(TestCase, CSVTstMixin):
         self.assertField({"default-currency": "USD"}, data[0])
 
     def test_currency(self):
-        # I'm assuming they want the actual currency
+        activity = fac.ActivityFactory.build(
+            default_currency=cl.Currency.from_string("AUD")
+        )
         data = self.process([
             fac.TransactionFactory.build(
                 type=cl.TransactionType.disbursement,
-                value_currency=cl.Currency.australian_dollar)
+                value_currency=cl.Currency.australian_dollar,
+                activity=activity,
+            )
         ])
         self.assertField({"default-currency": "AUD"}, data[0])
 
