@@ -5,9 +5,11 @@
     <body>
         <h1>Invalid Request</h1>
         Invalid arguments passed as filter, bad filters were : [
-        {%- for error in errors -%}
+        {%- for error in errors.path -%}
         {{ error }}, 
-        {%- endfor -%} ]
+        {%- endfor -%} ] 
+        <p>details : {{ errors.msg }}</p>
+
     </body>
 
 </html>

@@ -2,6 +2,7 @@ import datetime
 from unittest import TestCase
 
 from iatilib.frontend import validators
+from iatilib import codelists
 
 
 class TestApiDate(TestCase):
@@ -14,6 +15,17 @@ class TestApiDate(TestCase):
     def test_invalid_date(self):
         with self.assertRaises(validators.Invalid):
             validators.apidate("1-1-2012")
+
+class TestCodelist(TestCase):
+    def test_valid_organisation_role(self):
+        self.assertEqual(
+            validators.organisation_role("implementing"),
+            codelists.OrganisationRole.implementing
+        )
+
+    def test_invalid_organisation_role(self):
+        with self.assertRaises(validators.Invalid):
+            validators.organisation_role("not a role"),
 
 
 class TestApiSchema(TestCase):

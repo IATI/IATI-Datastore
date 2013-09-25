@@ -1,6 +1,7 @@
 # http://techspot.zzzeek.org/2011/01/14/the-enum-recipe/
 from sqlalchemy.types import SchemaType, TypeDecorator, Enum
 import re
+from requests.structures import CaseInsensitiveDict
 
 
 class EnumSymbol(object):
@@ -43,13 +44,13 @@ class DeclEnum(object):
     """Declarative enumeration."""
 
     __metaclass__ = EnumMeta
-    _reg = {}
+    _reg = CaseInsensitiveDict()
 
     @classmethod
     def from_string(cls, value):
         try:
             return cls._reg[value]
-        except KeyError:
+        except (KeyError, AttributeError):
             raise ValueError(
                     "Invalid value for %r: %r" %
                     (cls.__name__, value)

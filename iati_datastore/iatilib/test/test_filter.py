@@ -21,7 +21,7 @@ class TestActivityFilter(AppTestCase):
                 fac.CountryPercentageFactory.build(country=cl.Country.zambia),
             ])
         activities = dsfilter.activities({
-            "recipient-country": u"LY"
+            "recipient-country": cl.Country.from_string(u"LY")
         })
         self.assertIn(act_in, activities.all())
         self.assertNotIn(act_not, activities.all())
@@ -71,7 +71,7 @@ class TestActivityFilter(AppTestCase):
         act_not = fac.ActivityFactory.create(
             reporting_org__type=cl.OrganisationType.foundation)
         activities = dsfilter.activities({
-            "reporting-org.type": u"10"
+            "reporting-org.type": cl.OrganisationType.from_string(u"10")
         })
         self.assertIn(act_in, activities.all())
         self.assertNotIn(act_not, activities.all())
@@ -89,7 +89,7 @@ class TestActivityFilter(AppTestCase):
                 ),
             ])
         activities = dsfilter.activities({
-            "recipient-region": u"298"
+            "recipient-region": cl.Region.from_string(u"298")
         })
         self.assertIn(act_in, activities.all())
         self.assertNotIn(act_not, activities.all())
@@ -138,7 +138,7 @@ class TestActivityFilter(AppTestCase):
                 ),
             ])
         activities = dsfilter.activities({
-            "sector": u"11220"
+            "sector": cl.Sector.from_string(u"11220")
         })
         self.assertIn(act_in, activities.all())
         self.assertNotIn(act_not, activities.all())
@@ -249,7 +249,7 @@ class TestActivityFilter(AppTestCase):
                 ],
         )
         activities = dsfilter.activities({
-            "policy-marker": u"1"
+            "policy-marker": cl.PolicyMarker.from_string(u"1")
         })
         self.assertIn(act_in, activities.all())
         self.assertNotIn(act_not, activities.all())
@@ -312,6 +312,26 @@ class TestActivityFilter(AppTestCase):
         self.assertIn(act_in, activities.all())
         self.assertNotIn(act_not, activities.all())
 
+    def test_participating_org_role(self):
+        act_in = fac.ActivityFactory.create(
+                participating_orgs=[
+                    fac.ParticipationFactory.build(
+                        organisation__ref=u"AAA",
+                        role=cl.OrganisationRole.implementing)
+                ])
+        act_not = fac.ActivityFactory.create(
+                participating_orgs=[
+                    fac.ParticipationFactory.build(
+                        organisation__ref=u"BBB",
+                        role=cl.OrganisationRole.funding)
+                ])
+        activities = dsfilter.activities({
+            "participating-org.role": cl.OrganisationRole.implementing
+        })
+        self.assertIn(act_in, activities.all())
+        self.assertNotIn(act_not, activities.all())
+
+
 class TestTransactionFilter(AppTestCase):
     def test_by_country_code(self):
         trans_in = fac.TransactionFactory.create(
@@ -329,7 +349,7 @@ class TestTransactionFilter(AppTestCase):
                 ])
         )
         transactions = dsfilter.transactions({
-            "recipient-country": u"LY"
+            "recipient-country": cl.Country.from_string(u"LY")
         })
         self.assertIn(trans_in, transactions.all())
         self.assertNotIn(trans_not, transactions.all())
@@ -403,7 +423,7 @@ class TestBudgetFilter(AppTestCase):
                 ])
         )
         budgets = dsfilter.budgets({
-            "recipient-country": u"LY"
+            "recipient-country": cl.Country.from_string(u"LY")
         })
         self.assertIn(budget_in, budgets.all())
         self.assertNotIn(budget_not, budgets.all())

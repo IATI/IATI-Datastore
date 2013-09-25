@@ -182,8 +182,8 @@ class DataStoreView(MethodView):
 
         try:
             valid_args = self.validate_args()
-        except validators.Invalid, e:
-            return make_response(render_template('invalid_filter.html', errors=e.path), 400)
+        except (validators.MultipleInvalid, validators.Invalid), e:
+            return make_response(render_template('invalid_filter.html', errors=e), 400)
         query = self.filter(valid_args)
 
         if self.streaming:

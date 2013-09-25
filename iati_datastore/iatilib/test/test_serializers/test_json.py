@@ -34,7 +34,7 @@ class TestJson(AppTestCase):
                     tied_status=codelists.TiedStatus.untied,
                 )
 
-        json_output = jsonserializer.json(FakePage([activity]))
+        json_output = jsonserializer.datastore_json(FakePage([activity]))
         output = json.load(StringIO(json_output))
 
         transactions = {

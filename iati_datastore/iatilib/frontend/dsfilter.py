@@ -18,19 +18,26 @@ def filter_from_codelist(codelist, column, related_column, code):
 def filter_from_text(query, column, related_column, text):
     return query.filter(column.any(related_column == text))
 
+def filter_from(codelist, column, related_column, code):
+    value = codelist.from_string(code)
+    return column.any(related_column == value)
+
 def _filter(query, args):
-    recipient_country = partial(filter_from_codelist, codelists.Country,
-        Activity.recipient_country_percentages, CountryPercentage.country)
+    #recipient_country = partial(filter_from_codelist, codelists.Country,
+    #    Activity.recipient_country_percentages, CountryPercentage.country)
+    def recipient_country(country_code):
+        return Activity.recipient_country_percentages.any(
+            CountryPercentage.country == country_code
+        )
 
     def recipient_country_text(country):
         return Activity.recipient_country_percentages.any(
             CountryPercentage.name == country
         )
 
-    def recipient_region(region_string):
-        region = codelists.Region.from_string(region_string)
+    def recipient_region(region_code):
         return Activity.recipient_region_percentages.any(
-            RegionPercentage.region == region
+            RegionPercentage.region == region_code
         )
 
     def recipient_region_text(region):
@@ -49,9 +56,8 @@ def _filter(query, args):
         )
 
     def reporting_org_type(organisation_type):
-        code = codelists.OrganisationType.from_string(organisation_type)
         return Activity.reporting_org.has(
-            Organisation.type == code
+            Organisation.type == organisation_type 
         )
 
     def participating_org(organisation):
@@ -68,10 +74,14 @@ def _filter(query, args):
             )
         )
 
-    def sector(sector_string):
-        code = codelists.Sector.from_string(sector_string)
+    def participating_org_role(role):
+        return Activity.participating_orgs.any(
+            Participation.role == role 
+        )
+
+    def sector(sector_code):
         return Activity.sector_percentages.any(
-            SectorPercentage.sector == code
+            SectorPercentage.sector == sector_code
         )
 
     def sector_text(sector):
@@ -112,10 +122,9 @@ def _filter(query, args):
             )
         )
 
-    def policy_marker(code):
-        policy = codelists.PolicyMarker.from_string(code)
+    def policy_marker(policy_marker):
         return Activity.policy_markers.any(
-            PolicyMarker.code == policy
+            PolicyMarker.code == policy_marker
         )
 
     def related_activity(ref):
@@ -150,6 +159,7 @@ def _filter(query, args):
             'participating-org' : participating_org,
             'participating-org.ref' : participating_org,
             'participating-org.text' : participating_org_text,
+            'participating-org.role' : participating_org_role,
             'related-activity': related_activity,
             'related-activity.ref' : related_activity,
             'transaction_ref' : transaction_ref,
