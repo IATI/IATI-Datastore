@@ -515,6 +515,11 @@ class TestDates(TestCase):
             datetime.date(2011, 12, 31),
             parse.iati_date("31/12/2011"))
 
+    def test_iso_date_with_z(self):
+        self.assertEquals(
+            datetime.date(2010, 1, 2),
+            parse.iati_date("2010-01-02Z"))
+
 
 class TestValue(TestCase):
     def test_thousand_sep(self):
