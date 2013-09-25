@@ -64,9 +64,7 @@ def sector_vocabulary(activity):
 
 
 def default_currency(transaction):
-    if transaction.value_currency:
-        return transaction.value_currency.value
-    return ""
+    return activity_default_currency(transaction.activity)
 
 def transaction_type(transaction):
     return transaction.type.value
