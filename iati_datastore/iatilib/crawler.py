@@ -80,6 +80,13 @@ def fetch_dataset_metadata(dataset):
                     in ds_entity.get('resources', [])
                     if resource['url'] not in dataset.resource_urls]
         dataset.resource_urls.extend(new_urls)
+
+        urls = [resource['url'] for resource
+            in ds_entity.get('resources', []) ]
+        for deleted in set(dataset.resource_urls) - set(urls):
+            dataset.resource_urls.remove(deleted)
+
+
         try:
             dataset.license = ds_reg['result']['license']
         except KeyError:
