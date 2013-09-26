@@ -240,6 +240,15 @@ def update_resource(resource_url):
 def update_dataset(dataset_name):
     rq = get_queue()
     dataset = Dataset.query.get(dataset_name)
+
+    #clear up previous job queue log errors
+    db.session.query(Log).filter(sa.and_(
+        sa.not_(Log.logger.in_(
+            ['activity_importer', 'failed_activity', 'xml_parser'])),
+        Log.dataset==dataset_name,
+    )).delete(synchronize_session=False)
+    db.session.commit()
+
     fetch_dataset_metadata(dataset)
     db.session.commit()
     need_update = [r for r in dataset.resources
