@@ -20,6 +20,11 @@ class TestParseActivity(AppTestCase):
         super(TestParseActivity, self).setUp()
         self.act = parse.activity(fixture("default_currency.xml"))
 
+    def test_bad_xml(self):
+        with self.assertRaises(ET.LxmlError):
+            act = parse.activity(fixture("broken.xml"))
+
+
     def test_id(self):
         self.assertEquals(
             u"47045-ARM-202-G05-H-00",
@@ -212,6 +217,8 @@ class TestParseActivity(AppTestCase):
     def test_default_language(self):
         activities = [ a for a in parse.document(fixture_filename("default_currency.xml")) ]
         self.assertEquals(cl.Language.english, activities[0].default_language) 
+
+
 
 class TestFunctional(AppTestCase):
     def test_save_parsed_activity(self):
