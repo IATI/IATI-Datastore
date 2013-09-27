@@ -14,7 +14,7 @@ from . import db
 from iatilib.model import (
     Activity, Budget, CountryPercentage, Transaction, Organisation,
     Participation, PolicyMarker, RegionPercentage, RelatedActivity,
-    SectorPercentage)
+    SectorPercentage, Result, Indicator, IndicatorPeriod)
 from iatilib import codelists as cl
 from iatilib import loghandlers
 from iatilib.loghandlers import DatasetMessage as _
@@ -92,6 +92,12 @@ def xpath_decimal(xpath, xml, resource=None):
     else:
         return None
 
+def nocomma_if_int(text):
+    try:
+        return int(text.replace(",",""))
+    except ValueError:
+        return None
+
 def parse_org(xml, resource=no_resource):
     data = {
         "ref": xval(xml, "@ref", u""),
@@ -129,11 +135,11 @@ def reporting_org(element, resource=no_resource):
 def participating_orgs(xml, resource=None):
     ret = []
     seen = set()
-    for ele in [e for e in xml.xpath("./participating-org") if e.xpath("@ref")]:
+    for ele in [e for e in xml.xpath("./participating-org")]:
         role = cl.OrganisationRole.from_string(xval(ele, "@role").title())
         organisation = parse_org(ele)
-        if not (role, organisation.ref) in seen:
-            seen.add((role, organisation.ref))
+        if not (role, organisation.name, organisation.ref) in seen:
+            seen.add((role, organisation.name, organisation.ref))
             ret.append(Participation(role=role, organisation=organisation))
     return ret
 
@@ -330,6 +336,80 @@ def related_activities(xml, resource=no_resource):
             )
     return results
 
+def resultsdata(xml, resource=no_resource):
+    element = xml.xpath("./result")
+    results = []
+    for ele in element:
+        rdata = {
+            "type": from_codelist(cl.ResultType, "@type", ele, resource),
+            "aggregation_status": xval(ele, '@aggregation-status', None),
+            "title": xval(ele, 'title/text()', u""),
+            "description": xval(ele, 'description/text()', u""),
+        }
+
+        if rdata['type'] == None:
+            rdata['type'] = cl.ResultType.from_string("1")
+
+        result_element = ele.xpath("./indicator")
+
+        # many indicators in one result
+        rdata['indicators']=[]
+
+        for rele in result_element:
+            idata = {
+                "measure": from_codelist(cl.IndicatorMeasure, "@measure", rele, resource),
+                "ascending": xval(rele, '@ascending', 'None'),
+                "title": xval(rele, 'title/text()', u""),
+                "description": xval(rele, 'description/text()', u""),
+                "baseline_year": xpath_date('baseline/@year', rele, resource),
+                "baseline_value": xval(rele, 'baseline/@value', None),
+                "baseline_comment": xval(rele, 'baseline/comment/text()', None),
+            }
+
+            if idata['measure'] == None:
+                idata['measure'] = cl.IndicatorMeasure.from_string("1")
+
+            # many periods in one indicator
+            period_element = rele.xpath("./period")
+            idata['periods']=[]
+            for prele in period_element:
+                pdata = {
+                    "period_start": xpath_date('period-start/@iso-date', prele, resource),
+                    "period_end": xpath_date('period-end/@iso-date', prele, resource),
+                    "period_start_text": xval(prele, 'period-start/text()', None),
+                    "period_end_text": xval(prele, 'period-end/text()', None),
+                    "target": xval(prele, 'target/@value', None),
+                    "actual": xval(prele, 'actual/@value', None),
+                }
+
+                # If it looks like a number, remove commas
+                test = {}
+                newtarget = nocomma_if_int(pdata['target'])
+                newactual = nocomma_if_int(pdata['actual'])
+                if newtarget is not None:
+                    pdata['target'] = newtarget
+                if newactual is not None:
+                    pdata['actual'] = newactual
+
+                p = IndicatorPeriod()
+                for attribute, value in pdata.items():
+                    setattr(p, attribute, value)
+                idata['periods'].append(p)
+
+            i = Indicator()
+            for attribute, value in idata.items():
+                setattr(i, attribute, value)
+            rdata['indicators'].append(i)
+
+        r = Result()
+        for attribute, value in rdata.items():
+            setattr(r, attribute, value)
+
+        results.append(r)
+
+    return results
+
+
 def hierarchy(xml, resource=None):
     xml_value = xval(xml, "@hierarchy", None)
     if xml_value:
@@ -433,6 +513,7 @@ def activity(xml_resource, resource=no_resource):
         'default_flow_type' : default_flow_type,
         'default_aid_type' : default_aid_type,
         'default_tied_status' : default_tied_status,
+        'results': resultsdata,
     }
 
     for field, function in field_functions.items():

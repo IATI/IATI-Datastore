@@ -87,6 +87,48 @@ class Participation(db.Model):
     organisation = sa.orm.relationship("Organisation")
 
 
+class Result(db.Model):
+    __tablename__ = "result"
+    id = sa.Column(sa.Integer, primary_key=True)
+    activity_identifier = sa.Column(
+        act_ForeignKey("activity.iati_identifier"))
+    type = sa.Column(
+        codelists.ResultType.db_type())
+    aggregation_status = sa.Column(sa.Boolean, nullable=True)
+    title = sa.Column(sa.Unicode, default=u"", nullable=False)
+    description = sa.Column(sa.Unicode, default=u"", nullable=False)
+    indicators = act_relationship("Indicator")
+
+
+class Indicator(db.Model):
+    __tablename__ = "indicator"
+    id = sa.Column(sa.Integer, primary_key=True)
+    result_id = sa.Column(
+        act_ForeignKey("result.id"))
+    measure = sa.Column(
+        codelists.IndicatorMeasure.db_type())
+    ascending = sa.Column(sa.Boolean, nullable=True)
+    title = sa.Column(sa.Unicode, default=u"", nullable=False)
+    description = sa.Column(sa.Unicode, default=u"", nullable=False)
+    baseline_year = sa.Column(sa.Date, nullable=True)
+    baseline_value = sa.Column(sa.Unicode, nullable=True)
+    baseline_comment = sa.Column(sa.Unicode, nullable=True)
+    periods = act_relationship("IndicatorPeriod")
+
+
+class IndicatorPeriod(db.Model):
+    __tablename__ = "indicator_period"
+    id = sa.Column(sa.Integer, primary_key=True)
+    indicator_id = sa.Column(
+        act_ForeignKey("indicator.id"))
+    period_start = sa.Column(sa.Date, nullable=True)
+    period_end = sa.Column(sa.Date, nullable=True)
+    period_start_text = sa.Column(sa.Unicode, nullable=True)
+    period_end_text = sa.Column(sa.Unicode, nullable=True)
+    target = sa.Column(sa.Unicode, nullable=True)
+    actual = sa.Column(sa.Unicode, nullable=True)
+
+
 class Activity(db.Model):
     __tablename__ = "activity"
     iati_identifier = sa.Column(sa.Unicode, primary_key=True, nullable=False)
@@ -151,6 +193,7 @@ class Activity(db.Model):
     default_flow_type = sa.Column(codelists.FlowType.db_type())
     default_aid_type = sa.Column(codelists.AidType.db_type())
     default_tied_status = sa.Column(codelists.TiedStatus.db_type())
+    results = act_relationship("Result")
 
 class DeletedActivity(db.Model):
     __tablename__ = "deleted_activity"
