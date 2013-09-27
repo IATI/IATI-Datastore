@@ -86,6 +86,82 @@ class Participation(db.Model):
         primary_key=True)
     organisation = sa.orm.relationship("Organisation")
 
+class Location(db.Model):
+    __tablename__ = "location"
+    id = sa.Column(sa.Integer, primary_key=True)
+    activity_identifier = sa.Column(
+        act_ForeignKey("activity.iati_identifier"))
+    name = sa.Column(sa.Unicode, nullable=True)
+    coordinates_latitude = sa.Column(sa.Unicode, nullable=True)
+    coordinates_longitude = sa.Column(sa.Unicode, nullable=True)
+    coordinates_precision = sa.Column(sa.Unicode, nullable=True)
+    location_type = sa.Column(sa.Unicode, nullable=True)
+    location_type_code = sa.Column(sa.Unicode, nullable=True)
+
+
+class DocumentLink(db.Model):
+    __tablename__ = "document_link"
+    id = sa.Column(sa.Integer, primary_key=True)
+    activity_identifier = sa.Column(
+        act_ForeignKey("activity.iati_identifier"))
+    title = sa.Column(sa.Unicode, default=u"", nullable=False)
+    url = sa.Column(sa.Unicode, default=u"", nullable=False)
+    format = sa.Column(sa.Unicode, default=u"", nullable=False)
+    # format could use FileFormat codelist, but it's quite limited
+    # right now.
+    documentcategories = act_relationship("DocumentCategory")
+
+
+class DocumentCategory(db.Model):
+    document_link_id = sa.Column(
+        act_ForeignKey("document_link.id"),
+        primary_key=True)
+    category = sa.Column(
+        codelists.DocumentCategory.db_type(),
+        primary_key=True)
+
+
+class Result(db.Model):
+    __tablename__ = "result"
+    id = sa.Column(sa.Integer, primary_key=True)
+    activity_identifier = sa.Column(
+        act_ForeignKey("activity.iati_identifier"))
+    type = sa.Column(
+        codelists.ResultType.db_type())
+    aggregation_status = sa.Column(sa.Boolean, nullable=True)
+    title = sa.Column(sa.Unicode, default=u"", nullable=False)
+    description = sa.Column(sa.Unicode, default=u"", nullable=False)
+    indicators = act_relationship("Indicator")
+
+
+class Indicator(db.Model):
+    __tablename__ = "indicator"
+    id = sa.Column(sa.Integer, primary_key=True)
+    result_id = sa.Column(
+        act_ForeignKey("result.id"))
+    measure = sa.Column(
+        codelists.IndicatorMeasure.db_type())
+    ascending = sa.Column(sa.Boolean, nullable=True)
+    title = sa.Column(sa.Unicode, default=u"", nullable=False)
+    description = sa.Column(sa.Unicode, default=u"", nullable=False)
+    baseline_year = sa.Column(sa.Date, nullable=True)
+    baseline_value = sa.Column(sa.Unicode, nullable=True)
+    baseline_comment = sa.Column(sa.Unicode, nullable=True)
+    periods = act_relationship("IndicatorPeriod")
+
+
+class IndicatorPeriod(db.Model):
+    __tablename__ = "indicator_period"
+    id = sa.Column(sa.Integer, primary_key=True)
+    indicator_id = sa.Column(
+        act_ForeignKey("indicator.id"))
+    period_start = sa.Column(sa.Date, nullable=True)
+    period_end = sa.Column(sa.Date, nullable=True)
+    period_start_text = sa.Column(sa.Unicode, nullable=True)
+    period_end_text = sa.Column(sa.Unicode, nullable=True)
+    target = sa.Column(sa.Unicode, nullable=True)
+    actual = sa.Column(sa.Unicode, nullable=True)
+
 
 class Activity(db.Model):
     __tablename__ = "activity"
@@ -151,6 +227,9 @@ class Activity(db.Model):
     default_flow_type = sa.Column(codelists.FlowType.db_type())
     default_aid_type = sa.Column(codelists.AidType.db_type())
     default_tied_status = sa.Column(codelists.TiedStatus.db_type())
+    results = act_relationship("Result")
+    locations = act_relationship("Location")
+    documents = act_relationship("DocumentLink")
 
 class DeletedActivity(db.Model):
     __tablename__ = "deleted_activity"
