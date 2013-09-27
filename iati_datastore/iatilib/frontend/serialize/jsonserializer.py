@@ -9,7 +9,9 @@ import xmltodict
 
 from iatilib.model import (
     Activity, Organisation, Transaction, Participation, SectorPercentage,
-    CountryPercentage, Budget
+    CountryPercentage, Budget,
+    Result, Indicator, IndicatorPeriod,
+    Location
 )
 from iatilib import codelists
 
@@ -65,6 +67,7 @@ def json_rep(obj):
             ("end-planned", obj.end_planned),
             ("start-actual", obj.start_actual),
             ("end-actual", obj.end_actual),
+            ("activity-status", code(obj.activity_status)),
             ("activity-website", list(obj.websites)),
             ("transaction", [json_rep(o) for o in obj.transactions]),
             ("participating-org", [json_rep(o) for o in obj.participating_orgs]),
@@ -72,6 +75,8 @@ def json_rep(obj):
             ("sector", [json_rep(o) for o in obj.sector_percentages]),
             ("budget", {}),
             ("last-change", obj.last_change_datetime),
+            ("result", [json_rep(r) for r in obj.results]),
+            ("location", [json_rep(l) for l in obj.locations]),
 
         ),)
     if isinstance(obj, Organisation):
@@ -122,6 +127,42 @@ def json_rep(obj):
                 "currency": obj.value_currency.value,
                 "amount": str(obj.value_amount),
             }
+        }
+    if isinstance(obj, Location):
+        return {
+            "location_type": code(obj.location_type_code),
+            "name": obj.name,
+            "coordinates_longitude": obj.coordinates_longitude,
+            "coordinates_latitude": obj.coordinates_latitude,
+            "coordinates_precision": obj.coordinates_precision,
+        }
+    if isinstance(obj, Result):
+        return {
+            "type": code(obj.type),
+            "aggregation-status": obj.aggregation_status,
+            "title": obj.title,
+            "description": obj.description,
+            "indicator": [json_rep(r) for r in obj.indicators],
+        }
+    if isinstance(obj, Indicator):
+        return {
+            "measure": code(obj.measure),
+            "ascending": obj.ascending,
+            "title": obj.title,
+            "description": obj.description,
+            "baseline_year": obj.baseline_year,
+            "baseline_value": obj.baseline_value,
+            "baseline_comment": obj.baseline_comment,
+            "period": [json_rep(r) for r in obj.periods],
+        }
+    if isinstance(obj, IndicatorPeriod):
+        return {
+            "period_start": obj.period_start,
+            "period_end": obj.period_end,
+            "period_start_text": obj.period_start_text,
+            "period_end_text": obj.period_end_text,
+            "target": obj.target,
+            "actual": obj.actual,
         }
     return {}
 
