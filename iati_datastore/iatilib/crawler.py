@@ -12,9 +12,9 @@ from werkzeug.http import http_date
 
 from iatilib import db, parse
 from iatilib.model import Dataset, Resource, Activity, Log, DeletedActivity
+from iatilib.loghandlers import DatasetMessage as _
 
 log = logging.getLogger("crawler")
-
 
 CKAN_WEB_BASE = 'http://iatiregistry.org/dataset/%s'
 CKAN_API = 'http://iatiregistry.org'
@@ -161,20 +161,29 @@ def parse_resource(resource):
     activities = []
     for activity in parse.document(resource.document, resource):
         activity.resource = resource
-        new_identifiers.add(activity.iati_identifier)
-        try:
-            if hash(activity.raw_xml) == old_xml[activity.iati_identifier][1]:
-                activity.last_change_datetime = old_xml[activity.iati_identifier][0]
-            else:
+
+        if activity.iati_identifier not in new_identifiers:
+            new_identifiers.add(activity.iati_identifier)
+            try:
+                if hash(activity.raw_xml) == old_xml[activity.iati_identifier][1]:
+                    activity.last_change_datetime = old_xml[activity.iati_identifier][0]
+                else:
+                    activity.last_change_datetime = datetime.datetime.now()
+            except KeyError:
                 activity.last_change_datetime = datetime.datetime.now()
-        except KeyError:
-            activity.last_change_datetime = datetime.datetime.now()
-        activities.append(activity)
-        db.session.add(activity)
-        if len(db.session.new) > 50:
-            activities = check_for_duplicates(activities)
-            db.session.commit()
-            activities = []
+            activities.append(activity)
+            db.session.add(activity)
+            if len(db.session.new) > 50:
+                activities = check_for_duplicates(activities)
+                db.session.commit()
+                activities = []
+        else:
+            parse.log.warn(
+                _("Duplicate identifier {0} in same resource document".format(
+                    activity.iati_identifier),
+                logger='activity_importer', dataset=resource.dataset_id, resource=resource.url),
+                exc_info=''
+            )
     db.session.add_all(activities)
     activities = check_for_duplicates(activities)
     db.session.commit()
