@@ -19,7 +19,8 @@ def codelist_validator(Codelist, value):
         try:
             codes.append(Codelist.from_string(value))
         except ValueError:
-            raise Invalid(u"{0} is not on code list".format(value))
+            pass
+            #raise Invalid(u"{0} is not on code list".format(value))
     return codes
 
 organisation_role = partial(codelist_validator, codelists.OrganisationRole)
