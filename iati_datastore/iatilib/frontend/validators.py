@@ -14,10 +14,13 @@ def apidate(value):
         raise Invalid(u"Date must be in the form yyyy-mm-dd")
 
 def codelist_validator(Codelist, value):
-    try:
-        return Codelist.from_string(value)
-    except ValueError:
-        raise Invalid(u"{0} is not on code list".format(value))
+    codes = []
+    for i in value.split('|'):
+        try:
+            codes.append(Codelist.from_string(value))
+        except ValueError:
+            raise Invalid(u"{0} is not on code list".format(value))
+    return codes
 
 organisation_role = partial(codelist_validator, codelists.OrganisationRole)
 recipient_country = partial(codelist_validator, codelists.Country)

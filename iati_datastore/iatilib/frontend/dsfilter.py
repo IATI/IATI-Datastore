@@ -188,6 +188,13 @@ def _filter(query, args):
                     query = query.filter(or_(*conditions))
                 else:
                     query = query.filter(filter_condition(search_string))
+
+            elif isinstance(search_string, list):
+                if len(search_string) == 1:
+                    query = query.filter(filter_condition(search_string[0]))
+                elif len(search_string) >= 1:
+                    conditions = tuple([ filter_condition(term) for term in search_string])
+                    query = query.filter(or_(*conditions))
             else:
                 query = query.filter(filter_condition(search_string))
 
