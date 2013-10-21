@@ -145,7 +145,7 @@ Checking the Data
 The datastore keeps information on any errors it encountered whilst fetching and parsing any of tthe resources. [More info](http://iati-datastore.herokuapp.com/error)
 
 
-* list of datasets which have errored[`api/1/error/dataset`](http://iati-datastore.herokuapp.com/api/1/error)
+* list of datasets which have errored[`api/1/error/dataset`](http://iati-datastore.herokuapp.com/api/1/error/dataset)
 * list of errors for specific dataset `api/1/error/dataset/<errored dataset>`
 
 General information about the datasets, such as the urls for the resources and when they were fetched
