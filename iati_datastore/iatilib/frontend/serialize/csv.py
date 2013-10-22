@@ -594,6 +594,7 @@ csv_transaction_by_country = CSVSerializer((
     (u'transaction-type', trans(transaction_type)),
     (u'transaction-date', trans(transaction_date)),
     (u"default-currency", trans(default_currency)),
+    (u'transaction-value', trans(transaction_value)),
     ) + tuple([ (i[0], trans(i[1])) for i in common_transaction_csv ]) +
     ("iati-identifier",
     "hierarchy",
