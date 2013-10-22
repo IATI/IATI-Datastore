@@ -105,7 +105,7 @@ will respond with all the DFID data for the Democratic Republic of Congo.
 
 To filter by recipient-country as Democratic Republic of Congo OR Uganda
 
-[`/api/1/access/activity.xml?reporting-org=GB-1&recipient-country=CD|UG)`](http://iati-datastore.herokuapp.com/api/1/access/activity.xml?reporting-org=GB-1&recipient-country=CD|UG)
+[`/api/1/access/activity.xml?reporting-org=GB-1&recipient-country=CD|UG`](http://iati-datastore.herokuapp.com/api/1/access/activity.xml?reporting-org=GB-1&recipient-country=CD|UG)
 
 
 Paging through results
