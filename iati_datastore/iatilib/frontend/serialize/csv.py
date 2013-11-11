@@ -397,9 +397,9 @@ def adapt_activity_other(func):
 
 
 csv_activity_by_country = CSVSerializer((
-    (u"recipient-country-code", lambda (a, c): c.country.value), 
-    (u"recipient-country", lambda (a, c): c.country.description.title()),
-    (u"recipient-country-percentage", lambda (a, c): c.percentage),
+    (u"recipient-country-code", lambda (a, c): c.country.value if c.country else ""), 
+    (u"recipient-country", lambda (a, c): c.country.description.title() if c.country else ""),
+    (u"recipient-country-percentage", lambda (a, c): c.percentage if c.percentage else ""),
     "iati-identifier",
     "hierarchy",
     "last-updated-datetime",
