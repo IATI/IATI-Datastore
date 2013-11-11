@@ -133,7 +133,7 @@ Getting all the results at once
 The CSV format supports returning all results at once in a 'stream'. To
 request all results add 'stream=True' to your parameters. So
 
-[`/api/1/access/transaction.csv?reporting_org_ref=GB-1&stream=True`](http://iati-datastore.herokuapp.com/api/1/access/transaction.csv?reporting_org_ref=GB-1&stream=True)
+[`/api/1/access/transaction.csv?reporting-org.ref=GB-1&stream=True`](http://iati-datastore.herokuapp.com/api/1/access/transaction.csv?reporting-org.ref=GB-1&stream=True)
 
 will respond with all the DFID transactions data.
 
