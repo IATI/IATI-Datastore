@@ -148,7 +148,7 @@ def _filter(query, args):
             'recipient-region.code' : recipient_region,
             'recipient-region.text' : recipient_region_text,
             'reporting-org' : reporting_org,
-            'reporting-org.code' : reporting_org,
+            'reporting-org.ref' : reporting_org,
             'reporting-org.type' : reporting_org_type,
             'reporting-org.text' : reporting_org_text,
             'sector' : sector,
