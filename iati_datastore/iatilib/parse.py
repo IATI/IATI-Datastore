@@ -342,7 +342,10 @@ def last_updated_datetime(xml, resource=None):
 
 def default_language(xml, resource=None):
     xml_value = xval(xml, "@xml:lang", None)
-    return cl.Language.from_string(xml_value)
+    try:
+        return cl.Language.from_string(xml_value)
+    except ValueError:
+        return None
 
 def _open_resource(xml_resource, detect_encoding=False):
     if isinstance(xml_resource, basestring):

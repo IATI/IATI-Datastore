@@ -218,6 +218,14 @@ class TestParseActivity(AppTestCase):
         activities = [ a for a in parse.document(fixture_filename("default_currency.xml")) ]
         self.assertEquals(cl.Language.english, activities[0].default_language) 
 
+    def test_default_language_none(self):
+        default_language = parse.default_language(
+            ET.XML('<iati-activity xml:lang="en" default-currency="GBP" hierarchy="1"/>'))
+        self.assertEquals(cl.Language.english, default_language) 
+        no_default_language = parse.default_language(
+            ET.XML('<iati-activity default-currency="GBP" hierarchy="1"/>'))
+        self.assertEquals(None, no_default_language) 
+
 
 
 class TestFunctional(AppTestCase):
