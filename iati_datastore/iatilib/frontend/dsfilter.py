@@ -1,7 +1,7 @@
 from datetime import datetime
 from functools import partial
 from sqlalchemy import or_, and_
-from sqlalchemy.sql.operators import gt, lt
+from sqlalchemy.sql.operators import eq, gt, lt
 from iatilib import codelists, db
 from iatilib.model import (
     Activity, Budget, Transaction, CountryPercentage, SectorPercentage,
@@ -141,6 +141,7 @@ def _filter(query, args):
 
 
     filter_conditions = {
+            'iati-identifier': partial(eq, Activity.iati_identifier),
             'recipient-country' : recipient_country,
             'recipient-country.code' : recipient_country,
             'recipient-country.text' : recipient_country_text,
