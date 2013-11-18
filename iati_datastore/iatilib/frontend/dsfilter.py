@@ -175,7 +175,7 @@ def _filter(query, args):
             'end-date__gt' : partial(date_condition, gt, Activity.end_actual, Activity.end_planned),
             'end-date__lt' : partial(date_condition, lt, Activity.end_actual, Activity.end_planned),
             'last-change__gt': partial(gt, Activity.last_change_datetime),
-            'last-change__lt': partial(gt, Activity.last_change_datetime),
+            'last-change__lt': partial(lt, Activity.last_change_datetime),
     }
 
     for filter, search_string in args.items():
