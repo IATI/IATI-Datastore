@@ -384,6 +384,26 @@ class TestActivityFilter(AppTestCase):
         self.assertNotIn(act_not, activities.all())
 
 
+    def test_registry_dataset(self):
+        fac.DatasetFactory.create(name=u"aaa", resources=[])
+        fac.DatasetFactory.create(name=u"zzz", resources=[])
+        act_in = fac.ActivityFactory.create(
+                resource=fac.ResourceFactory.build(
+                    url=u"http://test.com",
+                    dataset_id=u"aaa")
+                )
+        act_not = fac.ActivityFactory.create(
+                resource=fac.ResourceFactory.build(
+                    url=u"http://test2.com",
+                    dataset_id=u"zzz")
+                )
+        activities = dsfilter.activities({
+            "registry-dataset": u"aaa"
+        })
+        self.assertIn(act_in, activities.all())
+        self.assertNotIn(act_not, activities.all())
+
+
 class TestTransactionFilter(AppTestCase):
     def test_by_country_code(self):
         trans_in = fac.TransactionFactory.create(

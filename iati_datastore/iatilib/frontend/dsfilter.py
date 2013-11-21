@@ -6,7 +6,7 @@ from iatilib import codelists, db
 from iatilib.model import (
     Activity, Budget, Transaction, CountryPercentage, SectorPercentage,
     RegionPercentage, Participation, Organisation, PolicyMarker,
-    RelatedActivity)
+    RelatedActivity, Resource)
 
 class BadFilterException(Exception):
     pass
@@ -138,6 +138,11 @@ def _filter(query, args):
                 and_(condition(planned_date, date), actual_date == None),
         )
 
+    def registry_dataset(dataset_id):
+        return Activity.resource.has(
+            Resource.dataset_id == dataset_id
+        )
+
 
 
     filter_conditions = {
@@ -179,6 +184,7 @@ def _filter(query, args):
             'last-change__lt': partial(lt, Activity.last_change_datetime),
             'last-updated-datetime__gt': partial(gt, Activity.last_updated_datetime),
             'last-updated-datetime__lt': partial(lt, Activity.last_updated_datetime),
+            'registry-dataset': registry_dataset,
     }
 
     for filter, search_string in args.items():

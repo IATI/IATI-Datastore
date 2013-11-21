@@ -67,4 +67,5 @@ activity_api_args = v.Schema({
     'last-change__lt' : apidate,
     'last-updated-datetime__gt' : apidate,
     'last-updated-datetime__lt' : apidate,
+    'registry-dataset': v.All(v.Coerce(str)),
 })
