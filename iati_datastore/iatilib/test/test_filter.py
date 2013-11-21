@@ -10,6 +10,15 @@ from iatilib.model import Activity
 
 
 class TestActivityFilter(AppTestCase):
+    def test_by_iati_identifier(self):
+        act_in = fac.ActivityFactory.create(iati_identifier='AAA')
+        act_not = fac.ActivityFactory.create(iati_identifier='ZZZ')
+        activities = dsfilter.activities({
+            "iati-identifier": u"AAA"
+        })
+        self.assertIn(act_in, activities.all())
+        self.assertNotIn(act_not, activities.all())
+
     def test_by_country_code(self):
         act_in = fac.ActivityFactory.create(
             recipient_country_percentages=[
