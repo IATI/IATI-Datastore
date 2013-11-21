@@ -65,4 +65,6 @@ activity_api_args = v.Schema({
     'end-date__lt' : apidate,
     'last-change__gt' : apidate,
     'last-change__lt' : apidate,
+    'last-updated-datetime__gt' : apidate,
+    'last-updated-datetime__lt' : apidate,
 })

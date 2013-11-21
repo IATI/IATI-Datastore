@@ -310,7 +310,6 @@ class TestActivityFilter(AppTestCase):
         self.assertIn(act_in, activities.all())
         self.assertNotIn(act_not, activities.all())
 
-
     def test_end_actual_lesser_than(self):
         act_in = fac.ActivityFactory.create(end_actual=datetime.date(2000, 1, 1))
         act_not = fac.ActivityFactory.create(end_actual=datetime.date(2013,1, 1))
@@ -320,6 +319,7 @@ class TestActivityFilter(AppTestCase):
         })
         self.assertIn(act_in, activities.all())
         self.assertNotIn(act_not, activities.all())
+
 
     def test_last_change_lesser_than(self):
         act_in = fac.ActivityFactory.create(last_change_datetime=datetime.date(2000, 1, 1))
@@ -331,12 +331,33 @@ class TestActivityFilter(AppTestCase):
         self.assertIn(act_in, activities.all())
         self.assertNotIn(act_not, activities.all())
 
-
     def test_last_change_actual_greater_than(self):
         act_in = fac.ActivityFactory.create(last_change_datetime=datetime.date(2013,1, 1))
         act_not = fac.ActivityFactory.create(last_change_datetime=datetime.date(2000, 1, 1))
         activities = dsfilter.activities({
             "last-change__gt": datetime.date(2010, 1, 1)
+
+        })
+        self.assertIn(act_in, activities.all())
+        self.assertNotIn(act_not, activities.all())
+
+
+    def test_last_updated_lesser_than(self):
+        act_in = fac.ActivityFactory.create(last_updated_datetime=datetime.date(2000, 1, 1))
+        act_not = fac.ActivityFactory.create(last_updated_datetime=datetime.date(2013,1, 1))
+        activities = dsfilter.activities({
+            "last-updated-datetime__lt":datetime.date(2010, 1, 1)
+
+        })
+        self.assertIn(act_in, activities.all())
+        self.assertNotIn(act_not, activities.all())
+
+
+    def test_last_updated_actual_greater_than(self):
+        act_in = fac.ActivityFactory.create(last_updated_datetime=datetime.date(2013,1, 1))
+        act_not = fac.ActivityFactory.create(last_updated_datetime=datetime.date(2000, 1, 1))
+        activities = dsfilter.activities({
+            "last-updated-datetime__gt": datetime.date(2010, 1, 1)
 
         })
         self.assertIn(act_in, activities.all())
