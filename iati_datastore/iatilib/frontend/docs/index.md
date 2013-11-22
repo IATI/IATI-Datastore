@@ -92,6 +92,14 @@ Filtering
         <td>start-date</td>
         <td><a href="http://iatistandard.org/activities-standard/activity-dates/">Start Actual</a></td>
     </tr>
+    <tr>
+        <td>end-date</td>
+        <td><a href="http://iatistandard.org/activities-standard/activity-dates/">End Actual</a></td>
+    </tr>
+    <tr>
+        <td>last-change</td>
+        <td>Datetime of activity's last change in the datastore</td>
+    </tr>
 </table>
 
 
