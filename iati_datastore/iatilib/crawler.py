@@ -16,8 +16,8 @@ from iatilib.loghandlers import DatasetMessage as _
 
 log = logging.getLogger("crawler")
 
-CKAN_WEB_BASE = 'http://iatiregistry.org/dataset/%s'
-CKAN_API = 'http://iatiregistry.org'
+CKAN_WEB_BASE = 'http://iati2.staging.ckanhosted.com/dataset/%s'
+CKAN_API = 'http://iati2.staging.ckanhosted.com'
 
 registry = ckanapi.RemoteCKAN(CKAN_API)
 
@@ -72,7 +72,7 @@ def delete_datasets(datasets):
 
 
 def fetch_dataset_metadata(dataset):
-    ds_reg = registry.action.package_show_rest(id=dataset.name)
+    ds_reg = registry.action.package_show(id=dataset.name)
     if ds_reg.get('success', False):
         ds_entity = ds_reg['result']
         dataset.last_modified = date_parser(ds_entity.get('metadata_modified', ""))
@@ -88,10 +88,10 @@ def fetch_dataset_metadata(dataset):
 
 
         try:
-            dataset.license = ds_reg['result']['license']
+            dataset.license = ds_entity['license']
         except KeyError:
             pass
-        dataset.is_open = ds_reg.get('isopen', False)
+        dataset.is_open = ds_entity.get('isopen', False)
         db.session.add(dataset)
         try:
             db.session.commit()
