@@ -130,11 +130,20 @@ def participating_orgs(xml, resource=None):
     ret = []
     seen = set()
     for ele in [e for e in xml.xpath("./participating-org") if e.xpath("@ref")]:
-        role = cl.OrganisationRole.from_string(xval(ele, "@role").title())
-        organisation = parse_org(ele)
-        if not (role, organisation.ref) in seen:
-            seen.add((role, organisation.ref))
-            ret.append(Participation(role=role, organisation=organisation))
+        try:
+            role = cl.OrganisationRole.from_string(xval(ele, "@role").title())
+            organisation = parse_org(ele)
+            if not (role, organisation.ref) in seen:
+                seen.add((role, organisation.ref))
+                ret.append(Participation(role=role, organisation=organisation))
+        except ValueError as e:
+            iati_identifier = xval(xml, "/iati-activity/iati-identifier/text()", 'no_identifier')
+            log.warn(
+                _("Failed to import a valid sector percentage:{0} in activity {1}, error was: {2}".format(
+                    'organisation_role', iati_identifier, e),
+                logger='activity_importer', dataset=resource.dataset_id, resource=resource.url),
+                exc_info=e
+            )
     return ret
 
 
@@ -187,7 +196,6 @@ def transactions(xml, resource=no_resource):
             'receiver_org_text' : xval(ele, "receiver-org/text()", None),
             'receiver_org_activity_id' : xval(ele, "receiver-org/@receiver-activity-id", None),
             'ref' : xval(ele, "@ref", None),
-            'value_amount' : iati_decimal(xval(ele, "value/text()")),
         }
 
         field_functions = {
@@ -202,12 +210,13 @@ def transactions(xml, resource=no_resource):
             'type' : partial(from_codelist, cl.TransactionType, "./transaction-type/@code"),
             'value_currency' : partial(currency, "value/@currency"),
             'value_date' : partial(xpath_date, "value/@value-date"),
+            'value_amount' : partial(xpath_decimal, "value/text()"),
         }
 
         for field, function in field_functions.items():
             try:
                 data[field] = function(ele, resource)
-            except (MissingValue, InvalidDateError, ValueError), exe:
+            except (MissingValue, InvalidDateError, ValueError, InvalidOperation), exe:
                 data[field] = None
                 iati_identifier = xval(xml, "/iati-activity/iati-identifier/text()", 'no_identifier')
                 log.warn(
@@ -256,7 +265,10 @@ def sector_percentages(xml, resource=no_resource):
                 )
         
         if ele.xpath("@percentage"):
-            sp.percentage = int(xval(ele, "@percentage"))
+            try:
+                sp.percentage = int(xval(ele, "@percentage"))
+            except ValueError:
+                sp.percentage = None
         if ele.xpath("text()"):
             sp.text = xval(ele, "text()")
         if any(getattr(sp, attr) for attr in "sector vocabulary percentage".split()):
@@ -441,7 +453,7 @@ def activity(xml_resource, resource=no_resource):
     for field, function in field_functions.items():
         try:
             data[field] = function(xml, resource)
-        except (MissingValue, InvalidDateError, ValueError), exe:
+        except (MissingValue, InvalidDateError, ValueError, InvalidOperation), exe:
             data[field] = None
             log.warn(
                 _("Failed to import a valid {0} in activity {1}, error was: {2}".format(
