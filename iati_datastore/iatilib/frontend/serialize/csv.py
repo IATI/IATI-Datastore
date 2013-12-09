@@ -11,7 +11,7 @@ def total(column):
     def accessor(activity):
         if len(set(t.value.currency for t in getattr(activity, column))) > 1:
             return "!Mixed currency"
-        return sum(t.value.amount for t in getattr(activity, column))
+        return sum(t.value.amount for t in getattr(activity, column) if t.value.amount)
     return accessor
 
 

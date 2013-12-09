@@ -39,18 +39,18 @@ class TestCrawler(AppTestCase):
 
     @mock.patch('iatilib.crawler.registry')
     def test_fetch_dataset(self, mock):
-        mock.action.package_show_rest.return_value = {
+        mock.action.package_show.return_value = {
                 'success' : True,
                 'result' : { "resources": [{"url": "http://foo"}], },
                 }
         dataset = crawler.fetch_dataset_metadata(Dataset())
-        mock.action.package_show_rest.assert_called_once_with(id=None)
+        mock.action.package_show.assert_called_once_with(id=None)
         self.assertEquals(1, len(dataset.resources))
         self.assertEquals("http://foo", dataset.resources[0].url)
 
     @mock.patch('iatilib.crawler.registry')
     def test_fetch_dataset_with_many_resources(self, mock):
-        mock.action.package_show_rest.return_value = {
+        mock.action.package_show.return_value = {
             'success' : True,
             'result' : {
                 "resources": [ 
@@ -60,12 +60,12 @@ class TestCrawler(AppTestCase):
             }
         }
         dataset = crawler.fetch_dataset_metadata(Dataset())
-        mock.action.package_show_rest.assert_called_once_with(id=None)
+        mock.action.package_show.assert_called_once_with(id=None)
         self.assertEquals(3, len(dataset.resources))
 
     @mock.patch('iatilib.crawler.registry')
     def test_fetch_dataset_count_commited_resources(self, mock):
-        mock.action.package_show_rest.return_value = {
+        mock.action.package_show.return_value = {
             'success' : True,
             'result' : {
                 "resources": [ 
@@ -76,7 +76,7 @@ class TestCrawler(AppTestCase):
             }
         }
         crawler.fetch_dataset_metadata(Dataset(name=u"tstds"))
-        mock.action.package_show_rest.assert_called_once_with(id="tstds")
+        mock.action.package_show.assert_called_once_with(id="tstds")
         db.session.commit()
         self.assertEquals(3, Resource.query.count())
 

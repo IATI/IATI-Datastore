@@ -16,8 +16,8 @@ from iatilib.loghandlers import DatasetMessage as _
 
 log = logging.getLogger("crawler")
 
-CKAN_WEB_BASE = 'http://iatiregistry.org/dataset/%s'
-CKAN_API = 'http://iatiregistry.org'
+CKAN_WEB_BASE = 'http://iati2.staging.ckanhosted.com/dataset/%s'
+CKAN_API = 'http://iati2.staging.ckanhosted.com'
 
 registry = ckanapi.RemoteCKAN(CKAN_API)
 
@@ -72,7 +72,7 @@ def delete_datasets(datasets):
 
 
 def fetch_dataset_metadata(dataset):
-    ds_reg = registry.action.package_show_rest(id=dataset.name)
+    ds_reg = registry.action.package_show(id=dataset.name)
     if ds_reg.get('success', False):
         ds_entity = ds_reg['result']
         dataset.last_modified = date_parser(ds_entity.get('metadata_modified', ""))
@@ -88,10 +88,10 @@ def fetch_dataset_metadata(dataset):
 
 
         try:
-            dataset.license = ds_reg['result']['license']
+            dataset.license = ds_entity['license']
         except KeyError:
             pass
-        dataset.is_open = ds_reg.get('isopen', False)
+        dataset.is_open = ds_entity.get('isopen', False)
         db.session.add(dataset)
         try:
             db.session.commit()
@@ -213,6 +213,13 @@ def parse_resource(resource):
     return resource#, new_identifiers
 
 def update_activities(resource_url):
+    #clear up previous job queue log errors
+    db.session.query(Log).filter(sa.and_(
+        Log.logger=='job iatilib.crawler.update_activities',
+        Log.resource==resource_url,
+    )).delete(synchronize_session=False)
+    db.session.commit()
+
     resource = Resource.query.get(resource_url)
     try:
         db.session.query(Log).filter(sa.and_(
@@ -238,6 +245,13 @@ def update_activities(resource_url):
 
 
 def update_resource(resource_url):
+    #clear up previous job queue log errors
+    db.session.query(Log).filter(sa.and_(
+        Log.logger=='job iatilib.crawler.update_resource',
+        Log.resource==resource_url,
+    )).delete(synchronize_session=False)
+    db.session.commit()
+
     rq = get_queue()
     resource = fetch_resource(Resource.query.get(resource_url))
     db.session.commit()
@@ -245,18 +259,17 @@ def update_resource(resource_url):
     if resource.last_status_code == 200:
         rq.enqueue(update_activities, args=(resource.url,), result_ttl=0, timeout=1000)
 
-
 def update_dataset(dataset_name):
-    rq = get_queue()
-    dataset = Dataset.query.get(dataset_name)
-
     #clear up previous job queue log errors
     db.session.query(Log).filter(sa.and_(
-        sa.not_(Log.logger.in_(
-            ['activity_importer', 'failed_activity', 'xml_parser'])),
+        Log.logger=='job iatilib.crawler.update_dataset',
         Log.dataset==dataset_name,
     )).delete(synchronize_session=False)
     db.session.commit()
+
+    rq = get_queue()
+    dataset = Dataset.query.get(dataset_name)
+
 
     fetch_dataset_metadata(dataset)
     db.session.commit()

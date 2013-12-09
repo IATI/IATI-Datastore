@@ -182,7 +182,7 @@ class TestActivityFilter(AppTestCase):
             ref="0123"
         )
         activity = dsfilter.activities({
-            "transaction_ref": u"12345"
+            "transaction.ref": u"12345"
         })
         
         self.assertIn(trans_in.activity, activity.all())
@@ -214,7 +214,7 @@ class TestActivityFilter(AppTestCase):
         self.assertNotIn(trans_not.activity, activity.all())
 
         text = dsfilter.activities({
-            "transaction_provider-org_text": u"an org"
+            "transaction_provider-org.text": u"an org"
         })
         self.assertIn(trans_in.activity, text.all())
         self.assertNotIn(trans_not.activity, text.all())
@@ -244,7 +244,7 @@ class TestActivityFilter(AppTestCase):
         self.assertNotIn(trans_not.activity, activity.all())
 
         text = dsfilter.activities({
-            "transaction_receiver-org_text": u"an org"
+            "transaction_receiver-org.text": u"an org"
         })
         self.assertIn(trans_in.activity, text.all())
 
