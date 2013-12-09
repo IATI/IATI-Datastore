@@ -213,6 +213,13 @@ def parse_resource(resource):
     return resource#, new_identifiers
 
 def update_activities(resource_url):
+    #clear up previous job queue log errors
+    db.session.query(Log).filter(sa.and_(
+        Log.logger=='job iatilib.crawler.update_activities',
+        Log.resource==resource_url,
+    )).delete(synchronize_session=False)
+    db.session.commit()
+
     resource = Resource.query.get(resource_url)
     try:
         db.session.query(Log).filter(sa.and_(
@@ -236,21 +243,8 @@ def update_activities(resource_url):
         ))
         db.session.commit()
 
-    #clear up previous job queue log errors
-    db.session.query(Log).filter(sa.and_(
-        Log.logger=='job iatilib.crawler.update_activities',
-        Log.resource==resource_url,
-    )).delete(synchronize_session=False)
-    db.session.commit()
 
 def update_resource(resource_url):
-    rq = get_queue()
-    resource = fetch_resource(Resource.query.get(resource_url))
-    db.session.commit()
-
-    if resource.last_status_code == 200:
-        rq.enqueue(update_activities, args=(resource.url,), result_ttl=0, timeout=1000)
-
     #clear up previous job queue log errors
     db.session.query(Log).filter(sa.and_(
         Log.logger=='job iatilib.crawler.update_resource',
@@ -258,7 +252,21 @@ def update_resource(resource_url):
     )).delete(synchronize_session=False)
     db.session.commit()
 
+    rq = get_queue()
+    resource = fetch_resource(Resource.query.get(resource_url))
+    db.session.commit()
+
+    if resource.last_status_code == 200:
+        rq.enqueue(update_activities, args=(resource.url,), result_ttl=0, timeout=1000)
+
 def update_dataset(dataset_name):
+    #clear up previous job queue log errors
+    db.session.query(Log).filter(sa.and_(
+        Log.logger=='job iatilib.crawler.update_dataset',
+        Log.dataset==dataset_name,
+    )).delete(synchronize_session=False)
+    db.session.commit()
+
     rq = get_queue()
     dataset = Dataset.query.get(dataset_name)
 
@@ -269,13 +277,6 @@ def update_dataset(dataset_name):
                    if not r.last_succ or r.last_succ < dataset.last_modified]
     for resource in need_update:
         rq.enqueue(update_resource, args=(resource.url,), result_ttl=0)
-
-    #clear up previous job queue log errors
-    db.session.query(Log).filter(sa.and_(
-        Log.logger=='job iatilib.crawler.update_dataset',
-        Log.dataset==dataset_name,
-    )).delete(synchronize_session=False)
-    db.session.commit()
 
 
 from flask.ext.script import Manager

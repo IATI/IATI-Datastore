@@ -1,7 +1,5 @@
 import traceback
 
-import sqlalchemy as sa
-
 from flask.ext.script import Manager
 from flask.ext.rq import get_worker as _get_worker, get_queue
 
@@ -18,18 +16,9 @@ def db_log_exception(job, exc_type, exc_value, tb):
     if resource:
         dataset = resource.dataset_id
         url = resource.url
-
-        db.session.query(Log).filter(sa.and_(
-            Log.logger=='job {0}'.format(job.func_name),
-            Log.dataset==dataset,
-            Log.resource==url,
-            Log.level=='error',
-        )).delete(synchronize_session=False)
     else:
         dataset = "nodataset"
         url = "noresource"
-
-
     log = Log(
         logger="job {0}".format(job.func_name),
         dataset=dataset,
@@ -38,8 +27,6 @@ def db_log_exception(job, exc_type, exc_value, tb):
         level="error",
         trace=traceback.format_exception(exc_type, exc_value, tb)
     )
-
-
     db.session.add(log)
     db.session.commit()
     job.cancel()
