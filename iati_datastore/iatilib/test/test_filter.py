@@ -200,11 +200,13 @@ class TestActivityFilter(AppTestCase):
         )
         trans_in = fac.TransactionFactory.create(
             activity=fac.ActivityFactory.build(),
-            provider_org=org_in
+            provider_org=org_in,
+            provider_org_activity_id=u"GB-1-AAA",
         )
         trans_not = fac.TransactionFactory.create(
             activity=fac.ActivityFactory.build(),
             provider_org=org_out,
+            provider_org_activity_id=u"GB-2-ZZZ",
         )
         activity = dsfilter.activities({
             "transaction_provider-org": u"GB-1"
@@ -219,6 +221,12 @@ class TestActivityFilter(AppTestCase):
         self.assertIn(trans_in.activity, text.all())
         self.assertNotIn(trans_not.activity, text.all())
 
+        provider_activity_id = dsfilter.activities({
+            "transaction_provider-org.provider-activity-id": u"GB-1-AAA"
+        })
+        self.assertIn(trans_in.activity, provider_activity_id.all())
+        self.assertNotIn(trans_not.activity, provider_activity_id.all())
+
     def test_receiver_org(self):
         org_in=fac.OrganisationFactory.build(
             ref="GB-1",
@@ -230,11 +238,13 @@ class TestActivityFilter(AppTestCase):
         )
         trans_in = fac.TransactionFactory.create(
             activity=fac.ActivityFactory.build(),
-            receiver_org=org_in
+            receiver_org=org_in,
+            receiver_org_activity_id=u"GB-1-AAA",
         )
         trans_not = fac.TransactionFactory.create(
             activity=fac.ActivityFactory.build(),
             receiver_org=org_out,
+            receiver_org_activity_id=u"GB-2-ZZZ",
         )
         activity = dsfilter.activities({
             "transaction_receiver-org": u"GB-1"
@@ -247,6 +257,12 @@ class TestActivityFilter(AppTestCase):
             "transaction_receiver-org.text": u"an org"
         })
         self.assertIn(trans_in.activity, text.all())
+
+        receiver_activity_id = dsfilter.activities({
+            "transaction_receiver-org.receiver-activity-id": u"GB-1-AAA"
+        })
+        self.assertIn(trans_in.activity, receiver_activity_id.all())
+        self.assertNotIn(trans_not.activity, receiver_activity_id.all())
 
     def test_policy_markers(self):
         act_in = fac.ActivityFactory.create(
