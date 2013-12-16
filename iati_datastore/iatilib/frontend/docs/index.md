@@ -18,25 +18,25 @@ URLs are of the form
 `/api/1/access/{activity}.{format}`
 
 
-* XML [`/api/1/access/activity.xml`](http://iati-datastore.herokuapp.com/api/1/access/activity.xml)
-* JSON [`/api/1/access/activity.json`](http://iati-datastore.herokuapp.com/api/1/access/activity.json)
-* CSV (see below) [`/api/1/access/activity.csv`](http://iati-datastore.herokuapp.com/api/1/access/activity.csv)
+* XML [`/api/1/access/activity.xml`](/api/1/access/activity.xml)
+* JSON [`/api/1/access/activity.json`](/api/1/access/activity.json)
+* CSV (see below) [`/api/1/access/activity.csv`](/api/1/access/activity.csv)
 
 
 There are several additional CSV formats to get access to more data.
 
-* List of activity [`/api/1/access/activity.csv`](http://iati-datastore.herokuapp.com/api/1/access/activity.csv)
-* Activities by sector [`/api/1/access/activity/by_sector.csv`](http://iati-datastore.herokuapp.com/api/1/access/activity/by_sector.csv)
-* Activities by country [`/api/1/access/activity/by_country.csv`](http://iati-datastore.herokuapp.com/api/1/access/activity/by_country.csv)
+* List of activity [`/api/1/access/activity.csv`](/api/1/access/activity.csv)
+* Activities by sector [`/api/1/access/activity/by_sector.csv`](/api/1/access/activity/by_sector.csv)
+* Activities by country [`/api/1/access/activity/by_country.csv`](/api/1/access/activity/by_country.csv)
 
-* List of transactions [`/api/1/access/transaction.csv`](http://iati-datastore.herokuapp.com/api/1/access/transactionscsv)
-* Transactions by sector [`/api/1/access/transaction/by_sector.csv`](http://iati-datastore.herokuapp.com/api/1/access/transaction/by_sector.csv)
-* Transactions by country [`/api/1/access/transaction/by_country.csv`](http://iati-datastore.herokuapp.com/api/1/access/transaction/by_country.csv)
+* List of transactions [`/api/1/access/transaction.csv`](/api/1/access/transactionscsv)
+* Transactions by sector [`/api/1/access/transaction/by_sector.csv`](/api/1/access/transaction/by_sector.csv)
+* Transactions by country [`/api/1/access/transaction/by_country.csv`](/api/1/access/transaction/by_country.csv)
 
 
-* List of budgets [`/api/1/access/budget.csv`](http://iati-datastore.herokuapp.com/api/1/access/budget.csv)
-* Budgets by sector [`/api/1/access/budget/by_sector.csv`](http://iati-datastore.herokuapp.com/api/1/access/budget/by_sector.csv)
-* Budgets by country [`/api/1/access/budget/by_country.csv`](http://iati-datastore.herokuapp.com/api/1/access/budget/by_country.csv)
+* List of budgets [`/api/1/access/budget.csv`](/api/1/access/budget.csv)
+* Budgets by sector [`/api/1/access/budget/by_sector.csv`](/api/1/access/budget/by_sector.csv)
+* Budgets by country [`/api/1/access/budget/by_country.csv`](/api/1/access/budget/by_country.csv)
 
 
 
@@ -135,7 +135,7 @@ The suffixes `__lt` and `__gt` distinguish filters for less than and greater tha
 
 Combining filters gives the results that fufill all the terms. So
 
-[`/api/1/access/activity.xml?reporting-org=GB-1&recipient-country=CD`](http://iati-datastore.herokuapp.com/api/1/access/activity.xml?reporting-org=GB-1&recipient-country=CD)
+[`/api/1/access/activity.xml?reporting-org=GB-1&recipient-country=CD`](/api/1/access/activity.xml?reporting-org=GB-1&recipient-country=CD)
 
 will respond with all the DFID data for the Democratic Republic of Congo.
 
@@ -143,7 +143,7 @@ will respond with all the DFID data for the Democratic Republic of Congo.
 
 To filter by recipient-country as Democratic Republic of Congo OR Uganda
 
-[`/api/1/access/activity.xml?reporting-org=GB-1&recipient-country=CD|UG`](http://iati-datastore.herokuapp.com/api/1/access/activity.xml?reporting-org=GB-1&recipient-country=CD|UG)
+[`/api/1/access/activity.xml?reporting-org=GB-1&recipient-country=CD|UG`](/api/1/access/activity.xml?reporting-org=GB-1&recipient-country=CD|UG)
 
 
 Paging through results
@@ -152,15 +152,15 @@ Paging through results
 Results are normally returned one page at a time, increment the the `offset`
 parameter to get the next page.
 
-* [`/api/1/access/activity.xml`](http://iati-datastore.herokuapp.com/api/1/access/activity.xml)
-* [`/api/1/access/activity.xml?offset=2`](http://iati-datastore.herokuapp.com/api/1/access/activity.xml?offset=2)
+* [`/api/1/access/activity.xml`](/api/1/access/activity.xml)
+* [`/api/1/access/activity.xml?offset=2`](/api/1/access/activity.xml?offset=2)
 
 The datastore will respond with an HTTP 404 when you have asked for the page
 beyond the last page.
 
 You can also set the maximum number of results to receive via the `limit`
 parameter:
-* [`/api/1/access/activity.xml?limit=50`](http://iati-datastore.herokuapp.com/api/1/access/activity.xml?limit=100)
+* [`/api/1/access/activity.xml?limit=50`](/api/1/access/activity.xml?limit=100)
 
 The default is 50.
 
@@ -171,7 +171,7 @@ Getting all the results at once
 The CSV format supports returning all results at once in a 'stream'. To
 request all results add 'stream=True' to your parameters. So
 
-[`/api/1/access/transaction.csv?reporting-org.ref=GB-1&stream=True`](http://iati-datastore.herokuapp.com/api/1/access/transaction.csv?reporting-org.ref=GB-1&stream=True)
+[`/api/1/access/transaction.csv?reporting-org.ref=GB-1&stream=True`](/api/1/access/transaction.csv?reporting-org.ref=GB-1&stream=True)
 
 will respond with all the DFID transactions data.
 
@@ -180,15 +180,15 @@ will respond with all the DFID transactions data.
 Checking the Data
 -----------------
 
-The datastore keeps information on any errors it encountered whilst fetching and parsing any of tthe resources. [More info](http://iati-datastore.herokuapp.com/error)
+The datastore keeps information on any errors it encountered whilst fetching and parsing any of tthe resources. [More info](/error)
 
 
-* list of datasets which have errored[`api/1/error/dataset`](http://iati-datastore.herokuapp.com/api/1/error/dataset)
+* list of datasets which have errored[`api/1/error/dataset`](/api/1/error/dataset)
 * list of errors for specific dataset `api/1/error/dataset/<errored dataset>`
 
 General information about the datasets, such as the urls for the resources and when they were fetched
  
-* List of datasets[`api/1/about/dataset`](http://iati-datastore.herokuapp.com/api/1/about/dataset)
+* List of datasets[`api/1/about/dataset`](/api/1/about/dataset)
 * Specific details of dataset `api/1/about/dataset/<dataset name>`
 
 Source code
