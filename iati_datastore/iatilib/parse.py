@@ -23,6 +23,7 @@ log = logging.getLogger("parser")
 sqlalchemyLog = loghandlers.SQLAlchemyHandler()
 sqlalchemyLog.setLevel(logging.WARNING)
 log.addHandler(sqlalchemyLog)
+log.propagate = False
 
 NODEFAULT = object()
 no_resource = namedtuple('DummyResource', 'url dataset_id')('no_url', 'no_dataset')
