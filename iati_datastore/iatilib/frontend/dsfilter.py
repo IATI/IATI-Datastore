@@ -1,12 +1,12 @@
 from datetime import datetime
 from functools import partial
 from sqlalchemy import or_, and_
-from sqlalchemy.sql.operators import gt, lt
+from sqlalchemy.sql.operators import eq, gt, lt
 from iatilib import codelists, db
 from iatilib.model import (
     Activity, Budget, Transaction, CountryPercentage, SectorPercentage,
     RegionPercentage, Participation, Organisation, PolicyMarker,
-    RelatedActivity)
+    RelatedActivity, Resource)
 
 class BadFilterException(Exception):
     pass
@@ -108,6 +108,11 @@ def _filter(query, args):
             )
         )
 
+    def transaction_provider_org_activity_id(activity_id):
+        return Activity.transactions.any(
+            Transaction.provider_org_activity_id == activity_id
+        )
+
     def transaction_receiver_org(organisation):
         return Activity.transactions.any(
             Transaction.receiver_org.has(
@@ -120,6 +125,11 @@ def _filter(query, args):
             Transaction.receiver_org.has(
                 Organisation.name == organisation
             )
+        )
+
+    def transaction_receiver_org_activity_id(activity_id):
+        return Activity.transactions.any(
+            Transaction.receiver_org_activity_id == activity_id
         )
 
     def policy_marker(policy_marker):
@@ -138,9 +148,15 @@ def _filter(query, args):
                 and_(condition(planned_date, date), actual_date == None),
         )
 
+    def registry_dataset(dataset_id):
+        return Activity.resource.has(
+            Resource.dataset_id == dataset_id
+        )
+
 
 
     filter_conditions = {
+            'iati-identifier': partial(eq, Activity.iati_identifier),
             'recipient-country' : recipient_country,
             'recipient-country.code' : recipient_country,
             'recipient-country.text' : recipient_country_text,
@@ -167,15 +183,20 @@ def _filter(query, args):
             'transaction_provider-org' : transaction_provider_org,
             'transaction_provider-org.ref' : transaction_provider_org,
             'transaction_provider-org.text' : transaction_provider_org_name,
+            'transaction_provider-org.provider-activity-id' : transaction_provider_org_activity_id,
             'transaction_receiver-org' : transaction_receiver_org,
             'transaction_receiver-org.ref' : transaction_receiver_org,
             'transaction_receiver-org.text' : transaction_receiver_org_name,
+            'transaction_receiver-org.receiver-activity-id' : transaction_receiver_org_activity_id,
             'start-date__gt' : partial(date_condition, gt, Activity.start_actual, Activity.start_planned),
             'start-date__lt' : partial(date_condition, lt, Activity.start_actual, Activity.start_planned),
             'end-date__gt' : partial(date_condition, gt, Activity.end_actual, Activity.end_planned),
             'end-date__lt' : partial(date_condition, lt, Activity.end_actual, Activity.end_planned),
             'last-change__gt': partial(gt, Activity.last_change_datetime),
             'last-change__lt': partial(lt, Activity.last_change_datetime),
+            'last-updated-datetime__gt': partial(gt, Activity.last_updated_datetime),
+            'last-updated-datetime__lt': partial(lt, Activity.last_updated_datetime),
+            'registry-dataset': registry_dataset,
     }
 
     for filter, search_string in args.items():

@@ -10,6 +10,15 @@ from iatilib.model import Activity
 
 
 class TestActivityFilter(AppTestCase):
+    def test_by_iati_identifier(self):
+        act_in = fac.ActivityFactory.create(iati_identifier='AAA')
+        act_not = fac.ActivityFactory.create(iati_identifier='ZZZ')
+        activities = dsfilter.activities({
+            "iati-identifier": u"AAA"
+        })
+        self.assertIn(act_in, activities.all())
+        self.assertNotIn(act_not, activities.all())
+
     def test_by_country_code(self):
         act_in = fac.ActivityFactory.create(
             recipient_country_percentages=[
@@ -191,11 +200,13 @@ class TestActivityFilter(AppTestCase):
         )
         trans_in = fac.TransactionFactory.create(
             activity=fac.ActivityFactory.build(),
-            provider_org=org_in
+            provider_org=org_in,
+            provider_org_activity_id=u"GB-1-AAA",
         )
         trans_not = fac.TransactionFactory.create(
             activity=fac.ActivityFactory.build(),
             provider_org=org_out,
+            provider_org_activity_id=u"GB-2-ZZZ",
         )
         activity = dsfilter.activities({
             "transaction_provider-org": u"GB-1"
@@ -210,6 +221,12 @@ class TestActivityFilter(AppTestCase):
         self.assertIn(trans_in.activity, text.all())
         self.assertNotIn(trans_not.activity, text.all())
 
+        provider_activity_id = dsfilter.activities({
+            "transaction_provider-org.provider-activity-id": u"GB-1-AAA"
+        })
+        self.assertIn(trans_in.activity, provider_activity_id.all())
+        self.assertNotIn(trans_not.activity, provider_activity_id.all())
+
     def test_receiver_org(self):
         org_in=fac.OrganisationFactory.build(
             ref="GB-1",
@@ -221,11 +238,13 @@ class TestActivityFilter(AppTestCase):
         )
         trans_in = fac.TransactionFactory.create(
             activity=fac.ActivityFactory.build(),
-            receiver_org=org_in
+            receiver_org=org_in,
+            receiver_org_activity_id=u"GB-1-AAA",
         )
         trans_not = fac.TransactionFactory.create(
             activity=fac.ActivityFactory.build(),
             receiver_org=org_out,
+            receiver_org_activity_id=u"GB-2-ZZZ",
         )
         activity = dsfilter.activities({
             "transaction_receiver-org": u"GB-1"
@@ -238,6 +257,12 @@ class TestActivityFilter(AppTestCase):
             "transaction_receiver-org.text": u"an org"
         })
         self.assertIn(trans_in.activity, text.all())
+
+        receiver_activity_id = dsfilter.activities({
+            "transaction_receiver-org.receiver-activity-id": u"GB-1-AAA"
+        })
+        self.assertIn(trans_in.activity, receiver_activity_id.all())
+        self.assertNotIn(trans_not.activity, receiver_activity_id.all())
 
     def test_policy_markers(self):
         act_in = fac.ActivityFactory.create(
@@ -301,7 +326,6 @@ class TestActivityFilter(AppTestCase):
         self.assertIn(act_in, activities.all())
         self.assertNotIn(act_not, activities.all())
 
-
     def test_end_actual_lesser_than(self):
         act_in = fac.ActivityFactory.create(end_actual=datetime.date(2000, 1, 1))
         act_not = fac.ActivityFactory.create(end_actual=datetime.date(2013,1, 1))
@@ -311,6 +335,7 @@ class TestActivityFilter(AppTestCase):
         })
         self.assertIn(act_in, activities.all())
         self.assertNotIn(act_not, activities.all())
+
 
     def test_last_change_lesser_than(self):
         act_in = fac.ActivityFactory.create(last_change_datetime=datetime.date(2000, 1, 1))
@@ -322,12 +347,33 @@ class TestActivityFilter(AppTestCase):
         self.assertIn(act_in, activities.all())
         self.assertNotIn(act_not, activities.all())
 
-
     def test_last_change_actual_greater_than(self):
         act_in = fac.ActivityFactory.create(last_change_datetime=datetime.date(2013,1, 1))
         act_not = fac.ActivityFactory.create(last_change_datetime=datetime.date(2000, 1, 1))
         activities = dsfilter.activities({
             "last-change__gt": datetime.date(2010, 1, 1)
+
+        })
+        self.assertIn(act_in, activities.all())
+        self.assertNotIn(act_not, activities.all())
+
+
+    def test_last_updated_lesser_than(self):
+        act_in = fac.ActivityFactory.create(last_updated_datetime=datetime.date(2000, 1, 1))
+        act_not = fac.ActivityFactory.create(last_updated_datetime=datetime.date(2013,1, 1))
+        activities = dsfilter.activities({
+            "last-updated-datetime__lt":datetime.date(2010, 1, 1)
+
+        })
+        self.assertIn(act_in, activities.all())
+        self.assertNotIn(act_not, activities.all())
+
+
+    def test_last_updated_actual_greater_than(self):
+        act_in = fac.ActivityFactory.create(last_updated_datetime=datetime.date(2013,1, 1))
+        act_not = fac.ActivityFactory.create(last_updated_datetime=datetime.date(2000, 1, 1))
+        activities = dsfilter.activities({
+            "last-updated-datetime__gt": datetime.date(2010, 1, 1)
 
         })
         self.assertIn(act_in, activities.all())
@@ -349,6 +395,26 @@ class TestActivityFilter(AppTestCase):
                 ])
         activities = dsfilter.activities({
             "participating-org.role": cl.OrganisationRole.implementing
+        })
+        self.assertIn(act_in, activities.all())
+        self.assertNotIn(act_not, activities.all())
+
+
+    def test_registry_dataset(self):
+        fac.DatasetFactory.create(name=u"aaa", resources=[])
+        fac.DatasetFactory.create(name=u"zzz", resources=[])
+        act_in = fac.ActivityFactory.create(
+                resource=fac.ResourceFactory.build(
+                    url=u"http://test.com",
+                    dataset_id=u"aaa")
+                )
+        act_not = fac.ActivityFactory.create(
+                resource=fac.ResourceFactory.build(
+                    url=u"http://test2.com",
+                    dataset_id=u"zzz")
+                )
+        activities = dsfilter.activities({
+            "registry-dataset": u"aaa"
         })
         self.assertIn(act_in, activities.all())
         self.assertNotIn(act_not, activities.all())
