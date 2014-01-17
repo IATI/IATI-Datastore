@@ -112,9 +112,9 @@ class Activity(db.Model):
     title = sa.Column(sa.Unicode, default=u"", nullable=False)
     description = sa.Column(sa.Unicode, default=u"", nullable=False)
     default_currency = sa.Column(codelists.Currency.db_type())
-    raw_xml = sa.orm.deferred(sa.Column(
+    raw_xml = sa.Column(
         sa.UnicodeText,
-        nullable=False))
+        nullable=False)
 
     commitments = TransactionType(codelists.TransactionType.commitment)
     disbursements = TransactionType(codelists.TransactionType.disbursement)
