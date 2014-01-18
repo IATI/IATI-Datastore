@@ -10,7 +10,7 @@ from iatilib.frontend import serialize
 class TestXMLSerializer(TestCase):
     def process(self, items):
         pagination = TestWrapper(items, 0, 0, 0)
-        return ET.fromstring(serialize.xml(pagination).encode("utf-8"))
+        return ET.fromstring(u"".join(serialize.xml(pagination)).encode("utf-8"))
 
     def test_raw(self):
         # the xml that's output is the stuff in raw_xml
@@ -31,12 +31,12 @@ class TestXMLSerializer(TestCase):
         # it's lousy to do this with string tests, but ET/Expat really
         # doesn't want to load xml with unbound prefixes
         items = [fac.ActivityFactory.build(raw_xml=u"<t:test />")]
-        ser_data = serialize.xml(TestWrapper(items, 0, 0, 0))
+        ser_data = "".join(serialize.xml(TestWrapper(items, 0, 0, 0)))
         self.assertIn("t:test", ser_data)
 
     def test_results_count(self):
         data =[ fac.ActivityFactory.build(raw_xml=u"<test />") ]
-        ser_data = serialize.xml(TestWrapper(data, 1, 0, 0))
+        ser_data = "".join(serialize.xml(TestWrapper(data, 1, 0, 0)))
         result = ET.fromstring(ser_data)
         self.assertEquals("1", result[1][0][0].text)
 
