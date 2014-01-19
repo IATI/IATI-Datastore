@@ -48,6 +48,9 @@ class MissingValue(SpecError):
 class InvalidDateError(SpecError):
     pass
 
+class InvalidTransactionTypeError(SpecError):
+    pass
+
 
 def xval(ele, xpath, default=NODEFAULT):
     try:
@@ -227,13 +230,16 @@ def transactions(xml, resource=no_resource):
                     exc_info=exe
                 )
         
+        if not data['type']:
+            raise InvalidTransactionTypeError()
+        
         return Transaction(**data)
 
     ret = []
     for ele in xml.xpath("./transaction"):
         try:
             ret.append(process(ele))
-        except MissingValue as exe:
+        except (MissingValue, InvalidTransactionTypeError) as exe:
             iati_identifier = xval(xml, "/iati-identifier/text()", 'no_identifier')
             log.warn(
                 _("Failed to import a valid transaction in activity {0}, error was: {1}".format(
