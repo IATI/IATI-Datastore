@@ -268,7 +268,7 @@ def update_resource(resource_url):
     db.session.commit()
 
     if resource.last_status_code == 200:
-        rq.enqueue(update_activities, args=(resource.url,), result_ttl=0, timeout=1000)
+        rq.enqueue(update_activities, args=(resource.url,), result_ttl=0, timeout=100000)
 
 def update_dataset(dataset_name):
     #clear up previous job queue log errors
@@ -456,7 +456,7 @@ def enqueue(careful=False):
             update_activities,
             args=(resource.url,),
             result_ttl=0,
-            timeout=1000)
+            timeout=100000)
 
 
 @manager.option('--dataset', action="store", type=unicode,
