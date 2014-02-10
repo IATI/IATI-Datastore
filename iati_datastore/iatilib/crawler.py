@@ -24,30 +24,41 @@ registry = ckanapi.RemoteCKAN(CKAN_API)
 class CouldNotFetchPackageList(Exception):
     pass
 
-def fetch_dataset_list():
+def fetch_dataset_list(modified_since=None):
     existing_datasets = Dataset.query.all()
     existing_ds_names = set(ds.name for ds in existing_datasets)
-    package_list = registry.action.package_list()
+    if modified_since:
+        solr_date_format = modified_since.strftime('%Y-%m-%dT%H:%M:%SZ')
+        package_list = registry.action.package_search(
+            fq='metadata_modified:[{0} TO NOW]'.format(solr_date_format)
+        )
 
-    if package_list.get('success', False):
-        incoming_ds_names = set(package_list['result'])
-        
-        new_datasets = [Dataset(name=n) for n
-                        in incoming_ds_names - existing_ds_names]
-        all_datasets = existing_datasets + new_datasets
-        for dataset in all_datasets:
-            dataset.last_seen = datetime.datetime.utcnow()
-        db.session.add_all(all_datasets)
-        db.session.commit()
-
-        deleted_ds_names = existing_ds_names - incoming_ds_names
-        if deleted_ds_names:
-            delete_datasets(deleted_ds_names)
-            all_datasets = Dataset.query.all()
-
-        return all_datasets
+        if package_list.get('success', False):
+            incoming_ds_names = set(i['name'] for i in package_list['result']['results'])
+        else:
+            raise CouldNotFetchPackageList()
     else:
-        raise CouldNotFetchPackageList()
+        package_list = registry.action.package_list()
+
+        if package_list.get('success', False):
+            incoming_ds_names = set(package_list['result'])
+        else:
+            raise CouldNotFetchPackageList()
+        
+    new_datasets = [Dataset(name=n) for n
+                    in incoming_ds_names - existing_ds_names]
+    all_datasets = existing_datasets + new_datasets
+    for dataset in all_datasets:
+        dataset.last_seen = datetime.datetime.utcnow()
+    db.session.add_all(all_datasets)
+    db.session.commit()
+
+    deleted_ds_names = existing_ds_names - incoming_ds_names
+    if deleted_ds_names:
+        delete_datasets(deleted_ds_names)
+        all_datasets = Dataset.query.all()
+
+    return all_datasets
 
 
 def delete_datasets(datasets):
@@ -453,7 +464,8 @@ def enqueue(careful=False):
 @manager.option('--limit', action="store", type=int,
                 help="max no of datasets to update")
 @manager.option('-v', '--verbose', action="store_true")
-def update(verbose=False, limit=None, dataset=None):
+@manager.option('-t', '--timedelta', action="store", type=int)
+def update(verbose=False, limit=None, dataset=None, timedelta=None):
     """
     Fetch all datasets from IATI registry; update any that have changed
     """
@@ -468,7 +480,12 @@ def update(verbose=False, limit=None, dataset=None):
             rq.enqueue(update_activities, args=(resource.url,), result_ttl=0,
                     timeout=1000)
     else:
-        fetch_dataset_list()
+        if timedelta:
+            modified_since = datetime.date.today() - datetime.timedelta(timedelta)
+            fetch_dataset_list(modified_since)
+        else:
+            fetch_dataset_list()
+
         db.session.commit()
 
         datasets = Dataset.query
