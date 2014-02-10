@@ -49,6 +49,23 @@ class TestCrawler(AppTestCase):
         self.assertEquals("http://foo", dataset.resources[0].url)
 
     @mock.patch('iatilib.crawler.registry')
+    def test_fetch_package_search(self, mock):
+        mock.action.package_search.return_value = {
+            'success': True, 
+            'result': {
+                'results': [
+                    {'name': 'tst-a'},
+                    {'name': 'tst-b'},
+                ]
+            }
+        }
+        date = datetime.date(2000, 1, 2)
+        datasets = crawler.fetch_dataset_list(date)
+        mock.action.package_search.assert_called_once_with(fq='metadata_modified:[2000-01-02T00:00:00Z TO NOW]')
+        self.assertIn("tst-a", [ds.name for ds in datasets])
+        self.assertIn("tst-b", [ds.name for ds in datasets])
+
+    @mock.patch('iatilib.crawler.registry')
     def test_fetch_dataset_with_many_resources(self, mock):
         mock.action.package_show.return_value = {
             'success' : True,
