@@ -17,7 +17,7 @@ from iatilib.loghandlers import DatasetMessage as _
 log = logging.getLogger("crawler")
 
 CKAN_WEB_BASE = 'http://www.iatiregistry.org/dataset/%s'
-CKAN_API = 'http://www.iatiregistry.org'
+CKAN_API = 'http://www.iatiregistry.org/'
 
 registry = ckanapi.RemoteCKAN(CKAN_API)
 
@@ -29,36 +29,70 @@ def fetch_dataset_list(modified_since=None):
     existing_ds_names = set(ds.name for ds in existing_datasets)
     if modified_since:
         solr_date_format = modified_since.strftime('%Y-%m-%dT%H:%M:%SZ')
-        package_list = registry.action.package_search(
-            fq='metadata_modified:[{0} TO NOW]'.format(solr_date_format)
+        search_result = registry.action.package_search(
+            fq='metadata_modified:[{0} TO NOW]'.format(solr_date_format),
         )
+        if search_result.get('success', False):
+            step = 50 
+            count = search_result['result']['count']
+            package_list = []
+            for current_start in range(0, count, step):
+                packages = registry.action.package_search(
+                    fq='metadata_modified:[{0} TO NOW]'.format(solr_date_format),
+                    start=current_start,
+                    rows=step,
 
-        if package_list.get('success', False):
-            incoming_ds_names = set(i['name'] for i in package_list['result']['results'])
+                )
+                package_list = package_list + packages['result']['results']
+            
+            incoming_ds_names = set()
+            deleted_ds_names  = set()
+
+            for dataset in package_list:
+                if dataset['state'] == 'active':
+                    incoming_ds_names.add(dataset['name'])
+                elif dataset['state'] == 'deleted':
+                    deleted_ds_names.add(dataset['name'])
+
+            new_datasets = [Dataset(name=n) for n
+                        in incoming_ds_names - existing_ds_names]
+
+            db.session.add_all(new_datasets)
+            db.session.commit()
+
+            if deleted_ds_names:
+                delete_datasets(deleted_ds_names)
+
+            datasets = db.session.query(Dataset).filter(
+                Dataset.name.in_(incoming_ds_names))
+            return datasets
         else:
             raise CouldNotFetchPackageList()
+
     else:
         package_list = registry.action.package_list()
 
         if package_list.get('success', False):
             incoming_ds_names = set(package_list['result'])
+
+            new_datasets = [Dataset(name=n) for n
+                            in incoming_ds_names - existing_ds_names]
+            all_datasets = existing_datasets + new_datasets
+            for dataset in all_datasets:
+                dataset.last_seen = datetime.datetime.utcnow()
+
+            db.session.add_all(all_datasets)
+            db.session.commit()
+
+            deleted_ds_names = existing_ds_names - incoming_ds_names
+            if deleted_ds_names:
+                delete_datasets(deleted_ds_names)
+
+            all_datasets = Dataset.query
+            return all_datasets
         else:
             raise CouldNotFetchPackageList()
-        
-    new_datasets = [Dataset(name=n) for n
-                    in incoming_ds_names - existing_ds_names]
-    all_datasets = existing_datasets + new_datasets
-    for dataset in all_datasets:
-        dataset.last_seen = datetime.datetime.utcnow()
-    db.session.add_all(all_datasets)
-    db.session.commit()
 
-    deleted_ds_names = existing_ds_names - incoming_ds_names
-    if deleted_ds_names:
-        delete_datasets(deleted_ds_names)
-        all_datasets = Dataset.query.all()
-
-    return all_datasets
 
 
 def delete_datasets(datasets):
@@ -482,13 +516,12 @@ def update(verbose=False, limit=None, dataset=None, timedelta=None):
     else:
         if timedelta:
             modified_since = datetime.date.today() - datetime.timedelta(timedelta)
-            fetch_dataset_list(modified_since)
         else:
-            fetch_dataset_list()
+            modified_since = None
 
+        datasets = fetch_dataset_list(modified_since)
         db.session.commit()
 
-        datasets = Dataset.query
         if limit:
             datasets = datasets.limit(limit)
 

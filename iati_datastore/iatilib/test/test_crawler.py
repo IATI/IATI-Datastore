@@ -26,7 +26,7 @@ class TestCrawler(AppTestCase):
         mock.action.package_list.assert_called_once_with()
         mock.action.package_list.return_value = {'success': True, 'result': [u"tst-a", u"tst-b"]}
         datasets = crawler.fetch_dataset_list()
-        self.assertEquals(2, len(datasets))
+        self.assertEquals(2, datasets.count())
 
     @mock.patch('iatilib.crawler.registry')
     def test_update_deletes_datasets(self, mock):
@@ -35,7 +35,7 @@ class TestCrawler(AppTestCase):
         mock.action.package_list.assert_called_once_with()
         mock.action.package_list.return_value = {'success': True, 'result': [u"tst-a"]}
         datasets = crawler.fetch_dataset_list()
-        self.assertEquals(1, len(datasets))
+        self.assertEquals(1, datasets.count())
 
     @mock.patch('iatilib.crawler.registry')
     def test_fetch_dataset(self, mock):
@@ -53,17 +53,62 @@ class TestCrawler(AppTestCase):
         mock.action.package_search.return_value = {
             'success': True, 
             'result': {
+                'count': 2,
                 'results': [
-                    {'name': 'tst-a'},
-                    {'name': 'tst-b'},
+                    {'name': 'tst-a', 'state': 'active'},
+                    {'name': 'tst-b', 'state': 'active'},
                 ]
             }
         }
         date = datetime.date(2000, 1, 2)
         datasets = crawler.fetch_dataset_list(date)
-        mock.action.package_search.assert_called_once_with(fq='metadata_modified:[2000-01-02T00:00:00Z TO NOW]')
-        self.assertIn("tst-a", [ds.name for ds in datasets])
-        self.assertIn("tst-b", [ds.name for ds in datasets])
+        # check the solr parameters are formed correctly
+        mock.action.package_search.assert_any_call(
+            fq='metadata_modified:[2000-01-02T00:00:00Z TO NOW]')
+
+        # check that the result of of fetch_dataset_list are only the 2 datasets
+        self.assertEquals(set(['tst-a', 'tst-b']), set([ds.name for ds in datasets]))
+
+    @mock.patch('iatilib.crawler.registry')
+    def test_fetch_package_search_update(self, mock):
+        #initial call to fetch dataset list sets up 3 datasets inside the
+        # datastore
+        mock.action.package_list.return_value = {
+            'success': True, 
+            'result': [u"tst-deleted", u"tst-not-modified", 'tst-modified'],
+        }
+        crawler.fetch_dataset_list()
+
+        # the second call, we are giving a time delta, this time the registry
+        # has 3 modified datasets, 1 deleted, 1 modified, 1 new
+        mock.action.package_search.return_value = {
+            'success': True, 
+            'result': {
+                'count': 3,
+                'results': [
+                    {'name': 'tst-deleted', 'state': 'deleted'},
+                    {'name': 'tst-modified', 'state': 'active'},
+                    {'name': 'tst-new', 'state': 'active'},
+                ]
+            }
+        }
+        date = datetime.date(2000, 1, 2)
+        datasets = set([ds.name for ds in crawler.fetch_dataset_list(date)])
+
+        # we want to check that the result returned are only the modified/new 
+        # datasets as these are the ones that are sent to the job queues
+        # normally a call without a time delta results in all the datasets
+        # being sent to the job queues
+        self.assertEquals(set(['tst-modified', 'tst-new']), datasets)
+
+        # finally we check over all the datasets to make sure nothing has
+        # happened to the not modified dataset, and that tst-deleted was 
+        # actually deleted.
+        all_datasets = set([i.name for i in Dataset.query.all()])
+        self.assertEquals(
+            set(['tst-not-modified', 'tst-modified', 'tst-new']),
+            all_datasets,
+        )
 
     @mock.patch('iatilib.crawler.registry')
     def test_fetch_dataset_with_many_resources(self, mock):
