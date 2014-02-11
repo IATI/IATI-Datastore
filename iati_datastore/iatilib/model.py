@@ -289,7 +289,7 @@ class Transaction(db.Model):
     )
     receiver_org_text = sa.Column(sa.Unicode, nullable=True)
     receiver_org_activity_id = sa.Column(sa.Unicode, nullable=True)
-    type = sa.Column(codelists.TransactionType.db_type(), nullable=False)
+    type = sa.Column(codelists.TransactionType.db_type(), nullable=True)
     date = sa.Column(sa.Date, nullable=True)
     value_date = sa.Column(sa.Date, nullable=True)
     value_amount = sa.Column(sa.Numeric(), nullable=True)
