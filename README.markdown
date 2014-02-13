@@ -11,13 +11,18 @@ extracts they are interested in. A public instance is available here:
 
 http://iati-datastore.herokuapp.com
 
+Requirements
+============
+
+You will need [Redis](http://redis.io), [Postgres](http://postgresql.org), python, pip and develpment libraries (for libpq, libxml2 and libxslt) to run the full setup.
+For example, on Ubuntu:
+    
+    sudo aptitude install postgresql redis-server python-pip libpq-dev libxml2-dev libxslt-dev
+
 Installing for development
 ==========================
 
-[![Build Status](https://api.travis-ci.org/okfn/iati-datastore.png)](https://travis-ci.org/[https://api.travis-ci.org/okfn/iati-datastore.png)
-
-You will need [Redis](http://redis.io) and [Postgres](http://postgresql.org)
-to run the full setup.
+[![Build Status](https://api.travis-ci.org/IATI/iati-datastore.png)](https://travis-ci.org/IATI/iati-datastore)
 
 * Clone the source
 * Install `pip install -e iati_datastore`
@@ -34,3 +39,15 @@ to run the full setup.
     check progess with `iati crawl status`.
 * Go to http://127.0.0.1:5000
 
+Deploying with apache
+=====================
+
+* Install the requirements listed above
+* Clone the source
+* Install `pip install -e iati_datastore`
+* Create a database (in postgres), and set an environment variable
+  `DATABASE_URL` to something like `postgres:///iati-ds`.
+* Set up a cron job for updates
+* Run a worker with `iati queue background`
+    - Run this with screen
+* Set up apache using mod_wsgi
