@@ -13,7 +13,7 @@ from iatilib.crawler import manager as crawler_manager
 from iatilib.queue import manager as queue_manager
 
 
-manager = Manager(create_app(DEBUG=True))
+manager = Manager(create_app(DEBUG=False))
 manager.add_command("crawl", crawler_manager)
 manager.add_command("queue", queue_manager)
 
