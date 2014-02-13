@@ -367,7 +367,12 @@ def _open_resource(xml_resource, detect_encoding=False):
             if encoding in ('UTF-16LE', 'UTF-16BE'):
                 xml_resource = xml_resource.decode('UTF-16').encode('utf-8')
 
-        if os.path.exists(xml_resource):
+        try: # https://github.com/IATI/iati-datastore/issues/160
+            xml_resource_is_path = os.path.exists(xml_resource)
+        except TypeError:
+            xml_resource_is_path = False
+
+        if xml_resource_is_path:
             #https://bugzilla.redhat.com/show_bug.cgi?id=874546
             f = open(xml_resource)
             lines = f.read()
