@@ -221,6 +221,7 @@ def parse_activity(new_identifiers, old_xml, resource):
         if flushed > 1000:
             db.session.commit()
             flushed = 0
+    db.session.commit()
 
 
 def parse_resource(resource):
