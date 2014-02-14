@@ -43,11 +43,35 @@ Deploying with apache
 =====================
 
 * Install the requirements listed above
+* Install Apache and mod_wsgi
+
+    sudo aptitude install apache2 libapache2-mod-wsgi
+
 * Clone the source
 * Install `pip install -e iati_datastore`
 * Create a database (in postgres), and set an environment variable
-  `DATABASE_URL` to something like `postgres:///iati-ds`.
+  `DATABASE_URL`. e.g.:
+
+    sudo -u postgres createdb iati-ds -O my_username -E utf-8
+    export DATABASE_URL='postgres:///iati-ds'
+
+* Run `iati create_database` to create the db tables
 * Set up a cron job for updates
+ 
+    0 0 * * * export DATABASE_URL='postgres:///iati-ds'; iati crawl update
+
 * Run a worker with `iati queue background`
     - Run this with screen
 * Set up apache using mod_wsgi
+
+Create a datastore.wsgi file containing
+
+    import os
+    os.environ['DATABASE_URL'] = 'postgres:///iati-ds'
+    from iatilib.wsgi import app as application
+
+Add this inside the `<VirtualHost>` tags of your apache configuration:
+
+    WSGIDaemonProcess datastore user=my_username group=my_username
+    WSGIProcessGroup datastore
+    WSGIScriptAlias / /home/datastore/datastore.wsgi
