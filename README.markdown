@@ -45,33 +45,34 @@ Deploying with apache
 * Install the requirements listed above
 * Install Apache and mod_wsgi
 
-    sudo aptitude install apache2 libapache2-mod-wsgi
+        sudo aptitude install apache2 libapache2-mod-wsgi
 
 * Clone the source
 * Install `pip install -e iati_datastore`
 * Create a database (in postgres), and set an environment variable
   `DATABASE_URL`. e.g.:
 
-    sudo -u postgres createdb iati-ds -O my_username -E utf-8
-    export DATABASE_URL='postgres:///iati-ds'
+        sudo -u postgres createdb iati-ds -O my_username -E utf-8
+        export DATABASE_URL='postgres:///iati-ds'
 
 * Run `iati create_database` to create the db tables
-* Set up a cron job for updates
+* Set up a cron job for updates. (Add the following line after running `crontab -e`)
  
-    0 0 * * * export DATABASE_URL='postgres:///iati-ds'; iati crawl update
+        0 0 * * * export DATABASE_URL='postgres:///iati-ds'; iati crawl update
 
 * Run a worker with `iati queue background`
-    - Run this with screen
+    - This needs to persist when you close your ssh connection. A simple way of doing this is using [screen](http://www.gnu.org/software/screen/).
+
 * Set up apache using mod_wsgi
 
-Create a datastore.wsgi file containing
+* Create a datastore.wsgi file containing this code (this is necessary because Apache's mod wsgi handles environment variables differently):
 
-    import os
-    os.environ['DATABASE_URL'] = 'postgres:///iati-ds'
-    from iatilib.wsgi import app as application
+        import os
+        os.environ['DATABASE_URL'] = 'postgres:///iati-ds'
+        from iatilib.wsgi import app as application
 
-Add this inside the `<VirtualHost>` tags of your apache configuration:
+* Add this inside the `<VirtualHost>` tags of your apache configuration:
 
-    WSGIDaemonProcess datastore user=my_username group=my_username
-    WSGIProcessGroup datastore
-    WSGIScriptAlias / /home/datastore/datastore.wsgi
+        WSGIDaemonProcess datastore user=my_username group=my_username
+        WSGIProcessGroup datastore
+        WSGIScriptAlias / /home/datastore/datastore.wsgi
