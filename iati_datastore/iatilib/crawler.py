@@ -191,19 +191,9 @@ def hash(string):
     m.update(string.encode('utf-8'))
     return m.digest()
 
-def parse_resource(resource):
-    db.session.add(resource)
-    now = datetime.datetime.utcnow()
-    current = Activity.query.filter_by(resource_url=resource.url)
-    current_identifiers = set([ i.iati_identifier for i in current.all() ])
 
-    old_xml = dict([ (i[0], (i[1], hash(i[2]))) for i in db.session.query(
-        Activity.iati_identifier, Activity.last_change_datetime,
-        Activity.raw_xml).filter_by(resource_url=resource.url) ])
-
-    db.session.query(Activity).filter_by(resource_url=resource.url).delete()
-    new_identifiers = set()
-    activities = []
+def parse_activity(new_identifiers, old_xml, resource):
+    flushed = 0
     for activity in parse.document(resource.document, resource):
         activity.resource = resource
 
@@ -216,12 +206,8 @@ def parse_resource(resource):
                     activity.last_change_datetime = datetime.datetime.now()
             except KeyError:
                 activity.last_change_datetime = datetime.datetime.now()
-            activities.append(activity)
             db.session.add(activity)
-            if len(db.session.new) > 50:
-                activities = check_for_duplicates(activities)
-                db.session.commit()
-                activities = []
+            check_for_duplicates([activity])
         else:
             parse.log.warn(
                 _("Duplicate identifier {0} in same resource document".format(
@@ -229,9 +215,28 @@ def parse_resource(resource):
                 logger='activity_importer', dataset=resource.dataset_id, resource=resource.url),
                 exc_info=''
             )
-    db.session.add_all(activities)
-    activities = check_for_duplicates(activities)
+
+        flushed = flushed + len(db.session.new)
+        db.session.flush()
+        if flushed > 1000:
+            db.session.commit()
+            flushed = 0
     db.session.commit()
+
+
+def parse_resource(resource):
+    db.session.add(resource)
+    now = datetime.datetime.utcnow()
+    current = Activity.query.filter_by(resource_url=resource.url)
+    current_identifiers = set([ i.iati_identifier for i in current.all() ])
+
+    old_xml = dict([ (i[0], (i[1], hash(i[2]))) for i in db.session.query(
+        Activity.iati_identifier, Activity.last_change_datetime,
+        Activity.raw_xml).filter_by(resource_url=resource.url) ])
+
+    db.session.query(Activity).filter_by(resource_url=resource.url).delete()
+    new_identifiers = set()
+    parse_activity(new_identifiers, old_xml, resource)
 
     resource.version = parse.document_metadata(resource.document)
 
