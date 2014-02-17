@@ -26,6 +26,12 @@ def dictify(resource):
             fields.append((key, resource.__dict__[key]))
     return dict(fields)
 
+@api.route('/meta/filters')
+def meta_filters():
+    return jsonify({
+        'filters': validators.activity_api_args.schema.keys()
+        })
+
 @api.route('/about')
 def about():
     # General status info
