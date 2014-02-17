@@ -47,6 +47,8 @@ def datasets():
 @api.route('/about/dataset/<dataset>')
 def about_dataset(dataset):
     dataset = db.session.query(Dataset).get(dataset)
+    if dataset is None:
+        abort(404)
     resources = []
     for r in dataset.resources:
         resources.append({
