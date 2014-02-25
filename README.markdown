@@ -58,7 +58,7 @@ Deploying with apache
 * Run `iati create_database` to create the db tables
 * Set up a cron job for updates. (Add the following line after running `crontab -e`)
  
-        0 0 * * * export DATABASE_URL='postgres:///iati-ds'; iati crawl update
+        0 0 * * * export DATABASE_URL='postgres:///iati-ds'; /usr/local/bin/iati crawl update
 
 * Run a worker with `iati queue background`
     - This needs to persist when you close your ssh connection. A simple way of doing this is using [screen](http://www.gnu.org/software/screen/).
