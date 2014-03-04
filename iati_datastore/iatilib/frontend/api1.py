@@ -62,7 +62,7 @@ def about_dataset(dataset):
         
     return jsonify(
             dataset=dataset.name,
-            last_modified=dataset.last_modified.isoformat(),
+            last_modified=None if dataset.last_modified is None else dataset.last_modified.isoformat(),
             num_resources=len(dataset.resources),
             resources=resources,
     )
