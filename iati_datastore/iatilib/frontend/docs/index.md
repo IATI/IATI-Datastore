@@ -137,11 +137,11 @@ Combining filters gives the results that fufill all the terms. So
 
 [`/api/1/access/activity.xml?reporting-org=GB-1&recipient-country=CD`](/api/1/access/activity.xml?reporting-org=GB-1&recipient-country=CD)
 
-will respond with all the DFID data for the Democratic Republic of Congo.
+will respond with all the DFID (GB-1) data for the Democratic Republic of Congo (CD).
 
 ###Complex Filtering###
 
-To filter by recipient-country as Democratic Republic of Congo OR Uganda
+To filter DFID (GB-1) data by recipient-country as Democratic Republic of Congo (CD) OR Uganda (UG)
 
 [`/api/1/access/activity.xml?reporting-org=GB-1&recipient-country=CD|UG`](/api/1/access/activity.xml?reporting-org=GB-1&recipient-country=CD|UG)
 
@@ -149,7 +149,7 @@ To filter by recipient-country as Democratic Republic of Congo OR Uganda
 Paging through results
 ----------------------
 
-Results are normally returned one page at a time, increment the the `offset`
+Results are normally returned one page at a time, increment the `offset`
 parameter to get the next page.
 
 * [`/api/1/access/activity.xml`](/api/1/access/activity.xml)
@@ -180,7 +180,7 @@ will respond with all the DFID transactions data.
 Checking the Data
 -----------------
 
-The datastore keeps information on any errors it encountered whilst fetching and parsing any of tthe resources. [More info](/error)
+The datastore keeps information on any errors it encountered whilst fetching and parsing any of the resources. [More info](/error)
 
 
 * list of datasets which have errored[`api/1/error/dataset`](/api/1/error/dataset)
