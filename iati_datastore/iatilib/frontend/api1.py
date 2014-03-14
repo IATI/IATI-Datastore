@@ -154,8 +154,13 @@ class Stream(object):
     """
     Wrapper to make a query object quack like a pagination object
     """
+
+    limit = ''
+    offset = ''
+
     def __init__(self, query):
         self.items = query
+        self.total = query.count()
 
 class DataStoreView(MethodView):
     filter = None
