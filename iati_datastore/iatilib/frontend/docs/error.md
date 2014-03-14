@@ -32,7 +32,7 @@ To retrieve detailed data on the errors encountered by the parser
     + `logger` - logger that reported the error
 
 ###In plaintext###
-You can also fetch a list of datasets `wget http://iati-datastore.herokuapp.com/api/1/error/dataset.log`
+You can also fetch a list of datasets `wget http://datastore.iatistandard.org/api/1/error/dataset.log`
 
-Detailed logs can be recreated using `wget http://iati-datastore.herokuapp.com/api/1/error/dataset.log/<dataset_id>` sorted by date
+Detailed logs can be recreated using `wget http://datastore.iatistandard.org/api/1/error/dataset.log/<dataset_id>` sorted by date
 `
