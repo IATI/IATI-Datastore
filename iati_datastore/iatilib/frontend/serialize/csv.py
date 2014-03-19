@@ -67,7 +67,7 @@ def default_currency(transaction):
     return activity_default_currency(transaction.activity)
 
 def transaction_type(transaction):
-    return transaction.type.value
+    return transaction.type.value if transaction.type else ""
 
 
 def transaction_date(transaction):
@@ -588,8 +588,8 @@ def trans_activity(func):
 
 
 csv_transaction_by_country = CSVSerializer((
-    (u"recipient-country-code", lambda (a, c): c.country.value),
-    (u"recipient-country", lambda (a, c): c.country.description.title()),
+    (u"recipient-country-code", lambda (a, c): c.country.value if c.country else ""),
+    (u"recipient-country", lambda (a, c): c.country.description.title() if c.country else ""),
     (u"recipient-country-percentage", lambda (a, c): c.percentage),
     (u'transaction-type', trans(transaction_type)),
     (u'transaction-date', trans(transaction_date)),
@@ -706,8 +706,8 @@ budget_csv = CSVSerializer((
 
 
 csv_budget_by_country = CSVSerializer((
-    (u"recipient-country-code", lambda (b, c): c.country.value),
-    (u"recipient-country", lambda (b, c): c.country.description.title()),
+    (u"recipient-country-code", lambda (b, c): c.country.value if c.country else ""),
+    (u"recipient-country", lambda (b, c): c.country.description.title() if c.country else ""),
     (u"recipient-country-percentage", lambda (b, c): c.percentage),
     (u'budget-period-start-date', trans(period_start_date)),
     (u'budget-period-end-date', trans(period_end_date)),
