@@ -162,18 +162,22 @@ You can also set the maximum number of results to receive via the `limit`
 parameter:
 * [`/api/1/access/activity.xml?limit=50`](/api/1/access/activity.xml?limit=100)
 
-The default is 50.
+The default is 50. Trying to fetch more than about 1000 activities with this this call is likely to result in an error.
 
 
 Getting all the results at once
 -------------------------------
 
-The CSV format supports returning all results at once in a 'stream'. To
-request all results add 'stream=True' to your parameters. So
+The CSV and XML formats supports returning all results at once in a 'stream'. To
+request all results add 'stream=True' to your parameters. So:
 
 [`/api/1/access/transaction.csv?reporting-org.ref=GB-1&stream=True`](/api/1/access/transaction.csv?reporting-org.ref=GB-1&stream=True)
 
-will respond with all the DFID transactions data.
+will respond with all the DFID transactions data as CSV.
+
+[`/api/1/access/activity.xml?reporting-org.ref=GB-1&stream=True`](/api/1/access/activity.xml?reporting-org.ref=GB-1&stream=True)
+
+will respond with all DFID activity data as XML.
 
 
 
