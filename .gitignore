@@ -6,3 +6,4 @@ _testdata
 .noseids
 1
 *.egg-info
+docs/_build
