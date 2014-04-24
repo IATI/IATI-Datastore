@@ -6,17 +6,17 @@ Method
 
 CSV data can be retrieved directly via the API. The basic form that we have constructed builds a query for you by displaying a paramaterised link to the API. So …
 
-Build a query by selecting from the check boxes and dropdowns
-Click on ‘Submit’
-Click on the link that appears at the top of the page
-The resulting csv file will be downloaded
-Depending on the settings on your computer the file will be automatically opened in your spreadsheet application.
+* Build a query by selecting from the check boxes and dropdowns
+* Click on ‘Submit’
+* Click on the link that appears at the top of the page
+* The resulting csv file will be downloaded
+* Depending on the settings on your computer the file will be automatically opened in your spreadsheet application.
 
 Format Check Boxes (Mandatory)
 ------------------------------
 
 - | Dataset
-  | Choose whether each row in your spreadsheet will contain a single activity, transaction or budget period. See above for more information on these three different table outputs.
+  | Choose whether each row in your spreadsheet will contain a single activity, transaction or budget period. See :doc:`how-is-the-csv-data-displayed` for more information on these three different table outputs.
   
   Tip! If you are looking to analyse activity finances by year you need to select “Transactions” and calculate the year from the transaction date.
 
@@ -30,7 +30,7 @@ Format Check Boxes (Mandatory)
   Warning! Choosing sector or country will duplicate rows of data. Do not add up financial values without introducing arithmetic to apply the relevant percentage to each row.
 
 - | Sample Size
-  | By default choose “Entire selection
+  | By default choose “Entire selection”
 
   If you want to check your selection by seeing a preview, choose “50 rows”.
 
@@ -44,7 +44,7 @@ Filters (Optional)
   | AND relations are applied between dropdowns
   | OR relations are applied within dropdowns
 
-  Warning! If you don’t add at least one filter to your query you will download the entire dataset. The data store currently holds over 200,000 activities and 1,000,000 transactions. This number increments on a daily basis.
+  Warning! If you don’t add at least one filter to your query you will download the entire dataset. The data store currently holds over 200,000 activities and 1,000,000 transactions. This number increases on a daily basis.
 
 - | Reporting Organisation
   | The reporting organisation is the publisher of the IATI data. You would choose this filter to analyse a particular donor or agency’s data. This might typically be used in conjunction with a country and/or a sector.
@@ -56,7 +56,7 @@ Filters (Optional)
 
 - Sector
 - | Country
-  | Choose the recipient country or countries you are looking for.See Region notes below for potential pitfalls.
+  | Choose the recipient country or countries you are looking for. See Region notes below for potential pitfalls.
 - | Region
   | Selecting a region will return activities that publishers have been unable to allocate to specific countries.
 

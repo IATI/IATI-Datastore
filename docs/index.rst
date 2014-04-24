@@ -9,7 +9,7 @@ The IATI Datastore is an online service that gathers all data published to the I
 How does it work?
 -----------------
 
-Data that is recorded on the IATI Registry, and is valid against the standard, is pulled into the Datastore on a nightly basis. This enables people to query for IATI activities across several facets (eg: country, publisher, sector). Activities that satisfy the criteria can then be access in XML, JSON or CSV (spreadsheet) format.
+Data that is recorded on the `IATI Registry <http://iatiregistry.org/>`__, and is valid against the standard, is pulled into the Datastore on a nightly basis. This enables people to query for IATI activities across several facets (eg: country, publisher, sector). Activities that satisfy the criteria can then be access in XML, JSON or CSV (spreadsheet) format.
 
 Who is it for?
 --------------
@@ -24,9 +24,9 @@ This repository is called a store, not a database, because it cannot be used as 
 How to access the Datastore
 ---------------------------
 
-* An API is available that enables people to construct queries.
+* :doc:`An API </api/>` is available that enables people to construct queries.
 
-* For those wishing to just access the data in CSV format, an online form is available to assist with queries
+* For those wishing to just access the data in CSV format, an :doc:`online form </csv-query-builder/>` is available to assist with queries
 
 Are there any limitations on the Datastore?
 -------------------------------------------
