@@ -44,12 +44,12 @@ Filters (Optional)
   | AND relations are applied between dropdowns
   | OR relations are applied within dropdowns
 
-  Warning! If you don’t add at least one filter to your query you will download the entire dataset. The data store currently holds over 200,000 activities and 1,000,000 transactions. This number increases on a daily basis.
+  Warning! If you don’t add at least one filter to your query you will download the entire dataset. The Datastore currently holds over 200,000 activities and 1,000,000 transactions. This number increases on a daily basis.
 
 - | Reporting Organisation
   | The reporting organisation is the publisher of the IATI data. You would choose this filter to analyse a particular donor or agency’s data. This might typically be used in conjunction with a country and/or a sector.
 
-  Warning! The data store contains activities reported by both primary and secondary sources. A secondary source, such as the UNOCHA Financial Tracking Service, reports data it holds about other agencies’ activities. An agency may well report activities to IATI and FTS, which in turn reports the same activities to IATI.
+  Warning! The Datastore contains activities reported by both primary and secondary sources. A secondary source, such as the UNOCHA Financial Tracking Service, reports data it holds about other agencies’ activities. An agency may well report activities to IATI and FTS, which in turn reports the same activities to IATI.
 
 - | Type of Reporting Organisation
   | This allows you to filter by the type of organisation. To access data on NGOs only you would select International NGO and/or National NGO and/or Regional NGO

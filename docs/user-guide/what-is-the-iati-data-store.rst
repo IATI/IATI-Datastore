@@ -1,7 +1,7 @@
-What is the IATI Data Store?
+What is the IATI Datastore?
 ============================
 
-The IATI Data Store is an online service that gathers all data published to the IATI standard into a single queryable database that can deliver selections of data to developers in JSON or XML formats, or non-technical users in CSV (spreadsheet) format.
+The IATI Datastore is an online service that gathers all data published to the IATI standard into a single queryable database that can deliver selections of data to developers in JSON or XML formats, or non-technical users in CSV (spreadsheet) format.
 
 When an organisation publishes its data in `IATI-XML format <http://iatistandard.org/>`__, it does so on its own website – often in separate files for each country or region – and indexes information about these files (what they contain, when they were last updated, etc) on the `IATI Registry <http://iatiregistry.org/>`__. The Registry is only a catalogue of all publishers and published files with links to the actual data.
 
