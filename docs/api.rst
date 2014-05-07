@@ -163,7 +163,7 @@ fetching and parsing any of the resources. `More info </error>`__
 General information about the datasets, such as the urls for the
 resources and when they were fetched
 
--  List of datasets\ ```api/1/about/dataset`` </api/1/about/dataset>`__
+-  List of datasets `api/1/about/dataset </api/1/about/dataset>`__
 -  Specific details of dataset ``api/1/about/dataset/<dataset name>``
 
 Source code
