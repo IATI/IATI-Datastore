@@ -118,7 +118,7 @@ def reporting_org(element, resource=no_resource):
         data['type'] = None
         iati_identifier = xval(xml, "/iati-identifier/text()", 'no_identifier')
         log.warn(
-            _("Failed to import a valid reporting-org.type in activity {0}, error was: {1}".format(
+            _(u"Failed to import a valid reporting-org.type in activity {0}, error was: {1}".format(
                 iati_identifier, exe),
             logger='activity_importer', dataset=resource.dataset_id, resource=resource.url),
             exc_info=exe
@@ -140,7 +140,7 @@ def participating_orgs(xml, resource=None):
         except ValueError as e:
             iati_identifier = xval(xml, "/iati-activity/iati-identifier/text()", 'no_identifier')
             log.warn(
-                _("Failed to import a valid sector percentage:{0} in activity {1}, error was: {2}".format(
+                _(u"Failed to import a valid sector percentage:{0} in activity {1}, error was: {2}".format(
                     'organisation_role', iati_identifier, e),
                 logger='activity_importer', dataset=resource.dataset_id, resource=resource.url),
                 exc_info=e
@@ -221,7 +221,7 @@ def transactions(xml, resource=no_resource):
                 data[field] = None
                 iati_identifier = xval(xml, "/iati-activity/iati-identifier/text()", 'no_identifier')
                 log.warn(
-                    _("Failed to import a valid {0} in activity {1}, error was: {2}".format(
+                    _(u"Failed to import a valid {0} in activity {1}, error was: {2}".format(
                         field, iati_identifier, exe),
                     logger='activity_importer', dataset=resource.dataset_id, resource=resource.url),
                     exc_info=exe
@@ -236,7 +236,7 @@ def transactions(xml, resource=no_resource):
         except MissingValue as exe:
             iati_identifier = xval(xml, "/iati-identifier/text()", 'no_identifier')
             log.warn(
-                _("Failed to import a valid transaction in activity {0}, error was: {1}".format(
+                _(u"Failed to import a valid transaction in activity {0}, error was: {1}".format(
                     iati_identifier, exe),
                 logger='activity_importer', dataset=resource.dataset_id, resource=resource.url),
                 exc_info=exe
@@ -259,7 +259,7 @@ def sector_percentages(xml, resource=no_resource):
             except (MissingValue, ValueError), exe:
                 iati_identifier = xval(xml, "/iati-activity/iati-identifier/text()", 'no_identifier')
                 log.warn(
-                    _("Failed to import a valid {0} in activity {1}, error was: {2}".format(
+                    _("uFailed to import a valid {0} in activity {1}, error was: {2}".format(
                         field, iati_identifier, exe),
                     logger='activity_importer', dataset=resource.dataset_id, resource=resource.url),
                     exc_info=exe
@@ -304,7 +304,7 @@ def budgets(xml, resource=no_resource):
                 data[field] = None
                 iati_identifier = xval(xml, "/iati-activity/iati-identifier/text()", 'no_identifier')
                 log.warn(
-                    _("Failed to import a valid budget:{0} in activity {1}, error was: {2}".format(
+                    _("uFailed to import a valid budget:{0} in activity {1}, error was: {2}".format(
                         field, iati_identifier, exe),
                     logger='activity_importer', dataset=resource.dataset_id, resource=resource.url),
                     exc_info=exe
@@ -336,7 +336,7 @@ def related_activities(xml, resource=no_resource):
         except MissingValue as e:
             iati_identifier = xval(xml, "/iati-activity/iati-identifier/text()", 'no_identifier')
             log.warn(
-                _("Failed to import a valid related-activity in activity {0}, error was: {1}".format(
+                _(u"Failed to import a valid related-activity in activity {0}, error was: {1}".format(
                     iati_identifier, e),
                 logger='activity_importer', dataset=resource.dataset_id, resource=resource.url),
                 exc_info=e
@@ -396,7 +396,7 @@ def from_codelist(codelist, path, xml, resource=no_resource):
                 'no_identifier')
 
             log.warn(
-                _(("Failed to import a valid {0} in activity"
+                _((u"Failed to import a valid {0} in activity"
                    "{1}, error was: {2}".format(codelist, iati_identifier, e)),
                    logger='activity_importer',
                    dataset=resource.dataset_id,
@@ -462,7 +462,7 @@ def activity(xml_resource, resource=no_resource):
         except (MissingValue, InvalidDateError, ValueError, InvalidOperation), exe:
             data[field] = None
             log.warn(
-                _("Failed to import a valid {0} in activity {1}, error was: {2}".format(
+                _(u"Failed to import a valid {0} in activity {1}, error was: {2}".format(
                     field, data['iati_identifier'], exe),
                 logger='activity_importer', dataset=resource.dataset_id, resource=resource.url),
                 exc_info=exe
