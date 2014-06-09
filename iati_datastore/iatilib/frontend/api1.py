@@ -57,7 +57,7 @@ def about_dataset(dataset):
             'last_status_code': r.last_status_code,
             'last_successful_fetch': r.last_succ.isoformat() if r.last_succ else None,
             'last_parsed': r.last_parsed.isoformat() if r.last_parsed else None,
-            'num_of_activities': len(r.activities),
+            'num_of_activities': r.activities.count(),
         }) 
         
     return jsonify(

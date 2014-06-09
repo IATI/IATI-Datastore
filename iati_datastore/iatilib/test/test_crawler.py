@@ -164,7 +164,7 @@ class TestCrawler(AppTestCase):
     def test_parse_resource_succ(self):
         resource = Resource(document="<iati-activities />", url="http://foo")
         resource = crawler.parse_resource(resource)
-        self.assertEquals([], resource.activities)
+        self.assertEquals([], list(resource.activities))
         self.assertEquals(None, resource.last_parse_error)
         now = datetime.datetime.utcnow()
         self.assertAlmostEquals(

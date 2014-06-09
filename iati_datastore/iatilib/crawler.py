@@ -257,7 +257,7 @@ def parse_resource(resource):
 
     log.info(
         "Parsed %d activities from %s",
-        len(resource.activities),
+        resource.activities.count(),
         resource.url)
     resource.last_parsed = now
     return resource#, new_identifiers

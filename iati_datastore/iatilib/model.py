@@ -15,6 +15,12 @@ act_relationship = ft.partial(
     cascade="all,delete",
     passive_deletes=True,
 )
+lazy_act_relationship = ft.partial(
+    sa.orm.relationship,
+    cascade="all,delete",
+    lazy='dynamic',
+    passive_deletes=True,
+)
 
 act_ForeignKey = ft.partial(
     sa.ForeignKey,
@@ -375,7 +381,7 @@ class Resource(db.Model):
     last_parse_error = sa.Column(sa.Unicode)  # last error from xml parser
     document = sa.orm.deferred(sa.Column(sa.LargeBinary))
     etag = sa.Column(sa.Unicode)
-    activities = act_relationship("Activity", cascade="all,delete", passive_deletes=True)
+    activities = lazy_act_relationship("Activity", cascade="all,delete", passive_deletes=True)
     version = sa.Column(sa.Unicode)
 
 
