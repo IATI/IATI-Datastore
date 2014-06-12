@@ -193,7 +193,6 @@ def hash(string):
 
 
 def parse_activity(new_identifiers, old_xml, resource):
-    flushed = 0
     for activity in parse.document(resource.document, resource):
         activity.resource = resource
 
@@ -216,13 +215,8 @@ def parse_activity(new_identifiers, old_xml, resource):
                 exc_info=''
             )
 
-        flushed = flushed + len(db.session.new)
         db.session.flush()
-        if flushed > 1000:
-            db.session.commit()
-            flushed = 0
     db.session.commit()
-
 
 def parse_resource(resource):
     db.session.add(resource)

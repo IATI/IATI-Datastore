@@ -1,10 +1,10 @@
 from setuptools import setup, find_packages
 
 requirements = """
-Flask==0.9
+Flask==0.10
 Jinja2==2.6
 SQLAlchemy==0.8
-Flask-SQLAlchemy==0.16
+Flask-SQLAlchemy==1.0
 Werkzeug==0.8.3
 ckanapi==1.5
 iso8601==0.1.4
