@@ -78,6 +78,9 @@ class TestParseActivity(AppTestCase):
             self.act.recipient_country_percentages[0].country)
         self.assertEquals(
             "Armenia", self.act.recipient_country_percentages[0].name)
+        self.assertEquals(
+            None,
+            self.act.recipient_country_percentages[0].percentage)
 
     def test_recipient_region_percentages(self):
         act = parse.activity(fixture("iati_activity_JP.xml"))
@@ -87,6 +90,9 @@ class TestParseActivity(AppTestCase):
             act.recipient_country_percentages[0].country)
         self.assertEquals(
             "Far East Asia, regional", act.recipient_region_percentages[0].name)
+        self.assertEquals(
+            100,
+            act.recipient_region_percentages[0].percentage)
 
     def test_transaction_count(self):
         self.assertEquals(1, len(self.act.transactions))
@@ -276,6 +282,22 @@ class TestSector(AppTestCase):
         ))
         self.assertEquals([], sec)
 
+class TestPercentages(AppTestCase):
+    def test_recipient_country_percentages(self):
+        recipient_country_percentages = parse.recipient_country_percentages(ET.XML(
+            u'<wrapper><recipient-country code="BD" percentage="3"></recipient-country></wrapper>'
+        ))
+        self.assertEquals(3, recipient_country_percentages[0].percentage)
+
+    def test_recipient_region_percentages(self):
+        recipient_region_percentages = parse.recipient_region_percentages(ET.XML(
+            u"""<wrapper>
+                    <recipient-region code="998" percentage="4"></recipient-region>
+                    <recipient-region code="998"></recipient-region>
+                </wrapper>"""
+        ))
+        self.assertEquals(4, recipient_region_percentages[0].percentage)
+        self.assertEquals(None, recipient_region_percentages[1].percentage)
 
 class TestOrganisation(AppTestCase):
     def test_org_role_looseness(self):
