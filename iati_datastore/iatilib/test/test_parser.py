@@ -68,8 +68,8 @@ class TestParseActivity(AppTestCase):
             cl.OrganisationRole.funding,
             self.act.participating_orgs[0].role)
 
-    def test_rejects_participatng_org_without_ref(self):
-        self.assertEquals(1, len(self.act.participating_orgs))
+    def test_accepts_participatng_org_without_ref(self):
+        self.assertEquals(2, len(self.act.participating_orgs))
 
     def test_recipient_country_percentages(self):
         self.assertEquals(1, len(self.act.recipient_country_percentages))
