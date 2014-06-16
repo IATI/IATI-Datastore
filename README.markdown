@@ -76,3 +76,10 @@ Deploying with apache
         WSGIDaemonProcess datastore user=my_username group=my_username
         WSGIProcessGroup datastore
         WSGIScriptAlias / /home/datastore/datastore.wsgi
+
+Updating activities after changing import code
+==============================================
+
+* Run this SQL query on the database - `UPDATE resource SET last_succ=NULL;`
+* Restart background process
+* Run `iati crawl update` (or wait for cron to run it for you)
