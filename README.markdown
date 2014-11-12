@@ -25,7 +25,6 @@ Installing for development
 [![Build Status](https://api.travis-ci.org/IATI/iati-datastore.png)](https://travis-ci.org/IATI/iati-datastore)
 
 * Clone the source
-* Install `pip install -e iati_datastore`
 * Install `pip install -r requirements_dev.txt`
 * Run the tests `nosetests iati_datastore`
   (the tests use an in-memory sqlite db)
