@@ -9,10 +9,216 @@ from lxml import etree as ET
 
 from iatilib.test import db, AppTestCase, fixture_filename
 from iatilib import parse, codelists as cl
+# Remove all lines containind nottest to enable all the 2.01 tests that we currently expect to fail
+from nose.tools import nottest
 
 
 def fixture(fix_name, encoding='utf-8'):
     return codecs.open(fixture_filename(fix_name), encoding=encoding).read()
+
+
+class TestParse201Activity(AppTestCase):
+    def setUp(self):
+        super(TestParse201Activity, self).setUp()
+        self.activities = list(parse.document(fixture_filename("2.01-example-annotated.xml")))
+        self.act = self.activities[0]
+
+    def test_id(self):
+        self.assertEquals(
+            u"AA-AAA-123456789-ABC123",
+            self.act.iati_identifier)
+    
+    @nottest
+    def test_title(self):
+        self.assertEquals(
+            u"Activity title",
+            self.act.title)
+
+    def test_last_updated_time(self):
+        self.assertEquals(datetime.date(2014, 9, 10), self.act.last_updated_datetime)
+
+    @nottest
+    def test_description(self):
+        self.assert_(self.act.description.startswith(
+            u"General activity description text."))
+    
+    def test_reporting_org_ref(self):
+        self.assertEquals(u"AA-AAA-123456789", self.act.reporting_org.ref)
+
+    def test_reporting_org_type(self):
+        self.assertEquals(
+            cl.OrganisationType.multilateral,
+            self.act.reporting_org.type
+        )
+
+    # TODO reporting ORG text
+
+    # activity-website not in 2.01
+    #def test_activity_websites(self):
+    #    self.assertEquals(
+    #        [u"http://portfolio.theglobalfund.org/en/Grant/Index/ARM-202-G05-H-00"],
+    #        self.act.websites)
+
+    def test_default_currency(self):
+        self.assertEquals(
+            cl.Currency.us_dollar,
+            self.act.default_currency
+        )
+
+    @nottest
+    def test_participating_org(self):
+        self.assertEquals(
+            cl.OrganisationRole.funding,
+            self.act.participating_orgs[0].role)
+        self.assertEquals(
+            cl.OrganisationRole.accountable,
+            self.act.participating_orgs[1].role)
+        self.assertEquals(
+            cl.OrganisationRole.extending,
+            self.act.participating_orgs[2].role)
+
+    # TODO Maybe add 2.01 test file for this
+    #def test_accepts_participatng_org_without_ref(self):
+    #    self.assertEquals(2, len(self.act.participating_orgs))
+
+    # TODO Update the XML here once this bug is fixed in the example XML:
+    # https://github.com/IATI/IATI-Extra-Documentation/issues/287
+    def test_recipient_country_percentages(self):
+        act = self.act
+        self.assertEquals(2, len(self.act.recipient_country_percentages))
+        self.assertEquals(
+            cl.Country.afghanistan,
+            act.recipient_country_percentages[0].country)
+        self.assertEquals(
+            cl.Country.antigua_and_barbuda,
+            act.recipient_country_percentages[1].country)
+
+    @nottest
+    # FIXME Not sure whiy this is failing for the current 1.0x code...
+    def test_recipient_region_percentages(self):
+        act = self.act
+        self.assertEquals(2, len(act.recipient_region_percentages))
+        self.assertEquals(
+            "South America, regional", act.recipient_region_percentages[0].name)
+        self.assertEquals(
+            "South of Sahara, regional", act.recipient_region_percentages[1].name)
+        self.assertEquals(
+            50,
+            act.recipient_region_percentages[0].percentage)
+        self.assertEquals(
+            50,
+            act.recipient_region_percentages[1].percentage)
+
+    def test_transaction_count(self):
+        self.assertEquals(1, len(self.act.transactions))
+
+    @nottest
+    def test_transaction_type(self):
+        self.assertEquals(
+            cl.TransactionType.incoming_funds,
+            self.act.transactions[0].type)
+
+    def test_transaction_date(self):
+        self.assertEquals(
+            datetime.date(2012, 1, 1),
+            self.act.transactions[0].date)
+
+    def test_transaction_value_date(self):
+        self.assertEquals(
+            datetime.date(2012, 1, 1),
+            self.act.transactions[0].value_date)
+
+    def test_transaction_value_amount(self):
+        self.assertEquals(
+            1000,
+            self.act.transactions[0].value_amount)
+
+    def test_transaction_currency(self):
+        self.assertEquals(
+            cl.Currency.euro,
+            self.act.transactions[0].value_currency)
+
+    def test_transaction_value_composite(self):
+        self.assertEquals(
+            (datetime.date(2012, 1, 1), 1000, cl.Currency.euro),
+            self.act.transactions[0].value)
+
+    def test_transaction_ref(self):
+        self.assertEquals(u'1234', self.act.transactions[0].ref)
+
+    def test_transaction_provider_org_ref(self):
+        self.assertEquals(u'BB-BBB-123456789', 
+                            self.act.transactions[0].provider_org.ref)
+
+    def test_transaction_reciever_org_ref(self):
+        self.assertEquals(u'AA-AAA-123456789', 
+                            self.act.transactions[0].receiver_org.ref)
+
+    @nottest
+    def test_date_start_planned(self):
+        self.assertEquals(datetime.date(2012, 4, 15), self.act.start_planned)
+
+    @nottest
+    def test_date_start_actual(self):
+        self.assertEquals(datetime.date(2012, 4, 25), self.act.start_actual)
+
+    @nottest
+    def test_date_end_planned(self):
+        self.assertEquals(datetime.date(2015, 12, 31), self.act.end_planned)
+
+    def test_date_end_actual(self):
+        self.assertEquals(None, self.act.end_actual)
+
+    # TODO Deal properly with sector and recipient-country/region at activity/country level
+    #def test_sector_percentage_count(self):
+    #    act = next(parse.document(
+    #        fixture("complex_example_dfid.xml", encoding=None)))
+    #    self.assertEquals(5, len(act.sector_percentages))
+    
+    @nottest
+    # FIXME not entirely sure why this fails, but it might have something to do with windowsy linebreaks
+    def test_raw_xml(self):
+        norm_xml = ET.tostring(ET.parse(fixture_filename("2.01-example-annotated.xml")))
+        self.assertEquals(norm_xml, self.act.raw_xml)
+
+
+    def test_budget(self):
+        self.assertEquals(1, len(self.act.budgets))
+
+    def test_policy_markers(self):
+        self.assertEquals(2, len(self.act.policy_markers))
+        self.assertEquals(cl.PolicyMarker.aid_to_environment, self.act.policy_markers[0].code)
+        self.assertEquals(cl.PolicyMarker.gender_equality, self.act.policy_markers[1].code)
+
+    def test_related_activity(self):
+        self.assertEquals(1, len(self.act.related_activities))
+        self.assertEquals("AA-AAA-123456789-6789", self.act.related_activities[0].ref)
+
+    def test_activity_status(self):
+        self.assertEquals(cl.ActivityStatus.implementation, self.act.activity_status)
+
+    def test_collaboration_type(self):
+        self.assertEquals(cl.CollaborationType.bilateral, self.act.collaboration_type)
+       
+    def test_default_finance_type(self):
+        self.assertEquals(cl.FinanceType.aid_grant_excluding_debt_reorganisation,
+                self.act.default_finance_type)
+
+    def test_default_flow_type(self):
+        self.assertEquals(cl.FlowType.oda, self.act.default_flow_type)
+
+    def test_default_aid_type(self):
+        self.assertEquals(cl.AidType.general_budget_support,
+                self.act.default_aid_type)
+
+    def test_default_tied_status(self):
+        self.assertEquals(cl.TiedStatus.partially_tied, self.act.default_tied_status) 
+
+    def test_default_hierarchy(self):
+        self.assertEquals(cl.RelatedActivityType.parent, self.act.hierarchy) 
+
+    def test_default_language(self):
+        self.assertEquals(cl.Language.english, self.act.default_language) 
 
 
 class TestParseActivity(AppTestCase):
