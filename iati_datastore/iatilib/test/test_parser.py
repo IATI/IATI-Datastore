@@ -81,8 +81,6 @@ class TestParse201Activity(AppTestCase):
     #def test_accepts_participatng_org_without_ref(self):
     #    self.assertEquals(2, len(self.act.participating_orgs))
 
-    # TODO Update the XML here once this bug is fixed in the example XML:
-    # https://github.com/IATI/IATI-Extra-Documentation/issues/287
     def test_recipient_country_percentages(self):
         act = self.act
         self.assertEquals(2, len(self.act.recipient_country_percentages))
@@ -92,22 +90,36 @@ class TestParse201Activity(AppTestCase):
         self.assertEquals(
             cl.Country.antigua_and_barbuda,
             act.recipient_country_percentages[1].country)
+        self.assertEquals(
+            25,
+            act.recipient_country_percentages[0].percentage)
+        self.assertEquals(
+            25,
+            act.recipient_country_percentages[1].percentage)
 
-    @nottest
-    # FIXME Not sure whiy this is failing for the current 1.0x code...
     def test_recipient_region_percentages(self):
         act = self.act
         self.assertEquals(2, len(act.recipient_region_percentages))
         self.assertEquals(
-            "South America, regional", act.recipient_region_percentages[0].name)
+            cl.Region.south_america_regional,
+            act.recipient_region_percentages[0].region)
         self.assertEquals(
-            "South of Sahara, regional", act.recipient_region_percentages[1].name)
+            cl.Region.south_of_sahara_regional,
+            act.recipient_region_percentages[1].region)
         self.assertEquals(
-            50,
+            25,
             act.recipient_region_percentages[0].percentage)
         self.assertEquals(
-            50,
+            25,
             act.recipient_region_percentages[1].percentage)
+
+
+        # TODO this is looking for the text in the element.
+        # Need to test this for RO for 2.01
+        #self.assertEquals(
+        #"South America, regional", act.recipient_region_percentages[0].name)
+        #self.assertEquals(
+        #    "South of Sahara, regional", act.recipient_region_percentages[1].name)
 
     def test_transaction_count(self):
         self.assertEquals(1, len(self.act.transactions))
@@ -175,10 +187,8 @@ class TestParse201Activity(AppTestCase):
     #        fixture("complex_example_dfid.xml", encoding=None)))
     #    self.assertEquals(5, len(act.sector_percentages))
     
-    @nottest
-    # FIXME not entirely sure why this fails, but it might have something to do with windowsy linebreaks
     def test_raw_xml(self):
-        norm_xml = ET.tostring(ET.parse(fixture_filename("2.01-example-annotated.xml")))
+        norm_xml = ET.tostring(ET.parse(fixture_filename("2.01-example-annotated.xml")).find('iati-activity'), encoding=unicode).strip(u'\n ')
         self.assertEquals(norm_xml, self.act.raw_xml)
 
 
