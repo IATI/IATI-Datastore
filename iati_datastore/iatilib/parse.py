@@ -432,16 +432,24 @@ default_flow_type = partial(from_codelist, cl.FlowType, "./default-flow-type/@co
 default_aid_type = partial(from_codelist, cl.AidType, "./default-aid-type/@code")
 default_tied_status = partial(from_codelist, cl.TiedStatus, "./default-tied-status/@code")
 
-def activity(xml_resource, resource=no_resource):
+def activity(xml_resource, resource=no_resource, major_version='1'):
 
     xml = ET.parse(_open_resource(xml_resource))
 
-    data = {
-        "iati_identifier": xval(xml.getroot(), "./iati-identifier/text()"),
-        "title": xval(xml, "./title/text()", u""),
-        "description": xval(xml, "./description/text()", u""),
-        "raw_xml": ET.tostring(xml, encoding=unicode)
-    }
+    if major_version == '2':
+        data = {
+            "iati_identifier": xval(xml.getroot(), "./iati-identifier/text()"),
+            "title": xval(xml, "./title/narrative/text()", u""),
+            "description": xval(xml, "./description/narrative/text()", u""),
+            "raw_xml": ET.tostring(xml, encoding=unicode)
+        }
+    else:
+        data = {
+            "iati_identifier": xval(xml.getroot(), "./iati-identifier/text()"),
+            "title": xval(xml, "./title/text()", u""),
+            "description": xval(xml, "./description/text()", u""),
+            "raw_xml": ET.tostring(xml, encoding=unicode)
+        }
 
     field_functions = {
         "default_currency" : partial(currency, "@default-currency"),
@@ -492,11 +500,16 @@ def document(xml_resource, resource=no_resource):
 
 
 def activities(xmlfile, resource=no_resource):
+    major_version = '1'
     try:
-        for event, elem in ET.iterparse(xmlfile):
-            if elem.tag == 'iati-activity':
+        for event, elem in ET.iterparse(xmlfile, events=('start','end')):
+            if event=='start' and elem.tag == 'iati-activities':
+                version = elem.attrib.get('version')
+                if version and version.startswith('2.'):
+                    major_version = '2'
+            elif event=='end' and elem.tag == 'iati-activity':
                 try:
-                    yield activity(elem, resource=resource)
+                    yield activity(elem, resource=resource, major_version=major_version)
                 except MissingValue, exe:
                     log.error(_("Failed to import a valid Activity error was: {0}".format(exe),
                             logger='failed_activity', dataset=resource.dataset_id, resource=resource.url),

@@ -31,7 +31,6 @@ class TestParse201Activity(AppTestCase):
             u"AA-AAA-123456789-ABC123",
             self.act.iati_identifier)
     
-    @nottest
     def test_title(self):
         self.assertEquals(
             u"Activity title",
@@ -40,7 +39,6 @@ class TestParse201Activity(AppTestCase):
     def test_last_updated_time(self):
         self.assertEquals(datetime.date(2014, 9, 10), self.act.last_updated_datetime)
 
-    @nottest
     def test_description(self):
         self.assert_(self.act.description.startswith(
             u"General activity description text."))
