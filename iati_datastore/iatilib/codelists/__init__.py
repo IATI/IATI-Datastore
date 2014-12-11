@@ -19,32 +19,32 @@ from unidecode import unidecode
 from .enum import DeclEnum
 
 
-def iati_url(name, version="1.0"):
-    return ("http://datadev.aidinfolabs.org/data/codelist/" +
-            "%s/version/%s/lang/en.csv" % (name, version))
+def iati_url(name):
+    return ("http://iatistandard.org/105/codelists/downloads/clv2/csv/en/" +
+            "%s.csv" % (name))
 
 # Run "iati download_codelists" after adding an entry here to download the
 # codelist file
 urls = {
-    "OrganisationType": iati_url("OrganisationType", version="1.0"),
-    "OrganisationRole": iati_url("OrganisationRole", version="1.0"),
-    "Country": iati_url("Country", version="1.01"),
-    "TransactionType": iati_url("TransactionType", version="1.01"),
-    "Currency": iati_url("Currency", version="1.0"),
-    "Sector": iati_url("Sector", version="1.0"),
+    "OrganisationType": iati_url("OrganisationType"),
+    "OrganisationRole": iati_url("OrganisationRole"),
+    "Country": iati_url("Country"),
+    "TransactionType": iati_url("TransactionType"),
+    "Currency": iati_url("Currency"),
+    "Sector": iati_url("Sector"),
     "Vocabulary": iati_url("Vocabulary"),
     "BudgetType": iati_url("BudgetType"),
     "Region": iati_url("Region"),
-    "FlowType": iati_url("FlowType", version="1.0"),
-    "FinanceType": iati_url("FinanceType", version="1.0"),
-    "AidType": iati_url("AidType", version="1.0"),
-    "TiedStatus": iati_url("TiedStatus", version="1.0"),
-    "DisbursementChannel": iati_url("DisbursementChannel", version="1.0"),
-    "PolicyMarker": iati_url("PolicyMarker", version="1.0"),
-    "ActivityStatus": iati_url("ActivityStatus", version="1.0"),
-    "CollaborationType": iati_url("CollaborationType", version="1.0"),
-    "RelatedActivityType": iati_url("RelatedActivityType", version="1.0"),
-    "Language": iati_url("Language", version="1.0"),
+    "FlowType": iati_url("FlowType"),
+    "FinanceType": iati_url("FinanceType"),
+    "AidType": iati_url("AidType"),
+    "TiedStatus": iati_url("TiedStatus"),
+    "DisbursementChannel": iati_url("DisbursementChannel"),
+    "PolicyMarker": iati_url("PolicyMarker"),
+    "ActivityStatus": iati_url("ActivityStatus"),
+    "CollaborationType": iati_url("CollaborationType"),
+    "RelatedActivityType": iati_url("RelatedActivityType"),
+    "Language": iati_url("Language"),
 }
 
 data_dir = os.path.dirname(__file__)

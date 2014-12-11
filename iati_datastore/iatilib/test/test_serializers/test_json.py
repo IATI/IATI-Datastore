@@ -27,7 +27,7 @@ class TestJson(AppTestCase):
                     value_amount=411900,
                     value_date=datetime(2012, 12, 31),
                     date=datetime(2012, 12, 31),
-                    flow_type=codelists.FlowType.private_grants,
+                    flow_type=codelists.FlowType.private_ngo_and_other_private_sources,
                     finance_type=codelists.FinanceType.aid_grant_excluding_debt_reorganisation,
                     aid_type=codelists.AidType.general_budget_support,
                     disbursement_channel=codelists.DisbursementChannel.aid_in_kind_donors_manage_funds_themselves,

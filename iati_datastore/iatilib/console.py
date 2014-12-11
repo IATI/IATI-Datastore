@@ -33,15 +33,12 @@ def download_codelists():
     "Download CSV codelists from IATI"
     for name, url in codelists.urls.items():
         filename = "iati_datastore/iatilib/codelists/%s.csv" % name
-        if os.path.exists(filename) and os.path.getsize(filename) > 0:
-            print filename, "exists, skipping"
-        else:
-            print "Downloading", name
-            resp = requests.get(url)
-            resp.raise_for_status()
-            assert len(resp.text) > 0, "Response is empty"
-            with codecs.open(filename, "w", encoding="utf-8") as cl:
-                cl.write(resp.text)
+        print "Downloading", name
+        resp = requests.get(url)
+        resp.raise_for_status()
+        assert len(resp.text) > 0, "Response is empty"
+        with codecs.open(filename, "w", encoding="utf-8") as cl:
+            cl.write(resp.text)
 
 
 @manager.command

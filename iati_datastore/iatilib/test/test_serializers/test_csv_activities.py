@@ -346,7 +346,7 @@ class TestCSVExample(CSVTstMixin, TestCase):
 
     def test_default_flow_type(self):
         data = self.process([fac.ActivityFactory.build(
-            default_flow_type=cl.FlowType.private_grants
+            default_flow_type=cl.FlowType.private_ngo_and_other_private_sources
         )])
         self.assertField({'default-flow-type-code': "30"}, data[0])
 

@@ -488,7 +488,7 @@ class TestCSVTransactionExample(TestCase, CSVTstMixin):
 
     def test_default_flow_type(self):
         activity = fac.ActivityFactory.build(
-            default_flow_type=cl.FlowType.private_grants
+            default_flow_type=cl.FlowType.private_ngo_and_other_private_sources
         )
         data = self.process([
             fac.TransactionFactory.build(activity=activity)

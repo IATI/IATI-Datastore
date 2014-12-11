@@ -1,6 +1,7 @@
-code,name,language
-1,Pipeline/identification,en
-2,Implementation,en
-3,Completion,en
-4,Post-completion,en
-5,Cancelled,en
+code,name,description,category,url
+1,Pipeline/identification,,,
+2,Implementation,,,
+3,Completion,,,
+4,Post-completion,,,
+5,Cancelled,,,
+6,Suspended,,,
