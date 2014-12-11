@@ -12,6 +12,7 @@ http://techspot.zzzeek.org/2011/01/14/the-enum-recipe/
 import os
 import codecs
 import warnings
+import copy
 
 import unicodecsv as csv
 from unidecode import unidecode
@@ -20,12 +21,17 @@ from .enum import DeclEnum
 
 
 def iati_url(name):
-    return ("http://iatistandard.org/105/codelists/downloads/clv2/csv/en/" +
-            "%s.csv" % (name))
+    return {
+        '1': ("http://iatistandard.org/105/codelists/downloads/clv2/csv/en/" +
+              "%s.csv" % (name)),
+        '2': ("http://dev.iatistandard.org/201/codelists/downloads/clv2/csv/en/" +
+              "%s.csv" % (name)),
+    }
 
 # Run "iati download_codelists" after adding an entry here to download the
 # codelist file
-urls = {
+urls = {}
+urls['1'] = {
     "OrganisationType": iati_url("OrganisationType"),
     "OrganisationRole": iati_url("OrganisationRole"),
     "Country": iati_url("Country"),
@@ -46,6 +52,8 @@ urls = {
     "RelatedActivityType": iati_url("RelatedActivityType"),
     "Language": iati_url("Language"),
 }
+urls['2'] = copy.copy(urls['1'])
+urls['2']['Vocabulary'] = iati_url("SectorVocabulary")
 
 data_dir = os.path.dirname(__file__)
 
@@ -61,9 +69,9 @@ def codelist_reader(itr):
     for line in itr:
         yield line[:2]
 
-for name in urls.keys():
+for name in urls['1'].keys():
     try:
-        with codecs.open(os.path.join(data_dir, "%s.csv" % name)) as cl_file:
+        with codecs.open(os.path.join(data_dir, '1', "%s.csv" % name)) as cl_file:
             reader = codelist_reader(csv.reader(cl_file, encoding="utf-8"))
             enums = {ident(name): (code, name) for code, name in reader}
             globals()[name] = type(name, (DeclEnum,), enums)
