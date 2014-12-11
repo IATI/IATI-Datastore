@@ -63,7 +63,7 @@ def xval(ele, xpath, default=NODEFAULT):
         return default
 
 def xval_date(xpath, xml, resource=None):
-    iso_date = xval(xml, xpath + "/text()", None) or xval(xml, xpath + "/@iso-date", None)
+    iso_date = xval(xml, xpath + "/@iso-date", None) or xval(xml, xpath + "/text()", None)
     return iati_date(iso_date)
 
 def xpath_date(xpath, xml, resource=None):
