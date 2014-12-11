@@ -15,7 +15,7 @@ from iatilib.model import (
     Activity, Budget, CountryPercentage, Transaction, Organisation,
     Participation, PolicyMarker, RegionPercentage, RelatedActivity,
     SectorPercentage)
-from iatilib import codelists as cl
+from iatilib import codelists
 from iatilib import loghandlers
 from iatilib.loghandlers import DatasetMessage as _
 
@@ -29,9 +29,9 @@ NODEFAULT = object()
 no_resource = namedtuple('DummyResource', 'url dataset_id')('no_url', 'no_dataset')
 
 
-
 class ParserError(Exception):
     pass
+
 
 class XMLError(ParserError):
     # Errors raised by XML parser
@@ -42,8 +42,10 @@ class SpecError(ParserError):
     # Errors raised by spec violations
     pass
 
+
 class MissingValue(SpecError):
     pass
+
 
 class InvalidDateError(SpecError):
     pass
@@ -62,13 +64,16 @@ def xval(ele, xpath, default=NODEFAULT):
             raise MissingValue("Missing %r from %s" % (xpath, ele.tag))
         return default
 
-def xval_date(xpath, xml, resource=None):
+
+def xval_date(xpath, xml, resource=None, major_version='1'):
     iso_date = xval(xml, xpath + "/@iso-date", None) or xval(xml, xpath + "/text()", None)
     return iati_date(iso_date)
 
-def xpath_date(xpath, xml, resource=None):
+
+def xpath_date(xpath, xml, resource=None, major_version='1'):
     iso_date = xval(xml, xpath, default=None)
     return iati_date(iso_date)
+
 
 def iati_date(iso_date):
     if iso_date:
@@ -79,6 +84,7 @@ def iati_date(iso_date):
     else:
         return None 
 
+
 def iati_int(text):
     return int(text.replace(",", ""))
 
@@ -86,25 +92,28 @@ def iati_int(text):
 def iati_decimal(text):
     return Decimal(text.replace(",", ""))
 
-def xpath_decimal(xpath, xml, resource=None):
+
+def xpath_decimal(xpath, xml, resource=None, major_version='1'):
     decimal_value = xval(xml, xpath, None)
     if decimal_value:
         return iati_decimal(decimal_value)
     else:
         return None
 
-def parse_org(xml, resource=no_resource):
+
+def parse_org(xml, resource=no_resource, major_version='1'):
     data = {
         "ref": xval(xml, "@ref", u""),
         "name": xval(xml, 'text()', u""),
     }
     try:
-        data['type'] = cl.OrganisationType.from_string(xval(xml, "@type"))
+        data['type'] = codelists.by_major_version[major_version].OrganisationType.from_string(xval(xml, "@type"))
     except (MissingValue, ValueError):
         data['type'] = None
     return Organisation.as_unique(db.session, **data)
 
-def reporting_org(element, resource=no_resource):
+
+def reporting_org(element, resource=no_resource, major_version='1'):
     xml = element.xpath("./reporting-org")[0]
     data = {
         "ref": xval(xml, "@ref"),
@@ -112,7 +121,7 @@ def reporting_org(element, resource=no_resource):
     }
     try:
         data.update({
-            "type": cl.OrganisationType.from_string(xval(xml, "@type"))
+            "type": codelists.by_major_version[major_version].OrganisationType.from_string(xval(xml, "@type"))
         })
     except (MissingValue, ValueError) as exe:
         data['type'] = None
@@ -127,12 +136,12 @@ def reporting_org(element, resource=no_resource):
     return Organisation.as_unique(db.session, **data)
 
 
-def participating_orgs(xml, resource=None):
+def participating_orgs(xml, resource=None, major_version='1'):
     ret = []
     seen = set()
     for ele in xml.xpath("./participating-org"):
         try:
-            role = cl.OrganisationRole.from_string(xval(ele, "@role").title())
+            role = codelists.by_major_version[major_version].OrganisationRole.from_string(xval(ele, "@role").title())
             organisation = parse_org(ele)
             if not (role, organisation.ref) in seen:
                 seen.add((role, organisation.ref))
@@ -148,15 +157,16 @@ def participating_orgs(xml, resource=None):
     return ret
 
 
-def websites(xml, resource=None):
+def websites(xml, resource=None, major_version='1'):
     return [xval(ele, "text()") for ele in xml.xpath("./activity-website") if xval(ele, "text()", None) ]
 
-def recipient_country_percentages(element, resource=no_resource):
+
+def recipient_country_percentages(element, resource=no_resource, major_version='1'):
     xml = element.xpath("./recipient-country")
     results = []
     for ele in xml:
         name = xval(ele, "text()", None)
-        code = from_codelist(cl.Country, "@code", ele, resource)
+        code = from_codelist(codelists.by_major_version[major_version].Country, "@code", ele, resource)
         if ele.xpath("@percentage"):
             try:
                 percentage = int(xval(ele, "@percentage"))
@@ -167,12 +177,13 @@ def recipient_country_percentages(element, resource=no_resource):
         results.append(CountryPercentage(name=name, country=code, percentage=percentage))
     return results
 
-def recipient_region_percentages(element, resource=no_resource):
+
+def recipient_region_percentages(element, resource=no_resource, major_version='1'):
     xml = element.xpath("./recipient-region")
     results = []
     for ele in xml:
         name=xval(ele, "text()", None)
-        region=from_codelist(cl.Region, "@code", ele, resource)
+        region=from_codelist(codelists.by_major_version[major_version].Region, "@code", ele, resource)
         if ele.xpath("@percentage"):
             try:
                 percentage = int(xval(ele, "@percentage"))
@@ -184,19 +195,20 @@ def recipient_region_percentages(element, resource=no_resource):
             results.append(RegionPercentage(name=name, region=region, percentage=percentage))
     return results
 
-def currency(path, xml, resource=None):
+
+def currency(path, xml, resource=None, major_version='1'):
     code = xval(xml, path, None)
     if code:
-        return cl.Currency.from_string(code)
+        return codelists.by_major_version[major_version].Currency.from_string(code)
     else:
         return None
         
 
-def transactions(xml, resource=no_resource):
+def transactions(xml, resource=no_resource, major_version='1'):
     def from_cl(code, codelist):
         return codelist.from_string(code) if code is not None else None
 
-    def from_org(path, ele, resource=None):
+    def from_org(path, ele, resource=None, major_version='1'):
         organisation = ele.xpath(path)
         if organisation:
             return parse_org(organisation[0])
@@ -215,14 +227,14 @@ def transactions(xml, resource=no_resource):
 
         field_functions = {
             'date' : partial(xpath_date, "transaction-date/@iso-date"),
-            'flow_type' : partial(from_codelist, cl.FlowType, "./flow-type/@code"),
-            'finance_type' : partial(from_codelist, cl.FinanceType, "./finance-type/@code"),
-            'aid_type' : partial(from_codelist, cl.AidType, "./aid-type/@code"),
-            'tied_status' : partial(from_codelist, cl.TiedStatus, "./tied-status/@code"),
-            'disbursement_channel' : partial(from_codelist, cl.DisbursementChannel, "./disbursement-channel/@code"),
+            'flow_type' : partial(from_codelist_with_major_version, 'FlowType', "./flow-type/@code"),
+            'finance_type' : partial(from_codelist_with_major_version, 'FinanceType', "./finance-type/@code"),
+            'aid_type' : partial(from_codelist_with_major_version, 'AidType', "./aid-type/@code"),
+            'tied_status' : partial(from_codelist_with_major_version, 'TiedStatus', "./tied-status/@code"),
+            'disbursement_channel' : partial(from_codelist_with_major_version, 'DisbursementChannel', "./disbursement-channel/@code"),
             'provider_org' : partial(from_org, "./provider-org"),
             'receiver_org' : partial(from_org, "./receiver-org"),
-            'type' : partial(from_codelist, cl.TransactionType, "./transaction-type/@code"),
+            'type' : partial(from_codelist_with_major_version, 'TransactionType', "./transaction-type/@code"),
             'value_currency' : partial(currency, "value/@currency"),
             'value_date' : partial(xpath_date, "value/@value-date"),
             'value_amount' : partial(xpath_decimal, "value/text()"),
@@ -230,7 +242,7 @@ def transactions(xml, resource=no_resource):
 
         for field, function in field_functions.items():
             try:
-                data[field] = function(ele, resource)
+                data[field] = function(ele, resource, major_version)
             except (MissingValue, InvalidDateError, ValueError, InvalidOperation), exe:
                 data[field] = None
                 iati_identifier = xval(xml, "/iati-activity/iati-identifier/text()", 'no_identifier')
@@ -258,7 +270,8 @@ def transactions(xml, resource=no_resource):
     return ret
 
 
-def sector_percentages(xml, resource=no_resource):
+def sector_percentages(xml, resource=no_resource, major_version='1'):
+    cl = codelists.by_major_version[major_version]
     ret = []
     for ele in xml.xpath("./sector"):
         sp = SectorPercentage()
@@ -291,8 +304,9 @@ def sector_percentages(xml, resource=no_resource):
     return ret
 
 
-def budgets(xml, resource=no_resource):
+def budgets(xml, resource=no_resource, major_version='1'):
     def budget_type(ele, resource=None):
+        cl = codelists.by_major_version[major_version]
         typestr = xval(ele, "@type", None)
         if typestr:
             try:
@@ -332,14 +346,15 @@ def budgets(xml, resource=no_resource):
     return ret
 
 
-def policy_markers(xml, resource=no_resource):
+def policy_markers(xml, resource=no_resource, major_version='1'):
     element = xml.xpath("./policy-marker")
     return [ PolicyMarker(
-                code=from_codelist(cl.PolicyMarker, "@code", ele, resource),
+                code=from_codelist(codelists.by_major_version[major_version].PolicyMarker, "@code", ele, resource),
                 text=xval(ele, "text()", None),
              ) for ele in element ]
 
-def related_activities(xml, resource=no_resource):
+
+def related_activities(xml, resource=no_resource, major_version='1'):
     element = xml.xpath("./related-activity")
     results = []
     for ele in element:
@@ -357,22 +372,26 @@ def related_activities(xml, resource=no_resource):
             )
     return results
 
-def hierarchy(xml, resource=None):
+
+def hierarchy(xml, resource=None, major_version='1'):
     xml_value = xval(xml, "@hierarchy", None)
     if xml_value:
-        return cl.RelatedActivityType.from_string(xml_value)
+        return codelists.by_major_version[major_version].RelatedActivityType.from_string(xml_value)
     return None
 
-def last_updated_datetime(xml, resource=None):
+
+def last_updated_datetime(xml, resource=None, major_version='1'):
     xml_value = xval(xml, "@last-updated-datetime", None)
     return iati_date(xml_value)
 
-def default_language(xml, resource=None):
+
+def default_language(xml, resource=None, major_version='1'):
     xml_value = xval(xml, "@xml:lang", None)
     try:
-        return cl.Language.from_string(xml_value)
+        return codelists.by_major_version[major_version].Language.from_string(xml_value)
     except ValueError:
         return None
+
 
 def _open_resource(xml_resource, detect_encoding=False):
     if isinstance(xml_resource, basestring):
@@ -421,15 +440,11 @@ def from_codelist(codelist, path, xml, resource=no_resource):
     return None
 
 
-activity_status = partial(from_codelist, cl.ActivityStatus, "./activity-status/@code")
-collaboration_type = partial(from_codelist, cl.CollaborationType, "./collaboration-type/@code")
-default_finance_type = partial(from_codelist, cl.FinanceType, "./default-finance-type/@code")
-default_flow_type = partial(from_codelist, cl.FlowType, "./default-flow-type/@code")
-default_aid_type = partial(from_codelist, cl.AidType, "./default-aid-type/@code")
-default_tied_status = partial(from_codelist, cl.TiedStatus, "./default-tied-status/@code")
+def from_codelist_with_major_version(codelist_name, path, xml, resource, major_version='1'):
+    return from_codelist(getattr(codelists.by_major_version[major_version], codelist_name), path, xml, resource)
+
 
 def activity(xml_resource, resource=no_resource, major_version='1'):
-
     xml = ET.parse(_open_resource(xml_resource))
 
     if major_version == '2':
@@ -444,6 +459,7 @@ def activity(xml_resource, resource=no_resource, major_version='1'):
             "description": xval(xml, "./description/narrative/text()", u""),
             "raw_xml": ET.tostring(xml, encoding=unicode)
         }
+
     else:
         start_planned = partial(xval_date, "./activity-date[@type='start-planned']")
         end_planned = partial(xval_date, "./activity-date[@type='end-planned']")
@@ -457,6 +473,14 @@ def activity(xml_resource, resource=no_resource, major_version='1'):
             "raw_xml": ET.tostring(xml, encoding=unicode)
         }
 
+    cl = codelists.by_major_version[major_version]
+    activity_status = partial(from_codelist_with_major_version, 'ActivityStatus', "./activity-status/@code")
+    collaboration_type = partial(from_codelist_with_major_version, 'CollaborationType', "./collaboration-type/@code")
+    default_finance_type = partial(from_codelist_with_major_version, 'FinanceType', "./default-finance-type/@code")
+    default_flow_type = partial(from_codelist_with_major_version, 'FlowType', "./default-flow-type/@code")
+    default_aid_type = partial(from_codelist_with_major_version, 'AidType', "./default-aid-type/@code")
+    default_tied_status = partial(from_codelist_with_major_version, 'TiedStatus', "./default-tied-status/@code")
+    
     field_functions = {
         "default_currency" : partial(currency, "@default-currency"),
         "hierarchy": hierarchy,
@@ -486,7 +510,7 @@ def activity(xml_resource, resource=no_resource, major_version='1'):
 
     for field, function in field_functions.items():
         try:
-            data[field] = function(xml, resource)
+            data[field] = function(xml, resource, major_version)
         except (MissingValue, InvalidDateError, ValueError, InvalidOperation), exe:
             data[field] = None
             log.warn(
@@ -523,6 +547,7 @@ def activities(xmlfile, resource=no_resource):
                 elem.clear()
     except ET.XMLSyntaxError, exe:
         raise XMLError()
+
 
 def document_metadata(xml_resource):
     version = None

@@ -69,6 +69,18 @@ def codelist_reader(itr):
     for line in itr:
         yield line[:2]
 
+by_major_version = {}
+for major_version in ['1', '2']:
+    by_major_version[major_version] = type('Codelists'+major_version, (object,), {})
+    for name in urls[major_version].keys():
+        try:
+            with codecs.open(os.path.join(data_dir, major_version, "%s.csv" % name)) as cl_file:
+                reader = codelist_reader(csv.reader(cl_file, encoding="utf-8"))
+                enums = {ident(name): (code, name) for code, name in reader}
+                setattr(by_major_version[major_version], name, type(name, (DeclEnum,), enums))
+        except IOError, exc:
+            warnings.warn(str(exc))
+
 for name in urls['1'].keys():
     try:
         with codecs.open(os.path.join(data_dir, '1', "%s.csv" % name)) as cl_file:
@@ -77,3 +89,4 @@ for name in urls['1'].keys():
             globals()[name] = type(name, (DeclEnum,), enums)
     except IOError, exc:
         warnings.warn(str(exc))
+

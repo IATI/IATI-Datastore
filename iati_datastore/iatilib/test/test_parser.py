@@ -9,8 +9,7 @@ from lxml import etree as ET
 
 from iatilib.test import db, AppTestCase, fixture_filename
 from iatilib import parse, codelists as cl
-# Remove all lines containind nottest to enable all the 2.01 tests that we currently expect to fail
-from nose.tools import nottest
+cl2 = cl.by_major_version['2']
 
 
 def fixture(fix_name, encoding='utf-8'):
@@ -48,7 +47,7 @@ class TestParse201Activity(AppTestCase):
 
     def test_reporting_org_type(self):
         self.assertEquals(
-            cl.OrganisationType.multilateral,
+            cl2.OrganisationType.multilateral,
             self.act.reporting_org.type
         )
 
@@ -62,20 +61,19 @@ class TestParse201Activity(AppTestCase):
 
     def test_default_currency(self):
         self.assertEquals(
-            cl.Currency.us_dollar,
+            cl2.Currency.us_dollar,
             self.act.default_currency
         )
 
-    @nottest
     def test_participating_org(self):
         self.assertEquals(
-            cl.OrganisationRole.funding,
+            cl2.OrganisationRole.funding,
             self.act.participating_orgs[0].role)
         self.assertEquals(
-            cl.OrganisationRole.accountable,
+            cl2.OrganisationRole.accountable,
             self.act.participating_orgs[1].role)
         self.assertEquals(
-            cl.OrganisationRole.extending,
+            cl2.OrganisationRole.extending,
             self.act.participating_orgs[2].role)
 
     # TODO Maybe add 2.01 test file for this
@@ -86,10 +84,10 @@ class TestParse201Activity(AppTestCase):
         act = self.act
         self.assertEquals(2, len(self.act.recipient_country_percentages))
         self.assertEquals(
-            cl.Country.afghanistan,
+            cl2.Country.afghanistan,
             act.recipient_country_percentages[0].country)
         self.assertEquals(
-            cl.Country.antigua_and_barbuda,
+            cl2.Country.antigua_and_barbuda,
             act.recipient_country_percentages[1].country)
         self.assertEquals(
             25,
@@ -102,10 +100,10 @@ class TestParse201Activity(AppTestCase):
         act = self.act
         self.assertEquals(2, len(act.recipient_region_percentages))
         self.assertEquals(
-            cl.Region.south_america_regional,
+            cl2.Region.south_america_regional,
             act.recipient_region_percentages[0].region)
         self.assertEquals(
-            cl.Region.south_of_sahara_regional,
+            cl2.Region.south_of_sahara_regional,
             act.recipient_region_percentages[1].region)
         self.assertEquals(
             25,
@@ -125,10 +123,9 @@ class TestParse201Activity(AppTestCase):
     def test_transaction_count(self):
         self.assertEquals(1, len(self.act.transactions))
 
-    @nottest
     def test_transaction_type(self):
         self.assertEquals(
-            cl.TransactionType.incoming_funds,
+            cl2.TransactionType.incoming_funds,
             self.act.transactions[0].type)
 
     def test_transaction_date(self):
@@ -148,12 +145,12 @@ class TestParse201Activity(AppTestCase):
 
     def test_transaction_currency(self):
         self.assertEquals(
-            cl.Currency.euro,
+            cl2.Currency.euro,
             self.act.transactions[0].value_currency)
 
     def test_transaction_value_composite(self):
         self.assertEquals(
-            (datetime.date(2012, 1, 1), 1000, cl.Currency.euro),
+            (datetime.date(2012, 1, 1), 1000, cl2.Currency.euro),
             self.act.transactions[0].value)
 
     def test_transaction_ref(self):
@@ -195,38 +192,38 @@ class TestParse201Activity(AppTestCase):
 
     def test_policy_markers(self):
         self.assertEquals(2, len(self.act.policy_markers))
-        self.assertEquals(cl.PolicyMarker.aid_to_environment, self.act.policy_markers[0].code)
-        self.assertEquals(cl.PolicyMarker.gender_equality, self.act.policy_markers[1].code)
+        self.assertEquals(cl2.PolicyMarker.aid_to_environment, self.act.policy_markers[0].code)
+        self.assertEquals(cl2.PolicyMarker.gender_equality, self.act.policy_markers[1].code)
 
     def test_related_activity(self):
         self.assertEquals(1, len(self.act.related_activities))
         self.assertEquals("AA-AAA-123456789-6789", self.act.related_activities[0].ref)
 
     def test_activity_status(self):
-        self.assertEquals(cl.ActivityStatus.implementation, self.act.activity_status)
+        self.assertEquals(cl2.ActivityStatus.implementation, self.act.activity_status)
 
     def test_collaboration_type(self):
-        self.assertEquals(cl.CollaborationType.bilateral, self.act.collaboration_type)
+        self.assertEquals(cl2.CollaborationType.bilateral, self.act.collaboration_type)
        
     def test_default_finance_type(self):
-        self.assertEquals(cl.FinanceType.aid_grant_excluding_debt_reorganisation,
+        self.assertEquals(cl2.FinanceType.aid_grant_excluding_debt_reorganisation,
                 self.act.default_finance_type)
 
     def test_default_flow_type(self):
-        self.assertEquals(cl.FlowType.oda, self.act.default_flow_type)
+        self.assertEquals(cl2.FlowType.oda, self.act.default_flow_type)
 
     def test_default_aid_type(self):
-        self.assertEquals(cl.AidType.general_budget_support,
+        self.assertEquals(cl2.AidType.general_budget_support,
                 self.act.default_aid_type)
 
     def test_default_tied_status(self):
-        self.assertEquals(cl.TiedStatus.partially_tied, self.act.default_tied_status) 
+        self.assertEquals(cl2.TiedStatus.partially_tied, self.act.default_tied_status) 
 
     def test_default_hierarchy(self):
-        self.assertEquals(cl.RelatedActivityType.parent, self.act.hierarchy) 
+        self.assertEquals(cl2.RelatedActivityType.parent, self.act.hierarchy) 
 
     def test_default_language(self):
-        self.assertEquals(cl.Language.english, self.act.default_language) 
+        self.assertEquals(cl2.Language.english, self.act.default_language) 
 
 
 class TestParseActivity(AppTestCase):
