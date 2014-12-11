@@ -167,15 +167,12 @@ class TestParse201Activity(AppTestCase):
         self.assertEquals(u'AA-AAA-123456789', 
                             self.act.transactions[0].receiver_org.ref)
 
-    @nottest
     def test_date_start_planned(self):
         self.assertEquals(datetime.date(2012, 4, 15), self.act.start_planned)
 
-    @nottest
     def test_date_start_actual(self):
-        self.assertEquals(datetime.date(2012, 4, 25), self.act.start_actual)
+        self.assertEquals(datetime.date(2012, 4, 28), self.act.start_actual)
 
-    @nottest
     def test_date_end_planned(self):
         self.assertEquals(datetime.date(2015, 12, 31), self.act.end_planned)
 

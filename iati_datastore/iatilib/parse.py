@@ -420,10 +420,6 @@ def from_codelist(codelist, path, xml, resource=no_resource):
             )
     return None
 
-start_planned = partial(xval_date, "./activity-date[@type='start-planned']")
-end_planned = partial(xval_date, "./activity-date[@type='end-planned']")
-start_actual = partial(xval_date, "./activity-date[@type='start-actual']")
-end_actual = partial(xval_date, "./activity-date[@type='end-actual']")
 
 activity_status = partial(from_codelist, cl.ActivityStatus, "./activity-status/@code")
 collaboration_type = partial(from_codelist, cl.CollaborationType, "./collaboration-type/@code")
@@ -437,6 +433,11 @@ def activity(xml_resource, resource=no_resource, major_version='1'):
     xml = ET.parse(_open_resource(xml_resource))
 
     if major_version == '2':
+        start_planned = partial(xval_date, "./activity-date[@type='1']")
+        start_actual = partial(xval_date, "./activity-date[@type='2']")
+        end_planned = partial(xval_date, "./activity-date[@type='3']")
+        end_actual = partial(xval_date, "./activity-date[@type='4']")
+
         data = {
             "iati_identifier": xval(xml.getroot(), "./iati-identifier/text()"),
             "title": xval(xml, "./title/narrative/text()", u""),
@@ -444,6 +445,11 @@ def activity(xml_resource, resource=no_resource, major_version='1'):
             "raw_xml": ET.tostring(xml, encoding=unicode)
         }
     else:
+        start_planned = partial(xval_date, "./activity-date[@type='start-planned']")
+        end_planned = partial(xval_date, "./activity-date[@type='end-planned']")
+        start_actual = partial(xval_date, "./activity-date[@type='start-actual']")
+        end_actual = partial(xval_date, "./activity-date[@type='end-actual']")
+
         data = {
             "iati_identifier": xval(xml.getroot(), "./iati-identifier/text()"),
             "title": xval(xml, "./title/text()", u""),
