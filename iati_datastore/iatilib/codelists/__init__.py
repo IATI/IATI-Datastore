@@ -77,16 +77,10 @@ for major_version in ['1', '2']:
             with codecs.open(os.path.join(data_dir, major_version, "%s.csv" % name)) as cl_file:
                 reader = codelist_reader(csv.reader(cl_file, encoding="utf-8"))
                 enums = {ident(name): (code, name) for code, name in reader}
-                setattr(by_major_version[major_version], name, type(name, (DeclEnum,), enums))
+                codelist = type(name, (DeclEnum,), enums)
+                setattr(by_major_version[major_version], name, codelist)
+                if major_version == '1':
+                    globals()[name] = codelist
         except IOError, exc:
             warnings.warn(str(exc))
-
-for name in urls['1'].keys():
-    try:
-        with codecs.open(os.path.join(data_dir, '1', "%s.csv" % name)) as cl_file:
-            reader = codelist_reader(csv.reader(cl_file, encoding="utf-8"))
-            enums = {ident(name): (code, name) for code, name in reader}
-            globals()[name] = type(name, (DeclEnum,), enums)
-    except IOError, exc:
-        warnings.warn(str(exc))
 
