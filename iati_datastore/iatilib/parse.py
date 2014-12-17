@@ -309,10 +309,10 @@ def budgets(xml, resource=no_resource, major_version='1'):
         cl = codelists.by_major_version[major_version]
         typestr = xval(ele, "@type", None)
         if typestr:
-            try:
-                return cl.BudgetType.from_string(typestr)
-            except ValueError:
+            if typestr in ['Original', 'Revised']:
                 return getattr(cl.BudgetType, typestr.lower())
+            else:
+                return cl.BudgetType.from_string(typestr)
         else:
             return None
 
@@ -387,10 +387,9 @@ def last_updated_datetime(xml, resource=None, major_version='1'):
 
 def default_language(xml, resource=None, major_version='1'):
     xml_value = xval(xml, "@xml:lang", None)
-    try:
-        return codelists.by_major_version[major_version].Language.from_string(xml_value)
-    except ValueError:
+    if xml_value is None:
         return None
+    return codelists.by_major_version[major_version].Language.from_string(xml_value)
 
 
 def _open_resource(xml_resource, detect_encoding=False):
