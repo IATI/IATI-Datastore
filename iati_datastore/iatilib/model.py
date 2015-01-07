@@ -121,6 +121,10 @@ class Activity(db.Model):
     raw_xml = sa.Column(
         sa.UnicodeText,
         nullable=False)
+    major_version = sa.Column(
+        sa.UnicodeText,
+        nullable=False,
+        default=u'1')
 
     commitments = TransactionType(codelists.TransactionType.commitment)
     disbursements = TransactionType(codelists.TransactionType.disbursement)

@@ -505,6 +505,7 @@ def activity(xml_resource, resource=no_resource, major_version='1'):
         'default_flow_type' : default_flow_type,
         'default_aid_type' : default_aid_type,
         'default_tied_status' : default_tied_status,
+        'major_version': lambda *args, **kwargs: major_version
     }
 
     for field, function in field_functions.items():
