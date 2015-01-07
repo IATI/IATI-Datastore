@@ -155,9 +155,9 @@ def reporting_org_type(activity):
 
 def participating_org(attr, role, activity):
     activity_by_role = dict(
-            [(a.role, a) for a in activity.participating_orgs])
+            [(a.role.value, a) for a in activity.participating_orgs])
 
-    participant = activity_by_role.get(role, "")
+    participant = activity_by_role.get(role.value, "")
     if participant:
         return getattr(participant.organisation, attr)
     else:
