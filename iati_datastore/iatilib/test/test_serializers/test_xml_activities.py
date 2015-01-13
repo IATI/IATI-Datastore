@@ -40,3 +40,8 @@ class TestXMLSerializer(TestCase):
         result = ET.fromstring(ser_data)
         self.assertEquals("1", result[1][0][0].text)
 
+    def test_version(self):
+        data = self.process([
+            fac.ActivityFactory.build(raw_xml=u"<iati-activity></iati-activity>", version='x.yy')
+        ])
+        self.assertEquals('x.yy', data.find('.//iati-activity').attrib['{http://datastore.iatistandard.org/ns}version'])

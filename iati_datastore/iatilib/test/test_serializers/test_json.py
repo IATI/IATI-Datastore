@@ -51,3 +51,12 @@ class TestJson(AppTestCase):
             "tied-status": { "code": "5" }
         }
         self.assertItemsEqual(transactions, output['iati-activities'][0]['transaction'][0])
+
+    @mock.patch('iatilib.frontend.serialize.jsonserializer.current_app')
+    def test_version(self, mock):
+        activity = factories.ActivityFactory.create(version='x.yy')
+        json_datastore_output = json.loads(jsonserializer.datastore_json(FakePage([activity])))
+        json_output = json.loads(jsonserializer.json(FakePage([activity])))
+        self.assertEquals('x.yy', json_datastore_output['iati-activities'][0]['version'])
+        # This has the "iati-extra:" because it should match the XML output
+        self.assertEquals('x.yy', json_output['iati-activities'][0]['iati-extra:version'])

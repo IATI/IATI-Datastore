@@ -121,8 +121,11 @@ class Activity(db.Model):
     raw_xml = sa.Column(
         sa.UnicodeText,
         nullable=False)
+    version = sa.Column(
+        sa.Unicode,
+        nullable=True)
     major_version = sa.Column(
-        sa.UnicodeText,
+        sa.Unicode,
         nullable=False,
         default=u'1')
 

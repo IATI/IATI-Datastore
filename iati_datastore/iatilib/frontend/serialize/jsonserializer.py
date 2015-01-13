@@ -24,7 +24,9 @@ class JSONEncoder(jsonlib.JSONEncoder):
         if isinstance(o, Decimal):
             return str(o.quantize(self.TWOPLACES))
         if isinstance(o, Activity):
-            return xmltodict.parse(o.raw_xml, attr_prefix='', cdata_key='text')
+            d = xmltodict.parse(o.raw_xml, attr_prefix='', cdata_key='text')
+            d['iati-extra:version'] = o.version
+            return d
         return super(JSONEncoder, self).default(o)
 
 
@@ -60,7 +62,7 @@ def json_rep(obj):
             ("description", obj.description),
             ("reporting-org", json_rep(obj.reporting_org)),
             ("license" , obj.resource.dataset.license if obj.resource else None),
-            ("version" , obj.resource.version if obj.resource else None),
+            ("version" , obj.version),
             ("start-planned", obj.start_planned),
             ("end-planned", obj.end_planned),
             ("start-actual", obj.start_actual),

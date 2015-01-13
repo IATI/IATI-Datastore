@@ -443,7 +443,7 @@ def from_codelist_with_major_version(codelist_name, path, xml, resource, major_v
     return from_codelist(getattr(codelists.by_major_version[major_version], codelist_name), path, xml, resource)
 
 
-def activity(xml_resource, resource=no_resource, major_version='1'):
+def activity(xml_resource, resource=no_resource, major_version='1', version=None):
     xml = ET.parse(_open_resource(xml_resource))
 
     if major_version == '2':
@@ -505,7 +505,8 @@ def activity(xml_resource, resource=no_resource, major_version='1'):
         'default_flow_type' : default_flow_type,
         'default_aid_type' : default_aid_type,
         'default_tied_status' : default_tied_status,
-        'major_version': lambda *args, **kwargs: major_version
+        'major_version': lambda *args, **kwargs: major_version,
+        'version': lambda *args, **kwargs: version,
     }
 
     for field, function in field_functions.items():
@@ -531,6 +532,7 @@ def document(xml_resource, resource=no_resource):
 
 def activities(xmlfile, resource=no_resource):
     major_version = '1'
+    version = None
     try:
         for event, elem in ET.iterparse(xmlfile, events=('start','end')):
             if event=='start' and elem.tag == 'iati-activities':
@@ -539,7 +541,7 @@ def activities(xmlfile, resource=no_resource):
                     major_version = '2'
             elif event=='end' and elem.tag == 'iati-activity':
                 try:
-                    yield activity(elem, resource=resource, major_version=major_version)
+                    yield activity(elem, resource=resource, major_version=major_version, version=version)
                 except MissingValue, exe:
                     log.error(_("Failed to import a valid Activity error was: {0}".format(exe),
                             logger='failed_activity', dataset=resource.dataset_id, resource=resource.url),
