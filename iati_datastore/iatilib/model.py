@@ -215,7 +215,7 @@ class PercentageMixin(object):
             index=True,
         )
     id = sa.Column(sa.Integer, primary_key=True)
-    percentage = sa.Column(sa.Integer, nullable=True)
+    percentage = sa.Column(sa.Numeric, nullable=True)
     name = sa.Column(sa.Unicode, nullable=True)
 
 
@@ -331,7 +331,7 @@ class SectorPercentage(db.Model):
         codelists.Vocabulary.db_type(),
         default=codelists.Vocabulary.oecd_development_assistance_committee,
         nullable=False)
-    percentage = sa.Column(sa.Integer, nullable=True)
+    percentage = sa.Column(sa.Numeric, nullable=True)
     activity = sa.orm.relationship("Activity")
 
 

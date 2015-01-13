@@ -9,6 +9,7 @@ from lxml import etree as ET
 
 from iatilib.test import db, AppTestCase, fixture_filename
 from iatilib import parse, codelists as cl
+from iatilib import model
 cl2 = cl.by_major_version['2']
 
 
@@ -476,6 +477,49 @@ class TestFunctional(AppTestCase):
         activities = parse.document(fixture_filename("big_value.xml"))
         db.session.add_all(activities)
         db.session.commit()
+
+    def test_decimal_percentages(self):
+        act = parse.activity(ET.XML(
+            u'''<iati-activity>
+                    <iati-identifier>AAA-BBB</iati-identifier>
+                    <reporting-org ref="AAA"/>
+                    <recipient-country code="AF" percentage="24.5" />
+                    <recipient-country code="AG" percentage="25.5" />  
+                    <recipient-region code="798" percentage="26.5" />
+                    <recipient-region code="889" percentage="23.5" />  
+                    <sector code="11130" percentage="49.5" />
+                    <sector code="11182" percentage="50.5" />  
+                </iati-activity>'''
+        ))
+        db.session.add(act)
+        db.session.commit()
+
+        self.assertEquals(
+            24.5,
+            db.session.query(model.CountryPercentage).filter(model.CountryPercentage.country==cl.Country.afghanistan).first().percentage
+        )
+        self.assertEquals(
+            25.5,
+            db.session.query(model.CountryPercentage).filter(model.CountryPercentage.country==cl.Country.antigua_and_barbuda).first().percentage
+        )
+
+        self.assertEquals(
+            26.5,
+            db.session.query(model.RegionPercentage).filter(model.RegionPercentage.region==cl.Region.asia_regional).first().percentage
+        )
+        self.assertEquals(
+            23.5,
+            db.session.query(model.RegionPercentage).filter(model.RegionPercentage.region==cl.Region.oceania_regional).first().percentage
+        )
+
+        self.assertEquals(
+            49.5,
+            db.session.query(model.SectorPercentage).filter(model.SectorPercentage.sector==cl.Sector.teacher_training).first().percentage
+        )
+        self.assertEquals(
+            50.5,
+            db.session.query(model.SectorPercentage).filter(model.SectorPercentage.sector==cl.Sector.educational_research).first().percentage
+        )
 
 
 class TestSector(AppTestCase):

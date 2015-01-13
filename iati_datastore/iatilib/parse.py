@@ -169,7 +169,7 @@ def recipient_country_percentages(element, resource=no_resource, major_version='
         code = from_codelist(codelists.by_major_version[major_version].Country, "@code", ele, resource)
         if ele.xpath("@percentage"):
             try:
-                percentage = int(xval(ele, "@percentage"))
+                percentage = Decimal(xval(ele, "@percentage"))
             except ValueError:
                 percentage = None
         else:
@@ -186,7 +186,7 @@ def recipient_region_percentages(element, resource=no_resource, major_version='1
         region=from_codelist(codelists.by_major_version[major_version].Region, "@code", ele, resource)
         if ele.xpath("@percentage"):
             try:
-                percentage = int(xval(ele, "@percentage"))
+                percentage = Decimal(xval(ele, "@percentage"))
             except ValueError:
                 percentage = None
         else:
@@ -294,7 +294,7 @@ def sector_percentages(xml, resource=no_resource, major_version='1'):
         
         if ele.xpath("@percentage"):
             try:
-                sp.percentage = int(xval(ele, "@percentage"))
+                sp.percentage = Decimal(xval(ele, "@percentage"))
             except ValueError:
                 sp.percentage = None
         if ele.xpath("text()"):
