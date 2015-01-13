@@ -28,6 +28,11 @@ log.propagate = False
 NODEFAULT = object()
 no_resource = namedtuple('DummyResource', 'url dataset_id')('no_url', 'no_dataset')
 
+TEXT_ELEMENT = {
+    '1': 'text()',
+    '2': 'narrative/text()',
+}
+
 
 class ParserError(Exception):
     pass
@@ -66,7 +71,7 @@ def xval(ele, xpath, default=NODEFAULT):
 
 
 def xval_date(xpath, xml, resource=None, major_version='1'):
-    iso_date = xval(xml, xpath + "/@iso-date", None) or xval(xml, xpath + "/text()", None)
+    iso_date = xval(xml, xpath + "/@iso-date", None) or xval(xml, xpath + "/" + TEXT_ELEMENT[major_version], None)
     return iati_date(iso_date)
 
 
@@ -104,7 +109,7 @@ def xpath_decimal(xpath, xml, resource=None, major_version='1'):
 def parse_org(xml, resource=no_resource, major_version='1'):
     data = {
         "ref": xval(xml, "@ref", u""),
-        "name": xval(xml, 'text()', u""),
+        "name": xval(xml, TEXT_ELEMENT[major_version], u""),
     }
     try:
         data['type'] = codelists.by_major_version[major_version].OrganisationType.from_string(xval(xml, "@type"))
@@ -117,7 +122,7 @@ def reporting_org(element, resource=no_resource, major_version='1'):
     xml = element.xpath("./reporting-org")[0]
     data = {
         "ref": xval(xml, "@ref"),
-        "name": xval(xml, 'text()', u""),
+        "name": xval(xml, TEXT_ELEMENT[major_version], u""),
     }
     try:
         data.update({
@@ -142,7 +147,7 @@ def participating_orgs(xml, resource=None, major_version='1'):
     for ele in xml.xpath("./participating-org"):
         try:
             role = codelists.by_major_version[major_version].OrganisationRole.from_string(xval(ele, "@role").title())
-            organisation = parse_org(ele)
+            organisation = parse_org(ele, major_version=major_version)
             if not (role, organisation.ref) in seen:
                 seen.add((role, organisation.ref))
                 ret.append(Participation(role=role, organisation=organisation))
@@ -165,7 +170,7 @@ def recipient_country_percentages(element, resource=no_resource, major_version='
     xml = element.xpath("./recipient-country")
     results = []
     for ele in xml:
-        name = xval(ele, "text()", None)
+        name = xval(ele, TEXT_ELEMENT[major_version], None)
         code = from_codelist(codelists.by_major_version[major_version].Country, "@code", ele, resource)
         if ele.xpath("@percentage"):
             try:
@@ -182,7 +187,7 @@ def recipient_region_percentages(element, resource=no_resource, major_version='1
     xml = element.xpath("./recipient-region")
     results = []
     for ele in xml:
-        name=xval(ele, "text()", None)
+        name=xval(ele, TEXT_ELEMENT[major_version], None)
         region=from_codelist(codelists.by_major_version[major_version].Region, "@code", ele, resource)
         if ele.xpath("@percentage"):
             try:
@@ -211,16 +216,16 @@ def transactions(xml, resource=no_resource, major_version='1'):
     def from_org(path, ele, resource=None, major_version='1'):
         organisation = ele.xpath(path)
         if organisation:
-            return parse_org(organisation[0])
+            return parse_org(organisation[0], major_version=major_version)
         #return Organisation.as_unique(db.session, ref=org) if org else Nonejk
 
     def process(ele):
         data = {
-            'description' : xval(ele, "description/text()", None),
-            'provider_org_text' : xval(ele, "provider-org/text()", None),
+            'description' : xval(ele, "description/" + TEXT_ELEMENT[major_version], None),
+            'provider_org_text' : xval(ele, "provider-org/" + TEXT_ELEMENT[major_version], None),
             'provider_org_activity_id' : xval(
                                 ele, "provider-org/@provider-activity-id", None),
-            'receiver_org_text' : xval(ele, "receiver-org/text()", None),
+            'receiver_org_text' : xval(ele, "receiver-org/" + TEXT_ELEMENT[major_version], None),
             'receiver_org_activity_id' : xval(ele, "receiver-org/@receiver-activity-id", None),
             'ref' : xval(ele, "@ref", None),
         }
@@ -297,8 +302,8 @@ def sector_percentages(xml, resource=no_resource, major_version='1'):
                 sp.percentage = Decimal(xval(ele, "@percentage"))
             except ValueError:
                 sp.percentage = None
-        if ele.xpath("text()"):
-            sp.text = xval(ele, "text()")
+        if ele.xpath(TEXT_ELEMENT[major_version]):
+            sp.text = xval(ele, TEXT_ELEMENT[major_version])
         if any(getattr(sp, attr) for attr in "sector vocabulary percentage".split()):
             ret.append(sp)
     return ret
@@ -350,7 +355,7 @@ def policy_markers(xml, resource=no_resource, major_version='1'):
     element = xml.xpath("./policy-marker")
     return [ PolicyMarker(
                 code=from_codelist(codelists.by_major_version[major_version].PolicyMarker, "@code", ele, resource),
-                text=xval(ele, "text()", None),
+                text=xval(ele, TEXT_ELEMENT[major_version], None),
              ) for ele in element ]
 
 
@@ -358,7 +363,7 @@ def related_activities(xml, resource=no_resource, major_version='1'):
     element = xml.xpath("./related-activity")
     results = []
     for ele in element:
-        text=xval(ele, "text()", None)
+        text=xval(ele, TEXT_ELEMENT[major_version], None)
         try:
             ref = xval(ele, "@ref")
             results.append(RelatedActivity(ref=ref, text=text))
@@ -452,25 +457,18 @@ def activity(xml_resource, resource=no_resource, major_version='1', version=None
         end_planned = partial(xval_date, "./activity-date[@type='3']")
         end_actual = partial(xval_date, "./activity-date[@type='4']")
 
-        data = {
-            "iati_identifier": xval(xml.getroot(), "./iati-identifier/text()"),
-            "title": xval(xml, "./title/narrative/text()", u""),
-            "description": xval(xml, "./description/narrative/text()", u""),
-            "raw_xml": ET.tostring(xml, encoding=unicode)
-        }
-
     else:
         start_planned = partial(xval_date, "./activity-date[@type='start-planned']")
         end_planned = partial(xval_date, "./activity-date[@type='end-planned']")
         start_actual = partial(xval_date, "./activity-date[@type='start-actual']")
         end_actual = partial(xval_date, "./activity-date[@type='end-actual']")
 
-        data = {
-            "iati_identifier": xval(xml.getroot(), "./iati-identifier/text()"),
-            "title": xval(xml, "./title/text()", u""),
-            "description": xval(xml, "./description/text()", u""),
-            "raw_xml": ET.tostring(xml, encoding=unicode)
-        }
+    data = {
+        "iati_identifier": xval(xml.getroot(), "./iati-identifier/text()"),
+        "title": xval(xml, "./title/"+TEXT_ELEMENT[major_version], u""),
+        "description": xval(xml, "./description/"+TEXT_ELEMENT[major_version], u""),
+        "raw_xml": ET.tostring(xml, encoding=unicode)
+    }
 
     cl = codelists.by_major_version[major_version]
     activity_status = partial(from_codelist_with_major_version, 'ActivityStatus', "./activity-status/@code")

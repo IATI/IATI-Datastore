@@ -52,7 +52,11 @@ class TestParse201Activity(AppTestCase):
             self.act.reporting_org.type
         )
 
-    # TODO reporting ORG text
+    def test_reporting_org_name(self):
+        self.assertEquals(
+            self.act.reporting_org.name,
+            u"Organisation name"
+        )
 
     # activity-website not in 2.01
     #def test_activity_websites(self):
@@ -71,15 +75,43 @@ class TestParse201Activity(AppTestCase):
             cl2.OrganisationRole.funding,
             self.act.participating_orgs[0].role)
         self.assertEquals(
+            cl2.OrganisationType.multilateral,
+            self.act.participating_orgs[0].organisation.type)
+        self.assertEquals(
+            cl2.OrganisationType.multilateral,
+            self.act.participating_orgs[0].organisation.type)
+        self.assertEquals(
+            u"BB-BBB-123456789",
+            self.act.participating_orgs[0].organisation.ref)
+        self.assertEquals(
+            u"Name of Agency B",
+            self.act.participating_orgs[0].organisation.name)
+
+        self.assertEquals(
             cl2.OrganisationRole.accountable,
             self.act.participating_orgs[1].role)
         self.assertEquals(
+            cl2.OrganisationType.government,
+            self.act.participating_orgs[1].organisation.type)
+        self.assertEquals(
+            u"CC-CCC-123456789",
+            self.act.participating_orgs[1].organisation.ref)
+        self.assertEquals(
+            u"Name of Agency C",
+            self.act.participating_orgs[1].organisation.name)
+
+        self.assertEquals(
             cl2.OrganisationRole.extending,
             self.act.participating_orgs[2].role)
-
-    # TODO Maybe add 2.01 test file for this
-    #def test_accepts_participatng_org_without_ref(self):
-    #    self.assertEquals(2, len(self.act.participating_orgs))
+        self.assertEquals(
+            cl2.OrganisationType.international_ngo,
+            self.act.participating_orgs[2].organisation.type)
+        self.assertEquals(
+            u"AA-AAA-123456789",
+            self.act.participating_orgs[2].organisation.ref)
+        self.assertEquals(
+            u"Name of Agency A",
+            self.act.participating_orgs[2].organisation.name)
 
     def test_recipient_country_percentages(self):
         act = self.act
@@ -113,13 +145,38 @@ class TestParse201Activity(AppTestCase):
             25,
             act.recipient_region_percentages[1].percentage)
 
-
-        # TODO this is looking for the text in the element.
-        # Need to test this for RO for 2.01
-        #self.assertEquals(
-        #"South America, regional", act.recipient_region_percentages[0].name)
-        #self.assertEquals(
-        #    "South of Sahara, regional", act.recipient_region_percentages[1].name)
+    def test_misc_narratives(self):
+        act = parse.activity(ET.XML(
+            u'''<iati-activity>
+                    <iati-identifier>AAA-AA</iati-identifier>
+                    <reporting-org ref="AAA"/>
+                    <recipient-country code="XX">
+                        <narrative>N1</narrative>
+                    </recipient-country>
+                    <recipient-region code="XXX">
+                        <narrative>N2</narrative>
+                    </recipient-region>
+                    <sector vocabulary="RO">
+                        <narrative>N3</narrative>
+                    </sector>
+                    <policy-marker>
+                        <narrative>N4</narrative>
+                    </policy-marker>
+                    <related-activity ref="">
+                        <narrative>N5</narrative>
+                    </related-activity>
+                </iati-activity>'''
+        ), major_version='2')
+        self.assertEquals(
+            "N1", act.recipient_country_percentages[0].name)
+        self.assertEquals(
+            "N2", act.recipient_region_percentages[0].name)
+        self.assertEquals(
+            "N3", act.sector_percentages[0].text)
+        self.assertEquals(
+            "N4", act.policy_markers[0].text)
+        self.assertEquals(
+            "N5", act.related_activities[0].text)
 
     def test_transaction_count(self):
         self.assertEquals(1, len(self.act.transactions))
@@ -157,13 +214,24 @@ class TestParse201Activity(AppTestCase):
     def test_transaction_ref(self):
         self.assertEquals(u'1234', self.act.transactions[0].ref)
 
+    def test_transaction_description(self):
+        self.assertEquals(u'Transaction description text',
+                          self.act.transactions[0].description)
+
     def test_transaction_provider_org_ref(self):
         self.assertEquals(u'BB-BBB-123456789', 
                             self.act.transactions[0].provider_org.ref)
 
+    def test_transaction_provider_org_name(self):
+        self.assertEquals(u'Agency B',
+                          self.act.transactions[0].provider_org.name)
+
     def test_transaction_reciever_org_ref(self):
         self.assertEquals(u'AA-AAA-123456789', 
                             self.act.transactions[0].receiver_org.ref)
+    def test_transaction_reciever_org_name(self):
+        self.assertEquals(u'Agency A',
+                          self.act.transactions[0].receiver_org.name)
 
     def test_date_start_planned(self):
         self.assertEquals(datetime.date(2012, 4, 15), self.act.start_planned)
@@ -368,7 +436,6 @@ class TestParseActivity(AppTestCase):
 
     def test_date_end_actual(self):
         self.assertEquals(datetime.date(2009, 10, 02), self.act.end_actual)
-
 
     def test_sector_percentage_count(self):
         act = next(parse.document(
