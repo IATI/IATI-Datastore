@@ -588,6 +588,44 @@ class TestFunctional(AppTestCase):
             db.session.query(model.SectorPercentage).filter(model.SectorPercentage.sector==cl.Sector.educational_research).first().percentage
         )
 
+    def test_version_stored_1(self):
+        act = parse.activity(ET.XML(
+            u'''<iati-activity>
+                    <iati-identifier>AAA-BBB</iati-identifier>
+                    <reporting-org ref="AAA"/>
+                </iati-activity>'''
+            ), major_version='1', version='1.05')
+        db.session.add(act)
+        db.session.commit()
+
+        self.assertEquals(
+            '1',
+            db.session.query(model.Activity).first().major_version
+        )
+        self.assertEquals(
+            '1.05',
+            db.session.query(model.Activity).first().version
+        )
+
+    def test_version_stored_2(self):
+        act = parse.activity(ET.XML(
+            u'''<iati-activity>
+                    <iati-identifier>AAA-BBB</iati-identifier>
+                    <reporting-org ref="AAA"/>
+                </iati-activity>'''
+            ), major_version='2', version='2.01')
+        db.session.add(act)
+        db.session.commit()
+
+        self.assertEquals(
+            '2',
+            db.session.query(model.Activity).first().major_version
+        )
+        self.assertEquals(
+            '2.01',
+            db.session.query(model.Activity).first().version
+        )
+
 
 class TestSector(AppTestCase):
     def test_code(self):
