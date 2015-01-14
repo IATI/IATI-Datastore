@@ -23,9 +23,17 @@ class TestCodelist(TestCase):
             [codelists.OrganisationRole.implementing]
         )
 
-#    def test_invalid_organisation_role(self):
-#        with self.assertRaises(validators.Invalid):
-#            validators.organisation_role("not a role"),
+    def test_multiple_codes(self):
+        self.assertEqual(
+            validators.reporting_org_type("10|40"),
+            [codelists.OrganisationType.government, codelists.OrganisationType.multilateral]
+        )
+
+    def test_multiple_codes_values(self):
+        self.assertEqual(
+            [x.value for x in validators.reporting_org_type("10|xx")],
+            ['10','xx']
+        )
 
 
 class TestApiSchema(TestCase):
