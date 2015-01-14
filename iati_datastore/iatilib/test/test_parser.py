@@ -17,12 +17,9 @@ def fixture(fix_name, encoding='utf-8'):
     return codecs.open(fixture_filename(fix_name), encoding=encoding).read()
 
 
-class TestParse201Activity(AppTestCase):
-    # TODO: Ensure that sectors and transactions are fully tested, maybe borrow some tests from TestSector and TestTransaction below
-    # TODO: Check through the sample XML for any 2.01 changes that aren't yet being tested here
-
+class TestParse2xxActivity(AppTestCase):
     def setUp(self):
-        super(TestParse201Activity, self).setUp()
+        super(TestParse2xxActivity, self).setUp()
         self.activities = list(parse.document(fixture_filename("2.01-example-annotated.xml")))
         self.act = self.activities[0]
 
@@ -57,12 +54,6 @@ class TestParse201Activity(AppTestCase):
             self.act.reporting_org.name,
             u"Organisation name"
         )
-
-    # activity-website not in 2.01
-    #def test_activity_websites(self):
-    #    self.assertEquals(
-    #        [u"http://portfolio.theglobalfund.org/en/Grant/Index/ARM-202-G05-H-00"],
-    #        self.act.websites)
 
     def test_default_currency(self):
         self.assertEquals(
@@ -245,12 +236,6 @@ class TestParse201Activity(AppTestCase):
     def test_date_end_actual(self):
         self.assertEquals(None, self.act.end_actual)
 
-    # TODO Deal properly with sector and recipient-country/region at activity/country level
-    #def test_sector_percentage_count(self):
-    #    act = next(parse.document(
-    #        fixture("complex_example_dfid.xml", encoding=None)))
-    #    self.assertEquals(5, len(act.sector_percentages))
-    
     def test_raw_xml(self):
         norm_xml = ET.tostring(ET.parse(fixture_filename("2.01-example-annotated.xml")).find('iati-activity'), encoding=unicode).strip(u'\n ')
         self.assertEquals(norm_xml, self.act.raw_xml)
