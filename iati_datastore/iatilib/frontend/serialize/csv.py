@@ -311,6 +311,7 @@ class CSVSerializer(object):
     are compatible.
     """
     def __init__(self, fields, adapter=identity):
+        self.get_major_version = adapter(lambda x: x.major_version)
         self.fields_by_major_version = {major_version:FieldDict(fields, adapter=adapter) for major_version, FieldDict in fielddict_by_major_version.items()}
 
     def __call__(self, data):
@@ -323,10 +324,9 @@ class CSVSerializer(object):
             writer.writerow(row)
             return out.getvalue().decode('utf-8')
         yield line(self.fields_by_major_version['1'].keys())
+        get_major_version = self.get_major_version
         for obj in data.items:
-            major_version = obj.major_version if hasattr(obj, 'major_version') else '1'
-            print major_version
-            row = [accessor(obj) for accessor in self.fields_by_major_version[major_version].values()]
+            row = [accessor(obj) for accessor in self.fields_by_major_version[get_major_version(obj)].values()]
             yield line(row)
 
 
@@ -459,7 +459,7 @@ csv_activity_by_country = CSVSerializer((
 
 csv_activity_by_sector = CSVSerializer((
     (u"sector-code", lambda (t, sp): sp.sector.value if sp.sector else ""),
-    (u"sector", lambda (t, sp): sp.sector.description.title() if sp.sector else ""),
+    (u"sector", lambda (t, sp): sp.sector.description.title() if sp.sector and sp.sector.description else ""),
     (u"sector-percentage", lambda (a, sp): sp.percentage if sp.percentage else ""),
     (u"sector-vocabulary", lambda (a, sp): sp.vocabulary.description if sp.vocabulary else ""),
     "iati-identifier",
