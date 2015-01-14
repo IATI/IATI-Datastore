@@ -131,6 +131,13 @@ class TestCSVTransactionExample(TestCase, CSVTstMixin):
             'transaction_aid-type_code',
             'transaction_tied-status_code',
             'transaction_disbursement-channel_code',
+            'transaction_recipient-country-code',
+            'transaction_recipient-country',
+            'transaction_recipient-region-code',
+            'transaction_recipient-region',
+            'transaction_sector-code',
+            'transaction_sector',
+            'transaction_sector-vocabulary',
         ]
         for col in cols:
             self.assertIn(col, data[0].keys(), msg="Missing col %s" % col)
@@ -180,6 +187,96 @@ class TestCSVTransactionExample(TestCase, CSVTstMixin):
             fac.TransactionFactory.build(value_amount=1000)
         ])
         self.assertField({"transaction-value": "1000"}, data[0])
+
+    def test_transaction_recepient_country_code(self):
+        data = self.process([fac.TransactionFactory.build(
+            recipient_country_percentages=[
+                fac.CountryPercentageFactory.build(country=cl.Country.kenya),
+                fac.CountryPercentageFactory.build(country=cl.Country.uganda),
+            ]
+        )])
+        self.assertField({
+            "transaction_recipient-country-code": "KE;UG"}, data[0])
+
+    def test_transaction_recepient_country(self):
+        data = self.process([fac.TransactionFactory.build(
+            recipient_country_percentages=[
+                fac.CountryPercentageFactory.build(country=cl.Country.kenya),
+                fac.CountryPercentageFactory.build(country=cl.Country.uganda),
+            ]
+        )])
+        self.assertField({"transaction_recipient-country": "Kenya;Uganda"}, data[0])
+
+    def test_transaction_recipient_region_code(self):
+        data = self.process([fac.TransactionFactory.build(
+            recipient_region_percentages=[
+                fac.RegionPercentageFactory.build(
+                        region=cl.Region.europe_regional),
+                fac.RegionPercentageFactory.build(
+                        region=cl.Region.africa_regional),
+            ]
+        )])
+        self.assertField({
+            "transaction_recipient-region-code": "89;298"}, data[0])
+
+    def test_transaction_recipient_region(self):
+        data = self.process([fac.TransactionFactory.build(
+            recipient_region_percentages=[
+                fac.RegionPercentageFactory.build(
+                        region=cl.Region.europe_regional),
+                fac.RegionPercentageFactory.build(
+                        region=cl.Region.africa_regional),
+            ]
+        )])
+        self.assertField(
+                {"transaction_recipient-region": "Europe, regional;Africa, regional"},
+                data[0]
+        )
+
+    def test_transaction_sector_code(self):
+        data = self.process([fac.TransactionFactory.build(
+            sector_percentages=[
+                fac.SectorPercentageFactory.build(
+                    sector=cl.Sector.teacher_training),
+                fac.SectorPercentageFactory.build(
+                    sector=cl.Sector.primary_education),
+            ]
+        )])
+        self.assertField({"transaction_sector-code": "11130;11220"}, data[0])
+
+    def test_transaction_sector_vocabulary(self):
+        data = self.process([fac.TransactionFactory.build(
+            sector_percentages=[
+                fac.SectorPercentageFactory.build(
+                    sector=cl.Sector.teacher_training,
+                    vocabulary=cl.Vocabulary.aiddata),
+                fac.SectorPercentageFactory.build(
+                    sector=cl.Sector.primary_education,
+                    vocabulary=cl.Vocabulary.world_bank),
+            ]
+        )])
+        self.assertField({"transaction_sector-vocabulary": "AidData;World Bank"}, data[0])
+
+    def test_transaction_sector(self):
+        data = self.process([fac.TransactionFactory.build(
+            sector_percentages=[
+                fac.SectorPercentageFactory.build(
+                    sector=cl.Sector.teacher_training),
+                fac.SectorPercentageFactory.build(
+                    sector=cl.Sector.primary_education),
+            ]
+        )])
+        self.assertField(
+            {"transaction_sector": u"Teacher training;Primary education"},
+            data[0])
+
+    def test_transaction_sector_blank(self):
+        data = self.process([fac.TransactionFactory.build(
+            sector_percentages=[
+                fac.SectorPercentageFactory.build(sector=None)
+            ]
+        )])
+        self.assertField({"sector": u""}, data[0])
 
     def test_iati_id(self):
         data = self.process([

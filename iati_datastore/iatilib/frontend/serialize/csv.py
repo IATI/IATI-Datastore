@@ -53,13 +53,13 @@ def sector_percentage(activity):
 
 def sector(activity):
     return u";".join(
-        u"%s" % sec.sector.description if sec.sector else u""
+        u"%s" % sec.sector.description if sec.sector and sec.sector.description else u""
         for sec in activity.sector_percentages)
 
 
 def sector_vocabulary(activity):
     return u";".join(
-        u"%s" % sec.vocabulary.description if sec.vocabulary else u""
+        u"%s" % sec.vocabulary.description if sec.vocabulary and sec.vocabulary.description else u""
         for sec in activity.sector_percentages)
 
 
@@ -116,7 +116,7 @@ def recipient_country_code(activity):
 
 def recipient_country(activity):
     return u";".join(
-        rcp.country.description.title() if rcp.country else ""
+        rcp.country.description.title() if rcp.country and rcp.country.description else ""
         for rcp in activity.recipient_country_percentages)
 
 
@@ -133,7 +133,7 @@ def recipient_region_code(activity):
 
 def recipient_region(activity):
     return u";".join(
-        rrp.region.description
+        rrp.region.description if rrp.region and rrp.region.description else ""
         for rrp in activity.recipient_region_percentages)
 
 def recipient_region_percentage(activity):
@@ -528,6 +528,13 @@ common_transaction_csv = (
     (u'transaction_tied-status_code', transaction_tied_status),
     (u'transaction_disbursement-channel_code',
             transaction_disbursement_channel),
+    (u"transaction_recipient-country-code", recipient_country_code),
+    (u"transaction_recipient-country", recipient_country),
+    (u"transaction_recipient-region-code", recipient_region_code),
+    (u"transaction_recipient-region", recipient_region),
+    (u"transaction_sector-code", sector_code),
+    (u"transaction_sector", sector),
+    (u"transaction_sector-vocabulary", sector_vocabulary),
     #(u'reporting-org', lambda t: t.activity.reporting_org_ref),
 )
 
