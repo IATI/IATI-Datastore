@@ -82,6 +82,7 @@ class TestCSVTransactionExample(TestCase, CSVTstMixin):
             "reporting-org",
             "reporting-org-ref",
             "reporting-org-type",
+            "reporting-org-type-code",
             "title",
             "description",
             "activity-status-code",
@@ -92,15 +93,19 @@ class TestCSVTransactionExample(TestCase, CSVTstMixin):
             "participating-org (Accountable)",
             "participating-org-ref (Accountable)",
             "participating-org-type (Accountable)",
+            "participating-org-type-code (Accountable)",
             "participating-org (Funding)",
             "participating-org-ref (Funding)",
             "participating-org-type (Funding)",
+            "participating-org-type-code (Funding)",
             "participating-org (Extending)",
             "participating-org-ref (Extending)",
             "participating-org-type (Extending)",
+            "participating-org-type-code (Extending)",
             "participating-org (Implementing)",
             "participating-org-ref (Implementing)",
             "participating-org-type (Implementing)",
+            "participating-org-type-code (Implementing)",
             "recipient-country-code",
             "recipient-country",
             "recipient-country-percentage",
@@ -138,6 +143,7 @@ class TestCSVTransactionExample(TestCase, CSVTstMixin):
             'transaction_sector-code',
             'transaction_sector',
             'transaction_sector-vocabulary',
+            'transaction_sector-vocabulary-code',
         ]
         for col in cols:
             self.assertIn(col, data[0].keys(), msg="Missing col %s" % col)
@@ -256,6 +262,7 @@ class TestCSVTransactionExample(TestCase, CSVTstMixin):
             ]
         )])
         self.assertField({"transaction_sector-vocabulary": "AidData;World Bank"}, data[0])
+        self.assertField({"transaction_sector-vocabulary-code": "ADT;WB"}, data[0])
 
     def test_transaction_sector(self):
         data = self.process([fac.TransactionFactory.build(
@@ -323,6 +330,7 @@ class TestCSVTransactionExample(TestCase, CSVTstMixin):
         self.assertField({"reporting-org": "rep"}, data[0])
         self.assertField({"reporting-org-ref": "rep_ref"}, data[0])
         self.assertField({"reporting-org-type": "Foundation"}, data[0])
+        self.assertField({"reporting-org-type-code": "60"}, data[0])
 
     def test_title(self):
         data = self.process([
@@ -400,6 +408,7 @@ class TestCSVTransactionExample(TestCase, CSVTstMixin):
         self.assertField({"participating-org (Accountable)": "acc"}, data[0])
         self.assertField({"participating-org-ref (Accountable)": "acc_ref"}, data[0])
         self.assertField({"participating-org-type (Accountable)": "Foundation"}, data[0])
+        self.assertField({"participating-org-type-code (Accountable)": "60"}, data[0])
 
     def test_funding_org(self):
         activity = fac.ActivityFactory.build(
@@ -416,6 +425,7 @@ class TestCSVTransactionExample(TestCase, CSVTstMixin):
         self.assertField({"participating-org (Funding)": "fund"}, data[0])
         self.assertField({"participating-org-ref (Funding)": "fund_ref"}, data[0])
         self.assertField({"participating-org-type (Funding)": "Foundation"}, data[0])
+        self.assertField({"participating-org-type-code (Funding)": "60"}, data[0])
 
     def test_implementing_org(self):
         activity = fac.ActivityFactory.build(
@@ -432,6 +442,7 @@ class TestCSVTransactionExample(TestCase, CSVTstMixin):
         self.assertField({"participating-org (Implementing)": "impl"}, data[0])
         self.assertField({"participating-org-ref (Implementing)": "impl_ref"}, data[0])
         self.assertField({"participating-org-type (Implementing)": "Foundation"}, data[0])
+        self.assertField({"participating-org-type-code (Implementing)": "60"}, data[0])
 
     def test_extending_org(self):
         activity = fac.ActivityFactory.build(
@@ -448,6 +459,7 @@ class TestCSVTransactionExample(TestCase, CSVTstMixin):
         self.assertField({"participating-org (Extending)": "ext"}, data[0])
         self.assertField({"participating-org-ref (Extending)": "ext_ref"}, data[0])
         self.assertField({"participating-org-type (Extending)": "Foundation"}, data[0])
+        self.assertField({"participating-org-type-code (Extending)": "60"}, data[0])
 
     def test_recipient_country_code(self):
         data = self.process([
@@ -614,6 +626,20 @@ class TestCSVTransactionExample(TestCase, CSVTstMixin):
 cl2 = cl.by_major_version['2']
 
 class TestCSVTransactionExample2(TestCase, CSVTstMixin):
+    def test_transaction_sector_vocabulary(self):
+        data = self.process([fac.TransactionFactory.build(
+            sector_percentages=[
+                fac.SectorPercentageFactory.build(
+                    sector=cl2.Sector.teacher_training,
+                    vocabulary=cl2.Vocabulary.aiddata),
+                fac.SectorPercentageFactory.build(
+                    sector=cl2.Sector.primary_education,
+                    vocabulary=cl2.Vocabulary.oecd_dac_crs_purpose_codes_5_digit),
+            ]
+        )])
+        self.assertField({"transaction_sector-vocabulary": "AidData;OECD DAC CRS Purpose Codes (5 digit)"}, data[0])
+        self.assertField({"transaction_sector-vocabulary-code": "6;1"}, data[0])
+
     def test_accountable_org(self):
         activity = fac.ActivityFactory.build(
             participating_orgs=[
@@ -636,6 +662,7 @@ class TestCSVTransactionExample2(TestCase, CSVTstMixin):
         self.assertField({"participating-org (Accountable)": "acc"}, data[0])
         self.assertField({"participating-org-ref (Accountable)": "acc_ref"}, data[0])
         self.assertField({"participating-org-type (Accountable)": "Foundation"}, data[0])
+        self.assertField({"participating-org-type-code (Accountable)": "60"}, data[0])
 
     def test_funding_org(self):
         activity = fac.ActivityFactory.build(
@@ -653,6 +680,7 @@ class TestCSVTransactionExample2(TestCase, CSVTstMixin):
         self.assertField({"participating-org (Funding)": "fund"}, data[0])
         self.assertField({"participating-org-ref (Funding)": "fund_ref"}, data[0])
         self.assertField({"participating-org-type (Funding)": "Foundation"}, data[0])
+        self.assertField({"participating-org-type-code (Funding)": "60"}, data[0])
 
     def test_implementing_org(self):
         activity = fac.ActivityFactory.build(
@@ -670,6 +698,7 @@ class TestCSVTransactionExample2(TestCase, CSVTstMixin):
         self.assertField({"participating-org (Implementing)": "impl"}, data[0])
         self.assertField({"participating-org-ref (Implementing)": "impl_ref"}, data[0])
         self.assertField({"participating-org-type (Implementing)": "Foundation"}, data[0])
+        self.assertField({"participating-org-type-code (Implementing)": "60"}, data[0])
 
     def test_extending_org(self):
         activity = fac.ActivityFactory.build(
@@ -687,6 +716,7 @@ class TestCSVTransactionExample2(TestCase, CSVTstMixin):
         self.assertField({"participating-org (Extending)": "ext"}, data[0])
         self.assertField({"participating-org-ref (Extending)": "ext_ref"}, data[0])
         self.assertField({"participating-org-type (Extending)": "Foundation"}, data[0])
+        self.assertField({"participating-org-type-code (Extending)": "60"}, data[0])
 
 
 

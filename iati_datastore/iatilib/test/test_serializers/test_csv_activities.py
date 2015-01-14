@@ -183,6 +183,7 @@ class TestCSVExample(CSVTstMixin, TestCase):
         self.assertField({"reporting-org": "rep"}, data[0])
         self.assertField({"reporting-org-ref": "rep_ref"}, data[0])
         self.assertField({"reporting-org-type": "Foundation"}, data[0])
+        self.assertField({"reporting-org-type-code": "60"}, data[0])
 
     def test_accountable_org(self):
         data = self.process([fac.ActivityFactory.build(
@@ -201,6 +202,7 @@ class TestCSVExample(CSVTstMixin, TestCase):
         self.assertField({"participating-org (Accountable)": "acc"}, data[0])
         self.assertField({"participating-org-ref (Accountable)": "acc_ref"}, data[0])
         self.assertField({"participating-org-type (Accountable)": "Foundation"}, data[0])
+        self.assertField({"participating-org-type-code (Accountable)": "60"}, data[0])
 
     def test_funding_org(self):
         data = self.process([fac.ActivityFactory.build(
@@ -214,6 +216,7 @@ class TestCSVExample(CSVTstMixin, TestCase):
         self.assertField({"participating-org (Funding)": "fund"}, data[0])
         self.assertField({"participating-org-ref (Funding)": "fund_ref"}, data[0])
         self.assertField({"participating-org-type (Funding)": "Foundation"}, data[0])
+        self.assertField({"participating-org-type-code (Funding)": "60"}, data[0])
 
     def test_implementing_org(self):
         data = self.process([fac.ActivityFactory.build(
@@ -227,6 +230,7 @@ class TestCSVExample(CSVTstMixin, TestCase):
         self.assertField({"participating-org (Implementing)": "impl"}, data[0])
         self.assertField({"participating-org-ref (Implementing)": "impl_ref"}, data[0])
         self.assertField({"participating-org-type (Implementing)": "Foundation"}, data[0])
+        self.assertField({"participating-org-type-code (Implementing)": "60"}, data[0])
 
     def test_extending_org(self):
         data = self.process([fac.ActivityFactory.build(
@@ -240,6 +244,7 @@ class TestCSVExample(CSVTstMixin, TestCase):
         self.assertField({"participating-org (Extending)": "ext"}, data[0])
         self.assertField({"participating-org-ref (Extending)": "ext_ref"}, data[0])
         self.assertField({"participating-org-type (Extending)": "Foundation"}, data[0])
+        self.assertField({"participating-org-type-code (Extending)": "60"}, data[0])
 
 
     def test_sector_code(self):
@@ -265,6 +270,7 @@ class TestCSVExample(CSVTstMixin, TestCase):
             ]
         )])
         self.assertField({"sector-vocabulary": "AidData;World Bank"}, data[0])
+        self.assertField({"sector-vocabulary-code": "ADT;WB"}, data[0])
 
     def test_sector(self):
         data = self.process([fac.ActivityFactory.build(
@@ -422,6 +428,7 @@ class TestCSVExample(CSVTstMixin, TestCase):
             "reporting-org",
             "reporting-org-ref",
             "reporting-org-type",
+            "reporting-org-type-code",
             "title",
             "description",
             "activity-status-code",
@@ -432,15 +439,19 @@ class TestCSVExample(CSVTstMixin, TestCase):
             "participating-org (Accountable)",
             "participating-org-ref (Accountable)",
             "participating-org-type (Accountable)",
+            "participating-org-type-code (Accountable)",
             "participating-org (Funding)",
             "participating-org-ref (Funding)",
             "participating-org-type (Funding)",
+            "participating-org-type-code (Funding)",
             "participating-org (Extending)",
             "participating-org-ref (Extending)",
             "participating-org-type (Extending)",
+            "participating-org-type-code (Extending)",
             "participating-org (Implementing)",
             "participating-org-ref (Implementing)",
             "participating-org-type (Implementing)",
+            "participating-org-type-code (Implementing)",
             "recipient-country-code",
             "recipient-country",
             "recipient-country-percentage",
@@ -451,6 +462,7 @@ class TestCSVExample(CSVTstMixin, TestCase):
             "sector",
             "sector-percentage",
             "sector-vocabulary",
+            "sector-vocabulary-code",
             "collaboration-type-code",
             "default-finance-type-code",
             "default-flow-type-code",
@@ -471,6 +483,20 @@ class TestCSVExample(CSVTstMixin, TestCase):
 cl2 = cl.by_major_version['2']
 
 class TestCSVExample2(CSVTstMixin, TestCase):
+    def test_sector_vocabulary(self):
+        data = self.process([fac.ActivityFactory.build(
+            sector_percentages=[
+                fac.SectorPercentageFactory.build(
+                    sector=cl2.Sector.teacher_training,
+                    vocabulary=cl2.Vocabulary.aiddata),
+                fac.SectorPercentageFactory.build(
+                    sector=cl2.Sector.primary_education,
+                    vocabulary=cl2.Vocabulary.oecd_dac_crs_purpose_codes_5_digit),
+            ]
+        )])
+        self.assertField({"sector-vocabulary": "AidData;OECD DAC CRS Purpose Codes (5 digit)"}, data[0])
+        self.assertField({"sector-vocabulary-code": "6;1"}, data[0])
+
     def test_accountable_org(self):
         data = self.process([fac.ActivityFactory.build(
             participating_orgs=[
@@ -489,6 +515,7 @@ class TestCSVExample2(CSVTstMixin, TestCase):
         self.assertField({"participating-org (Accountable)": "acc"}, data[0])
         self.assertField({"participating-org-ref (Accountable)": "acc_ref"}, data[0])
         self.assertField({"participating-org-type (Accountable)": "Foundation"}, data[0])
+        self.assertField({"participating-org-type-code (Accountable)": "60"}, data[0])
 
     def test_funding_org(self):
         data = self.process([fac.ActivityFactory.build(
@@ -503,6 +530,7 @@ class TestCSVExample2(CSVTstMixin, TestCase):
         self.assertField({"participating-org (Funding)": "fund"}, data[0])
         self.assertField({"participating-org-ref (Funding)": "fund_ref"}, data[0])
         self.assertField({"participating-org-type (Funding)": "Foundation"}, data[0])
+        self.assertField({"participating-org-type-code (Funding)": "60"}, data[0])
 
     def test_implementing_org(self):
         data = self.process([fac.ActivityFactory.build(
@@ -517,6 +545,7 @@ class TestCSVExample2(CSVTstMixin, TestCase):
         self.assertField({"participating-org (Implementing)": "impl"}, data[0])
         self.assertField({"participating-org-ref (Implementing)": "impl_ref"}, data[0])
         self.assertField({"participating-org-type (Implementing)": "Foundation"}, data[0])
+        self.assertField({"participating-org-type-code (Implementing)": "60"}, data[0])
 
     def test_extending_org(self):
         data = self.process([fac.ActivityFactory.build(
@@ -531,6 +560,7 @@ class TestCSVExample2(CSVTstMixin, TestCase):
         self.assertField({"participating-org (Extending)": "ext"}, data[0])
         self.assertField({"participating-org-ref (Extending)": "ext_ref"}, data[0])
         self.assertField({"participating-org-type (Extending)": "Foundation"}, data[0])
+        self.assertField({"participating-org-type-code (Extending)": "60"}, data[0])
 
 class ActivityExample(object):
     def example(self):
@@ -604,6 +634,7 @@ class TestActivityByCountry(CSVTstMixin, ActivityExample, TestCase):
             "reporting-org",
             "reporting-org-ref",
             "reporting-org-type",
+            "reporting-org-type-code",
             "title",
             "description",
             "activity-status-code",
@@ -614,15 +645,19 @@ class TestActivityByCountry(CSVTstMixin, ActivityExample, TestCase):
             "participating-org (Accountable)",
             "participating-org-ref (Accountable)",
             "participating-org-type (Accountable)",
+            "participating-org-type-code (Accountable)",
             "participating-org (Funding)",
             "participating-org-ref (Funding)",
             "participating-org-type (Funding)",
+            "participating-org-type-code (Funding)",
             "participating-org (Extending)",
             "participating-org-ref (Extending)",
             "participating-org-type (Extending)",
+            "participating-org-type-code (Extending)",
             "participating-org (Implementing)",
             "participating-org-ref (Implementing)",
             "participating-org-type (Implementing)",
+            "participating-org-type-code (Implementing)",
             "recipient-country-code",
             "recipient-country",
             "recipient-country-percentage",
@@ -633,6 +668,7 @@ class TestActivityByCountry(CSVTstMixin, ActivityExample, TestCase):
             "sector",
             "sector-percentage",
             "sector-vocabulary",
+            "sector-vocabulary-code",
             "collaboration-type-code",
             "default-finance-type-code",
             "default-flow-type-code",
@@ -762,6 +798,7 @@ class TestActivityBySector(CSVTstMixin, ActivityExample, TestCase):
             "reporting-org",
             "reporting-org-ref",
             "reporting-org-type",
+            "reporting-org-type-code",
             "title",
             "description",
             "activity-status-code",
@@ -772,15 +809,19 @@ class TestActivityBySector(CSVTstMixin, ActivityExample, TestCase):
             "participating-org (Accountable)",
             "participating-org-ref (Accountable)",
             "participating-org-type (Accountable)",
+            "participating-org-type-code (Accountable)",
             "participating-org (Funding)",
             "participating-org-ref (Funding)",
             "participating-org-type (Funding)",
+            "participating-org-type-code (Funding)",
             "participating-org (Extending)",
             "participating-org-ref (Extending)",
             "participating-org-type (Extending)",
+            "participating-org-type-code (Extending)",
             "participating-org (Implementing)",
             "participating-org-ref (Implementing)",
             "participating-org-type (Implementing)",
+            "participating-org-type-code (Implementing)",
             "recipient-country-code",
             "recipient-country",
             "recipient-country-percentage",
@@ -791,6 +832,7 @@ class TestActivityBySector(CSVTstMixin, ActivityExample, TestCase):
             "sector",
             "sector-percentage",
             "sector-vocabulary",
+            "sector-vocabulary-code",
             "collaboration-type-code",
             "default-finance-type-code",
             "default-flow-type-code",
