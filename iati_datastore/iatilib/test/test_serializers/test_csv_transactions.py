@@ -514,6 +514,85 @@ class TestCSVTransactionExample(TestCase, CSVTstMixin):
         self.assertField({'default-tied-status-code': "4"}, data[0])
 
 
+cl2 = cl.by_major_version['2']
+
+class TestCSVTransactionExample2(TestCase, CSVTstMixin):
+    def test_accountable_org(self):
+        activity = fac.ActivityFactory.build(
+            participating_orgs=[
+                fac.ParticipationFactory.build(
+                    organisation=fac.OrganisationFactory.build(name='acc', ref='acc_ref', type=cl2.OrganisationType.foundation),
+                    role=cl2.OrganisationRole.accountable,
+
+                ),
+                fac.ParticipationFactory.build(
+                    role=cl2.OrganisationRole.funding),
+                fac.ParticipationFactory.build(
+                    role=cl2.OrganisationRole.implementing),
+            ],
+            major_version='2'
+        )
+        data = self.process([
+            fac.TransactionFactory.build(activity=activity)
+        ])
+
+        self.assertField({"participating-org (Accountable)": "acc"}, data[0])
+        self.assertField({"participating-org-ref (Accountable)": "acc_ref"}, data[0])
+        self.assertField({"participating-org-type (Accountable)": "Foundation"}, data[0])
+
+    def test_funding_org(self):
+        activity = fac.ActivityFactory.build(
+            participating_orgs=[
+                fac.ParticipationFactory.build(
+                    organisation=fac.OrganisationFactory.build(name='fund',
+                        ref='fund_ref', type=cl2.OrganisationType.foundation),
+                    role=cl2.OrganisationRole.funding),
+            ],
+            major_version='2'
+        )
+        data = self.process([
+            fac.TransactionFactory.build(activity=activity)
+        ])
+        self.assertField({"participating-org (Funding)": "fund"}, data[0])
+        self.assertField({"participating-org-ref (Funding)": "fund_ref"}, data[0])
+        self.assertField({"participating-org-type (Funding)": "Foundation"}, data[0])
+
+    def test_implementing_org(self):
+        activity = fac.ActivityFactory.build(
+            participating_orgs=[
+                fac.ParticipationFactory.build(
+                    organisation=fac.OrganisationFactory.build(name='impl',
+                        ref="impl_ref", type=cl2.OrganisationType.foundation),
+                    role=cl2.OrganisationRole.implementing),
+            ],
+            major_version='2'
+        )
+        data = self.process([
+            fac.TransactionFactory.build(activity=activity)
+        ])
+        self.assertField({"participating-org (Implementing)": "impl"}, data[0])
+        self.assertField({"participating-org-ref (Implementing)": "impl_ref"}, data[0])
+        self.assertField({"participating-org-type (Implementing)": "Foundation"}, data[0])
+
+    def test_extending_org(self):
+        activity = fac.ActivityFactory.build(
+            participating_orgs=[
+                fac.ParticipationFactory.build(
+                    organisation=fac.OrganisationFactory.build(name='ext',
+                        ref="ext_ref", type=cl2.OrganisationType.foundation),
+                    role=cl2.OrganisationRole.extending),
+            ],
+            major_version='2'
+        )
+        data = self.process([
+            fac.TransactionFactory.build(activity=activity)
+        ])
+        self.assertField({"participating-org (Extending)": "ext"}, data[0])
+        self.assertField({"participating-org-ref (Extending)": "ext_ref"}, data[0])
+        self.assertField({"participating-org-type (Extending)": "Foundation"}, data[0])
+
+
+
 class TestTransactionByCountry(TestCase, CSVTstMixin):
     def serialize(self, data):
         return serialize.csv_transaction_by_country(data)
