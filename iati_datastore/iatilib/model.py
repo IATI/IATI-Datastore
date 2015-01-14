@@ -214,7 +214,14 @@ class PercentageMixin(object):
     def activity_id(cls):
         return sa.Column(
             act_ForeignKey("activity.iati_identifier"),
-            nullable=False,
+            nullable=True,
+            index=True,
+        )
+    @declared_attr
+    def transaction_id(cls):
+        return sa.Column(
+            act_ForeignKey("transaction.id"),
+            nullable=True,
             index=True,
         )
     id = sa.Column(sa.Integer, primary_key=True)
@@ -310,6 +317,10 @@ class Transaction(db.Model):
     value = sa.orm.composite(TransactionValue, value_date, value_amount,
                              value_currency)
 
+    recipient_country_percentages = act_relationship("CountryPercentage")
+    recipient_region_percentages = act_relationship("RegionPercentage")
+    sector_percentages = act_relationship("SectorPercentage")
+
     def __unicode__(self):
         return u"%s: %s/%s" % (
             self.activity.iati_identifier,
@@ -327,7 +338,11 @@ class SectorPercentage(db.Model):
     text = sa.Column(sa.Unicode)
     activity_id = sa.Column(
         act_ForeignKey("activity.iati_identifier"),
-        nullable=False,
+        nullable=True,
+        index=True)
+    transaction_id = sa.Column(
+        act_ForeignKey("transaction.id"),
+        nullable=True,
         index=True)
     sector = sa.Column(codelists.Sector.db_type(), nullable=True)
     vocabulary = sa.Column(

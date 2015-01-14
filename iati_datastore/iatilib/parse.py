@@ -243,6 +243,9 @@ def transactions(xml, resource=no_resource, major_version='1'):
             'value_currency' : partial(currency, "value/@currency"),
             'value_date' : partial(xpath_date, "value/@value-date"),
             'value_amount' : partial(xpath_decimal, "value/text()"),
+            "recipient_country_percentages": recipient_country_percentages,
+            "recipient_region_percentages": recipient_region_percentages,
+            "sector_percentages": sector_percentages,
         }
 
         for field, function in field_functions.items():

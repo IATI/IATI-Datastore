@@ -224,6 +224,21 @@ class TestParse2xxActivity(AppTestCase):
         self.assertEquals(u'Agency A',
                           self.act.transactions[0].receiver_org.name)
 
+    def test_transaction_new_elements(self):
+        act = self.act
+        self.assertEquals(1, len(act.transactions[0].recipient_region_percentages))
+        self.assertEquals(1, len(act.transactions[0].recipient_country_percentages))
+        self.assertEquals(1, len(act.transactions[0].sector_percentages))
+        self.assertEquals(
+            cl2.Country.afghanistan,
+            act.transactions[0].recipient_country_percentages[0].country)
+        self.assertEquals(
+            u'456',
+            act.transactions[0].recipient_region_percentages[0].region.value)
+        self.assertEquals(
+            u'111',
+            act.transactions[0].sector_percentages[0].sector.value)
+
     def test_date_start_planned(self):
         self.assertEquals(datetime.date(2012, 4, 15), self.act.start_planned)
 
