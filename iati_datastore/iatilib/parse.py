@@ -1,4 +1,5 @@
 import os
+import re
 import datetime
 import logging
 from decimal import Decimal, InvalidOperation
@@ -83,7 +84,7 @@ def xpath_date(xpath, xml, resource=None, major_version='1'):
 def iati_date(iso_date):
     if iso_date:
         try:
-            return parse_date(iso_date.rstrip('Z')).date()
+            return parse_date(iso_date, fuzzy=True).date()
         except ValueError:
             raise InvalidDateError('could not parse {0} as date'.format(iso_date))
     else:

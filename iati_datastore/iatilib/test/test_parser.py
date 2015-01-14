@@ -921,6 +921,14 @@ class TestDates(TestCase):
             datetime.date(2010, 1, 2),
             parse.iati_date("2010-01-02Z"))
 
+    def test_iso_date_with_timezone(self):
+        self.assertEquals(
+            datetime.date(2010, 1, 2),
+            parse.iati_date("2010-01-02+06:00"))
+        self.assertEquals(
+            datetime.date(2010, 1, 2),
+            parse.iati_date("2010-01-02-06:00"))
+
 
 class TestValue(TestCase):
     def test_thousand_sep(self):
