@@ -72,11 +72,11 @@ class UniqueMixin(object):
 
 
 class TransactionType(object):
-    def __init__(self, type_code):
-        self.type_code = type_code
+    def __init__(self, type_codes):
+        self.type_codes = [x.value for x in type_codes]
 
     def __get__(self, obj, type=None):
-        return [t for t in obj.transactions if t.type == self.type_code]
+        return [t for t in obj.transactions if t.type.value in self.type_codes]
 
 
 class Participation(db.Model):
@@ -129,13 +129,13 @@ class Activity(db.Model):
         nullable=False,
         default=u'1')
 
-    commitments = TransactionType(codelists.TransactionType.commitment)
-    disbursements = TransactionType(codelists.TransactionType.disbursement)
-    expenditures = TransactionType(codelists.TransactionType.expenditure)
-    incoming_funds = TransactionType(codelists.TransactionType.incoming_funds)
-    interest_repayment = TransactionType(codelists.TransactionType.interest_repayment)
-    loan_repayments = TransactionType(codelists.TransactionType.loan_repayment)
-    reembursements = TransactionType(codelists.TransactionType.reimbursement)
+    commitments = TransactionType([codelists.by_major_version[mv].TransactionType.commitment for mv in ['1','2']])
+    disbursements = TransactionType([codelists.by_major_version[mv].TransactionType.disbursement for mv in ['1','2']])
+    expenditures = TransactionType([codelists.by_major_version[mv].TransactionType.expenditure for mv in ['1','2']])
+    incoming_funds = TransactionType([codelists.by_major_version[mv].TransactionType.incoming_funds for mv in ['1','2']])
+    interest_repayment = TransactionType([codelists.by_major_version[mv].TransactionType.interest_repayment for mv in ['1','2']])
+    loan_repayments = TransactionType([codelists.by_major_version[mv].TransactionType.loan_repayment for mv in ['1','2']])
+    reembursements = TransactionType([codelists.by_major_version[mv].TransactionType.reimbursement for mv in ['1','2']])
 
     reporting_org = sa.orm.relationship("Organisation", uselist=False)
     activity_websites = act_relationship(

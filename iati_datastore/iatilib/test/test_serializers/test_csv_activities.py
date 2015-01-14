@@ -900,6 +900,8 @@ class TestActivityBySector(CSVTstMixin, ActivityExample, TestCase):
 
 
 class TotalFieldMixin(object):
+    cl = cl
+
     # There are six total fields that behave identicaly
     def test_total(self):
         data = self.process([fac.ActivityFactory.build(
@@ -933,12 +935,12 @@ class TotalFieldMixin(object):
                 fac.TransactionFactory.build(
                     type=self.transaction_type,
                     value_amount=2,
-                    value_currency=cl.Currency.us_dollar,
+                    value_currency=self.cl.Currency.us_dollar,
                 ),
                 fac.TransactionFactory.build(
                     type=self.transaction_type,
                     value_amount=1,
-                    value_currency=cl.Currency.australian_dollar
+                    value_currency=self.cl.Currency.australian_dollar
                 ),
             ]
         )])
@@ -975,4 +977,39 @@ class TestTotalReimbursement(CSVTstMixin, TotalFieldMixin, TestCase):
     transaction_type = cl.TransactionType.reimbursement
     csv_field = "total-Reimbursement"
 
+
+class TestTotalDisbursement2(CSVTstMixin, TotalFieldMixin, TestCase):
+    cl = cl2
+    transaction_type = cl2.TransactionType.disbursement
+    csv_field = "total-Disbursement"
+
+
+class TestTotalExpenditure2(CSVTstMixin, TotalFieldMixin, TestCase):
+    cl = cl2
+    transaction_type = cl2.TransactionType.expenditure
+    csv_field = "total-Expenditure"
+
+
+class TestTotalIncomingFunds2(CSVTstMixin, TotalFieldMixin, TestCase):
+    cl = cl2
+    transaction_type = cl2.TransactionType.incoming_funds
+    csv_field = "total-Incoming Funds"
+
+
+class TestTotalInterestRepayment2(CSVTstMixin, TotalFieldMixin, TestCase):
+    cl = cl2
+    transaction_type = cl2.TransactionType.interest_repayment
+    csv_field = "total-Interest Repayment"
+
+
+class TestTotalLoanRepayment2(CSVTstMixin, TotalFieldMixin, TestCase):
+    cl = cl2
+    transaction_type = cl2.TransactionType.loan_repayment
+    csv_field = "total-Loan Repayment"
+
+
+class TestTotalReimbursement2(CSVTstMixin, TotalFieldMixin, TestCase):
+    cl = cl2
+    transaction_type = cl2.TransactionType.reimbursement
+    csv_field = "total-Reimbursement"
 
