@@ -9,10 +9,290 @@ from lxml import etree as ET
 
 from iatilib.test import db, AppTestCase, fixture_filename
 from iatilib import parse, codelists as cl
+from iatilib import model
+cl2 = cl.by_major_version['2']
 
 
 def fixture(fix_name, encoding='utf-8'):
     return codecs.open(fixture_filename(fix_name), encoding=encoding).read()
+
+
+class TestParse2xxActivity(AppTestCase):
+    def setUp(self):
+        super(TestParse2xxActivity, self).setUp()
+        self.activities = list(parse.document(fixture_filename("2.01-example-annotated.xml")))
+        self.act = self.activities[0]
+
+    def test_id(self):
+        self.assertEquals(
+            u"AA-AAA-123456789-ABC123",
+            self.act.iati_identifier)
+    
+    def test_title(self):
+        self.assertEquals(
+            u"Activity title",
+            self.act.title)
+
+    def test_last_updated_time(self):
+        self.assertEquals(datetime.date(2014, 9, 10), self.act.last_updated_datetime)
+
+    def test_description(self):
+        self.assert_(self.act.description.startswith(
+            u"General activity description text."))
+    
+    def test_reporting_org_ref(self):
+        self.assertEquals(u"AA-AAA-123456789", self.act.reporting_org.ref)
+
+    def test_reporting_org_type(self):
+        self.assertEquals(
+            cl2.OrganisationType.multilateral,
+            self.act.reporting_org.type
+        )
+
+    def test_reporting_org_name(self):
+        self.assertEquals(
+            self.act.reporting_org.name,
+            u"Organisation name"
+        )
+
+    def test_default_currency(self):
+        self.assertEquals(
+            cl2.Currency.us_dollar,
+            self.act.default_currency
+        )
+
+    def test_participating_org(self):
+        self.assertEquals(
+            cl2.OrganisationRole.funding,
+            self.act.participating_orgs[0].role)
+        self.assertEquals(
+            cl2.OrganisationType.multilateral,
+            self.act.participating_orgs[0].organisation.type)
+        self.assertEquals(
+            cl2.OrganisationType.multilateral,
+            self.act.participating_orgs[0].organisation.type)
+        self.assertEquals(
+            u"BB-BBB-123456789",
+            self.act.participating_orgs[0].organisation.ref)
+        self.assertEquals(
+            u"Name of Agency B",
+            self.act.participating_orgs[0].organisation.name)
+
+        self.assertEquals(
+            cl2.OrganisationRole.accountable,
+            self.act.participating_orgs[1].role)
+        self.assertEquals(
+            cl2.OrganisationType.government,
+            self.act.participating_orgs[1].organisation.type)
+        self.assertEquals(
+            u"CC-CCC-123456789",
+            self.act.participating_orgs[1].organisation.ref)
+        self.assertEquals(
+            u"Name of Agency C",
+            self.act.participating_orgs[1].organisation.name)
+
+        self.assertEquals(
+            cl2.OrganisationRole.extending,
+            self.act.participating_orgs[2].role)
+        self.assertEquals(
+            cl2.OrganisationType.international_ngo,
+            self.act.participating_orgs[2].organisation.type)
+        self.assertEquals(
+            u"AA-AAA-123456789",
+            self.act.participating_orgs[2].organisation.ref)
+        self.assertEquals(
+            u"Name of Agency A",
+            self.act.participating_orgs[2].organisation.name)
+
+    def test_recipient_country_percentages(self):
+        act = self.act
+        self.assertEquals(2, len(self.act.recipient_country_percentages))
+        self.assertEquals(
+            cl2.Country.afghanistan,
+            act.recipient_country_percentages[0].country)
+        self.assertEquals(
+            cl2.Country.antigua_and_barbuda,
+            act.recipient_country_percentages[1].country)
+        self.assertEquals(
+            25,
+            act.recipient_country_percentages[0].percentage)
+        self.assertEquals(
+            25,
+            act.recipient_country_percentages[1].percentage)
+
+    def test_recipient_region_percentages(self):
+        act = self.act
+        self.assertEquals(2, len(act.recipient_region_percentages))
+        self.assertEquals(
+            cl2.Region.south_america_regional,
+            act.recipient_region_percentages[0].region)
+        self.assertEquals(
+            cl2.Region.south_of_sahara_regional,
+            act.recipient_region_percentages[1].region)
+        self.assertEquals(
+            25,
+            act.recipient_region_percentages[0].percentage)
+        self.assertEquals(
+            25,
+            act.recipient_region_percentages[1].percentage)
+
+    def test_misc_narratives(self):
+        act = parse.activity(ET.XML(
+            u'''<iati-activity>
+                    <iati-identifier>AAA-AA</iati-identifier>
+                    <reporting-org ref="AAA"/>
+                    <recipient-country code="XX">
+                        <narrative>N1</narrative>
+                    </recipient-country>
+                    <recipient-region code="XXX">
+                        <narrative>N2</narrative>
+                    </recipient-region>
+                    <sector vocabulary="RO">
+                        <narrative>N3</narrative>
+                    </sector>
+                    <policy-marker>
+                        <narrative>N4</narrative>
+                    </policy-marker>
+                    <related-activity ref="">
+                        <narrative>N5</narrative>
+                    </related-activity>
+                </iati-activity>'''
+        ), major_version='2')
+        self.assertEquals(
+            "N1", act.recipient_country_percentages[0].name)
+        self.assertEquals(
+            "N2", act.recipient_region_percentages[0].name)
+        self.assertEquals(
+            "N3", act.sector_percentages[0].text)
+        self.assertEquals(
+            "N4", act.policy_markers[0].text)
+        self.assertEquals(
+            "N5", act.related_activities[0].text)
+
+    def test_transaction_count(self):
+        self.assertEquals(1, len(self.act.transactions))
+
+    def test_transaction_type(self):
+        self.assertEquals(
+            cl2.TransactionType.incoming_funds,
+            self.act.transactions[0].type)
+
+    def test_transaction_date(self):
+        self.assertEquals(
+            datetime.date(2012, 1, 1),
+            self.act.transactions[0].date)
+
+    def test_transaction_value_date(self):
+        self.assertEquals(
+            datetime.date(2012, 1, 1),
+            self.act.transactions[0].value_date)
+
+    def test_transaction_value_amount(self):
+        self.assertEquals(
+            1000,
+            self.act.transactions[0].value_amount)
+
+    def test_transaction_currency(self):
+        self.assertEquals(
+            cl2.Currency.euro,
+            self.act.transactions[0].value_currency)
+
+    def test_transaction_value_composite(self):
+        self.assertEquals(
+            (datetime.date(2012, 1, 1), 1000, cl2.Currency.euro),
+            self.act.transactions[0].value)
+
+    def test_transaction_ref(self):
+        self.assertEquals(u'1234', self.act.transactions[0].ref)
+
+    def test_transaction_description(self):
+        self.assertEquals(u'Transaction description text',
+                          self.act.transactions[0].description)
+
+    def test_transaction_provider_org_ref(self):
+        self.assertEquals(u'BB-BBB-123456789', 
+                            self.act.transactions[0].provider_org.ref)
+
+    def test_transaction_provider_org_name(self):
+        self.assertEquals(u'Agency B',
+                          self.act.transactions[0].provider_org.name)
+
+    def test_transaction_reciever_org_ref(self):
+        self.assertEquals(u'AA-AAA-123456789', 
+                            self.act.transactions[0].receiver_org.ref)
+    def test_transaction_reciever_org_name(self):
+        self.assertEquals(u'Agency A',
+                          self.act.transactions[0].receiver_org.name)
+
+    def test_transaction_new_elements(self):
+        act = self.act
+        self.assertEquals(1, len(act.transactions[0].recipient_region_percentages))
+        self.assertEquals(1, len(act.transactions[0].recipient_country_percentages))
+        self.assertEquals(1, len(act.transactions[0].sector_percentages))
+        self.assertEquals(
+            cl2.Country.afghanistan,
+            act.transactions[0].recipient_country_percentages[0].country)
+        self.assertEquals(
+            u'456',
+            act.transactions[0].recipient_region_percentages[0].region.value)
+        self.assertEquals(
+            u'111',
+            act.transactions[0].sector_percentages[0].sector.value)
+
+    def test_date_start_planned(self):
+        self.assertEquals(datetime.date(2012, 4, 15), self.act.start_planned)
+
+    def test_date_start_actual(self):
+        self.assertEquals(datetime.date(2012, 4, 28), self.act.start_actual)
+
+    def test_date_end_planned(self):
+        self.assertEquals(datetime.date(2015, 12, 31), self.act.end_planned)
+
+    def test_date_end_actual(self):
+        self.assertEquals(None, self.act.end_actual)
+
+    def test_raw_xml(self):
+        norm_xml = ET.tostring(ET.parse(fixture_filename("2.01-example-annotated.xml")).find('iati-activity'), encoding=unicode).strip(u'\n ')
+        self.assertEquals(norm_xml, self.act.raw_xml)
+
+
+    def test_budget(self):
+        self.assertEquals(1, len(self.act.budgets))
+
+    def test_policy_markers(self):
+        self.assertEquals(2, len(self.act.policy_markers))
+        self.assertEquals(cl2.PolicyMarker.aid_to_environment, self.act.policy_markers[0].code)
+        self.assertEquals(cl2.PolicyMarker.gender_equality, self.act.policy_markers[1].code)
+
+    def test_related_activity(self):
+        self.assertEquals(1, len(self.act.related_activities))
+        self.assertEquals("AA-AAA-123456789-6789", self.act.related_activities[0].ref)
+
+    def test_activity_status(self):
+        self.assertEquals(cl2.ActivityStatus.implementation, self.act.activity_status)
+
+    def test_collaboration_type(self):
+        self.assertEquals(cl2.CollaborationType.bilateral, self.act.collaboration_type)
+       
+    def test_default_finance_type(self):
+        self.assertEquals(cl2.FinanceType.aid_grant_excluding_debt_reorganisation,
+                self.act.default_finance_type)
+
+    def test_default_flow_type(self):
+        self.assertEquals(cl2.FlowType.oda, self.act.default_flow_type)
+
+    def test_default_aid_type(self):
+        self.assertEquals(cl2.AidType.general_budget_support,
+                self.act.default_aid_type)
+
+    def test_default_tied_status(self):
+        self.assertEquals(cl2.TiedStatus.partially_tied, self.act.default_tied_status) 
+
+    def test_default_hierarchy(self):
+        self.assertEquals(cl2.RelatedActivityType.parent, self.act.hierarchy) 
+
+    def test_default_language(self):
+        self.assertEquals(cl2.Language.english, self.act.default_language) 
 
 
 class TestParseActivity(AppTestCase):
@@ -157,7 +437,6 @@ class TestParseActivity(AppTestCase):
     def test_date_end_actual(self):
         self.assertEquals(datetime.date(2009, 10, 02), self.act.end_actual)
 
-
     def test_sector_percentage_count(self):
         act = next(parse.document(
             fixture("complex_example_dfid.xml", encoding=None)))
@@ -240,6 +519,11 @@ class TestFunctional(AppTestCase):
         db.session.add(act)
         db.session.commit()
 
+    def test_save_parsed_201(self):
+        activities = parse.document(fixture_filename("2.01-example-annotated.xml"))
+        db.session.add_all(activities)
+        db.session.commit()
+
     def test_save_complex_example(self):
         acts = parse.document(
             fixture("complex_example_dfid.xml", encoding=None))
@@ -260,6 +544,87 @@ class TestFunctional(AppTestCase):
         activities = parse.document(fixture_filename("big_value.xml"))
         db.session.add_all(activities)
         db.session.commit()
+
+    def test_decimal_percentages(self):
+        act = parse.activity(ET.XML(
+            u'''<iati-activity>
+                    <iati-identifier>AAA-BBB</iati-identifier>
+                    <reporting-org ref="AAA"/>
+                    <recipient-country code="AF" percentage="24.5" />
+                    <recipient-country code="AG" percentage="25.5" />  
+                    <recipient-region code="798" percentage="26.5" />
+                    <recipient-region code="889" percentage="23.5" />  
+                    <sector code="11130" percentage="49.5" />
+                    <sector code="11182" percentage="50.5" />  
+                </iati-activity>'''
+        ))
+        db.session.add(act)
+        db.session.commit()
+
+        self.assertEquals(
+            24.5,
+            db.session.query(model.CountryPercentage).filter(model.CountryPercentage.country==cl.Country.afghanistan).first().percentage
+        )
+        self.assertEquals(
+            25.5,
+            db.session.query(model.CountryPercentage).filter(model.CountryPercentage.country==cl.Country.antigua_and_barbuda).first().percentage
+        )
+
+        self.assertEquals(
+            26.5,
+            db.session.query(model.RegionPercentage).filter(model.RegionPercentage.region==cl.Region.asia_regional).first().percentage
+        )
+        self.assertEquals(
+            23.5,
+            db.session.query(model.RegionPercentage).filter(model.RegionPercentage.region==cl.Region.oceania_regional).first().percentage
+        )
+
+        self.assertEquals(
+            49.5,
+            db.session.query(model.SectorPercentage).filter(model.SectorPercentage.sector==cl.Sector.teacher_training).first().percentage
+        )
+        self.assertEquals(
+            50.5,
+            db.session.query(model.SectorPercentage).filter(model.SectorPercentage.sector==cl.Sector.educational_research).first().percentage
+        )
+
+    def test_version_stored_1(self):
+        act = parse.activity(ET.XML(
+            u'''<iati-activity>
+                    <iati-identifier>AAA-BBB</iati-identifier>
+                    <reporting-org ref="AAA"/>
+                </iati-activity>'''
+            ), major_version='1', version='1.05')
+        db.session.add(act)
+        db.session.commit()
+
+        self.assertEquals(
+            '1',
+            db.session.query(model.Activity).first().major_version
+        )
+        self.assertEquals(
+            '1.05',
+            db.session.query(model.Activity).first().version
+        )
+
+    def test_version_stored_2(self):
+        act = parse.activity(ET.XML(
+            u'''<iati-activity>
+                    <iati-identifier>AAA-BBB</iati-identifier>
+                    <reporting-org ref="AAA"/>
+                </iati-activity>'''
+            ), major_version='2', version='2.01')
+        db.session.add(act)
+        db.session.commit()
+
+        self.assertEquals(
+            '2',
+            db.session.query(model.Activity).first().major_version
+        )
+        self.assertEquals(
+            '2.01',
+            db.session.query(model.Activity).first().version
+        )
 
 
 class TestSector(AppTestCase):
@@ -497,7 +862,6 @@ class TestTransaction(AppTestCase):
         self.assertEquals(u'2', transaction.disbursement_channel.value) 
 
 class TestBudget(TestCase):
-
     def parse_budget(self):
         return parse.budgets(ET.XML("""
             <wrapper>
@@ -556,6 +920,14 @@ class TestDates(TestCase):
         self.assertEquals(
             datetime.date(2010, 1, 2),
             parse.iati_date("2010-01-02Z"))
+
+    def test_iso_date_with_timezone(self):
+        self.assertEquals(
+            datetime.date(2010, 1, 2),
+            parse.iati_date("2010-01-02+06:00"))
+        self.assertEquals(
+            datetime.date(2010, 1, 2),
+            parse.iati_date("2010-01-02-06:00"))
 
 
 class TestValue(TestCase):

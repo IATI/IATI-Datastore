@@ -31,13 +31,11 @@ def make_shell_context():
 @manager.command
 def download_codelists():
     "Download CSV codelists from IATI"
-    for name, url in codelists.urls.items():
-        filename = "iati_datastore/iatilib/codelists/%s.csv" % name
-        if os.path.exists(filename) and os.path.getsize(filename) > 0:
-            print filename, "exists, skipping"
-        else:
-            print "Downloading", name
-            resp = requests.get(url)
+    for major_version in ['1', '2']:
+        for name, url in codelists.urls[major_version].items():
+            filename = "iati_datastore/iatilib/codelists/%s/%s.csv" % (major_version, name)
+            print "Downloading %s.xx %s" % (major_version, name)
+            resp = requests.get(url[major_version])
             resp.raise_for_status()
             assert len(resp.text) > 0, "Response is empty"
             with codecs.open(filename, "w", encoding="utf-8") as cl:

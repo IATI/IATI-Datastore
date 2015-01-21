@@ -64,6 +64,7 @@ class ActivityFactory(factory.Factory):
     iati_identifier = factory.Sequence(lambda n: u'test-act-{0}'.format(n))
     reporting_org = factory.SubFactory(OrganisationFactory)
     raw_xml = u"<test />"
+    major_version = '1'
 
 
 class TransactionFactory(factory.Factory):

@@ -16,11 +16,7 @@ def apidate(value):
 def codelist_validator(Codelist, value):
     codes = []
     for i in value.split('|'):
-        try:
-            codes.append(Codelist.from_string(value))
-        except ValueError:
-            pass
-            #raise Invalid(u"{0} is not on code list".format(value))
+        codes.append(Codelist.from_string(i))
     return codes
 
 organisation_role = partial(codelist_validator, codelists.OrganisationRole)

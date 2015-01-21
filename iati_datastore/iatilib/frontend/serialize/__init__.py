@@ -1,4 +1,5 @@
 from datetime import datetime
+from lxml import etree as ET
 from .csv import (
     csv, csv_activity_by_country, csv_activity_by_sector,
     transaction_csv, csv_transaction_by_country, csv_transaction_by_sector,
@@ -8,7 +9,7 @@ from .jsonserializer import json, datastore_json
 
 
 def xml(pagination):
-    yield u"""<result>
+    yield u"""<result xmlns:iati-extra="http://datastore.iatistandard.org/ns">
     <ok>True</ok>
     <iati-activities generated-datetime='{3}'>
       <query>
@@ -19,5 +20,10 @@ def xml(pagination):
     """.format(pagination.total,
             pagination.offset, pagination.limit, datetime.now().isoformat())
     for activity in pagination.items:
-        yield activity.raw_xml
+        if activity.version:
+            # This should always work, as the first element in the raw_xml should always be iati-activity
+            # And is lower overhead than using a proper XML parser again here
+            yield activity.raw_xml.replace('<iati-activity', '<iati-activity iati-extra:version="{}"'.format(activity.version), 1)
+        else:
+            yield activity.raw_xml
     yield u"</iati-activities></result>"

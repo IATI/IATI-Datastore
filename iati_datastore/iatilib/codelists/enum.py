@@ -1,5 +1,5 @@
 # http://techspot.zzzeek.org/2011/01/14/the-enum-recipe/
-from sqlalchemy.types import SchemaType, TypeDecorator, Enum
+from sqlalchemy.types import SchemaType, TypeDecorator, UnicodeText
 import re
 from requests.structures import CaseInsensitiveDict
 
@@ -51,10 +51,7 @@ class DeclEnum(object):
         try:
             return cls._reg[value]
         except (KeyError, AttributeError):
-            raise ValueError(
-                    "Invalid value for %r: %r" %
-                    (cls.__name__, value)
-                )
+            return EnumSymbol(cls, None, value, None)
 
     @classmethod
     def values(cls):
@@ -65,19 +62,10 @@ class DeclEnum(object):
         return DeclEnumType(cls)
 
 
-class DeclEnumType(SchemaType, TypeDecorator):
+class DeclEnumType(TypeDecorator):
     def __init__(self, enum):
         self.enum = enum
-        self.impl = Enum(
-                        *enum.values(),
-                        name="ck%s" % re.sub(
-                                    '([A-Z])',
-                                    lambda m:"_" + m.group(1).lower(),
-                                    enum.__name__)
-                    )
-
-    def _set_table(self, table, column):
-        self.impl._set_table(table, column)
+        self.impl = UnicodeText()
 
     def copy(self):
         return DeclEnumType(self.enum)

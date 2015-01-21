@@ -72,11 +72,11 @@ class UniqueMixin(object):
 
 
 class TransactionType(object):
-    def __init__(self, type_code):
-        self.type_code = type_code
+    def __init__(self, type_codes):
+        self.type_codes = [x.value for x in type_codes]
 
     def __get__(self, obj, type=None):
-        return [t for t in obj.transactions if t.type == self.type_code]
+        return [t for t in obj.transactions if t.type.value in self.type_codes]
 
 
 class Participation(db.Model):
@@ -121,14 +121,21 @@ class Activity(db.Model):
     raw_xml = sa.Column(
         sa.UnicodeText,
         nullable=False)
+    version = sa.Column(
+        sa.Unicode,
+        nullable=True)
+    major_version = sa.Column(
+        sa.Unicode,
+        nullable=False,
+        default=u'1')
 
-    commitments = TransactionType(codelists.TransactionType.commitment)
-    disbursements = TransactionType(codelists.TransactionType.disbursement)
-    expenditures = TransactionType(codelists.TransactionType.expenditure)
-    incoming_funds = TransactionType(codelists.TransactionType.incoming_funds)
-    interest_repayment = TransactionType(codelists.TransactionType.interest_repayment)
-    loan_repayments = TransactionType(codelists.TransactionType.loan_repayment)
-    reembursements = TransactionType(codelists.TransactionType.reimbursement)
+    commitments = TransactionType([codelists.by_major_version[mv].TransactionType.commitment for mv in ['1','2']])
+    disbursements = TransactionType([codelists.by_major_version[mv].TransactionType.disbursement for mv in ['1','2']])
+    expenditures = TransactionType([codelists.by_major_version[mv].TransactionType.expenditure for mv in ['1','2']])
+    incoming_funds = TransactionType([codelists.by_major_version[mv].TransactionType.incoming_funds for mv in ['1','2']])
+    interest_repayment = TransactionType([codelists.by_major_version[mv].TransactionType.interest_repayment for mv in ['1','2']])
+    loan_repayments = TransactionType([codelists.by_major_version[mv].TransactionType.loan_repayment for mv in ['1','2']])
+    reembursements = TransactionType([codelists.by_major_version[mv].TransactionType.reimbursement for mv in ['1','2']])
 
     reporting_org = sa.orm.relationship("Organisation", uselist=False)
     activity_websites = act_relationship(
@@ -207,11 +214,18 @@ class PercentageMixin(object):
     def activity_id(cls):
         return sa.Column(
             act_ForeignKey("activity.iati_identifier"),
-            nullable=False,
+            nullable=True,
+            index=True,
+        )
+    @declared_attr
+    def transaction_id(cls):
+        return sa.Column(
+            act_ForeignKey("transaction.id"),
+            nullable=True,
             index=True,
         )
     id = sa.Column(sa.Integer, primary_key=True)
-    percentage = sa.Column(sa.Integer, nullable=True)
+    percentage = sa.Column(sa.Numeric, nullable=True)
     name = sa.Column(sa.Unicode, nullable=True)
 
 
@@ -303,6 +317,10 @@ class Transaction(db.Model):
     value = sa.orm.composite(TransactionValue, value_date, value_amount,
                              value_currency)
 
+    recipient_country_percentages = act_relationship("CountryPercentage")
+    recipient_region_percentages = act_relationship("RegionPercentage")
+    sector_percentages = act_relationship("SectorPercentage")
+
     def __unicode__(self):
         return u"%s: %s/%s" % (
             self.activity.iati_identifier,
@@ -320,14 +338,18 @@ class SectorPercentage(db.Model):
     text = sa.Column(sa.Unicode)
     activity_id = sa.Column(
         act_ForeignKey("activity.iati_identifier"),
-        nullable=False,
+        nullable=True,
+        index=True)
+    transaction_id = sa.Column(
+        act_ForeignKey("transaction.id"),
+        nullable=True,
         index=True)
     sector = sa.Column(codelists.Sector.db_type(), nullable=True)
     vocabulary = sa.Column(
         codelists.Vocabulary.db_type(),
         default=codelists.Vocabulary.oecd_development_assistance_committee,
         nullable=False)
-    percentage = sa.Column(sa.Integer, nullable=True)
+    percentage = sa.Column(sa.Numeric, nullable=True)
     activity = sa.orm.relationship("Activity")
 
 
