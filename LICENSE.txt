@@ -1,6 +1,6 @@
 IATI Datastore
 
-Copyright (C) 2013 Development Initiatives
+Copyright (C) 2013-2015 Development Initiatives
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as
