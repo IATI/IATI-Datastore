@@ -1,5 +1,6 @@
+# If you update these, also update iati_datastore/setup.py
 -r requirements.txt
-nose
+nose==1.2.1
 mock==1.0.1
 factory-boy==1.2.0
 coveralls==0.5
