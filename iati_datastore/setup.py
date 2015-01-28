@@ -8,7 +8,7 @@ Flask-SQLAlchemy==1.0
 Werkzeug==0.8.3
 ckanapi==1.5
 iso8601==0.1.4
-lxml==3.1
+lxml==3.4.1
 psycopg2==2.4.6
 python-dateutil==2.1
 six==1.2.0
@@ -22,7 +22,7 @@ defusedxml==0.4
 redis==2.7.2
 rq==0.3.7
 Unidecode==0.04.12
-requests==1.2.3
+requests==2.5.1
 Flask-RQ==0.2
 flask-heroku==0.1.4
 Flask-And-Redis==0.4

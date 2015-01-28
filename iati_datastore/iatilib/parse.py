@@ -9,7 +9,7 @@ from StringIO import StringIO
 
 from lxml import etree as ET
 from dateutil.parser import parse as parse_date
-from requests.packages import charade
+from requests.packages import chardet
 
 from . import db
 from iatilib.model import (
@@ -404,7 +404,7 @@ def default_language(xml, resource=None, major_version='1'):
 def _open_resource(xml_resource, detect_encoding=False):
     if isinstance(xml_resource, basestring):
         if detect_encoding:
-            encoding = charade.detect(xml_resource)['encoding']
+            encoding = chardet.detect(xml_resource)['encoding']
             if encoding in ('UTF-16LE', 'UTF-16BE'):
                 xml_resource = xml_resource.decode('UTF-16').encode('utf-8')
 
