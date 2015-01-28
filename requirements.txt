@@ -1,8 +1,5 @@
 -e ./iati_datastore
 
-# should not be pinned, see https://devcenter.heroku.com/articles/newrelic
-newrelic
-
 # If you update these, also update iati_datastore/setup.py
 # These are duplicated here so that requires.io will flag out of date dependencies
 Flask==0.10
