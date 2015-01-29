@@ -31,7 +31,7 @@ There are several additional CSV formats to get access to more data.
    `/api/1/access/activity/by_country.csv </api/1/access/activity/by_country.csv>`__
 
 -  List of transactions
-   `/api/1/access/transaction.csv </api/1/access/transactionscsv>`__
+   `/api/1/access/transaction.csv </api/1/access/transaction.csv>`__
 
 -  Transactions by sector
    `/api/1/access/transaction/by_sector.csv </api/1/access/transaction/by_sector.csv>`__
