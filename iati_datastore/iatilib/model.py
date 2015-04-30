@@ -76,7 +76,7 @@ class TransactionType(object):
         self.type_codes = [x.value for x in type_codes]
 
     def __get__(self, obj, type=None):
-        return [t for t in obj.transactions if t.type.value in self.type_codes]
+        return [t for t in obj.transactions if t.type and t.type.value in self.type_codes]
 
 
 class Participation(db.Model):
