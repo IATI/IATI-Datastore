@@ -173,7 +173,7 @@ class DataStoreView(MethodView):
     def paginate(self, query, offset, limit):
         if offset < 0:
             abort(404)
-        items = query.limit(limit).offset(offset).all()
+        items = query.order_by('iati_identifier').limit(limit).offset(offset).all()
         if not items and offset != 0:
             abort(404)
         return Scrollination(query, offset, limit, query.count(), items)
