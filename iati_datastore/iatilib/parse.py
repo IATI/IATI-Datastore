@@ -106,7 +106,6 @@ def xpath_decimal(xpath, xml, resource=None, major_version='1'):
     else:
         return None
 
-
 def parse_org(xml, resource=no_resource, major_version='1'):
     data = {
         "ref": xval(xml, "@ref", u""),
@@ -116,8 +115,14 @@ def parse_org(xml, resource=no_resource, major_version='1'):
         data['type'] = codelists.by_major_version[major_version].OrganisationType.from_string(xval(xml, "@type"))
     except (MissingValue, ValueError):
         data['type'] = None
-    return Organisation.as_unique(db.session, **data)
 
+    # Query database for an existing entry for this organisation
+    org_from_db = db.session.query(Organisation).filter(Organisation.ref==data['ref']).filter(Organisation.name==data['name']).filter(Organisation.type==data['type']).all()
+    if len(org_from_db) < 1:
+        # If the organisation is not in the database, insert it 
+        org_from_db[0] = Organisation.as_unique(db.session, **data)
+
+    return org_from_db[0]
 
 def reporting_org(element, resource=no_resource, major_version='1'):
     xml = element.xpath("./reporting-org")[0]
