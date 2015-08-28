@@ -16,6 +16,12 @@ class EnumSymbol(object):
     def __hash__(self): 
         return hash(self.value)
 
+    def __eq__(self, other):
+        return self.value == other.value
+
+    def __ne__(self, other):
+        return self.value != other.value
+
     def __reduce__(self):
         """Allow unpickling to return the symbol
         linked to the DeclEnum class."""
