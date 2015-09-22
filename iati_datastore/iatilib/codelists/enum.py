@@ -17,9 +17,13 @@ class EnumSymbol(object):
         return hash(self.value)
 
     def __eq__(self, other):
+        if other is None:
+            return False
         return self.value == other.value
 
     def __ne__(self, other):
+        if other is None:
+            return True
         return self.value != other.value
 
     def __reduce__(self):
