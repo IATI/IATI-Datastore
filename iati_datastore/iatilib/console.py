@@ -12,7 +12,6 @@ from iatilib import parse, codelists, model, db, redis
 from iatilib.crawler import manager as crawler_manager
 from iatilib.queue import manager as queue_manager
 
-
 manager = Manager(create_app(DEBUG=False))
 manager.add_command("crawl", crawler_manager)
 manager.add_command("queue", queue_manager)
@@ -21,11 +20,11 @@ manager.add_command("queue", queue_manager)
 @manager.shell
 def make_shell_context():
     return dict(
-        app=manager.app,
-        db=db,
-        rdb=redis,
-        model=model,
-        codelists=codelists)
+            app=manager.app,
+            db=db,
+            rdb=redis,
+            model=model,
+            codelists=codelists)
 
 
 @manager.command
@@ -46,20 +45,20 @@ def download_codelists():
 def cleanup():
     from iatilib.model import Log
     db.session.query(Log).filter(
-        Log.created_at < dt.datetime.utcnow() - dt.timedelta(days=5)
+            Log.created_at < dt.datetime.utcnow() - dt.timedelta(days=5)
     ).filter(not_(Log.logger.in_(
-        ['activity_importer', 'failed_activity', 'xml_parser']),
+            ['activity_importer', 'failed_activity', 'xml_parser']),
     )).delete('fetch')
     db.session.commit()
     db.engine.dispose()
-    
+
 
 @manager.option(
-    '-x', '--fail-on-xml-errors',
-    action="store_true", dest="fail_xml")
+        '-x', '--fail-on-xml-errors',
+        action="store_true", dest="fail_xml")
 @manager.option(
-    '-s', '--fail-on-spec-errors',
-    action="store_true", dest="fail_spec")
+        '-s', '--fail-on-spec-errors',
+        action="store_true", dest="fail_spec")
 @manager.option('-v', '--verbose', action="store_true")
 @manager.option('filenames', nargs='+')
 def parse_file(filenames, verbose=False, fail_xml=False, fail_spec=False):
@@ -86,6 +85,6 @@ def create_database():
 def main():
     manager.run()
 
+
 if __name__ == "__main__":
     main()
-
