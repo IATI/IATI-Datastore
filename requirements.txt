@@ -14,7 +14,7 @@ psycopg2==2.6.1
 python-dateutil==2.5.2
 six==1.10.0
 unicodecsv==0.14.1
-voluptuous==0.8.9
+voluptuous==0.8.10
 Flask-Script==2.0.5
 prettytable==0.7.2
 alembic==0.8.5
