@@ -91,3 +91,10 @@ Updating activities after changing import code
 * Restart background process
 * Run `iati crawl update` (or wait for cron to run it for you)
 
+Generation of Documentation
+---------------------------
+
+API documentation in the docs folder is generated using [Spinx](http://www.sphinx-doc.org).
+
+    cd iati-datastore/docs
+    make dirhtml
