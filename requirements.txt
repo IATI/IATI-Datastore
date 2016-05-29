@@ -2,7 +2,7 @@
 
 # If you update these, also update iati_datastore/setup.py
 # These are duplicated here so that requires.io will flag out of date dependencies
-Flask==0.10.1
+Flask==0.11
 Jinja2==2.8
 SQLAlchemy==1.0.13
 Flask-SQLAlchemy==2.1
