@@ -23,7 +23,7 @@ defusedxml==0.4.1
 redis==2.10.5
 rq==0.6.0
 Unidecode==0.04.19
-requests==2.10.0
+requests==2.11.0
 Flask-RQ==0.2
 flask-heroku==0.1.9
 Flask-And-Redis==0.6
