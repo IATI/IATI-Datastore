@@ -11,7 +11,7 @@ ckanapi==3.6
 iso8601==0.1.11
 lxml==3.6.4
 psycopg2==2.6.2
-python-dateutil==2.5.3
+python-dateutil==2.6.0
 six==1.10.0
 unicodecsv==0.14.1
 voluptuous==0.9.3
