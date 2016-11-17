@@ -1,7 +1,7 @@
 IATI Datastore
 ==============
 
-[![Build Status](https://travis-ci.org/IATI/iati-datastore.svg?branch=master)](https://travis-ci.org/IATI/iati-datastore)
+[![Build Status](https://travis-ci.org/IATI/IATI-Datastore.svg?branch=master)](https://travis-ci.org/IATI/IATI-Datastore)
 [![Coverage Status](https://img.shields.io/coveralls/IATI/iati-datastore.svg)](https://coveralls.io/r/IATI/iati-datastore?branch=master)
 [![Code Health](https://landscape.io/github/IATI/iati-datastore/master/landscape.png)](https://landscape.io/github/IATI/iati-datastore/master)
 [![License: MIT](https://img.shields.io/badge/license-AGPLv3-blue.svg)](https://github.com/IATI/iati-datastore/blob/master/LICENSE.txt)
@@ -32,7 +32,7 @@ For example, on Ubuntu:
 Installing for development
 --------------------------
 
-[![Build Status](https://api.travis-ci.org/IATI/iati-datastore.png)](https://travis-ci.org/IATI/iati-datastore)
+[![Build Status](https://api.travis-ci.org/IATI/IATI-Datastore.png)](https://travis-ci.org/IATI/iati-datastore)
 
 ```
 # Clone the source
