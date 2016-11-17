@@ -115,8 +115,6 @@ Example API call:
 policy-marker
 `````````````
 
-*The IATI Tech team have uncovered issues with this filter (‘500 internal server error’). `This issue has been logged <https://github.com/IATI/iati-datastore/issues/237>`__ and we will endeavour to resolve this shortly.*
-
 Returns activities containing a `policy-marker <http://iatistandard.org/201/activity-standard/iati-activities/iati-activity/policy-marker/>`__ element which matches a your specified policy-marker value.
 
 Parameters:
