@@ -8,3 +8,4 @@ _testdata
 pyenv/
 *.egg-info
 docs/_build
+pyenv/

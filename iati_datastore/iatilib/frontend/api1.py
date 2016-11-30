@@ -58,8 +58,8 @@ def about_dataset(dataset):
             'last_successful_fetch': r.last_succ.isoformat() if r.last_succ else None,
             'last_parsed': r.last_parsed.isoformat() if r.last_parsed else None,
             'num_of_activities': r.activities.count(),
-        }) 
-        
+        })
+
     return jsonify(
             dataset=dataset.name,
             last_modified=None if dataset.last_modified is None else dataset.last_modified.isoformat(),
@@ -72,11 +72,11 @@ def deleted_activities():
     deleted_activities = db.session.query(DeletedActivity)\
                                    .order_by(DeletedActivity.deletion_date)
     return jsonify(
-        deleted_activities=[ 
+        deleted_activities=[
           {
             'iati_identifier' : da.iati_identifier,
             'deletion_date' : da.deletion_date.isoformat(),
-          } 
+          }
           for da in deleted_activities
         ],
     )
@@ -132,7 +132,7 @@ def dataset_error(dataset_id):
 def dataset_log():
     logs = db.session.query(Log.dataset).distinct()
     return render_template('datasets.log', logs=logs)
-    
+
 @api.route('/error/dataset.log/<dataset_id>')
 def dataset_log_error(dataset_id):
     error_logs = db.session.query(Log).order_by(sa.desc(Log.created_at)).\
