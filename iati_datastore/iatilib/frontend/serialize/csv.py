@@ -96,7 +96,7 @@ def transaction_tied_status(transaction):
 
 def transaction_disbursement_channel(transaction):
     if transaction.disbursement_channel:
-        return transaction.disbursement_channel.value 
+        return transaction.disbursement_channel.value
     return ""
 
 def transaction_org(field, transaction):
@@ -147,10 +147,16 @@ def recipient_region_percentage(activity):
         for rrp in activity.recipient_region_percentages)
 
 def reporting_org_ref(activity):
-    return activity.reporting_org.ref
+    try:
+        return activity.reporting_org.ref
+    except AttributeError:
+        return ""
 
 def reporting_org_name(activity):
-    return activity.reporting_org.name
+    try:
+        return activity.reporting_org.name
+    except AttributeError:
+        return ""
 
 def reporting_org_type(activity):
     try:
@@ -209,7 +215,7 @@ def value_currency(transaction):
     if transaction.value_currency:
         return transaction.value_currency.value
     else:
-        return u"" 
+        return u""
 
 def activity_default_currency(activity):
     if activity.default_currency:
@@ -439,7 +445,7 @@ def adapt_activity_other(func):
 
 
 csv_activity_by_country = CSVSerializer((
-    (u"recipient-country-code", lambda (a, c): c.country.value if c.country else ""), 
+    (u"recipient-country-code", lambda (a, c): c.country.value if c.country else ""),
     (u"recipient-country", lambda (a, c): c.country.description.title() if c.country and c.country.description else ""),
     (u"recipient-country-percentage", lambda (a, c): c.percentage if c.percentage else ""),
     "iati-identifier",

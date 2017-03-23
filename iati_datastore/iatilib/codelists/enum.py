@@ -86,6 +86,8 @@ class DeclEnumType(TypeDecorator):
     def process_bind_param(self, value, dialect):
         if value is None:
             return None
+        elif isinstance(value, basestring):
+            return value
         return value.value
 
     def process_result_value(self, value, dialect):
