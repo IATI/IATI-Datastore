@@ -223,7 +223,7 @@ class ActivityView(DataStoreView):
 
 class DataStoreCSVView(DataStoreView):
     def get(self, format=".csv"):
-        if not request.path.endswith("csv"):
+        if format != ".csv":
             abort(404)
         return self.get_response()
 
