@@ -222,7 +222,7 @@ class ActivityView(DataStoreView):
 
 
 class DataStoreCSVView(DataStoreView):
-    def get(self, format=".csv"):
+    def get(self, format):
         if format != ".csv":
             abort(404)
         return self.get_response()
