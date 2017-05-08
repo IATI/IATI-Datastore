@@ -250,6 +250,15 @@ class ApiViewMixin(object):
         resp = self.client.get(self.base_url + ".zzz")
         self.assertEquals(404, resp.status_code)
 
+    def test_junk_before_format(self):
+        url = self.base_url[:-4] + '-bad.csv'
+        resp = self.client.get(url)
+        self.assertEquals(404, resp.status_code)
+
+    def test_junk_in_format(self):
+        url = self.base_url[:-4] + '.bad-csv'
+        resp = self.client.get(url)
+        self.assertEquals(404, resp.status_code)
 
 class TestActivityView(ClientTestCase, ApiViewMixin):
     base_url = '/api/1/access/activity.csv'
