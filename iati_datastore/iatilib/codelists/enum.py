@@ -13,6 +13,19 @@ class EnumSymbol(object):
         self.value = value
         self.description = description
 
+    def __hash__(self): 
+        return hash(self.value)
+
+    def __eq__(self, other):
+        if other is None:
+            return False
+        return self.value == other.value
+
+    def __ne__(self, other):
+        if other is None:
+            return True
+        return self.value != other.value
+
     def __reduce__(self):
         """Allow unpickling to return the symbol
         linked to the DeclEnum class."""
@@ -73,6 +86,8 @@ class DeclEnumType(TypeDecorator):
     def process_bind_param(self, value, dialect):
         if value is None:
             return None
+        elif isinstance(value, basestring):
+            return value
         return value.value
 
     def process_result_value(self, value, dialect):

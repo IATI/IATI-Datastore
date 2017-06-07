@@ -103,6 +103,20 @@ class TestActivityFilter(AppTestCase):
         self.assertIn(act_in, activities.all())
         self.assertNotIn(act_not, activities.all())
 
+    def test_by_recipient_region_code_not_in_list(self):
+        # https://github.com/IATI/iati-datastore/issues/184
+        act_not = fac.ActivityFactory.create(
+            recipient_region_percentages=[
+                fac.RegionPercentageFactory.build(
+                    region=cl.Region.oceania_regional
+                ),
+            ])
+        activities = dsfilter.activities({
+            "recipient-region": cl.Region.from_string(u"xxx")
+        })
+        self.assertEquals([], activities.all())
+        self.assertNotIn(act_not, activities.all())
+
     def test_or_filter(self):
         act_a = fac.ActivityFactory.create(reporting_org__ref=u"AAA")
         act_b = fac.ActivityFactory.create(reporting_org__ref=u"BBB")

@@ -9,22 +9,21 @@ from sqlalchemy.ext.declarative import declared_attr
 from . import db
 from . import codelists
 
-
 act_relationship = ft.partial(
-    sa.orm.relationship,
-    cascade="all,delete",
-    passive_deletes=True,
+        sa.orm.relationship,
+        cascade="all,delete",
+        passive_deletes=True,
 )
 lazy_act_relationship = ft.partial(
-    sa.orm.relationship,
-    cascade="all,delete",
-    lazy='dynamic',
-    passive_deletes=True,
+        sa.orm.relationship,
+        cascade="all,delete",
+        lazy='dynamic',
+        passive_deletes=True,
 )
 
 act_ForeignKey = ft.partial(
-    sa.ForeignKey,
-    ondelete="CASCADE"
+        sa.ForeignKey,
+        ondelete="CASCADE"
 )
 
 
@@ -62,12 +61,12 @@ class UniqueMixin(object):
     @classmethod
     def as_unique(cls, session, *arg, **kw):
         return _unique(
-            session,
-            cls,
-            cls.unique_hash,
-            cls.unique_filter,
-            cls,
-            arg, kw
+                session,
+                cls,
+                cls.unique_hash,
+                cls.unique_filter,
+                cls,
+                arg, kw
         )
 
 
@@ -76,20 +75,20 @@ class TransactionType(object):
         self.type_codes = [x.value for x in type_codes]
 
     def __get__(self, obj, type=None):
-        return [t for t in obj.transactions if t.type.value in self.type_codes]
+        return [t for t in obj.transactions if t.type and t.type.value in self.type_codes]
 
 
 class Participation(db.Model):
     __tablename__ = "participation"
     activity_identifier = sa.Column(
-        act_ForeignKey("activity.iati_identifier"),
-        primary_key=True)
+            act_ForeignKey("activity.iati_identifier"),
+            primary_key=True)
     organisation_id = sa.Column(
-        sa.ForeignKey("organisation.id"),
-        primary_key=True)
+            sa.ForeignKey("organisation.id"),
+            primary_key=True)
     role = sa.Column(
-        codelists.OrganisationRole.db_type(),
-        primary_key=True)
+            codelists.OrganisationRole.db_type(),
+            primary_key=True)
     organisation = sa.orm.relationship("Organisation")
 
 
@@ -98,19 +97,19 @@ class Activity(db.Model):
     iati_identifier = sa.Column(sa.Unicode, primary_key=True, nullable=False)
     hierarchy = sa.Column(codelists.RelatedActivityType.db_type())
     default_language = sa.Column(codelists.Language.db_type())
-    #parsed from xml iati-activity@last-updated-datetime
+    # parsed from xml iati-activity@last-updated-datetime
     last_updated_datetime = sa.Column(sa.DateTime, nullable=True)
-    #last time datastore has seen change in the activity
+    # last time datastore has seen change in the activity
     last_change_datetime = sa.Column(sa.DateTime, nullable=False,
-        default=sa.func.now())
+                                     default=sa.func.now())
     resource_url = sa.Column(
-        sa.ForeignKey("resource.url", ondelete='CASCADE'),
-        index=True,
-        nullable=True)
+            sa.ForeignKey("resource.url", ondelete='CASCADE'),
+            index=True,
+            nullable=True)
     reporting_org_id = sa.Column(
-        sa.ForeignKey("organisation.id"),
-        nullable=True,
-        index=True)
+            sa.ForeignKey("organisation.id"),
+            nullable=True,
+            index=True)
     start_planned = sa.Column(sa.Date, nullable=True)
     start_actual = sa.Column(sa.Date, nullable=True)
     end_planned = sa.Column(sa.Date, nullable=True)
@@ -119,36 +118,40 @@ class Activity(db.Model):
     description = sa.Column(sa.Unicode, default=u"", nullable=False)
     default_currency = sa.Column(codelists.Currency.db_type())
     raw_xml = sa.Column(
-        sa.UnicodeText,
-        nullable=False)
+            sa.UnicodeText,
+            nullable=False)
     version = sa.Column(
-        sa.Unicode,
-        nullable=True)
+            sa.Unicode,
+            nullable=True)
     major_version = sa.Column(
-        sa.Unicode,
-        nullable=False,
-        default=u'1')
+            sa.Unicode,
+            nullable=False,
+            default=u'1')
 
-    commitments = TransactionType([codelists.by_major_version[mv].TransactionType.commitment for mv in ['1','2']])
-    disbursements = TransactionType([codelists.by_major_version[mv].TransactionType.disbursement for mv in ['1','2']])
-    expenditures = TransactionType([codelists.by_major_version[mv].TransactionType.expenditure for mv in ['1','2']])
-    incoming_funds = TransactionType([codelists.by_major_version[mv].TransactionType.incoming_funds for mv in ['1','2']])
-    interest_repayment = TransactionType([codelists.by_major_version[mv].TransactionType.interest_repayment for mv in ['1','2']])
-    loan_repayments = TransactionType([codelists.by_major_version[mv].TransactionType.loan_repayment for mv in ['1','2']])
-    reembursements = TransactionType([codelists.by_major_version[mv].TransactionType.reimbursement for mv in ['1','2']])
+    commitments = TransactionType([codelists.by_major_version[mv].TransactionType.commitment for mv in ['1', '2']])
+    disbursements = TransactionType([codelists.by_major_version[mv].TransactionType.disbursement for mv in ['1', '2']])
+    expenditures = TransactionType([codelists.by_major_version[mv].TransactionType.expenditure for mv in ['1', '2']])
+    incoming_funds = TransactionType(
+            [codelists.by_major_version[mv].TransactionType.incoming_funds for mv in ['1', '2']])
+    interest_repayment = TransactionType(
+            [codelists.by_major_version[mv].TransactionType.interest_repayment for mv in ['1', '2']])
+    loan_repayments = TransactionType(
+            [codelists.by_major_version[mv].TransactionType.loan_repayment for mv in ['1', '2']])
+    reembursements = TransactionType(
+            [codelists.by_major_version[mv].TransactionType.reimbursement for mv in ['1', '2']])
 
     reporting_org = sa.orm.relationship("Organisation", uselist=False)
     activity_websites = act_relationship(
-        "ActivityWebsite",
-        cascade="all,delete")
+            "ActivityWebsite",
+            cascade="all,delete")
     websites = association_proxy(
-        "activity_websites",
-        "url",
-        creator=lambda url: ActivityWebsite(url=url))
+            "activity_websites",
+            "url",
+            creator=lambda url: ActivityWebsite(url=url))
     created = sa.Column(
-        sa.DateTime,
-        nullable=False,
-        default=datetime.datetime.utcnow)
+            sa.DateTime,
+            nullable=False,
+            default=datetime.datetime.utcnow)
     participating_orgs = act_relationship("Participation")
     recipient_country_percentages = act_relationship("CountryPercentage")
     recipient_region_percentages = act_relationship("RegionPercentage")
@@ -164,6 +167,7 @@ class Activity(db.Model):
     default_flow_type = sa.Column(codelists.FlowType.db_type())
     default_aid_type = sa.Column(codelists.AidType.db_type())
     default_tied_status = sa.Column(codelists.TiedStatus.db_type())
+
 
 class DeletedActivity(db.Model):
     __tablename__ = "deleted_activity"
@@ -185,8 +189,8 @@ class Organisation(db.Model, UniqueMixin):
 
     @classmethod
     def unique_filter(cls, query, ref, name, type, **kw):
-        return query.filter( 
-            (cls.ref == ref) & (cls.name == name) & (cls.type == type)
+        return query.filter(
+                (cls.ref == ref) & (cls.name == name) & (cls.type == type)
         )
 
     def __repr__(self):
@@ -199,12 +203,12 @@ class Organisation(db.Model, UniqueMixin):
 class ActivityWebsite(db.Model):
     __tablename__ = "website"
     id = sa.Column(
-        sa.Integer,
-        primary_key=True)
+            sa.Integer,
+            primary_key=True)
     activity_id = sa.Column(
-        act_ForeignKey("activity.iati_identifier"),
-        nullable=False,
-        index=True)
+            act_ForeignKey("activity.iati_identifier"),
+            nullable=False,
+            index=True)
     url = sa.Column(sa.Unicode)
     activity = sa.orm.relationship("Activity")
 
@@ -213,17 +217,19 @@ class PercentageMixin(object):
     @declared_attr
     def activity_id(cls):
         return sa.Column(
-            act_ForeignKey("activity.iati_identifier"),
-            nullable=True,
-            index=True,
+                act_ForeignKey("activity.iati_identifier"),
+                nullable=True,
+                index=True,
         )
+
     @declared_attr
     def transaction_id(cls):
         return sa.Column(
-            act_ForeignKey("transaction.id"),
-            nullable=True,
-            index=True,
+                act_ForeignKey("transaction.id"),
+                nullable=True,
+                index=True,
         )
+
     id = sa.Column(sa.Integer, primary_key=True)
     percentage = sa.Column(sa.Numeric, nullable=True)
     name = sa.Column(sa.Unicode, nullable=True)
@@ -237,28 +243,30 @@ class CountryPercentage(db.Model, PercentageMixin):
 class RegionPercentage(db.Model, PercentageMixin):
     __tablename__ = "region_percentage"
     region = sa.Column(
-        codelists.Region.db_type(),
-        nullable=False,
-        index=True)
+            codelists.Region.db_type(),
+            nullable=False,
+            index=True)
+
 
 class PolicyMarker(db.Model):
     __tablename__ = "policy_marker"
     id = sa.Column(sa.Integer, primary_key=True)
     activity_id = sa.Column(
-        act_ForeignKey("activity.iati_identifier"),
-        nullable=False,
-        index=True)
+            act_ForeignKey("activity.iati_identifier"),
+            nullable=False,
+            index=True)
     code = sa.Column(codelists.PolicyMarker.db_type(), nullable=True, index=True)
     text = sa.Column(sa.Unicode(), nullable=True)
     activity = sa.orm.relationship("Activity")
+
 
 class RelatedActivity(db.Model):
     __tablename__ = "related_activity"
     id = sa.Column(sa.Integer, primary_key=True)
     activity_id = sa.Column(
-        act_ForeignKey("activity.iati_identifier"),
-        nullable=False,
-        index=True)
+            act_ForeignKey("activity.iati_identifier"),
+            nullable=False,
+            index=True)
     ref = sa.Column(sa.Unicode(), nullable=False)
     text = sa.Column(sa.Unicode())
     # i'd like to make this column a foreign key to activity, infact a self referential
@@ -267,6 +275,7 @@ class RelatedActivity(db.Model):
     # it nontrivial to model. It's probably best just to have it as free text, it will
     # will only be filtered on rather than joined.
     activity = sa.orm.relationship("Activity")
+
 
 class TransactionValue(namedtuple("TransactionValue", "date amount currency")):
     def __composite_values__(self):
@@ -278,9 +287,9 @@ class Transaction(db.Model):
     id = sa.Column(sa.Integer, primary_key=True)
     ref = sa.Column(sa.Unicode, nullable=True)
     activity_id = sa.Column(
-        act_ForeignKey("activity.iati_identifier"),
-        nullable=False,
-        index=True
+            act_ForeignKey("activity.iati_identifier"),
+            nullable=False,
+            index=True
     )
     activity = sa.orm.relationship("Activity")
     description = sa.Column(sa.Unicode, nullable=True)
@@ -294,18 +303,18 @@ class Transaction(db.Model):
     # Development". So the text DFID is being stored in provider_org_text
     provider_org_id = sa.Column(sa.Integer, sa.ForeignKey("organisation.id"))
     provider_org = sa.orm.relationship(
-        "Organisation",
-        primaryjoin=provider_org_id == Organisation.id,
-        foreign_keys=[provider_org_id],
+            "Organisation",
+            primaryjoin=provider_org_id == Organisation.id,
+            foreign_keys=[provider_org_id],
     )
     provider_org_text = sa.Column(sa.Unicode, nullable=True)
     provider_org_activity_id = sa.Column(sa.Unicode, nullable=True)
 
     receiver_org_id = sa.Column(sa.Integer, sa.ForeignKey("organisation.id"))
     receiver_org = sa.orm.relationship(
-        "Organisation",
-        primaryjoin=receiver_org_id == Organisation.id,
-        foreign_keys=[receiver_org_id],
+            "Organisation",
+            primaryjoin=receiver_org_id == Organisation.id,
+            foreign_keys=[receiver_org_id],
     )
     receiver_org_text = sa.Column(sa.Unicode, nullable=True)
     receiver_org_activity_id = sa.Column(sa.Unicode, nullable=True)
@@ -331,24 +340,23 @@ class Transaction(db.Model):
         return u"Transaction(id=%r)" % self.id
 
 
-
 class SectorPercentage(db.Model):
     __tablename__ = "sector_percentage"
     id = sa.Column(sa.Integer, primary_key=True)
     text = sa.Column(sa.Unicode)
     activity_id = sa.Column(
-        act_ForeignKey("activity.iati_identifier"),
-        nullable=True,
-        index=True)
+            act_ForeignKey("activity.iati_identifier"),
+            nullable=True,
+            index=True)
     transaction_id = sa.Column(
-        act_ForeignKey("transaction.id"),
-        nullable=True,
-        index=True)
+            act_ForeignKey("transaction.id"),
+            nullable=True,
+            index=True)
     sector = sa.Column(codelists.Sector.db_type(), nullable=True)
     vocabulary = sa.Column(
-        codelists.Vocabulary.db_type(),
-        default=codelists.Vocabulary.oecd_development_assistance_committee,
-        nullable=False)
+            codelists.Vocabulary.db_type(),
+            default=codelists.Vocabulary.oecd_development_assistance_committee,
+            nullable=False)
     percentage = sa.Column(sa.Numeric, nullable=True)
     activity = sa.orm.relationship("Activity")
 
@@ -357,9 +365,9 @@ class Budget(db.Model):
     __tablename__ = "budget"
     id = sa.Column(sa.Integer, primary_key=True)
     activity_id = sa.Column(
-        act_ForeignKey("activity.iati_identifier"),
-        nullable=False,
-        index=True)
+            act_ForeignKey("activity.iati_identifier"),
+            nullable=False,
+            index=True)
     type = sa.Column(codelists.BudgetType.db_type())
     period_end = sa.Column(sa.Date, nullable=True)
     period_start = sa.Column(sa.Date, nullable=True)
@@ -372,22 +380,22 @@ class Dataset(db.Model):
     __tablename__ = "dataset"
     name = sa.Column(sa.Unicode, primary_key=True)
     first_seen = sa.Column(
-        sa.DateTime,
-        nullable=False,
-        default=sa.func.now())
+            sa.DateTime,
+            nullable=False,
+            default=sa.func.now())
     last_seen = sa.Column(
-        sa.DateTime,
-        nullable=False,
-        default=sa.func.now())
+            sa.DateTime,
+            nullable=False,
+            default=sa.func.now())
     last_modified = sa.Column(sa.DateTime, nullable=True)
-    resources = sa.orm.relationship("Resource", 
-        cascade="all, delete, delete-orphan",
-        passive_deletes=True,
-        backref="dataset")
+    resources = sa.orm.relationship("Resource",
+                                    cascade="all, delete, delete-orphan",
+                                    passive_deletes=True,
+                                    backref="dataset")
     resource_urls = association_proxy(
-        "resources",
-        "url",
-        creator=lambda url: Resource(url=url))
+            "resources",
+            "url",
+            creator=lambda url: Resource(url=url))
     license = sa.Column(sa.Unicode)
     is_open = sa.Column(sa.Boolean)
 
@@ -396,10 +404,10 @@ class Resource(db.Model):
     __tablename__ = "resource"
     url = sa.Column(sa.Unicode, primary_key=True)
     dataset_id = sa.Column(sa.ForeignKey("dataset.name", ondelete='CASCADE'), index=True)
-    last_fetch = sa.Column(sa.DateTime)       # most recent request of this url
+    last_fetch = sa.Column(sa.DateTime)  # most recent request of this url
     last_status_code = sa.Column(sa.Integer)  # status code from last fetch
-    last_succ = sa.Column(sa.DateTime)        # last time status code was 200
-    last_parsed = sa.Column(sa.DateTime)      # when parsing last completed
+    last_succ = sa.Column(sa.DateTime)  # last time status code was 200
+    last_parsed = sa.Column(sa.DateTime)  # when parsing last completed
     last_parse_error = sa.Column(sa.Unicode)  # last error from xml parser
     document = sa.orm.deferred(sa.Column(sa.LargeBinary))
     etag = sa.Column(sa.Unicode)
@@ -424,9 +432,8 @@ class Log(db.Model):
     trace = sa.Column(sa.String)  # the full traceback printout
     msg = sa.Column(sa.String)  # any custom log you may have included
     created_at = sa.Column(
-        sa.DateTime,
-        default=sa.func.now())  # the current timestamp
-
+            sa.DateTime,
+            default=sa.func.now())  # the current timestamp
 
     def __unicode__(self):
         return self.__repr__()
