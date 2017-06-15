@@ -4,8 +4,8 @@
 # These are duplicated here so that requires.io will flag out of date dependencies
 Flask==0.12.2
 Jinja2==2.9.6
-SQLAlchemy==0.9.9
-Flask-SQLAlchemy==1.0
+SQLAlchemy==1.1.10
+Flask-SQLAlchemy==2.2
 Werkzeug==0.12.2
 ckanapi==4.0
 iso8601==0.1.11
@@ -18,12 +18,12 @@ voluptuous==0.10.5
 Flask-Script==2.0.5
 prettytable==0.7.2
 alembic==0.9.2
-gunicorn==0.17.4
+gunicorn==19.7.1
 defusedxml==0.5.0
 redis==2.10.5
 rq==0.8.0
 Unidecode==0.04.20
-requests==2.17.3
+requests==2.18.1
 Flask-RQ==0.2
 flask-heroku==0.1.9
 Flask-And-Redis==0.7
