@@ -22,7 +22,7 @@ gunicorn==19.7.1
 defusedxml==0.5.0
 redis==2.10.5
 rq==0.8.0
-Unidecode==0.04.20
+Unidecode==0.04.21
 requests==2.18.1
 Flask-RQ==0.2
 flask-heroku==0.1.9
