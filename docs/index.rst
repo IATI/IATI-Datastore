@@ -33,9 +33,10 @@ Are there any limitations on the Datastore?
 
 In its current format the store allows you to filter IATI activities by publisher, organisation type, sector, or country as well as by the date of the most recent update. In future all fields will be queryable.
 
-..list-table::Element data per format
+.. list-table:: Element data per format
   :widths: 20 10 10 10
   :header-rows: 1
+
   * - Element
     - XML
     - JSON
