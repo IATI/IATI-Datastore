@@ -33,6 +33,145 @@ Are there any limitations on the Datastore?
 
 In its current format the store allows you to filter IATI activities by publisher, organisation type, sector, or country as well as by the date of the most recent update. In future all fields will be queryable.
 
+..list-table::Element data per format
+  :widths: 20 10 10 10
+  :header-rows: 1
+  * - Element
+    - XML
+    - JSON
+    - CSV
+  * - iati-identifier
+    - yes
+    - yes
+    - yes
+  * - reporting-org
+    - yes
+    - yes
+    - yes
+  * - title
+    - yes
+    - yes
+    - yes
+  * - description
+    - yes
+    - yes
+    - yes
+  * - participating-org
+    - yes
+    - yes
+    - yes
+  * - other-identifier
+    - yes
+    - yes
+    - no
+  * - activity-status
+    - yes
+    - yes
+    - yes
+  * - activity-date
+    - yes
+    - yes
+    - yes
+  * - contact-info
+    - yes
+    - yes
+    - no
+  * - activity-scope
+    - yes
+    - yes
+    - no
+  * - recipient-country
+    - yes
+    - yes
+    - yes
+  * - recipient-region
+    - yes
+    - yes
+    - yes
+  * - location
+    - yes
+    - yes
+    - no
+  * - sector
+    - yes
+    - yes
+    - yes
+  * - country-budget-items
+    - yes
+    - yes
+    - no
+  * - humanitarian-scope
+    - yes
+    - yes
+    - no
+  * - policy-marker
+    - yes
+    - yes
+    - no
+  * - collaboration-type
+    - yes
+    - yes
+    - yes
+  * - default-flow-type
+    - yes
+    - yes
+    - yes
+  * - default-finance-type
+    - yes
+    - yes
+    - yes
+  * - default-aid-type
+    - yes
+    - yes
+    - yes
+  * - default-tied-status
+    - yes
+    - yes
+    - yes
+  * - budget
+    - yes
+    - yes
+    - no
+  * - planned-disbursement
+    - yes
+    - yes
+    - no
+  * - capital-spend
+    - yes
+    - yes
+    - no
+  * - transaction
+    - yes
+    - yes
+    - no
+  * - document-link
+    - yes
+    - yes
+    - no
+  * - related-activity
+    - yes
+    - yes
+    - no
+  * - legacy-data
+    - yes
+    - yes
+    - no
+  * - conditions
+    - yes
+    - yes
+    - no
+  * - result
+    - yes
+    - yes
+    - no
+  * - crs-add
+    - yes
+    - yes
+    - no
+  * - fss
+    - no
+    - no
+    - no
+
+
 In its current CSV format the store allows three different row outputs: where each row represents an activity, transaction or budget item. In future sub-national geographic information and results reporting will also be available.
-
-
