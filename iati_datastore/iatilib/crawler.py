@@ -161,8 +161,8 @@ def fetch_resource(resource):
     :return:
     '''
     headers = {}
-    if resource.last_succ:
-        headers['If-Modified-Since'] = http_date(resource.last_succ)
+    if resource.last_parsed:
+        headers['If-Modified-Since'] = http_date(resource.last_parsed)
     if resource.etag:
         headers["If-None-Match"] = resource.etag.encode('ascii')
     resp = requests.get(resource.url, headers=headers)
