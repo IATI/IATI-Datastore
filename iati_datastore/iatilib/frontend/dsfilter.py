@@ -27,7 +27,7 @@ def _filter(query, args):
     #    Activity.recipient_country_percentages, CountryPercentage.country)
     def recipient_country(country_code):
         return Activity.recipient_country_percentages.any(
-            CountryPercentage.country == country_code
+            CountryPercentage.country.op('~')('\s*{}\s*'.format(country_code))
         )
 
     def recipient_country_text(country):
