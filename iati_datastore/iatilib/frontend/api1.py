@@ -67,6 +67,28 @@ def about_dataset(dataset):
             resources=resources,
     )
 
+
+@api.route('/about/dataset/nest')
+def nest_about_dataset():
+    datasets_query = db.session.query(Dataset.name)
+    datasets = dict()
+    for ds in datasets_query.all():
+        resources = []
+        for r in ds.resources:
+            resources.append({
+                'url': r.url,
+                'last_fetch': r.last_fetch.isoformat() if r.last_fetch else None,
+                'last_status_code': r.last_status_code,
+                'last_successful_fetch': r.last_succ.isoformat() if r.last_succ else None,
+                'last_parsed': r.last_parsed.isoformat() if r.last_parsed else None,
+                'num_of_activities': r.activities.count(),
+            })
+
+        datasets.add({ds.name: {ds.resources}})
+
+    return jsonify(datasets=datasets)
+
+
 @api.route('/about/deleted')
 def deleted_activities():
     deleted_activities = db.session.query(DeletedActivity)\
