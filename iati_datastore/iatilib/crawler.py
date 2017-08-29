@@ -17,7 +17,7 @@ from iatilib.loghandlers import DatasetMessage as _
 log = logging.getLogger("crawler")
 
 CKAN_WEB_BASE = 'https://www.iatiregistry.org/dataset/%s'
-CKAN_API = 'https://www.iatiregistry.org/'
+CKAN_API = 'https://www.iatiregistry.org'
 
 registry = ckanapi.RemoteCKAN(CKAN_API)
 
