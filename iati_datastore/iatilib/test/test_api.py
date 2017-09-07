@@ -23,6 +23,14 @@ class TestAbout(ClientTestCase):
         resp = self.client.get('/api/1/about')
         self.assertEquals(200, resp.status_code)
 
+class TestAboutDatasets(ClientTestCase):
+    def test_about_datasets_nest(self):
+        """Check that the `about/datasets/nest` page has a 200 response and contains expected data."""
+        resp = self.client.get('/api/1/about/datasets/nest')
+        data = json.loads(resp.data)
+        self.assertEquals(200, resp.status_code)
+        self.assertIn("datasets", data)
+
 class TestDeletedActivitiesView(ClientTestCase):
     def test_deleted_activities(self):
         db.session.add(model.DeletedActivity(
@@ -35,7 +43,7 @@ class TestDeletedActivitiesView(ClientTestCase):
         deleted_activities = data['deleted_activities']
         self.assertEquals("test", deleted_activities[0]['iati_identifier'])
         self.assertEquals("2000-01-01", deleted_activities[0]['deletion_date'])
-        
+
 
 class TestEmptyDb_JSON(ClientTestCase):
     url = '/api/1/access/activity'
@@ -341,7 +349,7 @@ class CommonTransactionTests(object):
         csv_headers = output[0]
         i = csv_headers.index('transaction_receiver-org_receiver-activity-id')
         self.assertEquals(u'GB-CHC-1068839-dfid_ag_11-13', output[1][i])
-        
+
     def test_description(self):
         load_fix("transaction_provider.xml")
         output = list(csv.reader(StringIO(self.client.get(self.base_url).data)))
@@ -358,14 +366,14 @@ class CommonTransactionTests(object):
         csv_headers = output[0]
         i = csv_headers.index('transaction_flow-type_code')
         self.assertEquals(u'30', output[1][i])
-        
+
     def test_finance_type(self):
         load_fix("transaction_fields_code_lists.xml")
         output = list(csv.reader(StringIO(self.client.get(self.base_url).data)))
         csv_headers = output[0]
         i = csv_headers.index('transaction_finance-type_code')
         self.assertEquals(u'110', output[1][i])
-        
+
     def test_aid_type(self):
         load_fix("transaction_fields_code_lists.xml")
         output = list(csv.reader(StringIO(self.client.get(self.base_url).data)))
@@ -379,7 +387,7 @@ class CommonTransactionTests(object):
         csv_headers = output[0]
         i = csv_headers.index('transaction_tied-status_code')
         self.assertEquals(u'5', output[1][i])
-        
+
     def test_disbursement_channel_status(self):
         load_fix("transaction_fields_code_lists.xml")
         output = list(csv.reader(StringIO(self.client.get(self.base_url).data)))
@@ -421,4 +429,3 @@ class TestBudgetBySectorView(ClientTestCase, ApiViewMixin):
     base_url = '/api/1/access/budget/by_sector.csv'
     filter = 'iatilib.frontend.api1.BudgetsBySectorView.filter'
     serializer = 'iatilib.frontend.api1.BudgetsBySectorView.serializer'
-
