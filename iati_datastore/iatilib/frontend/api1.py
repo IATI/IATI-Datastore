@@ -70,6 +70,7 @@ def about_dataset(dataset):
 
 @api.route('/about/datasets/nest')
 def nest_about_dataset():
+    """Output a JSON formatted list of dataset dictionaries containing their resource details."""
     dataset_resources = db.session.query(Dataset).join(Dataset.resources)
     datasets = dict()
 
