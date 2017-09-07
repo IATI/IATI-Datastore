@@ -8,10 +8,10 @@ To retrieve metadata on the datasets known to the datastore.
 
 -  ``/api/1/about/dataset`` retrieves the list of datasets currently in
    the datastore
--  ``/api/1/about/dataset/<dataset>`` retreives specific details on the
+-  ``/api/1/about/dataset/<dataset>`` retrieves specific details on the
    dataset
    -  ``last_modified`` - the date stamp that the dataset was updated in
-      the iati registry.
+      the IATI registry.
    -  ``resources``
 
       -  ``url`` - url datastore used to fetch the resource
@@ -44,7 +44,7 @@ In JSON
 -  ``/api/1/error/dataset/<dataset_id>`` retrieves the list of datasets
    that have errored (in no order)
 
-   -  ``datestamp`` - date/time that the error occured
+   -  ``datestamp`` - date/time that the error occurred
    -  ``resource_url`` - url of the errored resource/dataset
    -  ``msg`` - error message
    -  ``traceback`` - detailed traceback of error, useful if you are a
