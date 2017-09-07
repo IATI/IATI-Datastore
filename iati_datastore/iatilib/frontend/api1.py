@@ -68,25 +68,23 @@ def about_dataset(dataset):
     )
 
 
-@api.route('/about/dataset/nest')
+@api.route('/about/datasets/nest')
 def nest_about_dataset():
-    datasets_query = db.session.query(Dataset.name)
+    dataset_resources = db.session.query(Dataset).join(Dataset.resources)
     datasets = dict()
-    for ds in datasets_query.all():
-        resources = []
-        for r in ds.resources:
-            resources.append({
-                'url': r.url,
-                'last_fetch': r.last_fetch.isoformat() if r.last_fetch else None,
-                'last_status_code': r.last_status_code,
-                'last_successful_fetch': r.last_succ.isoformat() if r.last_succ else None,
-                'last_parsed': r.last_parsed.isoformat() if r.last_parsed else None,
-                'num_of_activities': r.activities.count(),
-            })
 
-        datasets.add({ds.name: {ds.resources}})
+    for dataset in dataset_resources:
+        resources = {
+            'url': dataset.resources[0].url,
+            'last_fetch': dataset.resources[0].last_fetch.isoformat() if dataset.resources[0].last_fetch else None,
+            'last_status_code': dataset.resources[0].last_status_code,
+            'last_successful_fetch': dataset.resources[0].last_succ.isoformat() if dataset.resources[0].last_succ else None,
+            'last_parsed': dataset.resources[0].last_parsed.isoformat() if dataset.resources[0].last_parsed else None,
+            'num_of_activities': dataset.resources[0].activities.count(),
+        }
+        datasets[dataset.name] = resources
 
-    return jsonify(datasets=datasets)
+    return jsonify(datasets=[{dataset: datasets[dataset]} for dataset in datasets])
 
 
 @api.route('/about/deleted')
