@@ -10,9 +10,6 @@ To retrieve metadata on the datasets known to the datastore.
    the datastore
 -  ``/api/1/about/dataset/<dataset>`` retreives specific details on the
    dataset
--  ``/api/1/about/resource?url=<dataset>`` retreives specific details on
-   the dataset
-
    -  ``last_modified`` - the date stamp that the dataset was updated in
       the iati registry.
    -  ``resources``
@@ -25,6 +22,8 @@ To retrieve metadata on the datasets known to the datastore.
       -  ``last_parsed`` - last date resource was successfully parsed
       -  ``num_of_activities`` number of activities datastore has
          successfully parsed and stored
+-   ``/api/1/about/datasets/nest`` retrieves the list of datasets currently
+   in the datastore with specific details (as shown above) for each dataset.
 
 Errors
 ------
