@@ -71,17 +71,20 @@ def about_dataset(dataset):
 @api.route('/about/datasets/nest')
 def nest_about_dataset():
     """Output a JSON formatted list of dataset dictionaries containing their resource details."""
-    dataset_resources = db.session.query(Dataset).join(Dataset.resources)
+    dataset_resources = db.session.query(Dataset).options(db.subqueryload(Dataset.resources))
     datasets = dict()
 
     for dataset in dataset_resources:
+        if len(dataset.resources) == 0:
+            continue
+        ds_r = dataset.resources[0]
         resources = {
-            'url': dataset.resources[0].url,
-            'last_fetch': dataset.resources[0].last_fetch.isoformat() if dataset.resources[0].last_fetch else None,
-            'last_status_code': dataset.resources[0].last_status_code,
-            'last_successful_fetch': dataset.resources[0].last_succ.isoformat() if dataset.resources[0].last_succ else None,
-            'last_parsed': dataset.resources[0].last_parsed.isoformat() if dataset.resources[0].last_parsed else None,
-            'num_of_activities': dataset.resources[0].activities.count(),
+            'url': ds_r.url,
+            'last_fetch': ds_r.last_fetch.isoformat() if ds_r.last_fetch else None,
+            'last_status_code': ds_r.last_status_code,
+            'last_successful_fetch': ds_r.last_succ.isoformat() if ds_r.last_succ else None,
+            'last_parsed': ds_r.last_parsed.isoformat() if ds_r.last_parsed else None,
+            'num_of_activities': ds_r.activities.count(),
         }
         datasets[dataset.name] = resources
 
