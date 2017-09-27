@@ -84,7 +84,6 @@ def nest_about_dataset():
             'last_status_code': ds_r.last_status_code,
             'last_successful_fetch': ds_r.last_succ.isoformat() if ds_r.last_succ else None,
             'last_parsed': ds_r.last_parsed.isoformat() if ds_r.last_parsed else None,
-            # 'num_of_activities': ds_r.activities.count(),
         }
         datasets[dataset.name] = resources
 
