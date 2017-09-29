@@ -32,8 +32,6 @@ For example, on Ubuntu:
 Installing for development
 --------------------------
 
-[![Build Status](https://travis-ci.org/IATI/IATI-Datastore.svg?branch=master)](https://travis-ci.org/IATI/IATI-Datastore)
-
 ```
 # Clone the source
 git clone https://github.com/IATI/IATI-Datastore.git
