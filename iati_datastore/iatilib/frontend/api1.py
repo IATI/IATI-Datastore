@@ -68,7 +68,7 @@ def about_dataset(dataset):
     )
 
 
-@api.route('/about/datasets/nest')
+@api.route('/about/datasets/fetch_status')
 def nest_about_dataset():
     """Output a JSON formatted list of dataset dictionaries containing their resource details.
     This is an experimental API call and not intended for general use.
