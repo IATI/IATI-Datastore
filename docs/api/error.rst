@@ -22,8 +22,6 @@ To retrieve metadata on the datasets known to the datastore.
       -  ``last_parsed`` - last date resource was successfully parsed
       -  ``num_of_activities`` number of activities datastore has
          successfully parsed and stored
--   ``/api/1/about/datasets/nest`` retrieves the list of datasets currently
-   in the datastore with specific details (as shown above) for each dataset.
 
 Errors
 ------
