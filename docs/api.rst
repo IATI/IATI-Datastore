@@ -43,212 +43,214 @@ Available filters
 iati-identifier
 ```````````````
 
-Returns activities matching the specified `IATI Identifier <http://iatistandard.org/activity-standard/iati-identifier/>`__ element.  In practice this should return one activity, as each activity should contain a `IATI Identifier <http://iatistandard.org/activity-standard/iati-identifier/>`__ value.
+Returns activities matching your specified `IATI Identifier <http://iatistandard.org/activity-standard/iati-identifier/>`__ value.  In practice, no more than one activity should be returned, as each activity should contain a unique `IATI Identifier <http://iatistandard.org/activity-standard/iati-identifier/>`__ value.
 
 Parameters:
-    @iati-identifier: String denoting an individual IATI activity
+    iati-identifier: String denoting an individual IATI activity ID
 
 Example API call:
-    `/api/1/access/activity.xml?iati-identifier=NL-KVK-41177206-C-002350 <http://datastore.iatistandard.org/api/1/access/activity.xml?iati-identifier=NL-KVK-41177206-C-002350>`__
+    `iati-identifier=NL-KVK-41177206-C-002350 <http://datastore.iatistandard.org/api/1/access/activity.xml?iati-identifier=NL-KVK-41177206-C-002350>`__
 
 
 recipient-country
 `````````````````
 
-Returns activities where the country contained within a `recipient-country <http://iatistandard.org/201/activity-standard/iati-activities/iati-activity/recipient-country/>`__ element matches a specified ISO country code.
+Returns activities where the `recipient-country <http://iatistandard.org/activity-standard/iati-activities/iati-activity/recipient-country/>`__ element has a @code attribute value which matches your specified ISO country code.
 
 Parameters:
-    @recipient-country: 2-digit ISO country code which appears on the `country codelist <http://iatistandard.org/201/codelists/Country/>`__
+    recipient-country: 2-digit ISO country code which appears on the `country codelist <http://iatistandard.org/codelists/Country/>`__
 
 Example API call:
-    `/api/1/access/activity.xml?recipient-country=SS <http://datastore.iatistandard.org/api/1/access/activity.xml?recipient-country=SS>`__
+    `recipient-country=SS <http://datastore.iatistandard.org/api/1/access/activity.xml?recipient-country=SS>`__
 
 
 recipient-region
 ````````````````
 
-Returns activities where the contained within with a `recipient-region <http://iatistandard.org/201/activity-standard/iati-activities/iati-activity/recipient-region/>`__ element matches a specified DAC region code.
+Returns activities where the `recipient-region <http://iatistandard.org/activity-standard/iati-activities/iati-activity/recipient-region/>`__ element has a @code attribute value which matches your specified DAC region code..
 
 Parameters:
-    @recipient-region: 3-digit DAC region code which appears on the `region codelist <http://iatistandard.org/201/codelists/Region/>`__
+    recipient-region: 3-digit DAC region code which appears on the `region codelist <http://iatistandard.org/codelists/Region/>`__
 
 Example API call:
-    `/api/1/access/activity.xml?recipient-region=298 <http://datastore.iatistandard.org/api/1/access/activity.xml?recipient-region=298>`__
+    `recipient-region=298 <http://datastore.iatistandard.org/api/1/access/activity.xml?recipient-region=298>`__
 
 
 reporting-org
 `````````````
 
-Returns activities where the value contained within a `reporting-org <http://iatistandard.org/201/activity-standard/iati-activities/iati-activity/reporting-org/>`__ element matches your specified `Organisation identifier <http://iatistandard.org/201/organisation-identifiers/>`__ string.
+Returns activities where the `reporting-org <http://iatistandard.org/activity-standard/iati-activities/iati-activity/reporting-org/>`__ element has a @ref attribute value which matches your specified `Organisation identifier <http://iatistandard.org/organisation-identifiers/>`__ string.
 
 Parameters:
-    @reporting-org: Organisation identifier string.
+    reporting-org: Organisation identifier string.
 
 Example API call:
-    `/api/1/access/activity.xml?reporting-org=NL-KVK-41177206 <http://datastore.iatistandard.org/api/1/access/activity.xml?reporting-org=NL-KVK-41177206>`__
+    `reporting-org=NL-KVK-41177206 <http://datastore.iatistandard.org/api/1/access/activity.xml?reporting-org=NL-KVK-41177206>`__
 
 
 reporting-org.type
 ``````````````````
 
-Returns activities where the value contained within a `reporting-org <http://iatistandard.org/201/activity-standard/iati-activities/iati-activity/reporting-org/>`__ @type attribute matches your specified value.
+Returns activities where the `reporting-org <http://iatistandard.org/activity-standard/iati-activities/iati-activity/reporting-org/>`__ element has a @type attribute value which matches your specified value.
 
 Parameters:
-    @recipient-org.type: 2-digit value which appears on the `organisation type codelist<http://iatistandard.org/201/codelists/OrganisationType/>`__
+    recipient-org.type: 2-digit value which appears on the `organisation type codelist<http://iatistandard.org/codelists/OrganisationType/>`__
 
 Example API call:
-    `/api/1/access/activity.xml?reporting-org.type=10 </api/1/access/activity.xml?reporting-org.type=10>`__
+    `reporting-org.type=10 <http://datastore.iatistandard.org/api/1/access/activity.xml?reporting-org.type=10>`__
 
 
 sector
 ``````
 
-Returns activities where the value contained within a `sector <http://iatistandard.org/201/codelists/Sector/>`__ element matches a specified DAC sector code.
+Returns activities where the `sector <http://iatistandard.org/codelists/Sector/>`__ element has a @code attribute value which matches your specified DAC sector code.
 
 Parameters:
-    @sector: 5-digit DAC sector code which appears on the `sector codelist <http://iatistandard.org/201/codelists/Sector/>`__
+    sector: 5-digit DAC sector code which appears on the `sector codelist <http://iatistandard.org/codelists/Sector/>`__
 
 Example API call:
-    `/api/1/access/activity.xml?sector=11110 <http://datastore.iatistandard.org/api/1/access/activity.xml?sector=11110>`__
+    `sector=11110 <http://datastore.iatistandard.org/api/1/access/activity.xml?sector=11110>`__
 
 
 policy-marker
 `````````````
 
-Returns activities containing a `policy-marker <http://iatistandard.org/201/activity-standard/iati-activities/iati-activity/policy-marker/>`__ element which matches a your specified policy-marker value.
+Returns activities where a `policy-marker <http://iatistandard.org/activity-standard/iati-activities/iati-activity/policy-marker/>`__ element has a @code attribute value which matches your specified policy-marker value.
 
 Parameters:
-    @policy-marker: 1-digit value which appears on the `policy marker codelist<http://iatistandard.org/201/codelists/PolicyMarker/>`__
+    policy-marker: 1-digit value which appears on the `policy marker codelist<http://iatistandard.org/codelists/PolicyMarker/>`__
 
 Example API call:
-    `/api/1/access/activity.xml?policy-marker=1 <http://datastore.iatistandard.org/api/1/access/activity.xml?policy-marker=1>`__
+    `policy-marker=1 <http://datastore.iatistandard.org/api/1/access/activity.xml?policy-marker=1>`__
 
 
 participating-org
 ``````````````````
 
-Returns activities where the the value contained within the `participating-org <http://iatistandard.org/201/activity-standard/iati-activities/iati-activity/reporting-org/>`__ element matches your specified participating-org identification string.
+Returns activities where the `participating-org <http://iatistandard.org/activity-standard/iati-activities/iati-activity/reporting-org/>`__ element has a @ref attribute value which matches your specified participating-org identification string.
 
 Parameters:
-    @participating-org: Identification string for the organisation who is participating
+    participating-org: Identification string for the organisation who is participating
 
 Example API call:
-    `/api/1/access/activity.xml?participating-org=NL-KVK-41177206 <http://datastore.iatistandard.org/api/1/access/activity.xml?participating-org=NL-KVK-41177206>`__
+    `participating-org=NL-KVK-41177206 <http://datastore.iatistandard.org/api/1/access/activity.xml?participating-org=NL-KVK-41177206>`__
 
 
 participating-org.role
 ``````````````````````
 
-Returns activities where the value contained within the `participating-org <http://iatistandard.org/201/activity-standard/iati-activities/iati-activity/participating-org/>`__ @role attribute matches your specified value.
+Returns activities where the `participating-org <http://iatistandard.org/activity-standard/iati-activities/iati-activity/participating-org/>`__ element has a @role attribute value which matches your specified value.
 
 Parameters:
-    @participating-org.role: 1-digit value which appears on the organisation role codelist
+    participating-org.role: 1-digit value which appears on the organisation role codelist
 
 Example API call:
-    `/api/1/access/activity.xml?participating-org.role=1 <http://datastore.iatistandard.org/api/1/access/activity.xml?participating-org.role=1>`__
+    `participating-org.role=1 <http://datastore.iatistandard.org/api/1/access/activity.xml?participating-org.role=1>`__
 
 
 related-activity
 ````````````````
 
-Returns activities where the value contained within at least one `related-activity <http://iatistandard.org/201/activity-standard/iati-activities/iati-activity/related-activity/>`__ element within an activity matches a specified `IATI activity identifier <http://iatistandard.org/201/activity-standard/overview/iati-identifier/>`__ string.
+Returns activities where the `related-activity <http://iatistandard.org/activity-standard/iati-activities/iati-activity/related-activity/>`__ element has a @ref attribute value which matches your specified `IATI activity identifier <http://iatistandard.org/activity-standard/overview/iati-identifier/>`__ string.
 
 Parameters:
-    @related-activity: String denoting an `IATI activity identifier <http://iatistandard.org/201/activity-standard/overview/iati-identifier/>`__
+    related-activity: String denoting an `IATI activity identifier <http://iatistandard.org/activity-standard/overview/iati-identifier/>`__
 
 Example API call:
-    `/api/1/access/activity.xml?related-activity=US-7-GB-10-e76c5505 <http://datastore.iatistandard.org/api/1/access/activity.xml?related-activity=US-7-GB-10-e76c5505>`__
+    `related-activity=US-7-GB-10-e76c5505 <http://datastore.iatistandard.org/api/1/access/activity.xml?related-activity=US-7-GB-10-e76c5505>`__
 
 
 transaction
 ```````````
 
-Returns activities containing at least one `transaction element <http://iatistandard.org/201/activity-standard/iati-activities/iati-activity/transaction/>`__ where the @ref attribute matches your given string.
+Returns activities containing at least one `transaction element <http://iatistandard.org/activity-standard/iati-activities/iati-activity/transaction/>`__ where the @ref attribute matches your given string.
 
 Parameters:
-    @transaction: String denoting an `transaction @ref attribute <http://iatistandard.org/201/activity-standard/iati-activities/iati-activity/transaction/#attributes>`__
+    transaction: String denoting an `transaction @ref attribute <http://iatistandard.org/activity-standard/iati-activities/iati-activity/transaction/#attributes>`__
 
 Example API call:
-    `/api/1/access/activity.xml?transaction=15458 <http://datastore.iatistandard.org/api/1/access/activity.xml?transaction=15458>`__
+    `transaction=15458 <http://datastore.iatistandard.org/api/1/access/activity.xml?transaction=15458>`__
 
 
 transaction_provider-org
 ````````````````````````
 
-Returns activities containing at least one `transaction element <http://iatistandard.org/201/activity-standard/iati-activities/iati-activity/transaction/>`__ where the provider-org element matches your specified organisation identifier string.
+Returns activities containing at least one `transaction element <http://iatistandard.org/activity-standard/iati-activities/iati-activity/transaction/>`__ where the provider-org element has a @ref attribute value which matches your specified organisation identifier string.
 
 Parameters:
-    @transaction_provider-org: `Organisation identifier string <http://iatistandard.org/201/organisation-identifiers/>`__ for the organisation issuing who provided transaction funds
+    transaction_provider-org: `Organisation identifier string <http://iatistandard.org/organisation-identifiers/>`__ for the organisation issuing who provided transaction funds
 
 Example API call:
-    `/api/1/access/activity.xml?transaction_provider-org=GB-1 <http://datastore.iatistandard.org/api/1/access/activity.xml?transaction_provider-org=GB-1>`__
+    `transaction_provider-org=GB-1 <http://datastore.iatistandard.org/api/1/access/activity.xml?transaction_provider-org=GB-1>`__
 
 
 transaction_provider-org.provider-activity-id
 `````````````````````````````````````````````
 
-Returns activities containing at least one `transaction element <http://iatistandard.org/201/activity-standard/iati-activities/iati-activity/transaction/>`__ where the `provider-activity-id <http://iatistandard.org/201/activity-standard/iati-activities/iati-activity/transaction/provider-org/#attributes>`__ element matches a specified `IATI activity identifier <http://iatistandard.org/201/activity-standard/overview/iati-identifier/>`__ string.
+Returns activities containing at least one `transaction element <http://iatistandard.org/activity-standard/iati-activities/iati-activity/transaction/>`__ where the `provider-activity-id <http://iatistandard.org/activity-standard/iati-activities/iati-activity/transaction/provider-org/#attributes>`__ element matches your specified `IATI activity identifier <http://iatistandard.org/activity-standard/overview/iati-identifier/>`__ string.
 
 Parameters:
-    @transaction_provider-org.provider-activity-id: String denoting an `IATI activity identifier <http://iatistandard.org/201/activity-standard/overview/iati-identifier/>`__
+    transaction_provider-org.provider-activity-id: String denoting an `IATI activity identifier <http://iatistandard.org/activity-standard/overview/iati-identifier/>`__
 
 Example API call:
-    `/api/1/access/activity.xml?transaction_provider-org.provider-activity-id=GB-1-202505 <http://datastore.iatistandard.org/api/1/access/activity.xml?transaction_provider-org.provider-activity-id=GB-1-202505>`__
+    `transaction_provider-org.provider-activity-id=GB-1-202505 <http://datastore.iatistandard.org/api/1/access/activity.xml?transaction_provider-org.provider-activity-id=GB-1-202505>`__
 
 
 transaction_receiver-org
 ````````````````````````
 
-Returns activities containing at least one `transaction element <http://iatistandard.org/201/activity-standard/iati-activities/iati-activity/transaction/>`__ where funds have been transferred to an organisation with the specified `Organisation identifier <http://iatistandard.org/201/organisation-identifiers/>`__ string.
+Returns activities containing at least one `transaction element <http://iatistandard.org/activity-standard/iati-activities/iati-activity/transaction/>`__ where funds have been transferred to an organisation with your specified `Organisation identifier <http://iatistandard.org/organisation-identifiers/>`__ string.
 
 Parameters:
-    @transaction_receiver-org: `Organisation identifier string <http://iatistandard.org/201/organisation-identifiers/>`__ for the organisation issuing who received transaction funds
+    transaction_receiver-org: `Organisation identifier string <http://iatistandard.org/organisation-identifiers/>`__ for the organisation issuing who received transaction funds
 
 Example API call:
-    `/api/1/access/activity.xml?transaction_receiver-org=GB-CHC-1108464 <http://datastore.iatistandard.org/api/1/access/activity.xml?transaction_receiver-org=GB-CHC-1108464>`__
+    `transaction_receiver-org=GB-CHC-1108464 <http://datastore.iatistandard.org/api/1/access/activity.xml?transaction_receiver-org=GB-CHC-1108464>`__
 
 
 transaction_receiver-org.receiver-activity-id
 `````````````````````````````````````````````
 
-Returns activities containing at least one `transaction element <http://iatistandard.org/201/activity-standard/iati-activities/iati-activity/transaction/>`__ where the `receiver-org <http://iatistandard.org/201/activity-standard/iati-activities/iati-activity/transaction/receiver-org/#attributes>`__
-element has an @receiver-activity-id attribute which matches the specified `IATI activity identifier string <http://iatistandard.org/201/activity-standard/overview/iati-identifier/>`__.
+Returns activities containing at least one `transaction element <http://iatistandard.org/activity-standard/iati-activities/iati-activity/transaction/>`__ where the `receiver-org <http://iatistandard.org/activity-standard/iati-activities/iati-activity/transaction/receiver-org/#attributes>`__
+element has an @receiver-activity-id attribute which matches your specified `IATI activity identifier string <http://iatistandard.org/activity-standard/overview/iati-identifier/>`__.
 
 Parameters:
-    @transaction_receiver-org.receiver-activity-id: String denoting an `IATI activity identifier <http://iatistandard.org/201/activity-standard/overview/iati-identifier/>`__
+    transaction_receiver-org.receiver-activity-id: String denoting an `IATI activity identifier <http://iatistandard.org/activity-standard/overview/iati-identifier/>`__
 
 Example API call:
-    `/api/1/access/activity.xml?transaction_receiver-org.receiver-activity-id=GB-CHC-1099776-B8 <http://datastore.iatistandard.org/api/1/access/activity.xml?transaction_receiver-org.receiver-activity-id=GB-CHC-1099776-B8>`__
+    `transaction_receiver-org.receiver-activity-id=GB-CHC-1099776-B8 <http://datastore.iatistandard.org/api/1/access/activity.xml?transaction_receiver-org.receiver-activity-id=GB-CHC-1099776-B8>`__
 
 
 start-date
 ``````````
 
-Returns activities where the date with in @activity-date element (with type equivalent to start-planned or start-actual) of an activity is less or greater than your specified query.
+Returns activities where the value of an `@activity-date attribute <http://iatistandard.org/activity-standard/iati-activities/iati-activity/activity-date/#attributes>`__ within an `@activity-date <http://iatistandard.org/activity-standard/iati-activities/iati-activity/activity-date>`__ element (with `@type <http://iatistandard.org/activity-standard/iati-activities/iati-activity/activity-date/#activity-date>`__ equivalent to start-planned or start-actual) is chronologically before or after your specified query value.
 
-This API element has two sub-elements: to return activities less than your specified date, use start-date__lt, or to return activities less than your specified date use start-date__gt
+To return activities before the specified date, use ‘start-date__lt’
+To return activities after the specified date use ‘start-date__gt’
 
 Parameters:
-    @start-date: ISO format date (YYYY-MM-DD). 
+    start-date: ISO format date (YYYY-MM-DD).
 
 Example API calls:
-    `/api/1/access/activity.xml?start-date__lt=2015-01-01 <http://datastore.iatistandard.org/api/1/access/activity.xml?start-date__lt=2015-01-01>`__
-    `/api/1/access/activity.xml?start-date__gt=2015-01-01 <http://datastore.iatistandard.org/api/1/access/activity.xml?start-date__gt=2015-01-01>`__
+    `start-date__lt=2015-01-01 <http://datastore.iatistandard.org/api/1/access/activity.xml?start-date__lt=2015-01-01>`__
+    `start-date__gt=2015-01-01 <http://datastore.iatistandard.org/api/1/access/activity.xml?start-date__gt=2015-01-01>`__
 
 
 end-date
 ````````
 
-Returns activities where the @activity-date element (with type equivalent to end-planned or end-actual) of an activity is less or greater than your specified query.
+Returns activities where the value of an `@activity-date attribute <http://iatistandard.org/activity-standard/iati-activities/iati-activity/activity-date/#attributes>`__ within an `@activity-date <http://iatistandard.org/activity-standard/iati-activities/iati-activity/activity-date>`__ element (with `@type <http://iatistandard.org/activity-standard/iati-activities/iati-activity/activity-date/#activity-date>`__ equivalent to end-planned or end-actual) is chronologically before or after your specified query value.
 
-This API element has two sub-elements: to return activities less than your specified date, use end-date__lt, or to return activities less than your specified date use end-date__gt
+To return activities before the specified date, use ‘end-date__lt’
+To return activities after the specified date use ‘end-date__gt’
 
 Parameters:
-    @end-date: ISO format date (YYYY-MM-DD). 
+    end-date: ISO format date (YYYY-MM-DD).
 
-Example API call:
-    `/api/1/access/activity.xml?end-date__lt=2015-01-01 <http://datastore.iatistandard.org/api/1/access/activity.xml?end-date__lt=2015-01-01>`__
-    `/api/1/access/activity.xml?end-date__gt=2015-01-01 <http://datastore.iatistandard.org/api/1/access/activity.xml?end-date__gt=2015-01-01>`__
+Example API calls:
+    `end-date__lt=2015-01-01 <http://datastore.iatistandard.org/api/1/access/activity.xml?start-date__lt=2015-01-01>`__
+    `end-date__gt=2015-01-01 <http://datastore.iatistandard.org/api/1/access/activity.xml?start-date__gt=2015-01-01>`__
 
 
 .. _`last-change`:
@@ -256,18 +258,17 @@ Example API call:
 last-change
 ```````````
 
-Returns activities where the observed last change the of an activity is less or greater than your specified query.  
+Returns activities where the observed last change the of an activity is chronologically before or after your specified query value. This information is provided by Datastore update processes, rather than the actual IATI data.
 
-This differs from the `last-updated-datetime`_. filter, as the last-date filter is based on when the Datastore process observed a change in data. The `last-updated-datetime`_. filter returns data based on the @last-updated-datetime attribute contained within the data itself.
-
-This API element has two sub-elements: to return activities less than your specified date, use last-change__lt, or to return activities less than your specified date use last-change__gt
+To return activities before the specified date use ‘last-change__lt’
+To return activities after the specified date use ‘last-change__gt’
 
 Parameters:
-    @last-change: ISO format date (YYYY-MM-DD). 
+    last-change: ISO format date (YYYY-MM-DD).
 
 Example API calls:
-    `/api/1/access/activity.xml?last-change__lt=2009-01-01 <http://datastore.iatistandard.org/api/1/access/activity.xml?last-change__lt=2009-01-01>`__
-    `/api/1/access/activity.xml?last-change__gt=2009-01-01 <http://datastore.iatistandard.org/api/1/access/activity.xml?last-change__gt=2009-01-01>`__
+    `last-change__lt=2009-01-01 <http://datastore.iatistandard.org/api/1/access/activity.xml?last-change__lt=2009-01-01>`__
+    `last-change__gt=2009-01-01 <http://datastore.iatistandard.org/api/1/access/activity.xml?last-change__gt=2009-01-01>`__
 
 
 .. _`last-updated-datetime`:
@@ -275,30 +276,29 @@ Example API calls:
 last-updated-datetime
 `````````````````````
 
-Returns activities where the @last-updated-datetime attribute of an activity is less or greater than your specified query.
+Returns activities where the @last-updated-datetime attribute of an activity is chronologically before or after your specified query value.
 
-This differs from the `last-change`_. filter, as the last-updated-datetime filter returns data based on the @last-updated-datetime attribute contained within the data itself.  The `last-change`_. filter is based on when the Datastore process observed a change in data.
-
-This API element has two sub-elements: to return activities less than your specified date, use last-updated-datetime__lt, or to return activities less than your specified date use last-updated-datetime__gt
+To return activities less than the specified date use ‘last-updated-datetime__lt’
+To return activities less than the specified date use ‘last-updated-datetime__gt’
 
 Parameters:
-    @last-updated-datetime: ISO format date (YYYY-MM-DD). 
+    last-updated-datetime: ISO format date (YYYY-MM-DD).
 
 Example API calls:
-    `/api/1/access/activity.xml?last-updated-datetime__lt=2015-01-01 <http://datastore.iatistandard.org/api/1/access/activity.xml?last-updated-datetime__lt=2015-01-01>`__
-    `/api/1/access/activity.xml?last-updated-datetime__gt=2010-01-01 <http://datastore.iatistandard.org/api/1/access/activity.xml?last-updated-datetime__gt=2010-01-01>`__
+    `last-updated-datetime__lt=2015-01-01 <http://datastore.iatistandard.org/api/1/access/activity.xml?last-updated-datetime__lt=2015-01-01>`__
+    `last-updated-datetime__gt=2010-01-01 <http://datastore.iatistandard.org/api/1/access/activity.xml?last-updated-datetime__gt=2010-01-01>`__
 
 
 registry-dataset
 ````````````````
 
-Returns activities contained within a specified registry dataset.
+Returns activities contained within your specified registry dataset.
 
 Parameters:
-    @registry-dataset: string name of the specified registry dataset
+    registry-dataset: string name of the specified registry dataset
 
 Example API call:
-    `/api/1/access/activity.xml?registry-dataset=dfid-af <http://datastore.iatistandard.org/api/1/access/activity.xml?registry-dataset=dfid-af>`__
+    `registry-dataset=dfid-af <http://datastore.iatistandard.org/api/1/access/activity.xml?registry-dataset=dfid-af>`__
 
 
 
@@ -306,7 +306,7 @@ Example API call:
 Combining filters
 ~~~~~~~~~~~~~~~~~
 
-All of the above filters can be combined using the & character.  The resulting query will return activities which match all of the specified criteria.
+All of the above filters can be combined using the & character.  The resulting query will return activities which match all of your specified criteria.
 
 Example API call:
     `/api/1/access/activity.xml?reporting-org=GB-1&recipient-country=CD <http://datastore.iatistandard.org/api/1/access/activity.xml?reporting-org=GB-1&recipient-country=CD>`__
@@ -349,7 +349,7 @@ Setting a number of maximum results
 The maximum number of results to be returned on a ‘page’ can be set using the limit parameter.
 
 Parameters:
-    @limit: Maximum number of activities to be returned
+    limit: Maximum number of activities to be returned
 
 Example API call:
     `/api/1/access/activity.xml?limit=100 <http://datastore.iatistandard.org/api/1/access/activity.xml?limit=100>`__
