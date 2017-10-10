@@ -57,8 +57,8 @@ recipient-country
 
 Returns activities where the `recipient-country <http://iatistandard.org/activity-standard/iati-activities/iati-activity/recipient-country/>`__ element has a @code attribute value that matches your specified ISO country code.
 
- Parameters:
-    recipient-country: 2-digit ISO country code that appears on the `country codelist <http://iatistandard.org/codelists/Country/>`__
+Parameters:
+  recipient-country: 2-digit ISO country code that appears on the `country codelist <http://iatistandard.org/codelists/Country/>`__
 
 Example API call:
     `recipient-country=SS <http://datastore.iatistandard.org/api/1/access/activity.xml?recipient-country=SS>`__
