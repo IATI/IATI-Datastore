@@ -67,6 +67,34 @@ def about_dataset(dataset):
             resources=resources,
     )
 
+
+@api.route('/about/datasets/fetch_status')
+def fetch_status_about_dataset():
+    """Output a JSON formatted list of dataset dictionaries containing their resource details.
+
+    Warning:
+        This is an experimental API call and not intended for general use.
+
+    """
+    dataset_resources = db.session.query(Dataset).options(db.subqueryload(Dataset.resources))
+    datasets = dict()
+
+    for dataset in dataset_resources:
+        if len(dataset.resources) == 0:
+            continue
+        ds_r = dataset.resources[0]
+        resources = {
+            'url': ds_r.url,
+            'last_fetch': ds_r.last_fetch.isoformat() if ds_r.last_fetch else None,
+            'last_status_code': ds_r.last_status_code,
+            'last_successful_fetch': ds_r.last_succ.isoformat() if ds_r.last_succ else None,
+            'last_parsed': ds_r.last_parsed.isoformat() if ds_r.last_parsed else None,
+        }
+        datasets[dataset.name] = resources
+
+    return jsonify(datasets=[{dataset: datasets[dataset]} for dataset in datasets])
+
+
 @api.route('/about/deleted')
 def deleted_activities():
     deleted_activities = db.session.query(DeletedActivity)\
