@@ -2,33 +2,32 @@
 
 # If you update these, also update iati_datastore/setup.py
 # These are duplicated here so that requires.io will flag out of date dependencies
-<<<<<<< HEAD
-Flask==0.12.2
-Jinja2==2.9.6
-SQLAlchemy==1.1.13
-Flask-SQLAlchemy==2.2
-Werkzeug==0.12.2
-ckanapi==4.0
-iso8601==0.1.12
-lxml==3.8.0
-psycopg2==2.7.3
-python-dateutil==2.6.1
-six==1.10.0
-unicodecsv==0.14.1
-voluptuous==0.10.5
-Flask-Script==2.0.5
-prettytable==0.7.2
-alembic==0.9.4
-gunicorn==19.7.1
-defusedxml==0.5.0
-redis==2.10.5
-rq==0.8.1
-Unidecode==0.04.21
-requests==2.18.3
-Flask-RQ==0.2
-flask-heroku==0.1.9
-Flask-And-Redis==0.7
-Flask-Markdown==0.3
-xmltodict==0.11.0
-gevent>=0.13.8
+Flask==0.12.2  # rq.filter: <0.13
+Jinja2==2.9.6  # rq.filter: <3.0
+SQLAlchemy==1.1.13  # rq.filter: <2.0
+Flask-SQLAlchemy==2.2  # rq.filter: <3.0
+Werkzeug==0.12.2  # rq.filter: <0.13
+ckanapi==4.0  # rq.filter: <5.0
+iso8601==0.1.12  # rq.filter: <0.2
+lxml==3.8.0  # rq.filter: <4.0
+psycopg2==2.7.3  # rq.filter: <3.0
+python-dateutil==2.6.1  # rq.filter: <3.0
+six==1.10.0  # rq.filter: <2.0
+unicodecsv==0.14.1  # rq.filter: <0.15
+voluptuous==0.10.5  # rq.filter: <0.11
+Flask-Script==2.0.5  # rq.filter: <3.0
+prettytable==0.7.2  # rq.filter: <0.8
+alembic==0.9.4  # rq.filter: <0.10
+gunicorn==19.7.1  # rq.filter: <20.0
+defusedxml==0.5.0  # rq.filter: <0.6
+redis==2.10.5  # rq.filter: <3.0
+rq==0.8.1  # rq.filter: <0.9
+Unidecode==0.04.21  # rq.filter: <0.05
+requests==2.18.3  # rq.filter: <3.0
+Flask-RQ==0.2  # rq.filter: <0.3
+flask-heroku==0.1.9  # rq.filter: <0.2
+Flask-And-Redis==0.7  # rq.filter: <0.8
+Flask-Markdown==0.3  # rq.filter: <0.4
+xmltodict==0.11.0  # rq.filter: <0.12
+gevent==0.13.8  # rq.filter: <0.14
 
