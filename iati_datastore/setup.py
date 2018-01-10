@@ -9,7 +9,7 @@ Werkzeug==0.8.3
 ckanapi==1.5
 iso8601==0.1.4
 lxml==3.4.1
-psycopg2==2.4.6
+psycopg2==2.7.3.2
 python-dateutil==2.1
 six==1.10.0
 unicodecsv==0.9.4
