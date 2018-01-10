@@ -11,7 +11,7 @@ iso8601==0.1.4
 lxml==3.4.1
 psycopg2==2.4.6
 python-dateutil==2.1
-six==1.2.0
+six==1.10.0
 unicodecsv==0.9.4
 voluptuous==0.7.1
 Flask-Script==0.5.3
