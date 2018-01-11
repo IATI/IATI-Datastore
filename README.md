@@ -27,7 +27,7 @@ Requirements
 You will need [Redis](http://redis.io), [Postgres](http://postgresql.org), python, pip and develpment libraries (for libpq, libxml2 and libxslt) to run the full setup.
 For example, on Ubuntu:
     
-    sudo aptitude install postgresql redis-server python-pip libpq-dev libxml2-dev libxslt-dev python-dev
+    sudo aptitude install postgresql redis-server python-pip libpq-dev libxml2-dev libxslt-dev libevent-dev python-dev
 
 Installing for development
 --------------------------
