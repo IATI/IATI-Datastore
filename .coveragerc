@@ -1,3 +1,5 @@
 [run]
 source =
     iati_datastore
+omit =
+    */test/*
