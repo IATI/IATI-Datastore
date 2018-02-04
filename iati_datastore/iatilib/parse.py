@@ -120,7 +120,12 @@ def parse_org(xml, resource=no_resource, major_version='1'):
 
 
 def reporting_org(element, resource=no_resource, major_version='1'):
-    xml = element.xpath("./reporting-org")[0]
+    try:
+        xml = element.xpath("./reporting-org")[0]
+    except IndexError:
+        if major_version == '1':
+            return None
+        raise
     data = {
         "ref": xval(xml, "@ref"),
         "name": xval(xml, TEXT_ELEMENT[major_version], u""),
