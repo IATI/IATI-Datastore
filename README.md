@@ -27,7 +27,7 @@ Requirements
 You will need [Redis](http://redis.io), [Postgres](http://postgresql.org), python, pip and develpment libraries (for libpq, libxml2 and libxslt) to run the full setup.
 For example, on Ubuntu:
     
-    sudo aptitude install postgresql redis-server python-pip libpq-dev libxml2-dev libxslt-dev python-dev
+    sudo aptitude install postgresql redis-server python-pip libpq-dev libxml2-dev libxslt-dev libevent-dev python-dev
 
 Installing for development
 --------------------------
@@ -87,13 +87,13 @@ Deploying with apache
 * Create a database (in postgres), and set an environment variable
   `DATABASE_URL`. e.g.:
 
-        sudo -u postgres createdb iati-ds -O my_username -E utf-8
-        export DATABASE_URL='postgres:///iati-ds'
+        sudo -u postgres createdb iati-datastore -O my_username -E utf-8
+        export DATABASE_URL='postgres:///iati-datastore'
 
 * Run `iati create_database` to create the db tables
 * Set up a cron job for updates. (Add the following line after running `crontab -e`)
  
-        0 0 * * * export DATABASE_URL='postgres:///iati-ds'; /usr/local/bin/iati crawl update
+        0 0 * * * export DATABASE_URL='postgres:///iati-datastore'; /usr/local/bin/iati crawl update
 
 * Run a worker with `iati queue background`
     - This needs to persist when you close your ssh connection. A simple way of doing this is using [screen](http://www.gnu.org/software/screen/).
@@ -103,7 +103,7 @@ Deploying with apache
 * Create a datastore.wsgi file containing this code (this is necessary because Apache's mod wsgi handles environment variables differently):
 
         import os
-        os.environ['DATABASE_URL'] = 'postgres:///iati-ds'
+        os.environ['DATABASE_URL'] = 'postgres:///iati-datastore'
         from iatilib.wsgi import app as application
 
 * Add this inside the `<VirtualHost>` tags of your apache configuration:
