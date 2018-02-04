@@ -56,8 +56,14 @@ class TestActivityFilter(AppTestCase):
         self.assertNotIn(act_not, activities.all())
 
     def test_by_reporting_org_ref(self):
-        act_in = fac.ActivityFactory.create(reporting_org__ref=u"AAA")
-        act_not = fac.ActivityFactory.create(reporting_org__ref=u"ZZZ")
+        act_in = fac.ActivityFactory.create(
+            reporting_org=fac.OrganisationFactory.build(
+                ref=u"AAA"
+            ))
+        act_not = fac.ActivityFactory.create(
+            reporting_org=fac.OrganisationFactory.build(
+                ref=u"ZZZ"
+            ))
         activities = dsfilter.activities({
             "reporting-org": u"AAA"
         })
@@ -65,8 +71,16 @@ class TestActivityFilter(AppTestCase):
         self.assertNotIn(act_not, activities.all())
 
     def test_by_reporting_org_text(self):
-        act_in = fac.ActivityFactory.create(reporting_org__ref=u"AAA", reporting_org__name="aaa")
-        act_not = fac.ActivityFactory.create(reporting_org__ref=u"ZZZ", reporting_org__name="zzz")
+        act_in = fac.ActivityFactory.create(
+            reporting_org=fac.OrganisationFactory.build(
+                ref=u"AAA",
+                name=u"aaa"
+            ))
+        act_not = fac.ActivityFactory.create(
+            reporting_org=fac.OrganisationFactory.build(
+                ref=u"ZZZ",
+                name=u"zzz"
+            ))
         activities = dsfilter.activities({
             "reporting-org.text": u"aaa"
         })
@@ -76,9 +90,13 @@ class TestActivityFilter(AppTestCase):
 
     def test_by_reporting_org_type(self):
         act_in = fac.ActivityFactory.create(
-            reporting_org__type=cl.OrganisationType.government)
+            reporting_org=fac.OrganisationFactory.build(
+                type=cl.OrganisationType.government
+            ))
         act_not = fac.ActivityFactory.create(
-            reporting_org__type=cl.OrganisationType.foundation)
+            reporting_org=fac.OrganisationFactory.build(
+                type=cl.OrganisationType.foundation
+            ))
         activities = dsfilter.activities({
             "reporting-org.type": cl.OrganisationType.from_string(u"10")
         })
@@ -118,9 +136,18 @@ class TestActivityFilter(AppTestCase):
         self.assertNotIn(act_not, activities.all())
 
     def test_or_filter(self):
-        act_a = fac.ActivityFactory.create(reporting_org__ref=u"AAA")
-        act_b = fac.ActivityFactory.create(reporting_org__ref=u"BBB")
-        act_not = fac.ActivityFactory.create(reporting_org__ref=u"ZZZ")
+        act_a = fac.ActivityFactory.create(
+            reporting_org=fac.OrganisationFactory.build(
+                ref=u"AAA"
+            ))
+        act_b = fac.ActivityFactory.create(
+            reporting_org=fac.OrganisationFactory.build(
+                ref=u"BBB"
+            ))
+        act_not = fac.ActivityFactory.create(
+            reporting_org=fac.OrganisationFactory.build(
+                ref=u"ZZZ"
+            ))
         activities = dsfilter.activities({
             "reporting-org": u"AAA|BBB"
         })
@@ -458,9 +485,17 @@ class TestTransactionFilter(AppTestCase):
 
     def test_by_reporting_org_ref(self):
         trans_in = fac.TransactionFactory.create(
-            activity=fac.ActivityFactory.build(reporting_org__ref=u"AAA"))
+            activity=fac.ActivityFactory.build(
+                reporting_org=fac.OrganisationFactory.build(
+                    ref=u"AAA"
+                ))
+            )
         trans_not = fac.TransactionFactory.create(
-            activity=fac.ActivityFactory.build(reporting_org__ref=u"ZZZ"))
+            activity=fac.ActivityFactory.build(
+                reporting_org=fac.OrganisationFactory.build(
+                    ref=u"ZZZ"
+                ))
+            )
         transactions = dsfilter.transactions({
             "reporting-org": u"AAA"
         })
@@ -532,9 +567,17 @@ class TestBudgetFilter(AppTestCase):
 
     def test_by_reporting_org_ref(self):
         budget_in = fac.BudgetFactory.create(
-            activity=fac.ActivityFactory.build(reporting_org__ref=u"AAA"))
+            activity=fac.ActivityFactory.build(
+                reporting_org=fac.OrganisationFactory.build(
+                    ref=u"AAA"
+                ))
+            )
         budget_not = fac.BudgetFactory.create(
-            activity=fac.ActivityFactory.build(reporting_org__ref=u"ZZZ"))
+            activity=fac.ActivityFactory.build(
+                reporting_org=fac.OrganisationFactory.build(
+                    ref=u"ZZZ"
+                ))
+            )
         budgets = dsfilter.budgets({
             "reporting-org": u"AAA"
         })
