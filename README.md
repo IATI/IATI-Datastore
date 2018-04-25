@@ -32,7 +32,7 @@ For example, on Ubuntu:
 Installing for development
 --------------------------
 
-[![Build Status](https://api.travis-ci.org/IATI/IATI-Datastore.png)](https://travis-ci.org/IATI/iati-datastore)
+[![Build Status](https://api.travis-ci.org/IATI/IATI-Datastore.png)](https://travis-ci.org/IATI/IATI-Datastore)
 
 ```
 # Clone the source
