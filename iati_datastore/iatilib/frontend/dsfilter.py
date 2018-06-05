@@ -80,9 +80,13 @@ def _filter(query, args):
         )
 
     def sector(sector_code):
-        return Activity.sector_percentages.any(
+        return or_(Activity.sector_percentages.any(
             SectorPercentage.sector == sector_code
-        )
+        ), Activity.transactions.any(
+            Transaction.sector_percentages.any(
+                SectorPercentage.sector == sector_code
+            )
+        ))
 
     def sector_text(sector):
         return Activity.sector_percentages.any(
