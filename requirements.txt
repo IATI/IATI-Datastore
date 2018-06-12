@@ -23,7 +23,7 @@ defusedxml==0.4.1  # rq.filter: <0.5
 redis==2.10.6  # rq.filter: <3.0
 rq==0.3.13  # rq.filter: <0.4
 Unidecode==0.04.21  # rq.filter: <0.05
-requests==2.18.4  # rq.filter: <3.0
+requests==2.19.0  # rq.filter: <3.0
 Flask-RQ==0.2  # rq.filter: <0.3
 flask-heroku==0.1.9  # rq.filter: <0.2
 Flask-And-Redis==0.4  # rq.filter: <0.5
