@@ -22,7 +22,6 @@ def create_app(**config):
             'RQ_DEFAULT_PASSWORD': app.config['REDIS_PASSWORD']
         })
 
-    db.app = app  # don't understand why I need to this
     db.init_app(app)
     redis.init_app(app)
 

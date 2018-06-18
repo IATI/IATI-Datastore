@@ -32,6 +32,8 @@ class AppTestCase(unittest.TestCase):
                     'sqlite:///:memory:',
                 )
             )
+            _app.app_context().push()
+
         self.app = _app
         if os.environ.get("SA_ECHO", "False") == "True":
             db.engine.echo = True
