@@ -2,9 +2,9 @@ IATI Datastore
 ==============
 
 [![Build Status](https://travis-ci.org/IATI/IATI-Datastore.svg?branch=master)](https://travis-ci.org/IATI/IATI-Datastore)
-[![Coverage Status](https://img.shields.io/coveralls/IATI/iati-datastore.svg)](https://coveralls.io/r/IATI/iati-datastore?branch=master)
-[![Code Health](https://landscape.io/github/IATI/iati-datastore/master/landscape.png)](https://landscape.io/github/IATI/iati-datastore/master)
-[![License: MIT](https://img.shields.io/badge/license-AGPLv3-blue.svg)](https://github.com/IATI/iati-datastore/blob/master/LICENSE.txt)
+[![Coverage Status](https://img.shields.io/coveralls/IATI/IATI-Datastore.svg)](https://coveralls.io/r/IATI/IATI-Datastore?branch=master)
+[![Code Health](https://landscape.io/github/IATI/IATI-Datastore/master/landscape.png)](https://landscape.io/github/IATI/IATI-Datastore/master)
+[![License: MIT](https://img.shields.io/badge/license-AGPLv3-blue.svg)](https://github.com/IATI/IATI-Datastore/blob/master/LICENSE.txt)
 
 
 Introduction
