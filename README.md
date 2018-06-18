@@ -2,9 +2,9 @@ IATI Datastore
 ==============
 
 [![Build Status](https://travis-ci.org/IATI/IATI-Datastore.svg?branch=master)](https://travis-ci.org/IATI/IATI-Datastore)
-[![Coverage Status](https://img.shields.io/coveralls/IATI/iati-datastore.svg)](https://coveralls.io/r/IATI/iati-datastore?branch=master)
-[![Code Health](https://landscape.io/github/IATI/iati-datastore/master/landscape.png)](https://landscape.io/github/IATI/iati-datastore/master)
-[![License: MIT](https://img.shields.io/badge/license-AGPLv3-blue.svg)](https://github.com/IATI/iati-datastore/blob/master/LICENSE.txt)
+[![Coverage Status](https://img.shields.io/coveralls/IATI/IATI-Datastore.svg)](https://coveralls.io/r/IATI/IATI-Datastore?branch=master)
+[![Code Health](https://landscape.io/github/IATI/IATI-Datastore/master/landscape.png)](https://landscape.io/github/IATI/IATI-Datastore/master)
+[![License: MIT](https://img.shields.io/badge/license-AGPLv3-blue.svg)](https://github.com/IATI/IATI-Datastore/blob/master/LICENSE.txt)
 
 
 Introduction
@@ -117,12 +117,3 @@ Updating activities after changing import code
 * Run this SQL query on the database - `UPDATE resource SET last_succ=NULL;`
 * Restart background process
 * Run `iati crawl update` (or wait for cron to run it for you)
-
-
-Generation of Documentation
----------------------------
-
-API documentation in the docs folder is generated using [Spinx](http://www.sphinx-doc.org).
-
-    cd iati-datastore/docs
-    make dirhtml
