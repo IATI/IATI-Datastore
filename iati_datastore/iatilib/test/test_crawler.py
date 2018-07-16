@@ -13,7 +13,7 @@ from iatilib.model import Dataset, Resource, Activity, DeletedActivity
 class TestCrawler(AppTestCase):
     @mock.patch('iatilib.crawler.registry')
     def test_fetch_package_list(self, mock):
-        mock.action.package_list.return_value = {'success': True, 'result': [u"tst-a", u"tst-b"]}
+        mock.action.package_list.return_value = [u"tst-a", u"tst-b"]
         datasets = crawler.fetch_dataset_list()
         mock.action.package_list.assert_called_once_with()
         self.assertIn("tst-a", [ds.name for ds in datasets])
@@ -21,28 +21,27 @@ class TestCrawler(AppTestCase):
 
     @mock.patch('iatilib.crawler.registry')
     def test_update_adds_datasets(self, mock):
-        mock.action.package_list.return_value = {'success': True, 'result': [u"tst-a"]}
+        mock.action.package_list.return_value = [u"tst-a"]
         datasets = crawler.fetch_dataset_list()
         mock.action.package_list.assert_called_once_with()
-        mock.action.package_list.return_value = {'success': True, 'result': [u"tst-a", u"tst-b"]}
+        mock.action.package_list.return_value = [u"tst-a", u"tst-b"]
         datasets = crawler.fetch_dataset_list()
         self.assertEquals(2, datasets.count())
 
     @mock.patch('iatilib.crawler.registry')
     def test_update_deletes_datasets(self, mock):
-        mock.action.package_list.return_value = {'success': True, 'result': [u"tst-a", u"tst-b"]}
+        mock.action.package_list.return_value = [u"tst-a", u"tst-b"]
         datasets = crawler.fetch_dataset_list()
         mock.action.package_list.assert_called_once_with()
-        mock.action.package_list.return_value = {'success': True, 'result': [u"tst-a"]}
+        mock.action.package_list.return_value = [u"tst-a"]
         datasets = crawler.fetch_dataset_list()
         self.assertEquals(1, datasets.count())
 
     @mock.patch('iatilib.crawler.registry')
     def test_fetch_dataset(self, mock):
         mock.action.package_show.return_value = {
-                'success' : True,
-                'result' : { "resources": [{"url": "http://foo"}], },
-                }
+            "resources": [{"url": "http://foo"}],
+        }
         dataset = crawler.fetch_dataset_metadata(Dataset())
         mock.action.package_show.assert_called_once_with(id=None)
         self.assertEquals(1, len(dataset.resources))
@@ -51,14 +50,11 @@ class TestCrawler(AppTestCase):
     @mock.patch('iatilib.crawler.registry')
     def test_fetch_package_search(self, mock):
         mock.action.package_search.return_value = {
-            'success': True, 
-            'result': {
-                'count': 2,
-                'results': [
-                    {'name': 'tst-a', 'state': 'active'},
-                    {'name': 'tst-b', 'state': 'active'},
-                ]
-            }
+            'count': 2,
+            'results': [
+                {'name': 'tst-a', 'state': 'active'},
+                {'name': 'tst-b', 'state': 'active'},
+            ]
         }
         date = datetime.date(2000, 1, 2)
         datasets = crawler.fetch_dataset_list(date)
@@ -73,24 +69,20 @@ class TestCrawler(AppTestCase):
     def test_fetch_package_search_update(self, mock):
         #initial call to fetch dataset list sets up 3 datasets inside the
         # datastore
-        mock.action.package_list.return_value = {
-            'success': True, 
-            'result': [u"tst-deleted", u"tst-not-modified", 'tst-modified'],
-        }
+        mock.action.package_list.return_value = [
+            u"tst-deleted", u"tst-not-modified", 'tst-modified'
+        ]
         crawler.fetch_dataset_list()
 
         # the second call, we are giving a time delta, this time the registry
         # has 3 modified datasets, 1 deleted, 1 modified, 1 new
         mock.action.package_search.return_value = {
-            'success': True, 
-            'result': {
-                'count': 3,
-                'results': [
-                    {'name': 'tst-deleted', 'state': 'deleted'},
-                    {'name': 'tst-modified', 'state': 'active'},
-                    {'name': 'tst-new', 'state': 'active'},
-                ]
-            }
+            'count': 3,
+            'results': [
+                {'name': 'tst-deleted', 'state': 'deleted'},
+                {'name': 'tst-modified', 'state': 'active'},
+                {'name': 'tst-new', 'state': 'active'},
+            ]
         }
         date = datetime.date(2000, 1, 2)
         datasets = set([ds.name for ds in crawler.fetch_dataset_list(date)])
@@ -113,13 +105,10 @@ class TestCrawler(AppTestCase):
     @mock.patch('iatilib.crawler.registry')
     def test_fetch_dataset_with_many_resources(self, mock):
         mock.action.package_show.return_value = {
-            'success' : True,
-            'result' : {
-                "resources": [ 
-                    {"url": "http://foo"}, {"url": "http://bar"},
-                    {"url": "http://baz"},
-                ]
-            }
+            "resources": [
+                {"url": "http://foo"}, {"url": "http://bar"},
+                {"url": "http://baz"},
+            ]
         }
         dataset = crawler.fetch_dataset_metadata(Dataset())
         mock.action.package_show.assert_called_once_with(id=None)
@@ -128,14 +117,11 @@ class TestCrawler(AppTestCase):
     @mock.patch('iatilib.crawler.registry')
     def test_fetch_dataset_count_commited_resources(self, mock):
         mock.action.package_show.return_value = {
-            'success' : True,
-            'result' : {
-                "resources": [ 
-                    {"url": "http://foo"},
-                    {"url": "http://bar"},
-                    {"url": "http://baz"},
-                ]
-            }
+            "resources": [
+                {"url": "http://foo"},
+                {"url": "http://bar"},
+                {"url": "http://baz"},
+            ]
         }
         crawler.fetch_dataset_metadata(Dataset(name=u"tstds"))
         mock.action.package_show.assert_called_once_with(id="tstds")
@@ -267,10 +253,7 @@ class TestCrawler(AppTestCase):
                 ]
             )]
         )
-        mock.action.package_list.return_value = {
-            'success': True,
-            'result': [u"tst-a", u"tst-b"]
-        }
+        mock.action.package_list.return_value = [u"tst-a", u"tst-b"]
         self.assertIn("deleteme", [ds.name for ds in Dataset.query.all()])
         datasets = crawler.fetch_dataset_list()
         self.assertNotIn("deleteme", [ds.name for ds in datasets])
