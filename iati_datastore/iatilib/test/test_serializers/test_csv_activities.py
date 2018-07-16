@@ -50,13 +50,17 @@ class TestCSVSerializer(CSVTstMixin, TestCase):
 
     def test_quoting(self):
         data = self.process([fac.ActivityFactory.build(
-            reporting_org__name=u"l,r"
+            reporting_org=fac.OrganisationFactory.build(
+                name=u"l,r"
+            )
         )])
         self.assertField({"reporting-org": "l,r"}, data[0])
 
     def test_unicode(self):
         data = self.process([fac.ActivityFactory.build(
-            reporting_org__name=u"\u2603"
+            reporting_org=fac.OrganisationFactory.build(
+                name=u"\u2603"
+            )
         )])
         self.assertField({"reporting-org": u"\u2603"}, data[0])
 

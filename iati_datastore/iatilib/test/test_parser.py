@@ -731,6 +731,20 @@ class TestActivity(AppTestCase):
         self.assertEquals(datetime.date(2010, 12, 31), activities[0].end_planned)
         self.assertEquals(datetime.date(2010, 12, 31), activities[0].end_actual)
 
+    def test_missing_reporting_org(self):
+        # missing reporting org should still parse
+        activities = list(parse.document(ET.XML(
+            u'''
+              <iati-activities>
+                <iati-activity default-currency="GBP" xml:lang="en">
+                    <iati-identifier>AAA-AA</iati-identifier>
+                    <activity-status code="2">Implementation</activity-status>
+                </iati-activity>
+              </iati-activities>
+                ''')))
+        self.assertEquals(1, len(activities))
+        self.assertEquals(u"AAA-AA", activities[0].iati_identifier)
+
 
 class TestTransaction(AppTestCase):
     def __init__(self, methodName='runTest'):

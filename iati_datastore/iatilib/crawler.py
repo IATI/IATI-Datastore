@@ -395,10 +395,16 @@ def documents(verbose=False):
 
 
 def status_line(msg, filt, tot):
+    total_count = tot.count()
+    filtered_count = filt.count()
+    try:
+        ratio = 1.0 * filtered_count / total_count
+    except ZeroDivisionError:
+        ratio = 0.0
     return "{filt_c:4d}/{tot_c:4d} ({pct:6.2%}) {msg}".format(
-            filt_c=filt.count(),
-            tot_c=tot.count(),
-            pct=1.0 * filt.count() / tot.count(),
+            filt_c=filtered_count,
+            tot_c=total_count,
+            pct=ratio,
             msg=msg
     )
 
@@ -476,14 +482,19 @@ def status():
     )
 
     print
+
+    total_activities = Activity.query.count()
     # out of date activitiy was created < resource last_parsed
-    print "{nofetched_c}/{res_c} ({pct:.2%}) activities out of date".format(
-            nofetched_c=Activity.query.join(Resource).filter(
-                    Activity.created < Resource.last_parsed).count(),
-            res_c=Activity.query.count(),
-            pct=1.0 * Activity.query.join(Resource).filter(
-                    Activity.created < Resource.last_parsed).count() /
-                Activity.query.count()
+    total_activities_fetched = Activity.query.join(Resource).filter(
+        Activity.created < Resource.last_parsed).count()
+    try:
+        ratio = 1.0 * total_activities_fetched / total_activities
+    except ZeroDivisionError:
+        ratio = 0.0
+    print "{nofetched_c}/{res_c} ({pct:6.2%}) activities out of date".format(
+            nofetched_c=total_activities_fetched,
+            res_c=total_activities,
+            pct=ratio
     )
 
 
