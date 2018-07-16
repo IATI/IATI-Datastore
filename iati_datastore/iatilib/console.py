@@ -36,8 +36,9 @@ def download_codelists():
             print "Downloading %s.xx %s" % (major_version, name)
             resp = requests.get(url[major_version])
             resp.raise_for_status()
+            resp.encoding = "utf-8"
             assert len(resp.text) > 0, "Response is empty"
-            with codecs.open(filename, "w", encoding="utf-8") as cl:
+            with codecs.open(filename, "w", encoding=resp.encoding) as cl:
                 cl.write(resp.text)
 
 
