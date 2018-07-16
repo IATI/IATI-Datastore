@@ -7,7 +7,7 @@ Jinja2==2.6  # rq.filter: <3.0
 SQLAlchemy==0.8  # rq.filter: <0.9
 Flask-SQLAlchemy==1.0  # rq.filter: <2.0
 Werkzeug==0.8.3  # rq.filter: <0.9
-ckanapi==1.5  # rq.filter: <2.0
+ckanapi==4.1  # rq.filter: <5.0
 iso8601==0.1.4  # rq.filter: <0.2
 lxml==3.4.1  # rq.filter: <4.0
 psycopg2==2.7.3.2  # rq.filter: <3.0
