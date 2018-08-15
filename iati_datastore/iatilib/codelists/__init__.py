@@ -22,9 +22,9 @@ from .enum import DeclEnum
 
 def iati_url(name):
     return {
-        '1': ("http://iatistandard.org/105/codelists/downloads/clv2/csv/en/" +
+        '1': ("http://reference.iatistandard.org/105/codelists/downloads/clv2/csv/en/" +
               "%s.csv" % (name)),
-        '2': ("http://dev.iatistandard.org/201/codelists/downloads/clv2/csv/en/" +
+        '2': ("http://reference.iatistandard.org/203/codelists/downloads/clv2/csv/en/" +
               "%s.csv" % (name)),
     }
 
