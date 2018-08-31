@@ -187,7 +187,7 @@ class Stream(object):
     offset = ''
 
     def __init__(self, query):
-        self.items = query
+        self.items = query.all()
         self.total = query.count()
 
 class DataStoreView(MethodView):
