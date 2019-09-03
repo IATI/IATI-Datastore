@@ -3,7 +3,6 @@ IATI Datastore
 
 [![Build Status](https://travis-ci.com/codeforIATI/IATI-Datastore.svg?branch=master)](https://travis-ci.com/codeforIATI/IATI-Datastore)
 [![Coverage Status](https://img.shields.io/coveralls/codeforIATI/IATI-Datastore.svg)](https://coveralls.io/r/codeforIATI/IATI-Datastore?branch=master)
-[![Code Health](https://landscape.io/github/codeforIATI/IATI-Datastore/master/landscape.png)](https://landscape.io/github/codeforIATI/IATI-Datastore/master)
 [![License: MIT](https://img.shields.io/badge/license-AGPLv3-blue.svg)](https://github.com/codeforIATI/IATI-Datastore/blob/master/LICENSE.txt)
 
 
