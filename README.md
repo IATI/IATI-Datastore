@@ -1,10 +1,10 @@
 IATI Datastore
 ==============
 
-[![Build Status](https://travis-ci.org/IATI/IATI-Datastore.svg?branch=master)](https://travis-ci.org/IATI/IATI-Datastore)
-[![Coverage Status](https://img.shields.io/coveralls/IATI/IATI-Datastore.svg)](https://coveralls.io/r/IATI/IATI-Datastore?branch=master)
-[![Code Health](https://landscape.io/github/IATI/IATI-Datastore/master/landscape.png)](https://landscape.io/github/IATI/IATI-Datastore/master)
-[![License: MIT](https://img.shields.io/badge/license-AGPLv3-blue.svg)](https://github.com/IATI/IATI-Datastore/blob/master/LICENSE.txt)
+[![Build Status](https://travis-ci.com/codeforIATI/IATI-Datastore.svg?branch=master)](https://travis-ci.com/codeforIATI/IATI-Datastore)
+[![Coverage Status](https://img.shields.io/coveralls/codeforIATI/IATI-Datastore.svg)](https://coveralls.io/r/codeforIATI/IATI-Datastore?branch=master)
+[![Code Health](https://landscape.io/github/codeforIATI/IATI-Datastore/master/landscape.png)](https://landscape.io/github/codeforIATI/IATI-Datastore/master)
+[![License: MIT](https://img.shields.io/badge/license-AGPLv3-blue.svg)](https://github.com/codeforIATI/IATI-Datastore/blob/master/LICENSE.txt)
 
 
 Introduction
@@ -34,7 +34,7 @@ Installing for development
 
 ```
 # Clone the source
-git clone https://github.com/IATI/IATI-Datastore.git
+git clone https://github.com/codeforIATI/IATI-Datastore.git
 
 # Install development dependencies 
 pip install -r requirements_dev.txt
