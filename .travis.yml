@@ -4,5 +4,5 @@ python:
 before_install:
   sudo apt-get install -y libevent-dev
 install: "pip install -r requirements_dev.txt"
-script: nosetests iati_datastore --with-coverage
+script: nosetests iati_datastore --with-coverage --cover-package iati_datastore
 after_success: coveralls
