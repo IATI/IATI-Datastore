@@ -104,6 +104,7 @@ def fetch_dataset_list(modified_since=None):
 
 
 def delete_datasets(datasets):
+
     deleted_datasets = db.session.query(Dataset).filter(Dataset.name.in_(datasets))
 
     activities_to_delete = db.session.query(Activity). \
@@ -111,11 +112,11 @@ def delete_datasets(datasets):
         filter(Resource.dataset_id.in_(datasets))
 
     now = datetime.datetime.now()
-    deleted_activities = [DeletedActivity(
-            iati_identifier=a.iati_identifier,
-            deletion_date=now
-    )
-                          for a in activities_to_delete]
+    deleted_activities = []
+    # Slice the query to make sure it doesn't use up all the memory
+    for i in range(0, activities_to_delete.count(), 100):
+        for a in activities_to_delete.slice(i, i+100):
+            deleted_activities.append(DeletedActivity(iati_identifier=a.iati_identifier, deletion_date=now))
     db.session.add_all(deleted_activities)
     db.session.commit()
     deleted = deleted_datasets.delete(synchronize_session='fetch')
