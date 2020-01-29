@@ -104,6 +104,7 @@ def fetch_dataset_list(modified_since=None):
 
 
 def delete_datasets(datasets):
+
     deleted_datasets = db.session.query(Dataset).filter(Dataset.name.in_(datasets))
 
     activities_to_delete = db.session.query(Activity). \
@@ -111,11 +112,11 @@ def delete_datasets(datasets):
         filter(Resource.dataset_id.in_(datasets))
 
     now = datetime.datetime.now()
-    deleted_activities = [DeletedActivity(
-            iati_identifier=a.iati_identifier,
-            deletion_date=now
-    )
-                          for a in activities_to_delete]
+    deleted_activities = []
+    for i in range(0, activities_to_delete.count(), 100):
+        # Slice the query to make sure it doesn't use up all the memory
+        for a in activities_to_delete.slice(i, i+100):
+            deleted_activities.append(DeletedActivity(iati_identifier=a.iati_identifier, deletion_date=now))
     db.session.add_all(deleted_activities)
     db.session.commit()
     deleted = deleted_datasets.delete(synchronize_session='fetch')
@@ -328,7 +329,7 @@ def update_resource(resource_url):
     db.session.commit()
 
     if resource.last_status_code == 200:
-        rq.enqueue(update_activities, args=(resource.url,), result_ttl=0, timeout=100000)
+        rq.enqueue(update_activities, args=(resource.url,), result_ttl=0, timeout=300)
 
 
 def update_dataset(dataset_name):
@@ -536,7 +537,7 @@ def enqueue(careful=False):
                 update_activities,
                 args=(resource.url,),
                 result_ttl=0,
-                timeout=100000)
+                timeout=300)
 
 
 @manager.option('--dataset', action="store", type=unicode,
@@ -560,7 +561,7 @@ def update(verbose=False, limit=None, dataset=None, timedelta=None):
         for resource in res:
             rq.enqueue(update_resource, args=(resource.url,), result_ttl=0)
             rq.enqueue(update_activities, args=(resource.url,), result_ttl=0,
-                       timeout=1000)
+                       timeout=300)
     else:
         if timedelta:
             modified_since = datetime.date.today() - datetime.timedelta(timedelta)
