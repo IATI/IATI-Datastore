@@ -18,7 +18,7 @@ voluptuous==0.7.1  # rq.filter: ==0.7.1
 Flask-Script==0.5.3  # rq.filter: <0.6
 prettytable==0.7.2  # rq.filter: <0.8
 alembic==0.5.0  # rq.filter: <0.6
-gunicorn==0.17.4  # rq.filter: <0.18
+gunicorn==19.5.0  # rq.filter: <0.18
 defusedxml==0.4.1  # rq.filter: <0.5
 redis==2.10.6  # rq.filter: <3.0
 rq==0.3.13  # rq.filter: <0.4
