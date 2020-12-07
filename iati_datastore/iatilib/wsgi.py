@@ -1,4 +1,4 @@
-from iatilib.frontend import create_app
+from iatilib.frontend.app import create_app
 
 app = create_app()
 
