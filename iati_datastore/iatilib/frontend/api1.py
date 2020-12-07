@@ -5,7 +5,7 @@ from flask import (request, Response, Blueprint, jsonify, abort,
                    render_template, make_response)
 from flask.views import MethodView
 from werkzeug.datastructures import MultiDict
-from flask.ext.sqlalchemy import Pagination
+from flask_sqlalchemy import Pagination
 
 from iatilib import db
 from iatilib.model import (Activity, Resource, Transaction, Dataset,
@@ -217,7 +217,7 @@ class DataStoreView(MethodView):
 
         try:
             valid_args = self.validate_args()
-        except (validators.MultipleInvalid, validators.Invalid), e:
+        except (validators.MultipleInvalid, validators.Invalid) as e:
             return make_response(render_template('invalid_filter.html', errors=e), 400)
         query = self.filter(valid_args)
 
@@ -230,7 +230,7 @@ class DataStoreView(MethodView):
                 valid_args.get("offset", 0),
                 valid_args.get("limit", 50),
             )
-            body = u"".join(serializer(pagination))
+            body = u"".join(list(serializer(pagination)))
         return Response(body, mimetype=mimetype)
 
 
