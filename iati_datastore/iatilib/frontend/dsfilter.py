@@ -252,7 +252,7 @@ def transactions(args):
 def transactions_by_country(args):
     return _filter(
         db.session.query(Transaction, CountryPercentage)
-        .join(Activity)
+        .join(Activity, Activity.iati_identifier==Transaction.activity_id)
         .join(CountryPercentage),
         args
     )
@@ -261,7 +261,7 @@ def transactions_by_country(args):
 def transactions_by_sector(args):
     return _filter(
         db.session.query(Transaction, SectorPercentage)
-        .join(Activity)
+        .join(Activity, Activity.iati_identifier==Transaction.activity_id)
         .join(SectorPercentage),
         args
     )
@@ -274,7 +274,7 @@ def budgets(args):
 def budgets_by_country(args):
     return _filter(
         db.session.query(Budget, CountryPercentage)
-        .join(Activity)
+        .join(Activity, Activity.iati_identifier==Budget.activity_id)
         .join(CountryPercentage),
         args
     )
@@ -283,7 +283,7 @@ def budgets_by_country(args):
 def budgets_by_sector(args):
     return _filter(
         db.session.query(Budget, SectorPercentage)
-        .join(Activity)
+        .join(Activity, Activity.iati_identifier==Budget.activity_id)
         .join(SectorPercentage),
         args
     )
