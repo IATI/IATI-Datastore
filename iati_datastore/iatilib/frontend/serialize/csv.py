@@ -1,8 +1,8 @@
 from collections import OrderedDict
 from functools import partial
-import unicodecsv
-
-from StringIO import StringIO
+import csv as unicodecsv
+import six
+from io import StringIO
 from operator import attrgetter
 from iatilib import codelists
 
@@ -309,7 +309,7 @@ def fielddict_from_major_version(major_version):
             adapt = kw.pop("adapter", lambda i: i)
 
             def field_for(i):
-                if isinstance(i, basestring):
+                if isinstance(i, six.string_types):
                     cf = (i, self.common_field[i])
                     return cf[0], adapt(cf[1])
                 elif isinstance(i, tuple):
@@ -354,9 +354,9 @@ class CSVSerializer(object):
         """
         def line(row):
             out = StringIO()
-            writer = unicodecsv.writer(out, encoding='utf-8')
+            writer = unicodecsv.writer(out)
             writer.writerow(row)
-            return out.getvalue().decode('utf-8')
+            return out.getvalue()
         yield line(self.fields_by_major_version['1'].keys())
         get_major_version = self.get_major_version
         for obj in data.items:
