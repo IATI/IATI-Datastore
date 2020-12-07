@@ -1,6 +1,7 @@
 # http://techspot.zzzeek.org/2011/01/14/the-enum-recipe/
 from sqlalchemy.types import SchemaType, TypeDecorator, UnicodeText
 import re
+import six
 from requests.structures import CaseInsensitiveDict
 
 
@@ -13,7 +14,7 @@ class EnumSymbol(object):
         self.value = value
         self.description = description
 
-    def __hash__(self): 
+    def __hash__(self):
         return hash(self.value)
 
     def __eq__(self, other):
@@ -85,7 +86,7 @@ class DeclEnumType(TypeDecorator):
     def process_bind_param(self, value, dialect):
         if value is None:
             return None
-        elif isinstance(value, basestring):
+        elif isinstance(value, six.string_types):
             return value
         return value.value
 
