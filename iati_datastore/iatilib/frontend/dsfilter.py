@@ -1,5 +1,6 @@
 from datetime import datetime
 from functools import partial
+import six
 from sqlalchemy import or_, and_
 from sqlalchemy.sql.operators import eq, gt, lt
 from iatilib import codelists, db
@@ -206,7 +207,7 @@ def _filter(query, args):
     for filter, search_string in args.items():
         filter_condition = filter_conditions.get(filter, None)
         if filter_condition:
-            if isinstance(search_string, basestring):
+            if isinstance(search_string, six.string_types):
                 terms = search_string.split('|')
                 if len(terms) >= 1:
                     conditions = tuple([ filter_condition(term) for term in terms ])
