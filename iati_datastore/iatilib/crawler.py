@@ -196,13 +196,14 @@ def check_for_duplicates(activities):
                         a.iati_identifier for a in activities
                 )
         )
-        for db_activity in dup_activity:
-            res_activity = next(
-                    a for a in activities
-                    if a.iati_identifier == db_activity.iati_identifier
-            )
-            activities.remove(res_activity)
-            db.session.expunge(res_activity)
+        with db.session.no_autoflush:
+            for db_activity in dup_activity:
+                res_activity = next(
+                        a for a in activities
+                        if a.iati_identifier == db_activity.iati_identifier
+                )
+                activities.remove(res_activity)
+                db.session.expunge(res_activity)
     return activities
 
 
