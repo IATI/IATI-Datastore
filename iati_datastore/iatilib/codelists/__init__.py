@@ -14,7 +14,7 @@ import codecs
 import warnings
 import copy
 
-import unicodecsv as csv
+import csv
 from unidecode import unidecode
 
 from .enum import DeclEnum
@@ -75,12 +75,12 @@ for major_version in ['1', '2']:
     for name in urls[major_version].keys():
         try:
             with codecs.open(os.path.join(data_dir, major_version, "%s.csv" % name)) as cl_file:
-                reader = codelist_reader(csv.reader(cl_file, encoding="utf-8"))
+                reader = codelist_reader(csv.reader(cl_file))
                 enums = {ident(name): (code, name) for code, name in reader}
                 codelist = type(name, (DeclEnum,), enums)
                 setattr(by_major_version[major_version], name, codelist)
                 if major_version == '1':
                     globals()[name] = codelist
-        except IOError, exc:
+        except IOError as exc:
             warnings.warn(str(exc))
 
