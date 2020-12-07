@@ -1,5 +1,6 @@
 import datetime
 from unittest import TestCase
+from collections import namedtuple
 
 from . import CSVTstMixin as _CSVTstMixin
 
@@ -198,9 +199,10 @@ class TestBudgetByCountry(TestCase, CSVTstMixin):
     def example(self):
         ret = []
         act = example()
+        NT = namedtuple('CountryBudget', 'Budget CountryPercentage')
         for budget in act.budgets:
             for country in act.recipient_country_percentages:
-                ret.append((budget, country))
+                ret.append(NT(budget, country))
         return ret
 
     def test_rec_country_code_0(self):
@@ -229,9 +231,10 @@ class TestBudgetBySector(TestCase, CSVTstMixin):
     def example(self):
         ret = []
         act = example()
+        NT = namedtuple('SectorBudget', 'Budget SectorPercentage')
         for budget in act.budgets:
             for sector in act.sector_percentages:
-                ret.append((budget, sector))
+                ret.append(NT(budget, sector))
         return ret
 
     def test_sector_code_0(self):
