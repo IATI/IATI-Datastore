@@ -87,14 +87,14 @@ class TestCrawler(AppTestCase):
         date = datetime.date(2000, 1, 2)
         datasets = set([ds.name for ds in crawler.fetch_dataset_list(date)])
 
-        # we want to check that the result returned are only the modified/new 
+        # we want to check that the result returned are only the modified/new
         # datasets as these are the ones that are sent to the job queues
         # normally a call without a time delta results in all the datasets
         # being sent to the job queues
         self.assertEquals(set(['tst-modified', 'tst-new']), datasets)
 
         # finally we check over all the datasets to make sure nothing has
-        # happened to the not modified dataset, and that tst-deleted was 
+        # happened to the not modified dataset, and that tst-deleted was
         # actually deleted.
         all_datasets = set([i.name for i in Dataset.query.all()])
         self.assertEquals(
@@ -133,7 +133,7 @@ class TestCrawler(AppTestCase):
         mock.get.return_value.content = "test"
         mock.get.return_value.status_code = 200
         resource = crawler.fetch_resource(Resource(url="http://foo"))
-        self.assertEquals("test", resource.document)
+        self.assertEquals(b"test", resource.document)
         self.assertEquals(None, resource.last_parsed)
         self.assertEquals(None, resource.last_parse_error)
 
@@ -142,13 +142,13 @@ class TestCrawler(AppTestCase):
         mock.get.return_value.status_code = 404
         resource = crawler.fetch_resource(Resource(
             url="http://foo",
-            document=u"stillhere"
+            document=b"stillhere"
         ))
         self.assertEquals(404, resource.last_status_code)
-        self.assertEquals(u"stillhere", resource.document)
+        self.assertEquals(b"stillhere", resource.document)
 
     def test_parse_resource_succ(self):
-        resource = Resource(document="<iati-activities />", url="http://foo")
+        resource = Resource(document=b"<iati-activities />", url="http://foo")
         resource = crawler.parse_resource(resource)
         self.assertEquals([], list(resource.activities))
         self.assertEquals(None, resource.last_parse_error)
@@ -166,7 +166,7 @@ class TestCrawler(AppTestCase):
             activities=[act]
         )
         # the updated resource (will remove the activities)
-        resource.document="<iati-activities />"
+        resource.document=b"<iati-activities />"
         resource = crawler.parse_resource(resource)
         db.session.commit()
         self.assertEquals(None, Activity.query.get(act.iati_identifier))
@@ -181,7 +181,7 @@ class TestCrawler(AppTestCase):
         db.session.commit()
         resource = fac.ResourceFactory.create(
             url=u"http://test",
-            document="""
+            document=b"""
                 <iati-activities>
                   <iati-activity>
                     <iati-identifier>test_deleted_activity</iati-identifier>
@@ -205,7 +205,7 @@ class TestCrawler(AppTestCase):
     def test_last_changed_datetime(self):
         resource = fac.ResourceFactory.create(
             url=u"http://test",
-            document="""
+            document=b"""
                 <iati-activities>
                   <iati-activity>
                     <iati-identifier>test_deleted_activity</iati-identifier>
@@ -234,11 +234,11 @@ class TestCrawler(AppTestCase):
 
 
     def test_parse_resource_fail(self):
-        resource = Resource(document="")
+        resource = Resource(document=b"", url="")
         with self.assertRaises(parse.ParserError):
             resource = crawler.parse_resource(resource)
             self.assertEquals(None, resource.last_parsed)
-            
+
     @mock.patch('iatilib.crawler.registry')
     def test_deleted_activities(self, mock):
         fac.DatasetFactory.create(
@@ -265,10 +265,10 @@ class TestCrawler(AppTestCase):
     def test_document_metadata(self):
         res = fac.ResourceFactory.create(
             url=u"http://res2",
-            document=open(fixture_filename("complex_example_dfid.xml")).read()
+            document=open(fixture_filename("complex_example_dfid.xml")).read().encode()
         )
         result = crawler.parse_resource(res)
-        
+
         self.assertEquals("1.00", result.version)
 
 
@@ -295,7 +295,7 @@ class TestResourceUpdate(AppTestCase):
         # activity "47045-ARM-202-G05-H-00"
         fac.ResourceFactory.create(
             url=u"http://res2",
-            document=open(fixture_filename("single_activity.xml")).read()
+            document=open(fixture_filename("single_activity.xml")).read().encode()
         )
 
         crawler.update_activities(u"http://res2")
