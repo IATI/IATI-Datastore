@@ -1,6 +1,6 @@
 from datetime import datetime
 import json
-from StringIO import StringIO
+from io import StringIO
 import mock
 from iatilib import codelists
 from iatilib.frontend.serialize import jsonserializer
@@ -15,11 +15,11 @@ class FakePage(object):
     @property
     def total(self):
         return len(self.items)
-        
+
 class TestJson(AppTestCase):
     maxDiff = None
     @mock.patch('iatilib.frontend.serialize.jsonserializer.current_app')
-    def test_transaction_json(self, mock): 
+    def test_transaction_json(self, mock):
         mock.debug = True
         activity = factories.ActivityFactory.create()
         trans = factories.TransactionFactory.create(
@@ -50,7 +50,7 @@ class TestJson(AppTestCase):
             "disbursement-channel": { "code": "4" },
             "tied-status": { "code": "5" }
         }
-        self.assertItemsEqual(transactions, output['iati-activities'][0]['transaction'][0])
+        self.assertCountEqual(transactions, output['iati-activities'][0]['transaction'][0])
 
     @mock.patch('iatilib.frontend.serialize.jsonserializer.current_app')
     def test_version(self, mock):
