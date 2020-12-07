@@ -9,7 +9,7 @@ from .jsonserializer import json, datastore_json
 
 
 def xml(pagination):
-    yield u"""<result xmlns:iati-extra="http://datastore.iatistandard.org/ns">
+    yield """<result xmlns:iati-extra="http://datastore.iatistandard.org/ns">
     <ok>True</ok>
     <iati-activities generated-datetime='{3}'>
       <query>
@@ -23,7 +23,7 @@ def xml(pagination):
         if activity.version:
             # This should always work, as the first element in the raw_xml should always be iati-activity
             # And is lower overhead than using a proper XML parser again here
-            yield activity.raw_xml.replace('<iati-activity', '<iati-activity iati-extra:version="{}"'.format(activity.version), 1)
+            yield str(activity.raw_xml.replace('<iati-activity', '<iati-activity iati-extra:version="{}"'.format(activity.version), 1))
         else:
-            yield activity.raw_xml
-    yield u"</iati-activities></result>"
+            yield str(activity.raw_xml)
+    yield "</iati-activities></result>"
