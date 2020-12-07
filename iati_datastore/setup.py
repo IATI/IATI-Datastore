@@ -1,43 +1,32 @@
 from setuptools import setup, find_packages
 
 requirements = """
-Flask==0.10.1
-Jinja2==2.10
-SQLAlchemy==0.8.7
-Flask-SQLAlchemy==1.0
-Werkzeug==0.8.3
-ckanapi==4.1
-iso8601==0.1.12
-lxml==3.8.0
-psycopg2==2.7.5
-python-dateutil==2.4.2
-six==1.11.0
-unicodecsv==0.9.4
-voluptuous==0.7.1
-Flask-Script==0.5.3
-prettytable==0.7.2
-alembic==0.5.0
-gunicorn==0.17.4
-defusedxml==0.4.1
-redis==2.10.6
-rq==0.3.13
-Unidecode==0.04.21
-requests==2.19.1
+Flask==1.1.2
+Flask-SQLAlchemy==2.4.4
+ckanapi==4.5
+lxml==4.6.2
+python-dateutil==2.8.1
+six==1.15.0
+voluptuous>=0.12.0
+alembic==1.4.3
+gunicorn==20.0.4
+Unidecode==1.1.1
+requests==2.25.0
+xmltodict==0.12.0
+gevent>=20.9.0
+Markdown==3.3.3
 Flask-RQ==0.2
-flask-heroku==0.1.9
-Flask-And-Redis==0.4
-Flask-Markdown==0.3
-xmltodict==0.7.0
-gevent==0.13.8
+Flask-And-Redis==1.0.0
+redis==3.5.3
+rq==1.7.0
 """
 
 tests_require = """
-nose==1.3.7
-mock==1.3.0
-factory-boy==1.3.0
-coveralls==0.5
-coverage==3.7.1
-html==1.16
+nose==1.3.7  # rq.filter: <2.0
+mock==4.0.2  # rq.filter: <2.0
+factory-boy==3.1.0  # rq.filter: <2.0
+coveralls==2.2.0  # rq.filter: <0.6
+coverage==5.3  # rq.filter: <4.0
 """
 
 
@@ -58,7 +47,7 @@ setup(
     test_suite='nose.collector',
     entry_points={
         'console_scripts': [
-            'iati = iatilib.console:main',
+            'iati = iatilib.console:cli',
         ]
     }
 )
