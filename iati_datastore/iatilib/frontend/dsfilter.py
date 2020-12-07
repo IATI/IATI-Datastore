@@ -57,7 +57,7 @@ def _filter(query, args):
 
     def reporting_org_type(organisation_type):
         return Activity.reporting_org.has(
-            Organisation.type == organisation_type 
+            Organisation.type == organisation_type
         )
 
     def participating_org(organisation):
@@ -66,7 +66,7 @@ def _filter(query, args):
                 Organisation.ref == organisation
             )
         )
- 
+
     def participating_org_text(organisation):
         return Activity.participating_orgs.any(
             Participation.organisation.has(
@@ -76,7 +76,7 @@ def _filter(query, args):
 
     def participating_org_role(role):
         return Activity.participating_orgs.any(
-            Participation.role == role 
+            Participation.role == role
         )
 
     def sector(sector_code):
@@ -90,7 +90,7 @@ def _filter(query, args):
 
     def sector_text(sector):
         return Activity.sector_percentages.any(
-            SectorPercentage.text == sector 
+            SectorPercentage.text == sector
         )
 
     def transaction_ref(transaction):
