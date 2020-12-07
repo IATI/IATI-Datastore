@@ -1,14 +1,14 @@
 from collections import namedtuple
-from StringIO import StringIO
+from io import StringIO
 
-import unicodecsv
+import csv
 
 TestWrapper = namedtuple('TestWrapper', 'items total offset limit')
 
 
 def load_csv(data):
-    sio = StringIO(data)
-    return list(unicodecsv.DictReader(sio, encoding="utf-8"))
+    sio = StringIO(data.decode("utf-8"))
+    return list(csv.DictReader(sio))
 
 
 class CSVTstMixin(object):
@@ -21,6 +21,6 @@ class CSVTstMixin(object):
 
     def assertField(self, mapping, row):
         assert len(mapping) == 1
-        key, val = mapping.items()[0]
+        key, val = list(mapping.items())[0]
         self.assertIn(key, row)
         self.assertEquals(row[key], val)
