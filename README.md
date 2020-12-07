@@ -44,8 +44,8 @@ nosetests iati_datastore
 # Create a new PostgreSQL database
 sudo -u postgres psql -c "CREATE DATABASE iati_datastore"
 
-# Set an environment variable for `DATABASE_URL` linking to the database created
-export DATABASE_URL=postgres:///iati_datastore
+# Set an environment variable for `IATI_DATASTORE_DATABASE_URL` linking to the database created
+export IATI_DATASTORE_DATABASE_URL=postgres:///iati_datastore
 
 # Create the db tables
 iati create_database
