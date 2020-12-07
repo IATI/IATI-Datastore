@@ -1,6 +1,7 @@
 import datetime
 import inspect
 from unittest import TestCase
+from collections import namedtuple
 
 from . import CSVTstMixin as _CSVTstMixin
 
@@ -103,7 +104,7 @@ class TestCSVExample(CSVTstMixin, TestCase):
             end_planned=datetime.date(2012, 1, 2))
         ])
         self.assertField({"end-planned": "2012-01-02"}, data[0])
-        
+
     def test_start_actual(self):
         data = self.process([fac.ActivityFactory.build(
             start_actual=datetime.date(2012, 1, 3))
@@ -618,14 +619,16 @@ class TestActivityByCountry(CSVTstMixin, ActivityExample, TestCase):
 
     def example(self):
         activity = super(TestActivityByCountry, self).example()
+        NT = namedtuple('ActivityCountryPercentage', 'Activity CountryPercentage')
         return [
-            (activity, activity.recipient_country_percentages[0]),
-            (activity, activity.recipient_country_percentages[1])
+            NT(activity, activity.recipient_country_percentages[0]),
+            NT(activity, activity.recipient_country_percentages[1])
         ]
 
     def test_column_list(self):
+        NT = namedtuple('ActivityCountryPercentage', 'Activity CountryPercentage')
         data = self.process([
-            (
+            NT(
                 fac.ActivityFactory.build(iati_identifier=u"GB-1-123"),
                 fac.CountryPercentageFactory.build()
             )
@@ -782,14 +785,16 @@ class TestActivityBySector(CSVTstMixin, ActivityExample, TestCase):
 
     def example(self):
         activity = super(TestActivityBySector, self).example()
+        NT = namedtuple('ActivitySectorPercentage', 'Activity SectorPercentage')
         return [
-            (activity, activity.sector_percentages[0]),
-            (activity, activity.sector_percentages[1])
+            NT(activity, activity.sector_percentages[0]),
+            NT(activity, activity.sector_percentages[1])
         ]
 
     def test_column_list(self):
+        NT = namedtuple('ActivitySectorPercentage', 'Activity SectorPercentage')
         data = self.process([
-            (
+            NT(
                 fac.ActivityFactory.build(iati_identifier=u"GB-1-123"),
                 fac.SectorPercentageFactory.build()
             )
