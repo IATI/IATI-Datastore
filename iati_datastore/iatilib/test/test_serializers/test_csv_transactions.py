@@ -1,5 +1,6 @@
 import datetime
 from unittest import TestCase
+from collections import namedtuple
 
 from . import CSVTstMixin as _CSVTstMixin
 from iatilib.test import factories as fac
@@ -370,7 +371,7 @@ class TestCSVTransactionExample(TestCase, CSVTstMixin):
             fac.TransactionFactory.build(activity=activity)
         ])
         self.assertField({"end-planned": "2012-01-02"}, data[0])
-        
+
     def test_start_actual(self):
         activity = fac.ActivityFactory.build(
             start_actual=datetime.date(2012, 1, 3))
@@ -585,7 +586,7 @@ class TestCSVTransactionExample(TestCase, CSVTstMixin):
         ])
         self.assertField({"sector-percentage": ""}, data[0])
 
-    
+
     def test_default_finance_type(self):
         activity = fac.ActivityFactory.build(
             default_finance_type=cl.FinanceType.bank_bonds
@@ -727,9 +728,10 @@ class TestTransactionByCountry(TestCase, CSVTstMixin):
     def example(self):
         ret = []
         act = example()
+        NT = namedtuple('TransactionCountryPercentage', 'Transaction CountryPercentage')
         for transaction in act.transactions:
             for country in act.recipient_country_percentages:
-                ret.append((transaction, country))
+                ret.append(NT(transaction, country))
         return ret
 
     def test_rec_country_code_0(self):
@@ -760,9 +762,10 @@ class TestTransactionBySector(TestCase, CSVTstMixin):
     def example(self):
         ret = []
         act = example()
+        NT = namedtuple('TransactionSectorPercentage', 'Transaction SectorPercentage')
         for transaction in act.transactions:
             for sector in act.sector_percentages:
-                ret.append((transaction, sector))
+                ret.append(NT(transaction, sector))
         return ret
 
     def test_sector_code_0(self):
