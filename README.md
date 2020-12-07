@@ -25,7 +25,7 @@ Requirements
 
 You will need [Redis](http://redis.io), [Postgres](http://postgresql.org), python, pip and develpment libraries (for libpq, libxml2 and libxslt) to run the full setup.
 For example, on Ubuntu:
-    
+
     sudo aptitude install postgresql redis-server python-pip libpq-dev libxml2-dev libxslt-dev libevent-dev python-dev
 
 Installing for development
@@ -35,7 +35,7 @@ Installing for development
 # Clone the source
 git clone https://github.com/codeforIATI/IATI-Datastore.git
 
-# Install development dependencies 
+# Install development dependencies
 pip install -r requirements_dev.txt
 
 # Run the tests  (these tests use an in-memory sqlite db)
@@ -89,7 +89,7 @@ Deploying with apache
 
 * Run `iati create_database` to create the db tables
 * Set up a cron job for updates. (Add the following line after running `crontab -e`)
- 
+
         0 0 * * * export DATABASE_URL='postgres:///iati-datastore'; /usr/local/bin/iati crawl update
 
 * Run a worker with `iati queue background`
