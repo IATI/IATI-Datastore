@@ -1,5 +1,5 @@
-from flask.ext.sqlalchemy import SQLAlchemy
-from flask.ext.redis import Redis
+from flask_sqlalchemy import SQLAlchemy
+from flask_redis import Redis
 
 db = SQLAlchemy()
 redis = Redis()
