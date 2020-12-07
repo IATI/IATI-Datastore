@@ -1,11 +1,6 @@
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.redis import Redis
 
-# Monkeypatch to disable signalling
-# https://github.com/IATI/iati-datastore/issues/172#issuecomment-45877966
-from flask.ext.sqlalchemy import _MapperSignalEvents
-_MapperSignalEvents._record = lambda *args, **kwargs: None
-
 db = SQLAlchemy()
 redis = Redis()
 
