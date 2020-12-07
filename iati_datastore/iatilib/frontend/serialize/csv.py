@@ -445,9 +445,9 @@ def adapt_activity_other(func):
 
 
 csv_activity_by_country = CSVSerializer((
-    (u"recipient-country-code", lambda (a, c): c.country.value if c.country else ""),
-    (u"recipient-country", lambda (a, c): c.country.description.title() if c.country and c.country.description else ""),
-    (u"recipient-country-percentage", lambda (a, c): c.percentage if c.percentage else ""),
+    ("recipient-country-code", lambda r: r.CountryPercentage.country.value if r.CountryPercentage.country is not None else ""),
+    ("recipient-country", lambda r: r.CountryPercentage.country.description.title() if r.CountryPercentage.country and r.CountryPercentage.country.description is not None else ""),
+    ("recipient-country-percentage", lambda r: r.CountryPercentage.percentage if r.CountryPercentage.percentage is not None else ""),
     "iati-identifier",
     "hierarchy",
     "last-updated-datetime",
@@ -504,11 +504,11 @@ csv_activity_by_country = CSVSerializer((
 
 
 csv_activity_by_sector = CSVSerializer((
-    (u"sector-code", lambda (t, sp): sp.sector.value if sp.sector else ""),
-    (u"sector", lambda (t, sp): sp.sector.description.title() if sp.sector and sp.sector.description else ""),
-    (u"sector-percentage", lambda (a, sp): sp.percentage if sp.percentage else ""),
-    (u"sector-vocabulary", lambda (a, sp): sp.vocabulary.description if sp.vocabulary and sp.vocabulary.description else ""),
-    (u"sector-vocabulary-code", lambda (a, sp): sp.vocabulary.value if sp.vocabulary and sp.vocabulary.description else ""),
+    (u"sector-code", lambda r: r.SectorPercentage.sector.value if r.SectorPercentage.sector is not None else ""),
+    (u"sector", lambda r: r.SectorPercentage.sector.description.title() if r.SectorPercentage.sector and r.SectorPercentage.sector.description is not None else ""),
+    (u"sector-percentage", lambda r: r.SectorPercentage.percentage if r.SectorPercentage.percentage else ""),
+    (u"sector-vocabulary", lambda r: r.SectorPercentage.vocabulary.description if r.SectorPercentage.vocabulary and r.SectorPercentage.vocabulary.description is not None else ""),
+    (u"sector-vocabulary-code", lambda r: r.SectorPercentage.vocabulary.value if r.SectorPercentage.vocabulary and r.SectorPercentage.vocabulary.description is not None else ""),
     "iati-identifier",
     "hierarchy",
     "last-updated-datetime",
@@ -662,9 +662,9 @@ def trans_activity(func):
 
 
 csv_transaction_by_country = CSVSerializer((
-    (u"recipient-country-code", lambda (a, c): c.country.value if c.country else ""),
-    (u"recipient-country", lambda (a, c): c.country.description.title() if c.country else ""),
-    (u"recipient-country-percentage", lambda (a, c): c.percentage),
+    (u"recipient-country-code", lambda r: r.CountryPercentage.country.value if r.CountryPercentage.country is not None else ""),
+    (u"recipient-country", lambda r: r.CountryPercentage.country.description.title() if (r.CountryPercentage.country is not None and r.CountryPercentage.country.description is not None) else ""),
+    (u"recipient-country-percentage", lambda r: r.CountryPercentage.percentage),
     (u'transaction-type', trans(transaction_type)),
     (u'transaction-date', trans(transaction_date)),
     (u"default-currency", trans(default_currency)),
@@ -719,11 +719,11 @@ csv_transaction_by_country = CSVSerializer((
 
 
 csv_transaction_by_sector = CSVSerializer((
-    (u"sector-code", lambda (t, sp): sp.sector.value if sp.sector else ""),
-    (u"sector", lambda (t, sp): sp.sector.description.title() if sp.sector else ""),
-    (u"sector-percentage", lambda (t, sp): sp.percentage),
-    (u"sector-vocabulary", lambda (a, sp): sp.vocabulary.description if sp.vocabulary else ""),
-    (u"sector-vocabulary-code", lambda (a, sp): sp.vocabulary.value if sp.vocabulary else ""),
+    (u"sector-code", lambda r: r.SectorPercentage.sector.value if r.SectorPercentage.sector is not None else ""),
+    (u"sector", lambda r: r.SectorPercentage.sector.description.title() if (r.SectorPercentage.sector is not None and r.SectorPercentage.sector.description is not None) else ""),
+    (u"sector-percentage", lambda r: r.SectorPercentage.percentage),
+    (u"sector-vocabulary", lambda r: r.SectorPercentage.vocabulary.description if r.SectorPercentage.vocabulary is not None else ""),
+    (u"sector-vocabulary-code", lambda r: r.SectorPercentage.vocabulary.value if r.SectorPercentage.vocabulary is not None else ""),
     (u'transaction-type', trans(transaction_type)),
     (u'transaction-date', trans(transaction_date)),
     (u"default-currency", trans(default_currency)),
@@ -792,9 +792,9 @@ budget_csv = CSVSerializer((
 
 
 csv_budget_by_country = CSVSerializer((
-    (u"recipient-country-code", lambda (b, c): c.country.value if c.country else ""),
-    (u"recipient-country", lambda (b, c): c.country.description.title() if c.country else ""),
-    (u"recipient-country-percentage", lambda (b, c): c.percentage),
+    (u"recipient-country-code", lambda r: r.CountryPercentage.country.value if r.CountryPercentage.country is not None else ""),
+    (u"recipient-country", lambda r: r.CountryPercentage.country.description.title() if (r.CountryPercentage.country is not None and r.CountryPercentage.country.description is not None) else ""),
+    (u"recipient-country-percentage", lambda r: r.CountryPercentage.percentage),
     (u'budget-period-start-date', trans(period_start_date)),
     (u'budget-period-end-date', trans(period_end_date)),
     (u"budget-value", trans(budget_value)),
@@ -808,9 +808,9 @@ csv_budget_by_country = CSVSerializer((
 
 
 csv_budget_by_sector = CSVSerializer((
-    (u"sector-code", lambda (t, sp): sp.sector.value if sp.sector else ""),
-    (u"sector", lambda (t, sp): sp.sector.description.title() if sp.sector else ""),
-    (u"sector-percentage", lambda (t, sp): sp.percentage),
+    (u"sector-code", lambda r: r.SectorPercentage.sector.value if r.SectorPercentage.sector is not None else ""),
+    (u"sector", lambda r: r.SectorPercentage.sector.description.title() if (r.SectorPercentage.sector is not None and r.SectorPercentage.sector.description is not None) else ""),
+    (u"sector-percentage", lambda r: r.SectorPercentage.percentage),
     (u'budget-period-start-date', trans(period_start_date)),
     (u'budget-period-end-date', trans(period_end_date)),
     (u"budget-value", trans(budget_value)),
