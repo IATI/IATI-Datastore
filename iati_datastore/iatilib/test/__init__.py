@@ -6,7 +6,7 @@ from lxml import etree as lxml_etree
 from xml.etree import ElementTree as xml_etree
 
 
-from iatilib.frontend import create_app
+from iatilib.frontend.app import create_app
 from iatilib import db
 
 
@@ -26,12 +26,8 @@ class AppTestCase(unittest.TestCase):
     def setUp(self):
         global _app
         if _app is None:
-            _app = create_app(
-                SQLALCHEMY_DATABASE_URI=os.environ.get(
-                    "TEST_DATABASE_URL",
-                    'sqlite:///:memory:',
-                )
-            )
+            _app = create_app()
+            _app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///:memory:"
             _app.app_context().push()
 
         self.app = _app
