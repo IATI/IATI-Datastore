@@ -1,6 +1,6 @@
 import os
 import unittest
-from StringIO import StringIO
+from io import StringIO
 
 from lxml import etree as lxml_etree
 from xml.etree import ElementTree as xml_etree
