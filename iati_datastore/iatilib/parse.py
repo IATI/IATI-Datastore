@@ -5,8 +5,8 @@ import logging
 from decimal import Decimal, InvalidOperation
 from functools import partial
 from collections import namedtuple
-from StringIO import StringIO
-
+from io import StringIO, BytesIO
+import six
 from lxml import etree as ET
 from dateutil.parser import parse as parse_date
 from requests.packages import chardet
@@ -61,10 +61,8 @@ def xval(ele, xpath, default=NODEFAULT):
     try:
         val = ele.xpath(xpath)[0]
         if isinstance(val, str):
-            return val.decode("utf-8")
-        if isinstance(val, unicode):
             return val
-        raise TypeError("val is not a basestring")
+        raise TypeError("val is not a sting")
     except IndexError:
         if default is NODEFAULT:
             raise MissingValue("Missing %r from %s" % (xpath, ele.tag))
@@ -88,7 +86,7 @@ def iati_date(iso_date):
         except ValueError:
             raise InvalidDateError('could not parse {0} as date'.format(iso_date))
     else:
-        return None 
+        return None
 
 
 def iati_int(text):
@@ -213,7 +211,7 @@ def currency(path, xml, resource=None, major_version='1'):
         return codelists.by_major_version[major_version].Currency.from_string(code)
     else:
         return None
-        
+
 
 def transactions(xml, resource=no_resource, major_version='1'):
     def from_cl(code, codelist):
@@ -257,7 +255,7 @@ def transactions(xml, resource=no_resource, major_version='1'):
         for field, function in field_functions.items():
             try:
                 data[field] = function(ele, resource, major_version)
-            except (MissingValue, InvalidDateError, ValueError, InvalidOperation), exe:
+            except (MissingValue, InvalidDateError, ValueError, InvalidOperation) as exe:
                 data[field] = None
                 iati_identifier = xval(xml, "/iati-activity/iati-identifier/text()", 'no_identifier')
                 log.warn(
@@ -266,7 +264,7 @@ def transactions(xml, resource=no_resource, major_version='1'):
                     logger='activity_importer', dataset=resource.dataset_id, resource=resource.url),
                     exc_info=exe
                 )
-        
+
         return Transaction(**data)
 
     ret = []
@@ -297,7 +295,7 @@ def sector_percentages(xml, resource=no_resource, major_version='1'):
         for field, function in field_functions.items():
             try:
                 setattr(sp, field, function(ele, resource))
-            except (MissingValue, ValueError), exe:
+            except (MissingValue, ValueError) as exe:
                 iati_identifier = xval(xml, "/iati-activity/iati-identifier/text()", 'no_identifier')
                 log.warn(
                     _("uFailed to import a valid {0} in activity {1}, error was: {2}".format(
@@ -305,7 +303,7 @@ def sector_percentages(xml, resource=no_resource, major_version='1'):
                     logger='activity_importer', dataset=resource.dataset_id, resource=resource.url),
                     exc_info=exe
                 )
-        
+
         if ele.xpath("@percentage"):
             try:
                 sp.percentage = Decimal(xval(ele, "@percentage"))
@@ -407,7 +405,11 @@ def default_language(xml, resource=None, major_version='1'):
 
 
 def _open_resource(xml_resource, detect_encoding=False):
-    if isinstance(xml_resource, basestring):
+    """
+    Must return bytes object.
+    """
+    if isinstance(xml_resource, str):
+        # If it is a string...
         if detect_encoding:
             encoding = chardet.detect(xml_resource)['encoding']
             if encoding in ('UTF-16LE', 'UTF-16BE'):
@@ -418,17 +420,24 @@ def _open_resource(xml_resource, detect_encoding=False):
         except TypeError:
             xml_resource_is_path = False
 
+
+        # Previously included a workaround to this bug, but now appears to be fixed
+        #https://bugzilla.redhat.com/show_bug.cgi?id=874546
+        # appears now to be fixed
         if xml_resource_is_path:
-            #https://bugzilla.redhat.com/show_bug.cgi?id=874546
-            f = open(xml_resource)
-            lines = f.read()
-            xmlfile = StringIO(lines)
+            xmlfile = open(xml_resource, 'rb')
         else:
-            xmlfile = StringIO(xml_resource)
+            xmlfile = BytesIO(xml_resource.encode())
     else:
+        # It is bytes.
         # so it's a xml literal, probably from a test. It shouldn't be
         # big enough that a round trip through the serializer is a problem
-        xmlfile = StringIO(ET.tostring(xml_resource))
+        if isinstance(xml_resource, bytes):
+            xmlfile = BytesIO(xml_resource)
+        elif isinstance(xml_resource, str):
+            xmlfile = BytesIO(xml_resource.encode())
+        else:
+            xmlfile = BytesIO(ET.tostring(xml_resource))
     return xmlfile
 
 
@@ -476,7 +485,7 @@ def activity(xml_resource, resource=no_resource, major_version='1', version=None
         "iati_identifier": xval(xml.getroot(), "./iati-identifier/text()"),
         "title": xval(xml, "./title/"+TEXT_ELEMENT[major_version], u""),
         "description": xval(xml, "./description/"+TEXT_ELEMENT[major_version], u""),
-        "raw_xml": ET.tostring(xml, encoding=unicode)
+        "raw_xml": ET.tostring(xml, encoding='utf-8').decode()
     }
 
     cl = codelists.by_major_version[major_version]
@@ -486,7 +495,7 @@ def activity(xml_resource, resource=no_resource, major_version='1', version=None
     default_flow_type = partial(from_codelist_with_major_version, 'FlowType', "./default-flow-type/@code")
     default_aid_type = partial(from_codelist_with_major_version, 'AidType', "./default-aid-type/@code")
     default_tied_status = partial(from_codelist_with_major_version, 'TiedStatus', "./default-tied-status/@code")
-    
+
     field_functions = {
         "default_currency" : partial(currency, "@default-currency"),
         "hierarchy": hierarchy,
@@ -519,7 +528,7 @@ def activity(xml_resource, resource=no_resource, major_version='1', version=None
     for field, function in field_functions.items():
         try:
             data[field] = function(xml, resource, major_version)
-        except (MissingValue, InvalidDateError, ValueError, InvalidOperation), exe:
+        except (MissingValue, InvalidDateError, ValueError, InvalidOperation) as exe:
             data[field] = None
             log.warn(
                 _(u"Failed to import a valid {0} in activity {1}, error was: {2}".format(
@@ -532,9 +541,9 @@ def activity(xml_resource, resource=no_resource, major_version='1', version=None
 
 def document(xml_resource, resource=no_resource):
     try:
-        return activities(_open_resource(xml_resource), resource) 
+        return activities(_open_resource(xml_resource), resource)
     except UnicodeDecodeError:
-        return activities(_open_resource(xml_resource, detect_encoding=True), resource) 
+        return activities(_open_resource(xml_resource, detect_encoding=True), resource)
 
 
 def activities(xmlfile, resource=no_resource):
@@ -549,12 +558,12 @@ def activities(xmlfile, resource=no_resource):
             elif event=='end' and elem.tag == 'iati-activity':
                 try:
                     yield activity(elem, resource=resource, major_version=major_version, version=version)
-                except MissingValue, exe:
+                except MissingValue as exe:
                     log.error(_("Failed to import a valid Activity error was: {0}".format(exe),
                             logger='failed_activity', dataset=resource.dataset_id, resource=resource.url),
                             exc_info=exe)
                 elem.clear()
-    except ET.XMLSyntaxError, exe:
+    except ET.XMLSyntaxError as exe:
         raise XMLError()
 
 
