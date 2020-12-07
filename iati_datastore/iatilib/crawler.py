@@ -135,7 +135,8 @@ def fetch_dataset_metadata(dataset):
     except Exception:
         raise CouldNotFetchPackageList()
 
-    dataset.last_modified = date_parser(ds_entity.get('metadata_modified', ""))
+    dataset.last_modified = date_parser(ds_entity.get('metadata_modified',
+        datetime.datetime.now().date().isoformat()))
     new_urls = [resource['url'] for resource
                 in ds_entity.get('resources', [])
                 if resource['url'] not in dataset.resource_urls]
