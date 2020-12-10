@@ -1,3 +1,12 @@
+*NOTE*
+====
+
+This is the old version of the IATI Datastore and is not currently hosted live or maintained by IATI. For the current live version of the Datastore check here:
+
+- [Website](https://iatidatastore.iatistandard.org/home)
+- [GitHub](https://github.com/zimmerman-team/iati.cloud)
+
+
 IATI Datastore
 ==============
 
@@ -5,7 +14,6 @@ IATI Datastore
 [![Coverage Status](https://img.shields.io/coveralls/IATI/IATI-Datastore.svg)](https://coveralls.io/r/IATI/IATI-Datastore?branch=master)
 [![Code Health](https://landscape.io/github/IATI/IATI-Datastore/master/landscape.png)](https://landscape.io/github/IATI/IATI-Datastore/master)
 [![License: MIT](https://img.shields.io/badge/license-AGPLv3-blue.svg)](https://github.com/IATI/IATI-Datastore/blob/master/LICENSE.txt)
-
 
 Introduction
 ------------
